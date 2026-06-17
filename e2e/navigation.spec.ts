@@ -10,7 +10,11 @@ test.describe('Navigation', () => {
 
     test('Principles nav link leads to /principles', async ({ page }) => {
         await page.goto('/')
-        await page.click('nav a[href="/principles"]')
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/principles"]:visible').click()
         await expect(page).toHaveURL('/principles')
     })
 
