@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
     site: 'https://philipp.fyi',
+    trailingSlash: 'always',
     prefetch: true,
     integrations: [
         mdx(),
