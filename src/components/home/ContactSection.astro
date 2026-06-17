@@ -1,0 +1,46 @@
+---
+import ContactForm from '@/components/ui/ContactForm'
+---
+
+<!--
+    The hidden <form> below is required for Netlify's deploy-time spider to
+    detect and register the form. The actual submission is handled by the
+    React ContactForm component via fetch().
+-->
+<form name="contact" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
+    <input type="text"     name="name"      />
+    <input type="email"    name="email"     />
+    <textarea              name="message"   ></textarea>
+</form>
+
+<section id="contact" aria-labelledby="contact-heading" class="mx-auto max-w-6xl px-6 py-24 md:py-32">
+
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
+
+        <!-- Left: heading + invitation text -->
+        <div class="flex flex-col justify-center">
+            <h2
+                id="contact-heading"
+                class="mb-5 font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
+                style="font-variation-settings: 'opsz' 48"
+            >
+                Get in touch
+            </h2>
+            <p class="mb-6 text-base leading-relaxed text-muted">
+                Whether you have a role in mind, a project to discuss,
+                or just want to connect — I'd love to hear from you.
+            </p>
+            <p class="text-sm text-muted">
+                Based in Leipzig / Chemnitz area, Germany.<br />
+                Available for remote work worldwide.
+            </p>
+        </div>
+
+        <!-- Right: contact form -->
+        <div>
+            <ContactForm client:load />
+        </div>
+
+    </div>
+
+</section>

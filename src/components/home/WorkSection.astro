@@ -1,0 +1,39 @@
+---
+import { getCollection } from 'astro:content'
+import WorkCard from './WorkCard.astro'
+
+const entries = (await getCollection('work', ({ data }) => !data.draft))
+    .sort((a, b) => a.data.order - b.data.order)
+
+const [featured, ...rest] = entries
+---
+
+<section id="work" aria-labelledby="work-heading" class="mx-auto max-w-6xl px-6 py-24 md:py-32">
+
+    <div class="mb-12">
+        <h2
+            id="work-heading"
+            class="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
+            style="font-variation-settings: 'opsz' 48"
+        >
+            Selected work
+        </h2>
+    </div>
+
+    <!--
+        Grid layout: 3 columns on md+.
+        Featured card (Storyblok migration) spans all 3 columns in row 1.
+        Remaining 3 cards sit equally in row 2.
+    -->
+    <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+        {featured && (
+            <div class="md:col-span-3">
+                <WorkCard entry={featured} />
+            </div>
+        )}
+        {rest.map((entry) => (
+            <WorkCard entry={entry} />
+        ))}
+    </div>
+
+</section>

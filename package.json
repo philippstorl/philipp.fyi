@@ -1,0 +1,49 @@
+{
+    "name": "philipp-fyi",
+    "type": "module",
+    "version": "0.1.0",
+    "scripts": {
+        "dev": "netlify dev",
+        "dev:astro": "astro dev",
+        "build": "astro check && astro build",
+        "preview": "astro preview",
+        "typecheck": "astro check",
+        "lint": "eslint .",
+        "format": "prettier --write .",
+        "test": "playwright test",
+        "test:ui": "playwright test --ui"
+    },
+    "dependencies": {
+        "@astrojs/mdx": "^6.0.0",
+        "@astrojs/react": "^5.0.0",
+        "@astrojs/sitemap": "^3.7.0",
+        "@fontsource-variable/fraunces": "^5.1.0",
+        "@fontsource/dm-sans": "^5.1.0",
+        "@fontsource/fraunces": "^5.2.9",
+        "@fontsource/jetbrains-mono": "^5.1.0",
+        "astro": "^6.4.0",
+        "lucide-react": "^1.0.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+        "satori": "^0.26.0",
+        "sharp": "^0.34.0"
+    },
+    "devDependencies": {
+        "@astrojs/check": "^0.9.0",
+        "@playwright/test": "^1.45.0",
+        "@tailwindcss/typography": "^0.5.0",
+        "@tailwindcss/vite": "^4.3.0",
+        "@types/node": "^20.0.0",
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "eslint": "^9.0.0",
+        "eslint-plugin-astro": "^1.0.0",
+        "eslint-plugin-jsx-a11y": "^6.0.0",
+        "netlify-cli": "^26.1.0",
+        "prettier": "^3.0.0",
+        "prettier-plugin-astro": "^0.14.0",
+        "tailwindcss": "^4.3.0",
+        "typescript": "^5.0.0",
+        "typescript-eslint": "^8.0.0"
+    }
+}

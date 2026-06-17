@@ -1,0 +1,36 @@
+---
+import { socialLinks } from '@/data/social'
+import SocialIcon from '@/components/ui/SocialIcon.astro'
+
+const year = new Date().getFullYear()
+---
+
+<footer class="border-t border-border">
+    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 py-10 sm:flex-row">
+
+        <!-- Copyright -->
+        <p class="text-sm text-muted">
+            &copy; {year} Philipp Storl &mdash; <span class="font-mono text-xs">philipp.fyi</span>
+        </p>
+
+        <!-- Social links -->
+        <ul class="flex items-center gap-2">
+            {socialLinks.map((link) => {
+                const isExternal = link.href.startsWith('http')
+                return (
+                    <li>
+                        <a
+                            href={link.href}
+                            aria-label={link.label}
+                            target={isExternal ? '_blank' : undefined}
+                            rel={isExternal ? 'noopener noreferrer' : undefined}
+                            class="flex h-9 w-9 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground"
+                        >
+                            <SocialIcon icon={link.icon} size={18} />
+                        </a>
+                    </li>
+                )
+            })}
+        </ul>
+    </div>
+</footer>

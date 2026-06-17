@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
+  <!-- Terracotta rounded square background -->
+  <rect width="32" height="32" rx="7" fill="#C85A2A"/>
+  <!-- Off-white diamond: a rounded square rotated 45° from centre -->
+  <rect x="9" y="9" width="14" height="14" rx="3" fill="#FAF9F6" transform="rotate(45 16 16)"/>
+</svg>

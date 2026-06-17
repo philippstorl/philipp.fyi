@@ -1,0 +1,31 @@
+---
+import type { CollectionEntry } from 'astro:content'
+
+interface Props {
+    entry: CollectionEntry<'principles'>
+}
+
+const { entry } = Astro.props
+const { title, description } = entry.data
+const number = entry.id.split('-')[0]
+---
+
+<article class="flex flex-col rounded-xl border border-border bg-card p-6">
+
+    <!-- Order number -->
+    <span class="mb-4 font-mono text-xs text-muted">{number}</span>
+
+    <!-- Title -->
+    <h3
+        class="mb-3 font-display text-lg font-normal leading-snug tracking-tight text-foreground"
+        style="font-variation-settings: 'opsz' 24"
+    >
+        {title}
+    </h3>
+
+    <!-- Description -->
+    <p class="text-sm leading-relaxed text-muted">
+        {description}
+    </p>
+
+</article>

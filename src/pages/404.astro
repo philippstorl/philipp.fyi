@@ -1,0 +1,50 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Header from '@/components/layout/Header.astro'
+import Footer from '@/components/layout/Footer.astro'
+---
+
+<BaseLayout
+    title="404 — Not found"
+    description="The page you were looking for doesn't exist."
+>
+    <Header />
+
+    <main class="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-6 py-24 text-center">
+
+        <!--
+            The large "404" is purely decorative — aria-hidden keeps
+            screen readers focused on the meaningful h1 below.
+        -->
+        <p
+            class="mb-0 select-none font-display font-normal leading-none text-accent/10"
+            style="font-size: clamp(8rem, 28vw, 18rem); font-variation-settings: 'opsz' 80"
+            aria-hidden="true"
+        >
+            404
+        </p>
+
+        <!-- Title — the actual heading -->
+        <h1
+            class="-mt-4 mb-5 font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
+            style="font-variation-settings: 'opsz' 48"
+        >
+            This page took the wave.
+        </h1>
+
+        <p class="mb-10 max-w-sm text-base leading-relaxed text-muted">
+            Whatever you were looking for isn't here — moved, renamed, or simply
+            never existed. Easy to do after eight years of building.
+        </p>
+
+        <a
+            href="/"
+            class="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-150 hover:border-accent hover:text-accent"
+        >
+            ← Back home
+        </a>
+
+    </main>
+
+    <Footer />
+</BaseLayout>

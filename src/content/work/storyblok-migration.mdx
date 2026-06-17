@@ -1,0 +1,38 @@
+---
+title: "Migrating staffbase.com to Storyblok & Symfony"
+description: "A full-stack migration of Staffbase's entire marketing website from WordPress to a headless CMS — the most complex, highest-stakes project of eight years."
+category: "Engineering"
+tags: ["PHP", "Symfony", "Storyblok", "Tailwind CSS", "Upsun", "Twig", "Varnish"]
+year: "2024–2025"
+featured: true
+order: 1
+draft: false
+---
+
+By 2024, staffbase.com had outgrown WordPress. The platform had served us well for years — and I'd built a great deal of it by hand — but a monolithic CMS was no longer the right tool. Content management was developer-dependent. The codebase had accumulated years of custom code. And as Staffbase scaled, we needed something that could grow with us: a clear separation between content and presentation, self-service publishing for marketing, and a foundation built to last.
+
+The answer was a headless architecture: Storyblok as the CMS, PHP/Symfony as the application layer, Twig for templating, and Tailwind CSS powering the entire frontend styling system. We partnered with SensioLabs — Symfony specialists — as the external engineering agency, and I served as the technical lead and primary decision-maker for the web team throughout.
+
+## What we built
+
+The scope was substantial. The migration covered the full staffbase.com estate — every product page, resource hub, campaign landing page, and integration page — across five languages: English, German, French, Spanish, and Japanese. Beyond the content, the entire infrastructure was rebuilt: Route53 and Cloudflare for DNS (managed via Terraform), Upsun for the Symfony application hosting, Netlify for static assets, and a VarnishCache layer for performance. Every redirect, every canonical URL, every tracking integration was accounted for.
+
+## My role
+
+I owned the technical direction. That meant making the architecture decisions that everything else would be built on, reviewing and approving code across both the Staffbase team and SensioLabs, and staying hands-on enough to contribute directly when the work required it.
+
+I managed the agency relationship end-to-end: aligning on scope and approach, coordinating the GitHub repository structure (codeowners, branch strategy, CI/CD), and maintaining the quality bar across releases. When the navigation needed to be fully rebuilt in late 2025 — a structural overhaul under a tight external deadline — I coordinated the SensioLabs team alongside contributing and reviewing code directly.
+
+I also owned the knowledge transfer that made the migration sustainable. I ran two Storyblok editorial workshops for the marketing team — covering everything from page building and component usage to the practical reality of how content publishing would change. The goal was for marketing colleagues to publish independently, without raising a ticket to the web team for every content change. That goal was met.
+
+## What made this hard
+
+The complexity wasn't in any single piece — it was in the accumulation. Five languages in production simultaneously. A component library rebuilt from scratch but needing to be functionally equivalent to what existed. A VarnishCache layer that needed to be understood and configured correctly or you'd introduce subtle caching bugs that only appeared in production. Integrations with Iframely for rich embeds, OneTrust for consent management, and a range of marketing tools that all had opinions about how they were implemented.
+
+The highest-stakes moment was go-live: switching primary domains on a live commercial website that generates significant demand for a B2B SaaS company. There was no tolerance for downtime, missed redirects, or broken tracking. The coordination required — across the web team, SensioLabs, marketing, and infrastructure — was the most demanding of my eight years at Staffbase.
+
+## The outcome
+
+Marketing self-publishes in Storyblok. The number of web support tickets driven by content management — which had been significant — dropped materially. The Terraform-managed infrastructure is documented and reproducible. And the Symfony codebase, with its clear architecture and codeowner structure, is something the team can maintain and extend confidently.
+
+The foundation that replaced eight years of accumulated WordPress is built to last.

@@ -1,0 +1,77 @@
+---
+import { ClientRouter } from 'astro:transitions'
+import '../styles/global.css'
+
+interface Props {
+    /** Page title — shown as "Title | Philipp Storl", omit for home page */
+    title?: string
+    description?: string
+    ogImage?: string
+}
+
+const SITE_NAME = 'Philipp Storl'
+const DEFAULT_DESC =
+    "Principal Web Developer — full-stack, with a designer's eye. Based in Leipzig / Chemnitz area, Germany."
+
+const { title, description = DEFAULT_DESC, ogImage = '/og/home.png' } = Astro.props
+
+const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+const ogImageURL = new URL(ogImage, Astro.site)
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="generator" content={Astro.generator} />
+
+        <!-- Primary -->
+        <title>{fullTitle}</title>
+        <meta name="description" content={description} />
+        <link rel="canonical" href={canonicalURL} />
+
+        <!-- Open Graph -->
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={canonicalURL} />
+        <meta property="og:title" content={fullTitle} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={ogImageURL} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:site_name" content={SITE_NAME} />
+
+        <!-- Twitter / X -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={fullTitle} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={ogImageURL} />
+
+        <!-- Mobile browser chrome colour -->
+        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6" />
+        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0C0B09" />
+
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <ClientRouter />
+
+        <!--
+            Dark mode: runs synchronously before first paint to prevent flash.
+            Reads localStorage, falls back to OS preference.
+        -->
+        <script is:inline>
+            ;(function () {
+                var stored = localStorage.getItem('theme')
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+                if (stored === 'dark' || (!stored && prefersDark)) {
+                    document.documentElement.classList.add('dark')
+                }
+            })()
+        </script>
+    </head>
+
+    <body class="bg-background text-foreground font-sans">
+        <slot />
+    </body>
+</html>

@@ -1,0 +1,12 @@
+{
+    "extends": "./node_modules/astro/tsconfigs/strict.json",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "ignoreDeprecations": "6.0",
+        "paths": {
+            "@/*": ["src/*"]
+        }
+    },
+    "include": [".astro/types.d.ts", "**/*"],
+    "exclude": ["dist", "e2e", "playwright.config.ts"]
+}

@@ -1,0 +1,47 @@
+---
+import { about } from '@/data/about'
+---
+
+<section id="about" aria-labelledby="about-heading" class="mx-auto max-w-6xl px-6 py-24 md:py-32">
+
+    <!-- Section heading -->
+    <div class="mb-12">
+        <h2
+            id="about-heading"
+            class="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
+            style="font-variation-settings: 'opsz' 48"
+        >
+            About
+        </h2>
+    </div>
+
+    <!-- Two-column: bio text (left) + key facts (right) -->
+    <div class="grid grid-cols-1 gap-12 md:grid-cols-5">
+
+        <!-- Bio paragraphs — wider column -->
+        <div class="space-y-5 md:col-span-3">
+            {about.paragraphs.map((para) => (
+                <p class="text-base leading-relaxed text-muted md:text-lg">
+                    {para}
+                </p>
+            ))}
+        </div>
+
+        <!-- Key facts — narrower column -->
+        <div class="md:col-span-2">
+            <dl class="rounded-xl border border-border bg-card divide-y divide-border overflow-hidden">
+                {about.facts.map((fact) => (
+                    <div class="flex items-baseline justify-between gap-4 px-5 py-3.5">
+                        <dt class="shrink-0 text-xs font-medium text-muted">
+                            {fact.label}
+                        </dt>
+                        <dd class="text-right text-sm text-foreground">
+                            {fact.value}
+                        </dd>
+                    </div>
+                ))}
+            </dl>
+        </div>
+
+    </div>
+</section>

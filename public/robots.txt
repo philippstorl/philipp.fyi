@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# OG images are assets, not pages — already noindex via HTTP headers
+Disallow: /og/
+
+Sitemap: https://philipp.fyi/sitemap-index.xml
