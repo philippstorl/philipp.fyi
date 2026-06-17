@@ -1,5 +1,7 @@
 # philipp.fyi
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/298b597c-afe1-458b-9c18-b261be8eef05/deploy-status)](https://app.netlify.com/projects/philipp-storl/deploys)
+
 Personal portfolio site for Philipp Storl — built with Astro v6, Tailwind CSS v4, React, and deployed on Netlify.
 
 ## Prerequisites
