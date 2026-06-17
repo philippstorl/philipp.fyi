@@ -1,10 +1,10 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Principles page', () => {
-    test('shows all 13 principles', async ({ page }) => {
+    test('shows all principles', async ({ page }) => {
         await page.goto('/principles')
         const items = page.locator('ol li')
-        await expect(items).toHaveCount(13)
+        await expect(items).toHaveCount(15)
     })
 
     test('first principle is numbered 01', async ({ page }) => {
@@ -13,10 +13,10 @@ test.describe('Principles page', () => {
         await expect(firstNumber).toContainText('01')
     })
 
-    test('last principle is numbered 13', async ({ page }) => {
+    test('last principle is numbered 15', async ({ page }) => {
         await page.goto('/principles')
         const lastNumber = page.locator('ol li').last().locator('.font-mono').first()
-        await expect(lastNumber).toContainText('13')
+        await expect(lastNumber).toContainText('15')
     })
 
     test('"How I work" CTA on home links to /principles', async ({ page }) => {

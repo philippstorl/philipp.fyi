@@ -35,9 +35,11 @@ export default function ThemeToggle() {
     }, [theme])
 
     const select = (next: Theme) => {
-        next === 'system'
-            ? localStorage.removeItem('theme')
-            : localStorage.setItem('theme', next)
+        if (next === 'system') {
+            localStorage.removeItem('theme')
+        } else {
+            localStorage.setItem('theme', next)
+        }
         applyTheme(next)
         setTheme(next)
     }
