@@ -1,6 +1,7 @@
 # philipp.fyi
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/298b597c-afe1-458b-9c18-b261be8eef05/deploy-status)](https://app.netlify.com/projects/philipp-storl/deploys)
+[![CI](https://github.com/philippstorl/philipp.fyi/actions/workflows/ci.yml/badge.svg)](https://github.com/philippstorl/philipp.fyi/actions/workflows/ci.yml)
 
 Personal portfolio site for Philipp Storl — built with Astro v6, Tailwind CSS v4, React, and deployed on Netlify.
 
@@ -42,12 +43,29 @@ npm run dev:astro  # http://localhost:4321
 | `npm run build` | Type-check + build to `dist/` |
 | `npm run typecheck` | Run `astro check` (TypeScript only) |
 | `npm run lint` | Run ESLint (TypeScript, Astro, accessibility) |
+| `npm run check:trailing-slashes` | Validate every internal link/route ends in `/` |
 | `npm run format` | Format all files with Prettier |
 | `npm run preview` | Preview the production build locally |
 | `npm test` | Run Playwright E2E tests |
 | `npm run test:ui` | Run Playwright tests in interactive UI mode |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
+
+## CI (GitHub Actions)
+
+Every pull request, and every push to `main`, runs the workflow in `.github/workflows/ci.yml`. It can also be triggered manually (`workflow_dispatch`). Runs are cancelled and restarted if you push again to the same branch before the previous run finishes.
+
+Five jobs run in parallel, all on Node 26:
+
+| Job | What it does |
+|---|---|
+| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git |
+| `lint` | `npm run lint` |
+| `typecheck` | `npm run typecheck` |
+| `build` | `npm run check:trailing-slashes`, then `npm run build` |
+| `test` | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail |
+
+Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at 5 open at a time, labeled `dependencies`.
 
 ## Deployment
 
@@ -86,7 +104,7 @@ npx playwright test e2e/home.spec.ts --debug
 | `e2e/home.spec.ts` | Title, headline, 4 work cards, 6 principle cards, contact section |
 | `e2e/navigation.spec.ts` | Header, nav links, name mark, theme toggle |
 | `e2e/work.spec.ts` | All 4 case study pages render, card links resolve correctly |
-| `e2e/principles.spec.ts` | 13 principles shown, numbered 01–13, CTA links to /principles |
+| `e2e/principles.spec.ts` | 15 principles shown, numbered 01–15, CTA links to /principles |
 | `e2e/404.spec.ts` | 404 status on unknown routes, correct headline, back home link |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
@@ -120,7 +138,7 @@ draft: false       # true = hidden from the site
 
 ### Principles — `src/content/principles/`
 
-Thirteen `.md` files named `01-title.md` through `13-title.md`. The filename prefix controls sort order — rename a file to reorder it. No `order` field in frontmatter.
+Fifteen `.md` files named `01-title.md` through `15-title.md`. The filename prefix controls sort order — rename a file to reorder it. No `order` field in frontmatter.
 
 ```yaml
 title: "Principle title"
@@ -165,7 +183,7 @@ src/
     work/          → CaseStudyLayout
   content/
     work/          → Case study MDX files (4 entries)
-    principles/    → Principle MD files (13 entries)
+    principles/    → Principle MD files (15 entries)
     blog/          → Blog post MD files (all draft by default)
   data/
     about.ts       → About section copy and facts
