@@ -8,7 +8,7 @@ interface Props {
 
 const { entry } = Astro.props
 const { title, description, category, tags, year, featured } = entry.data
-const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}`
+const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
 
 const categoryStyles: Record<string, string> = {
     Engineering: 'border-accent/30 text-accent',

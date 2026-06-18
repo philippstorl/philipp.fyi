@@ -33,5 +33,5 @@ test('work cards link to correct case study URLs', async ({ page }) => {
     const firstCard = page.locator('#work article').first()
     const link = firstCard.locator('a').first()
     const href = await link.getAttribute('href')
-    expect(href).toMatch(/^\/work\/storyblok-migration$/)
+    expect(href).toMatch(/^\/work\/storyblok-migration\/$/)
 })

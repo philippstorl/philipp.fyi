@@ -9,6 +9,7 @@
         "preview": "astro preview",
         "typecheck": "astro check",
         "lint": "eslint .",
+        "check:trailing-slashes": "node scripts/check-trailing-slashes.js",
         "format": "prettier --write .",
         "test": "playwright test",
         "test:ui": "playwright test --ui"
