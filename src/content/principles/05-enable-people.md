@@ -9,4 +9,4 @@ When a new developer joined a project, my message was clear: *"Without enablemen
 
 The goal is always to make yourself less of a single point of failure, and to leave the system stronger than you found it.
 
-*Where this shows up:* The documentation library built from day one, Storyblok editorial workshops that enabled marketing self-publishing, the "How to prioritise tasks" shared with the team, onboarding treated as genuine investment, the career track built to help every IC understand their path and what "good" looked like at each level.
+*Where this shows up:* The documentation library built from day one, Storyblok editorial workshops that enabled marketing self-publishing, the "How to prioritize tasks" shared with the team, onboarding treated as genuine investment, the career track built to help every IC understand their path and what "good" looked like at each level.

@@ -53,7 +53,7 @@ The `build` script runs `astro check` before `astro build` — TypeScript errors
 
 ## CI (GitHub Actions)
 
-Every pull request, and every push to `main`, runs the workflow in `.github/workflows/ci.yml`. It can also be triggered manually (`workflow_dispatch`). Runs are cancelled and restarted if you push again to the same branch before the previous run finishes.
+Every pull request, and every push to `main`, runs the workflow in `.github/workflows/ci.yml`. It can also be triggered manually (`workflow_dispatch`). Runs are canceled and restarted if you push again to the same branch before the previous run finishes.
 
 Five jobs run in parallel, all on Node 26:
 

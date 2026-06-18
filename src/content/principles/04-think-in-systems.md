@@ -9,4 +9,4 @@ But identifying a root cause isn't enough — you have to communicate it in a wa
 
 People follow standards more readily when they understand why those standards exist. And systems improve faster when people understand the root cause, not just the symptom.
 
-*Where this shows up:* Every Jira card comment with visual evidence and plain-language explanation, the request intake system (a systematic solution to ad-hoc requests overwhelming the team), template and brand standards with documented rationale, the sprint framework introduced to fix unpredictable delivery, the Eisenhower Matrix shared with the team as a prioritisation tool.
+*Where this shows up:* Every Jira card comment with visual evidence and plain-language explanation, the request intake system (a systematic solution to ad-hoc requests overwhelming the team), template and brand standards with documented rationale, the sprint framework introduced to fix unpredictable delivery, the Eisenhower Matrix shared with the team as a prioritization tool.
