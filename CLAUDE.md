@@ -24,6 +24,7 @@ Personal portfolio site for Philipp Storl — Astro v6, Tailwind v4, a couple of
 - **CSP lives in `netlify.toml`**, not just in markup. If you add any third-party script (analytics, embeds, etc.), update the `Content-Security-Policy` header there too — there's a `TODO` already marking where Plausible will go.
 - **Dark mode** is a manual `.dark` class on `<html>`, set by an inline pre-paint script in `src/layouts/BaseLayout.astro` and toggled by `ThemeToggle.tsx` via `localStorage`. Don't introduce a theming library for this.
 - **Color tokens** in `src/styles/global.css` carry inline comments recording WCAG contrast ratios (e.g. "improved to AAA on bg"). Treat color value changes as accessibility-sensitive, not pure style edits.
+- **American English spelling** throughout — color not colour, organization not organisation, behavior not behaviour, prioritize not prioritise, etc. Applies to prose (content, README, comments) and extends to direct quotes attributed to other people, where spelling consistency takes priority over verbatim preservation. Doesn't apply to spec-defined identifiers that happen to contain similar substrings (e.g. `aria-labelledby`).
 
 ## Commands Claude should run
 
