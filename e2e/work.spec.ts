@@ -15,7 +15,7 @@ const caseStudies = [
     },
     {
         slug: 'voices-conference-website',
-        title: 'Five years evolving the VOICES conference website',
+        title: 'Six years evolving the VOICES conference website',
     },
 ]
 
