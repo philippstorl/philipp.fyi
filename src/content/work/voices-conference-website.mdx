@@ -1,23 +1,23 @@
 ---
-title: "Five years evolving the VOICES conference website"
-description: "From introducing Eleventy as the framework to maintaining a multi-region, multi-state event website across five annual editions — and keeping it consistent through two complete rebrands."
+title: "Six years evolving the VOICES conference website"
+description: "From introducing Eleventy as the framework to maintaining a multi-region, multi-state annual event website — and keeping it consistent through two complete rebrands."
 category: "Engineering"
 tags: ["Eleventy", "Netlify", "JAMstack", "Bootstrap", "YouTube API", "Static Site"]
-year: "2020–2025"
+year: "2020–2026"
 featured: false
 order: 4
 draft: false
 ---
 
-VOICES is Staffbase's flagship annual conference for internal communications and employee experience professionals. The website promoting it — voices.staffbase.com — is a different kind of problem than the main marketing site: it has to serve three distinct lifecycle states, support multiple simultaneous regional editions, and be rebuilt from scratch for each annual event while retaining accumulated improvements. I owned it from the ground up for five years.
+VOICES is Staffbase's flagship annual conference for internal communications and employee experience professionals, running since 2019. The website promoting it — voices.staffbase.com — is a different kind of problem than the main marketing site: it has to serve three distinct lifecycle states, support multiple simultaneous regional editions, and be rebuilt from scratch for each annual event while retaining accumulated improvements. I owned it solo from the ground up for six years.
 
 ## Introducing Eleventy
 
-When I took on the VOICES website in mid-2020, the existing setup wasn't working well. The conference had been running for several years but the web presence was awkward to maintain and extend. In July 2020 I ran a Proof of Concept with Eleventy — a lightweight static site generator — to validate whether it could handle the requirements: templating for components, data-driven content, multi-region support, and easy deployment through Netlify.
+When I took on the VOICES website in mid-2020, the existing setup was plain HTML, maintained by an external agency with some review from me along the way. "Deployment" meant uploading a zip file to AWS, where the domain itself was also hosted at the time. It worked, but it wasn't a system — there was no templating, no component reuse, and no real way to scale it as the conference grew into more regions. In July 2020 I ran a Proof of Concept with Eleventy — a lightweight static site generator — to validate whether it could handle the requirements: templating for components, data-driven content, multi-region support, and easy deployment through Netlify.
 
 The PoC worked. Eleventy was the right tool: simple enough to build quickly, powerful enough to handle the complexity, and producing purely static output that Netlify could serve without any server-side overhead. This was a JAMstack decision before "JAMstack" was a standard part of the marketing vocabulary.
 
-I built the first full version of the new site from an Adobe XD design, establishing the component system that would carry forward across every subsequent edition.
+The visual design came mostly from the brand team. My job was translating that into the web — in a lot of cases that meant feasibility conversations and trade-offs with the brand team about what would hold up as a real, data-driven component system rather than a one-off page. I built the first full version of the new site from that design, establishing the component system that would carry forward across every subsequent edition.
 
 ## What the site actually is
 
@@ -27,7 +27,7 @@ Three lifecycle states govern every section: pre-event (promoting registration, 
 
 Three regional editions run simultaneously on the same codebase: DACH (German), UK, and US/North America. Each has its own configuration for dates, copy, imagery, CTAs, and tracking — but shares the component library and style system. Adding a new region means configuring data, not rebuilding components.
 
-The component library is substantial — speaker lineups, multi-track agendas, registration flows, post-event recording sections, award sections — each component built to handle all three lifecycle states. Every component handles missing-data states gracefully, so the site can go live early while speakers, agenda items, and partners are still being confirmed.
+The component library is substantial — speaker lineups, multi-track agendas, registration flows, post-event recording sections, award sections, FAQ — each component built to handle all three lifecycle states. Every component handles missing-data states gracefully, so the site can go live early while speakers, agenda items, and partners are still being confirmed.
 
 ## The YouTube API integration
 
@@ -37,13 +37,13 @@ This is the "right tool for the job" principle applied cleanly: event recordings
 
 ## Consistency through change
 
-Five years is a long time in brand and technology terms. The VOICES website went through two complete rebrands — 2022 and 2025 — plus annual updates for each event edition. Each year: new dates, new speakers, new imagery, new event theme, potential new regions or regional expansions.
+Six years is a long time in brand and technology terms. The VOICES website went through its own two complete rebrands — 2022 and 2025, on its own timeline distinct from the main staffbase.com brand evolution — plus annual updates for each event edition. Each year: new dates, new speakers, new imagery, new event theme, potential new regions or regional expansions.
 
 What made this manageable was the component architecture established in 2020. New brand colours and typography get applied to the design system once; every component inherits the update. Annual content changes happen in data files rather than template code. The result is a site that looks purpose-built for each year's event while requiring significantly less effort than a ground-up rebuild would.
 
-The NA/US 2023 MVP introduced a third regional edition, extending a 2-region codebase to 3 without touching the underlying component system. By 2026 the platform serves four simultaneous global events — VOICES Berlin (in-person, German), VOICES Americas (virtual), VOICES London (in-person), and VOICES APJ Customer Awards (virtual) — each with its own configuration but sharing the same component library, the same styling system, and the same deployment pipeline I set up in 2020.
+The NA/US 2023 MVP introduced a third regional edition, extending a 2-region codebase to 3 without touching the underlying component system. By 2026 the platform serves three simultaneous global events — VOICES Berlin (in-person, German), VOICES Americas (virtual), and VOICES London (in-person) — each with its own configuration but sharing the same component library, the same styling system, and the same deployment pipeline I set up in 2020. A fourth event, the VOICES APJ Customer Awards, is linked from the site but lives on a separate HubSpot landing page outside the Eleventy platform.
 
-## What five years of ownership produces
+## What six years of ownership produces
 
 The documentation I wrote for the VOICES website covers component states, styling guidelines, regional configuration, the deployment workflow, and the lifecycle management process. When the time came to hand it over, the knowledge was in the documentation — not just in my head.
 
