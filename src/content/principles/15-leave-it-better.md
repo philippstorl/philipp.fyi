@@ -3,8 +3,9 @@ title: "Leave it better than you found it — transitions are part of the work"
 description: "How you transition a responsibility is part of how well you did the work. A thorough handover, a clean transition, and a system that runs without you are part of the job — not extras."
 ---
 
-> *"It's not important what people think when you arrive. What's important is what people think when you leave."*
-> — Jürgen Klopp
+> *It's not important what people think when you arrive. What's important is what people think when you leave.*
+
+— Jürgen Klopp
 
 There's a thing people sometimes get wrong about ownership: they think it ends when they stop being the one doing the work. It doesn't. How you transition a responsibility — to a colleague, to a successor, to a future version of your team — is part of how well you did the work in the first place.
 

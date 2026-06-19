@@ -9,4 +9,4 @@ I pushed back when colleagues were missed in recognition moments. I argued that 
 
 These aren't extras. This is how I work. And it shows up not just in the warm moments, but in the hard ones too: when I felt that a colleague's contribution had been overlooked, I said so, on record, to the person who could do something about it.
 
-*Where this shows up:* A proposal to the CMO about improving recognition culture, supporting a teammate through a visa process for a workshop, celebrating colleagues' milestones publicly, the consistent pattern across eight years that David Burnand described as *"the little cultural things that make a difference."*
+The CMO at the time once described the pattern as *"the little cultural things that make a difference."* That's exactly what I was going for.
