@@ -7,20 +7,41 @@ interface Props {
 
 const { entry } = Astro.props
 const { title, description } = entry.data
-const number = entry.id.split('-')[0]
+const slug = entry.id.replace(/\.md$/, '')
+const number = slug.split('-')[0]
+const href = `/principles/#${slug}`
 ---
 
-<article class="flex flex-col rounded-xl border border-border bg-card p-6">
+<!--
+    Card uses the stretched-link pattern (see WorkCard.astro):
+    - Outer element is <article>, not <a>
+    - The <a> wraps only the title text
+    - after:absolute after:inset-0 on the <a> extends the click target
+      to cover the entire card via a CSS pseudo-element
+-->
+<article
+    class:list={[
+        'group relative flex cursor-pointer flex-col rounded-xl border border-border bg-card p-6',
+        'transition-colors duration-200 hover:border-accent/40',
+        'focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-background',
+    ]}
+>
 
     <!-- Order number -->
     <span class="mb-4 font-mono text-xs text-muted">{number}</span>
 
-    <!-- Title -->
+    <!-- Title — the actual <a> element, extended to full card via ::after -->
     <h3
-        class="mb-3 font-display text-lg font-normal leading-snug tracking-tight text-foreground"
+        class="mb-3 font-display text-lg font-normal leading-snug tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent"
         style="font-variation-settings: 'opsz' 24"
     >
-        {title}
+        <a
+            href={href}
+            data-astro-prefetch
+            class="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none"
+        >
+            {title}
+        </a>
     </h3>
 
     <!-- Description -->

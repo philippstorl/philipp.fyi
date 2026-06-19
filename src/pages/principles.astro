@@ -10,7 +10,7 @@ const principles = (await getCollection('principles'))
 
 <BaseLayout
     title="Principles"
-    description="Thirteen things I hold close — how I think about work, quality, people, and building things that last."
+    description="Fifteen things I hold close — how I think about work, quality, people, and building things that last."
     ogImage="/og/principles.png"
 >
     <Header />
@@ -41,7 +41,7 @@ const principles = (await getCollection('principles'))
                     return (
                         <li
                             id={slug}
-                            class="rounded-xl border border-border bg-card p-8 md:p-10"
+                            class="scroll-mt-24 rounded-xl border border-border bg-card p-8 md:p-10"
                         >
                             <span class="mb-4 block font-mono text-xs text-muted">
                                 {number}
