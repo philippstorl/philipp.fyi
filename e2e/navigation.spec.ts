@@ -28,4 +28,23 @@ test.describe('Navigation', () => {
         await page.goto('/')
         await expect(page.getByRole('group')).toBeVisible()
     })
+
+    test('dark mode persists across client-side navigation', async ({ page }) => {
+        await page.goto('/')
+
+        // The toggle is a client:load React island; retry the click in case
+        // it lands before hydration attaches the handler.
+        await expect(async () => {
+            await page.getByRole('button', { name: 'Dark mode' }).click()
+            await expect(page.locator('html')).toHaveClass(/dark/)
+        }).toPass()
+
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/principles/"]:visible').click()
+        await expect(page).toHaveURL('/principles/')
+        await expect(page.locator('html')).toHaveClass(/dark/)
+    })
 })
