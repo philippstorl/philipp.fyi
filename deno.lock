@@ -20,12 +20,12 @@
         "npm:@fontsource/fraunces@^5.2.9",
         "npm:@fontsource/jetbrains-mono@^5.1.0",
         "npm:@playwright/test@^1.45.0",
-        "npm:@tailwindcss/typography@0.5",
-        "npm:@tailwindcss/vite@^4.3.0",
-        "npm:@types/node@20",
+        "npm:@tailwindcss/typography@~0.5.20",
+        "npm:@tailwindcss/vite@^4.3.1",
+        "npm:@types/node@^25.9.3",
         "npm:@types/react-dom@19",
         "npm:@types/react@19",
-        "npm:astro@^6.4.0",
+        "npm:astro@^6.4.8",
         "npm:eslint-plugin-astro@1",
         "npm:eslint-plugin-jsx-a11y@6",
         "npm:eslint@9",
@@ -39,7 +39,7 @@
         "npm:sharp@0.34",
         "npm:tailwindcss@^4.3.0",
         "npm:typescript-eslint@8",
-        "npm:typescript@5"
+        "npm:typescript@^6.0.3"
       ]
     }
   }
