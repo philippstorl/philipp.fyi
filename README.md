@@ -104,6 +104,7 @@ npx playwright test e2e/home.spec.ts --debug
 | `e2e/home.spec.ts` | Title, headline, 4 work cards, 6 principle cards, contact section |
 | `e2e/navigation.spec.ts` | Header, nav links, name mark, theme toggle |
 | `e2e/work.spec.ts` | All 4 case study pages render, card links resolve correctly |
+| `e2e/lightbox.spec.ts` | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence |
 | `e2e/principles.spec.ts` | 15 principles shown, numbered 01–15, CTA links to /principles |
 | `e2e/404.spec.ts` | 404 status on unknown routes, correct headline, back home link |
 
@@ -134,7 +135,10 @@ year: "2024–2025"
 featured: true     # true = wide card in the grid (only one should be featured)
 order: 1           # controls display order — keep as integers, 1 = first
 draft: false       # true = hidden from the site
+coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
 ```
+
+Any screenshots used in the case study body (via `<Image>` inside a `<figure>`) automatically get a click-to-enlarge lightbox — no markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
 
 ### Principles — `src/content/principles/`
 
@@ -180,7 +184,7 @@ src/
     home/          → Hero, WorkSection, WorkCard, PrinciplesSection, PrincipleCard, AboutSection, ContactSection
     layout/        → Header, Footer
     ui/            → ThemeToggle, ContactForm, SocialIcon
-    work/          → CaseStudyLayout
+    work/          → CaseStudyLayout, ImageLightbox
   content/
     work/          → Case study MDX files (4 entries)
     principles/    → Principle MD files (15 entries)
