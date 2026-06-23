@@ -84,3 +84,22 @@ html {
     outline-offset: 3px;
     border-radius: 2px;
 }
+
+/* ─── Modal dialogs ──────────────────────────────────────────── */
+/*
+    Applies to any open native <dialog> (e.g. ImageLightbox), not just one
+    feature — kept here rather than in a component so it stays correct if
+    more dialogs are added later.
+*/
+html:has(dialog[open]) {
+    overflow: hidden;
+}
+
+/*
+    #site-header's backdrop-filter promotes it to its own compositing layer,
+    which in some browsers paints above a dialog's top layer instead of
+    being occluded by it. Hide it explicitly while any dialog is open.
+*/
+html:has(dialog[open]) #site-header {
+    visibility: hidden;
+}
