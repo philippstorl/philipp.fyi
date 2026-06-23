@@ -1,0 +1,239 @@
+---
+---
+
+<dialog id="lightbox" aria-label="Enlarged screenshot" class="m-0 max-h-none max-w-none border-none bg-black/90 p-0">
+    <div class="relative flex h-dvh w-dvw flex-col p-4">
+        <button
+            id="lightbox-close"
+            type="button"
+            aria-label="Close"
+            class="lightbox-btn absolute z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/15 transition-colors hover:bg-black/80"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M18 6 6 18" />
+                <path d="m6 6 12 12" />
+            </svg>
+        </button>
+        <button
+            id="lightbox-prev"
+            type="button"
+            aria-label="Previous image"
+            class="lightbox-btn absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/15 transition-colors hover:bg-black/80 disabled:opacity-0"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m15 18-6-6 6-6" />
+            </svg>
+        </button>
+        <button
+            id="lightbox-next"
+            type="button"
+            aria-label="Next image"
+            class="lightbox-btn absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/15 transition-colors hover:bg-black/80 disabled:opacity-0"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6" />
+            </svg>
+        </button>
+
+        <div
+            id="lightbox-track"
+            class="flex flex-1 snap-x snap-mandatory overflow-x-auto scroll-smooth"
+        >
+        </div>
+
+        <div class="shrink-0 pt-3 text-center" aria-live="polite">
+            <p id="lightbox-caption" class="text-sm text-white/90"></p>
+            <p id="lightbox-counter" class="mt-1 text-xs text-white/50"></p>
+        </div>
+    </div>
+</dialog>
+
+<style>
+    #lightbox-close {
+        top: max(0.75rem, env(safe-area-inset-top));
+        right: max(0.75rem, env(safe-area-inset-right));
+    }
+
+    #lightbox-prev {
+        left: max(0.5rem, env(safe-area-inset-left));
+    }
+
+    #lightbox-next {
+        right: max(0.5rem, env(safe-area-inset-right));
+    }
+
+    .lightbox-slide {
+        scroll-snap-stop: always;
+    }
+
+    :global(html.lightbox-open) {
+        overflow: hidden;
+    }
+
+    /*
+        The sticky header's backdrop-filter promotes it to its own compositing
+        layer, which in some browsers paints above a <dialog>'s top layer
+        instead of being occluded by it. Hide it explicitly while open.
+    */
+    :global(html.lightbox-open header) {
+        visibility: hidden;
+    }
+</style>
+
+<script>
+    // Astro's view-transitions router swaps page content client-side rather
+    // than doing a full reload, but a <script> module's top-level code only
+    // ever runs once per browser session (standard ES module behavior) — so
+    // navigating away and back to a case study would leave its new figures
+    // without listeners. Re-running setup on astro:page-load (which fires
+    // after the initial load too) keeps it working across every navigation.
+    function initLightbox() {
+        const dialog = document.getElementById('lightbox') as HTMLDialogElement | null
+        const track = document.getElementById('lightbox-track')
+        const caption = document.getElementById('lightbox-caption')
+        const counter = document.getElementById('lightbox-counter')
+        const closeBtn = document.getElementById('lightbox-close') as HTMLButtonElement | null
+        const prevBtn = document.getElementById('lightbox-prev') as HTMLButtonElement | null
+        const nextBtn = document.getElementById('lightbox-next') as HTMLButtonElement | null
+        const proseRoot = document.querySelector('.prose')
+
+        if (!dialog || !track || !caption || !counter || !closeBtn || !prevBtn || !nextBtn || !proseRoot) {
+            return
+        }
+
+        // Every screenshot in the case study is one gallery, in document
+        // order — prev/next steps through the whole article, not just the
+        // section the clicked image happened to be grouped in.
+        const figures = Array.from(proseRoot.querySelectorAll('figure')).filter((figure) =>
+            figure.querySelector('img'),
+        )
+
+        let currentIndex = 0
+        let lastTrigger: HTMLElement | null = null
+        let scrollTimeout: ReturnType<typeof setTimeout>
+
+        const describe = (figure: Element) => {
+            const img = figure.querySelector('img')
+            const figcaption = figure.querySelector('figcaption')
+            return {
+                src: img?.src || '',
+                alt: img?.alt || '',
+                caption: figcaption?.textContent?.trim() || '',
+            }
+        }
+
+        const updateCaption = () => {
+            const { caption: text } = describe(figures[currentIndex])
+            caption.textContent = text
+            counter.textContent =
+                figures.length > 1 ? `${currentIndex + 1} / ${figures.length}` : ''
+            prevBtn.disabled = currentIndex === 0
+            nextBtn.disabled = currentIndex === figures.length - 1
+        }
+
+        const syncFromScroll = () => {
+            if (!track.clientWidth) return
+            const index = Math.round(track.scrollLeft / track.clientWidth)
+            if (index !== currentIndex && index >= 0 && index < figures.length) {
+                currentIndex = index
+                updateCaption()
+            }
+        }
+
+        const goTo = (index: number) => {
+            const clamped = Math.max(0, Math.min(index, figures.length - 1))
+            // Button/keyboard navigation knows its destination immediately —
+            // update the caption right away instead of waiting for the
+            // (debounced, post-animation) scroll-driven sync to catch up,
+            // which made the caption visibly lag behind the image.
+            if (clamped !== currentIndex) {
+                currentIndex = clamped
+                updateCaption()
+            }
+            track.scrollTo({ left: clamped * track.clientWidth, behavior: 'smooth' })
+        }
+
+        const openLightbox = (index: number, trigger: HTMLElement) => {
+            currentIndex = index
+            lastTrigger = trigger
+
+            dialog.showModal()
+            document.documentElement.classList.add('lightbox-open')
+            // The track has `scroll-behavior: smooth` for prev/next, but a
+            // direct scrollLeft assignment inherits that and animates too —
+            // it would visibly slide through every image in between on
+            // open. Force an instant jump to the clicked slide instead.
+            track.scrollTo({ left: index * track.clientWidth, behavior: 'instant' })
+            updateCaption()
+        }
+
+        // Slides are built once, up front, rather than per-open — it's the
+        // same gallery every time, just starting at a different index.
+        for (const figure of figures) {
+            const { src, alt } = describe(figure)
+            const slide = document.createElement('div')
+            slide.className =
+                'lightbox-slide flex h-full w-full shrink-0 snap-center items-center justify-center'
+            const img = document.createElement('img')
+            img.src = src
+            img.alt = alt
+            img.className = 'max-h-full max-w-full object-contain'
+            slide.appendChild(img)
+            track.appendChild(slide)
+        }
+
+        const multiple = figures.length > 1
+        prevBtn.style.display = multiple ? '' : 'none'
+        nextBtn.style.display = multiple ? '' : 'none'
+
+        figures.forEach((figure, index) => {
+            const img = figure.querySelector('img')
+            if (!img) return
+            img.classList.add('cursor-zoom-in')
+            img.tabIndex = 0
+            img.setAttribute('role', 'button')
+            img.setAttribute('aria-label', `Enlarge image: ${img.alt}`)
+            img.addEventListener('click', () => openLightbox(index, img))
+            img.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    openLightbox(index, img)
+                }
+            })
+        })
+
+        track.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout)
+            scrollTimeout = setTimeout(syncFromScroll, 80)
+        })
+        // Swipe gestures don't have a known destination ahead of time like
+        // goTo() does — sync as soon as the browser reports scrolling has
+        // truly stopped, rather than waiting on the debounce above (kept as
+        // a fallback for browsers without scrollend support).
+        track.addEventListener('scrollend', syncFromScroll)
+
+        prevBtn.addEventListener('click', () => goTo(currentIndex - 1))
+        nextBtn.addEventListener('click', () => goTo(currentIndex + 1))
+        closeBtn.addEventListener('click', () => dialog.close())
+
+        dialog.addEventListener('click', (event) => {
+            // The dialog's content fills the viewport, so there's no exposed
+            // ::backdrop to click — treat any click outside the image/buttons
+            // as a "tap to dismiss" instead.
+            const target = event.target as HTMLElement
+            if (!target.closest('button, img')) dialog.close()
+        })
+
+        dialog.addEventListener('keydown', (event) => {
+            if (event.key === 'ArrowLeft') goTo(currentIndex - 1)
+            if (event.key === 'ArrowRight') goTo(currentIndex + 1)
+        })
+
+        dialog.addEventListener('close', () => {
+            document.documentElement.classList.remove('lightbox-open')
+            lastTrigger?.focus()
+        })
+    }
+
+    document.addEventListener('astro:page-load', initLightbox)
+</script>

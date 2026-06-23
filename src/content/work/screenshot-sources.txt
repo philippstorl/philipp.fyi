@@ -6,6 +6,11 @@ Maps each image file to the page it was captured from, with capture dates
 so future drift on the live pages (countdown numbers, next-event
 announcements, etc.) doesn't get mistaken for a documentation error.
 
+Note: this set was reprocessed from the original high-resolution source
+files (2926px+ wide) after an earlier pass had accidentally worked from
+downscaled 780px copies, which produced soft/blurry output. All images
+below are now sourced from the original captures at native resolution.
+
 Wayback Machine snapshots
 --------------------------
 voices-2020-pre-eleventy.png
@@ -66,7 +71,8 @@ Live captures (production site, not archived)
 voices-2026-en.png
   https://voices.staffbase.com/en/  (VOICES Americas — captured post-event,
   "This event concluded on May 12, 2026", registration closed)
-  Captured: June 22, 2026, 3:33 PM
+  Source: voices-2026-americas.png, a higher-resolution recapture
+  (3804px wide) replacing the original 1358px live capture.
 
 voices-2026-emea.png
   https://voices.staffbase.com/emea/  (VOICES London — captured post-event,
@@ -94,12 +100,6 @@ Not used in the MDX
   https://web.archive.org/web/20220519213735/https://voices.staffbase.com/us/
   Captured as a bonus/reference shot but not wired into the case study —
   the DE 2022 snapshot above is the one used in the evolution grid.
-
-2027 teaser / post-2026 transition state
-  Captured live, showing "VOICES 2027" headline over a "LINE-UP 2026"
-  speaker grid (the site's holding page right after the 2026 event,
-  promoting the next cycle). Not used in the final MDX — superseded by
-  the genuine pre-event 2026 Wayback capture above.
 
 
 Gaps / things worth double-checking

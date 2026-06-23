@@ -4,7 +4,7 @@ import { z } from 'zod'
 
 const work = defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/work' }),
-    schema: z.object({
+    schema: ({ image }) => z.object({
         title: z.string(),
         description: z.string(),
         category: z.enum(['Engineering', 'Leadership', 'Design']),
@@ -15,6 +15,8 @@ const work = defineCollection({
         /** Controls display order — kept because filenames become URLs */
         order: z.number(),
         draft: z.boolean().default(false),
+        /** Optional teaser screenshot shown on the homepage card */
+        coverImage: image().optional(),
     }),
 })
 

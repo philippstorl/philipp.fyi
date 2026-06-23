@@ -12,6 +12,7 @@ coverImage: "./voices-2026.png"
 
 import { Image } from 'astro:assets';
 import voices2020 from './voices-2020.png';
+import voices2020PreEleventy from './voices-2020-pre-eleventy.png';
 import voices2022 from './voices-2022.png';
 import voices2023 from './voices-2023.png';
 import voices2024 from './voices-2024.png';
@@ -32,14 +33,25 @@ VOICES is Staffbase's flagship annual conference for internal communications and
 
 When I took on the VOICES website in mid-2020, the existing setup was plain HTML, maintained by an external agency with some review from me along the way. "Deployment" meant uploading a zip file to AWS, where the domain itself was also hosted at the time. It worked, but it wasn't a system — there was no templating, no component reuse, and no real way to scale it as the conference grew into more regions. In July 2020 I ran a Proof of Concept with Eleventy — a lightweight static site generator — to validate whether it could handle the requirements: templating for components, data-driven content, multi-region support, and easy deployment through Netlify.
 
+<div class="my-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
+  <figure>
+    <Image src={voices2020PreEleventy} alt="VOICES website homepage in April 2020, the plain-HTML site maintained by an external agency" />
+    <figcaption class="text-sm text-muted mt-2">Before — April 2020, plain HTML, agency-maintained</figcaption>
+  </figure>
+  <figure>
+    <Image src={voices2020} alt="VOICES website homepage in October 2020, the first Eleventy build" />
+    <figcaption class="text-sm text-muted mt-2">After — October 2020, the first Eleventy build</figcaption>
+  </figure>
+</div>
+
 The PoC worked. Eleventy was the right tool: simple enough to build quickly, powerful enough to handle the complexity, and producing purely static output that Netlify could serve without any server-side overhead. This was a JAMstack decision before "JAMstack" was a standard part of the marketing vocabulary.
 
 The visual design came mostly from the brand team. My job was translating that into the web — in a lot of cases that meant feasibility conversations and trade-offs with the brand team about what would hold up as a real, data-driven component system rather than a one-off page. I built the first full version of the new site from that design, establishing the component system that would carry forward across every subsequent edition.
 
 <div class="my-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
   <figure>
-    <Image src={voices2020} alt="VOICES website homepage in 2020, the original Eleventy build" />
-    <figcaption class="text-sm text-muted mt-2">2020 — the original Eleventy build</figcaption>
+    <Image src={voices2020} alt="VOICES website homepage in 2020" />
+    <figcaption class="text-sm text-muted mt-2">2020</figcaption>
   </figure>
   <figure>
     <Image src={voices2022} alt="VOICES website homepage after the 2022 rebrand" />
@@ -62,7 +74,6 @@ The visual design came mostly from the brand team. My job was translating that i
     <figcaption class="text-sm text-muted mt-2">2026 — current state</figcaption>
   </figure>
 </div>
-<p class="text-sm text-muted italic">Screenshots span April 2020 to June 2026 — earlier years via Wayback Machine archives, the 2026 regional and component shots captured live from the production site. Live-captured pages reflect that specific date; event dates, lineups, and registration status have moved on since.</p>
 
 ## What the site actually is
 
