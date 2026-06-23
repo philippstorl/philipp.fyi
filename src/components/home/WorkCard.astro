@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import { Image } from 'astro:assets'
 import { ArrowRight } from 'lucide-react'
 
 interface Props {
@@ -7,7 +8,7 @@ interface Props {
 }
 
 const { entry } = Astro.props
-const { title, description, category, tags, year, featured } = entry.data
+const { title, description, category, tags, year, featured, coverImage } = entry.data
 const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
 
 const categoryStyles: Record<string, string> = {
@@ -29,60 +30,74 @@ const categoryStyle = categoryStyles[category] ?? 'border-border text-muted'
 -->
 <article
     class:list={[
-        'group relative flex cursor-pointer flex-col rounded-xl border border-border bg-card',
-        'p-6 transition-colors duration-200',
+        'group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-card',
+        'transition-colors duration-200',
         'hover:border-accent/40',
         'focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-background',
-        'md:p-8',
     ]}
 >
-    <!-- Top: category badge + year -->
-    <div class="mb-4 flex items-start justify-between gap-4">
-        <span class:list={[
-            'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
-            categoryStyle,
-        ]}>
-            {category}
-        </span>
-        <span class="text-xs text-muted">{year}</span>
-    </div>
+    <!-- Teaser screenshot — optional, falls back to today's text-only card -->
+    {coverImage && (
+        <div class="aspect-[16/10] w-full overflow-hidden rounded-t-[inherit] bg-muted">
+            <Image
+                src={coverImage}
+                alt=""
+                width={640}
+                height={400}
+                class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            />
+        </div>
+    )}
 
-    <!-- Title — the actual <a> element, extended to full card via ::after -->
-    <h3
-        class:list={[
-            'mb-3 font-display font-normal leading-snug tracking-tight text-foreground',
-            'transition-colors duration-150 group-hover:text-accent',
-            featured ? 'text-2xl md:text-3xl' : 'text-xl',
-        ]}
-        style="font-variation-settings: 'opsz' 36"
-    >
-        <a
-            href={href}
-            data-astro-prefetch
-            class="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none"
+    <div class="flex flex-1 flex-col p-6 md:p-8">
+        <!-- Top: category badge + year -->
+        <div class="mb-4 flex items-start justify-between gap-4">
+            <span class:list={[
+                'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
+                categoryStyle,
+            ]}>
+                {category}
+            </span>
+            <span class="text-xs text-muted">{year}</span>
+        </div>
+
+        <!-- Title — the actual <a> element, extended to full card via ::after -->
+        <h3
+            class:list={[
+                'mb-3 font-display font-normal leading-snug tracking-tight text-foreground',
+                'transition-colors duration-150 group-hover:text-accent',
+                featured ? 'text-2xl md:text-3xl' : 'text-xl',
+            ]}
+            style="font-variation-settings: 'opsz' 36"
         >
-            {title}
-        </a>
-    </h3>
+            <a
+                href={href}
+                data-astro-prefetch
+                class="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none"
+            >
+                {title}
+            </a>
+        </h3>
 
-    <!-- Description -->
-    <p class="mb-6 grow text-sm leading-relaxed text-muted">
-        {description}
-    </p>
+        <!-- Description -->
+        <p class="mb-6 grow text-sm leading-relaxed text-muted">
+            {description}
+        </p>
 
-    <!-- Bottom: tags + arrow -->
-    <div class="flex items-end justify-between gap-4">
-        <ul class="flex flex-wrap gap-1.5">
-            {tags.map((tag) => (
-                <li class="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted">
-                    {tag}
-                </li>
-            ))}
-        </ul>
-        <ArrowRight
-            size={16}
-            strokeWidth={1.75}
-            className="shrink-0 text-muted transition-all duration-150 group-hover:translate-x-1 group-hover:text-accent"
-        />
+        <!-- Bottom: tags + arrow -->
+        <div class="flex items-end justify-between gap-4">
+            <ul class="flex flex-wrap gap-1.5">
+                {tags.map((tag) => (
+                    <li class="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted">
+                        {tag}
+                    </li>
+                ))}
+            </ul>
+            <ArrowRight
+                size={16}
+                strokeWidth={1.75}
+                className="shrink-0 text-muted transition-all duration-150 group-hover:translate-x-1 group-hover:text-accent"
+            />
+        </div>
     </div>
 </article>

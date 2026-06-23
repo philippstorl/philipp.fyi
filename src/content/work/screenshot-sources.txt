@@ -1,0 +1,111 @@
+Screenshot sources — VOICES conference website
+================================================
+
+Reference list for the screenshots used in voices-conference-website.mdx.
+Maps each image file to the page it was captured from, with capture dates
+so future drift on the live pages (countdown numbers, next-event
+announcements, etc.) doesn't get mistaken for a documentation error.
+
+Note: this set was reprocessed from the original high-resolution source
+files (2926px+ wide) after an earlier pass had accidentally worked from
+downscaled 780px copies, which produced soft/blurry output. All images
+below are now sourced from the original captures at native resolution.
+
+Wayback Machine snapshots
+--------------------------
+voices-2020-pre-eleventy.png
+  https://web.archive.org/web/20200423131425/https://voices.staffbase.com/
+  DE homepage, April 2020 — the plain-HTML site maintained by an external
+  agency, predating the Eleventy rebuild. Used as the "before" image in
+  the before/after pairing in the "Introducing Eleventy" section.
+
+voices-2020.png
+  https://web.archive.org/web/20200815012544/https://voices.staffbase.com/de/
+  DE homepage, first Eleventy build. "Die neue Ära digitaler
+  Mitarbeiterkommunikation", "1. Oktober 2020", "047 Tage" countdown.
+  Captured: June 23, 2026, 5:40 PM
+  Used as the "after" image in the same before/after pairing, and also as
+  the "2020" entry in the year-by-year evolution grid further down.
+
+voices-2022.png
+  https://web.archive.org/web/20220520075837/https://voices.staffbase.com/de/
+  DE homepage (Festsaal Kreuzberg event). "INTERNE KOMMUNIKATION
+  TRANSFORMIERT", "012 Tage noch".
+  Note: a second 2022 snapshot was also captured (US/NYC edition, "THE
+  GREAT RECONNECTION", Metropolitan Pavilion) — see "Not used" below.
+  https://web.archive.org/web/20220519213735/https://voices.staffbase.com/us/
+
+voices-2023.png
+  https://web.archive.org/web/20230401195257/https://voices.staffbase.com/de/
+  DE homepage. "ZUSAMMEN", "032 Tage noch", "LINE UP 2023", Arena Berlin.
+
+voices-2024.png
+  https://web.archive.org/web/20240420223359/https://voices.staffbase.com/de/
+  DE homepage. "VOICES 2024", "ASPIRE TO INSPIRE" teaser (video embed
+  reused from 2023), "LINE-UP 2024", "03 Tage noch".
+
+voices-2025.png
+  https://web.archive.org/web/20250519013817/https://voices.staffbase.com/de/
+  DE homepage. "VOICES 2025", "ASPIRE TO INSPIRE" teaser, "LINE-UP 2025",
+  "016 Tage noch".
+
+voices-2026.png / voices-2026-de.png
+  https://web.archive.org/web/20260326115343/https://voices.staffbase.com/de/
+  DE homepage, pre-event state. "29. und 30. April 2026", "Arena Berlin",
+  "VOICES 2026", "034 Tage noch". Same snapshot used for both files — the
+  region-comparison "de" copy and the evolution-grid "2026" copy are
+  identical source images.
+
+voices-2026-de-mobile.png
+  https://web.archive.org/web/20260326115343/https://voices.staffbase.com/de/
+  Same snapshot as above, captured at mobile viewport (iPhone 14 Pro Max,
+  390 width).
+
+voices-2026-de-mobile-nav.png
+  https://web.archive.org/web/20260326115343/https://voices.staffbase.com/de/
+  Same snapshot, mobile nav menu opened.
+
+
+Live captures (production site, not archived)
+-----------------------------------------------
+voices-2026-en.png
+  https://voices.staffbase.com/en/  (VOICES Americas — captured post-event,
+  "This event concluded on May 12, 2026", registration closed)
+  Source: voices-2026-americas.png, a higher-resolution recapture
+  (3804px wide) replacing the original 1358px live capture.
+
+voices-2026-emea.png
+  https://voices.staffbase.com/emea/  (VOICES London — captured post-event,
+  "June 4, 2026", registering interest for 2027)
+  Captured: June 22, 2026, 3:36 PM
+
+voices-2026-overview.png
+  https://voices.staffbase.com/  (region picker / hub page listing all
+  four editions: Berlin, Americas, London, APJ Customer Awards)
+  Captured: June 22, 2026 (exact time not recorded)
+
+voices-2026-agenda.png
+  https://voices.staffbase.com/en/agenda/  (VOICES Americas agenda page)
+  Captured: June 22, 2026, 3:34 PM
+
+voices-2026-recordings.png
+  https://voices.staffbase.com/en/recordings/  (VOICES Americas recordings
+  page)
+  Captured: June 22, 2026, 3:34 PM
+
+
+Not used in the MDX
+---------------------
+2022 US/NYC homepage
+  https://web.archive.org/web/20220519213735/https://voices.staffbase.com/us/
+  Captured as a bonus/reference shot but not wired into the case study —
+  the DE 2022 snapshot above is the one used in the evolution grid.
+
+
+Gaps / things worth double-checking
+--------------------------------------
+- All live (non-Wayback) captures were taken June 22, 2026. Since these
+  are production pages, anything dependent on "days until the event" or
+  "next event announcement" will drift from what's shown here over time —
+  the screenshots are a snapshot of that specific afternoon, not a
+  permanent state of those URLs.
