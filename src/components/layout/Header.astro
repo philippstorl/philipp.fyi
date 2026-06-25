@@ -140,7 +140,6 @@ const pathname = Astro.url.pathname
         iconClose?.classList.toggle('hidden', !isOpen)
     })
 
-    // Close on anchor link click
     nav?.querySelectorAll('a').forEach((link) => {
         link.addEventListener('click', () => {
             nav.classList.add('hidden')

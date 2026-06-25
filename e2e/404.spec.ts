@@ -3,7 +3,6 @@ import { test, expect } from '@playwright/test'
 test.describe('404 page', () => {
     test('unknown route serves the 404 page', async ({ page }) => {
         const response = await page.goto('/this-page-does-not-exist/')
-        // Netlify serves the 404.html with a 404 status
         expect(response?.status()).toBe(404)
     })
 

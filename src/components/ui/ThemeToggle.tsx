@@ -20,13 +20,11 @@ function applyTheme(theme: Theme) {
 export default function ThemeToggle() {
     const [theme, setTheme] = useState<Theme>('system')
 
-    // Sync to whatever is in localStorage (or default to system)
     useEffect(() => {
         const stored = localStorage.getItem('theme') as Theme | null
         setTheme(stored ?? 'system')
     }, [])
 
-    // When in system mode, keep .dark in sync with OS preference changes
     useEffect(() => {
         if (theme !== 'system') return
         const mq = window.matchMedia('(prefers-color-scheme: dark)')

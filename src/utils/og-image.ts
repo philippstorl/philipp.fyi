@@ -3,8 +3,6 @@ import sharp from 'sharp'
 import { readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 
-// ─── Font loading ─────────────────────────────────────────────
-// Fonts are read from node_modules at build time.
 // readdirSync lets us find the correct filename without hardcoding it.
 
 type FontCache = { fraunces: ArrayBuffer; dmSans: ArrayBuffer } | null
@@ -59,7 +57,6 @@ function loadFonts(): NonNullable<FontCache> {
     return fontCache
 }
 
-// ─── Design tokens ────────────────────────────────────────────
 // Kept in sync with global.css OKLCH values (approximated as hex for Satori)
 const colors = {
     background: '#FAF9F6',
@@ -72,7 +69,6 @@ const colors = {
 const OG_WIDTH = 1200
 const OG_HEIGHT = 630
 
-// ─── Template ─────────────────────────────────────────────────
 // Satori does not accept JSX in a .ts file — the template is
 // written using plain nested objects (equivalent to h() calls).
 
@@ -177,8 +173,6 @@ function buildTemplate(title: string, label?: string): any {
         },
     }
 }
-
-// ─── Public API ───────────────────────────────────────────────
 
 export async function generateOgImage(
     title: string,
