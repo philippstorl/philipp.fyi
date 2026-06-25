@@ -211,6 +211,7 @@ src/
     global.css     → Tailwind v4 config, design tokens, dark mode
   utils/
     og-image.ts    → Satori template + Sharp PNG generation
+    experience.ts  → Computes career-length and Staffbase-tenure year figures from fixed dates
 e2e/               → Playwright E2E tests
 public/
   favicon.svg

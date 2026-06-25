@@ -7,7 +7,7 @@ const caseStudies = [
     },
     {
         slug: 'brand-evolution',
-        title: 'Eight years of brand evolution on staffbase.com',
+        title: '8 years of brand evolution on staffbase.com',
     },
     {
         slug: 'leadership-operating-model',

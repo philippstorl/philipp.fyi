@@ -2,6 +2,9 @@
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Footer from '@/components/layout/Footer.astro'
+import { getYearsOfExperience } from '@/utils/experience'
+
+const years = getYearsOfExperience()
 ---
 
 <BaseLayout
@@ -35,7 +38,7 @@ import Footer from '@/components/layout/Footer.astro'
 
         <p class="mb-10 max-w-sm text-base leading-relaxed text-muted">
             Whatever you were looking for isn't here — moved, renamed, or simply
-            never existed. Easy to do after eight years of building.
+            never existed. Easy to do after {years} years of building.
         </p>
 
         <a
