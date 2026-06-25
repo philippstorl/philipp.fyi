@@ -25,7 +25,6 @@ for (const { slug, title } of caseStudies) {
         await expect(page.getByRole('heading', { level: 1 })).toContainText(
             title,
         )
-        // Back to work link should be present
         await expect(page.getByText('← All work').first()).toBeVisible()
     })
 }

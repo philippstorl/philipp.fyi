@@ -1,28 +1,22 @@
-/* ─── Tailwind v4 ───────────────────────────────────────────── */
 @import "tailwindcss";
 
-/* ─── Typography plugin ──────────────────────────────────────── */
-/* Provides `prose` classes for rendering MDX content            */
+/* Provides `prose` classes for rendering MDX content */
 @plugin "@tailwindcss/typography";
 
-/* ─── Fonts ─────────────────────────────────────────────────── */
 @import "@fontsource-variable/fraunces/index.css";
 @import "@fontsource/dm-sans/latin-400.css";
 @import "@fontsource/dm-sans/latin-500.css";
 @import "@fontsource/dm-sans/latin-600.css";
 @import "@fontsource/jetbrains-mono/latin-400.css";
 
-/* ─── Dark mode — official Tailwind v4 class strategy ──────── */
-/* https://tailwindcss.com/docs/dark-mode                        */
+/* Dark mode — official Tailwind v4 class strategy: https://tailwindcss.com/docs/dark-mode */
 @custom-variant dark (&:is(.dark *));
 
-/* ─── Design tokens ─────────────────────────────────────────── */
 /*
     OKLCH color system — all neutrals share hue 80 (warm), accent at hue 35 (terracotta).
     Format: oklch(L% C H)
 */
 @theme {
-    /* Typography */
     --font-display: "Fraunces Variable", serif;
     --font-sans: "DM Sans", sans-serif;
     --font-mono: "JetBrains Mono", monospace;
@@ -31,33 +25,22 @@
     --color-background: oklch(98% 0.004 80);
     --color-card: oklch(93% 0.006 80);
     --color-foreground: oklch(12% 0.005 80);
-    --color-muted: oklch(
-        44% 0.007 80
-    ); /* was 48% — improved to AAA on bg (7.33:1) */
-    --color-accent: oklch(
-        52% 0.17 35
-    ); /* was 56% — fixed FAIL on card (4.10→4.86) */
+    --color-muted: oklch(44% 0.007 80);
+    --color-accent: oklch(52% 0.17 35);
     --color-border: oklch(89% 0.006 80);
 
-    /* Hero fade-up animation */
     --animate-fade-up: fade-up 0.5s ease-out both;
 }
 
-/* ─── Dark mode overrides ────────────────────────────────────── */
 .dark {
     --color-background: oklch(11% 0.005 80);
     --color-card: oklch(15% 0.006 80);
     --color-foreground: oklch(96% 0.005 80);
-    --color-muted: oklch(
-        68% 0.007 80
-    ); /* was 64% — improved to AAA on bg (7.10:1) */
-    --color-accent: oklch(
-        70% 0.15 35
-    ); /* was 64% — improved to AAA on bg (7.21:1) */
+    --color-muted: oklch(68% 0.007 80);
+    --color-accent: oklch(70% 0.15 35);
     --color-border: oklch(21% 0.006 80);
 }
 
-/* ─── Animations ─────────────────────────────────────────────── */
 @media (prefers-reduced-motion: no-preference) {
     @keyframes fade-up {
         from {
@@ -75,7 +58,6 @@
     }
 }
 
-/* ─── Base ───────────────────────────────────────────────────── */
 html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
@@ -93,7 +75,6 @@ html {
     border-radius: 2px;
 }
 
-/* ─── Modal dialogs ──────────────────────────────────────────── */
 /*
     Applies to any open native <dialog> (e.g. ImageLightbox), not just one
     feature — kept here rather than in a component so it stays correct if

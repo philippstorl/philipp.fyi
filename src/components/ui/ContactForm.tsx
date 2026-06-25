@@ -35,7 +35,6 @@ export default function ContactForm() {
         const form = e.currentTarget
         const data = new FormData(form)
 
-        // Client-side validation
         const fieldErrors = validate(data)
         if (Object.keys(fieldErrors).length > 0) {
             setErrors(fieldErrors)
@@ -105,7 +104,6 @@ export default function ContactForm() {
             </div>
 
             <div className="space-y-5">
-                {/* Name */}
                 <div>
                     <label htmlFor="contact-name" className={labelBase}>
                         Name
@@ -133,7 +131,6 @@ export default function ContactForm() {
                     )}
                 </div>
 
-                {/* Email */}
                 <div>
                     <label htmlFor="contact-email" className={labelBase}>
                         Email
@@ -161,7 +158,6 @@ export default function ContactForm() {
                     )}
                 </div>
 
-                {/* Message */}
                 <div>
                     <label htmlFor="contact-message" className={labelBase}>
                         Message
@@ -188,7 +184,6 @@ export default function ContactForm() {
                     )}
                 </div>
 
-                {/* Error banner */}
                 {status === 'error' && (
                     <p
                         role="alert"
@@ -199,7 +194,6 @@ export default function ContactForm() {
                     </p>
                 )}
 
-                {/* Submit */}
                 <button
                     type="submit"
                     disabled={status === 'submitting'}
