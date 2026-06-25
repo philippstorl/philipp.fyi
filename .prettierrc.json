@@ -2,8 +2,15 @@
     "tabWidth": 4,
     "singleQuote": true,
     "semi": false,
-    "plugins": ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
+    "plugins": [
+        "prettier-plugin-astro",
+        "prettier-plugin-toml",
+        "prettier-plugin-tailwindcss"
+    ],
     "tailwindStylesheet": "./src/styles/global.css",
+    "indentEntries": true,
+    "indentTables": true,
+    "alignEntries": true,
     "overrides": [
         {
             "files": "*.astro",
