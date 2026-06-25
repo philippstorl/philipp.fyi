@@ -15,5 +15,40 @@
             "Bash(git log)",
             "Bash(git log *)"
         ]
+    },
+    "hooks": {
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "node scripts/check-doc-sync.js 2>/dev/null || true",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ],
+        "SessionStart": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "node scripts/load-learnings.js 2>/dev/null || true",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ],
+        "SessionEnd": [
+            {
+                "hooks": [
+                    {
+                        "type": "agent",
+                        "prompt": "Review this session in the philipp.fyi repo (check `git status`, `git diff`, and `git log -5` for what changed and why) and decide whether anything from it belongs in LEARNINGS.md at the project root.\n\nOnly record something that neither of this repo's other two mechanisms already captures: a standing rule or convention belongs in CLAUDE.md (via the `doc-sync` skill), and feedback about working style belongs in Claude's own cross-session memory — not here. LEARNINGS.md is for dated, narrative context: a decision and the reasoning behind it, a dead end and why it didn't work, domain knowledge about the tooling/process itself, or a genuinely open question to revisit later.\n\nIf nothing from this session meets that bar, do nothing and exit without writing anything — don't force an entry just because the hook ran.\n\nIf something does, read LEARNINGS.md first. Append one short, specific entry (1-3 sentences) to the `## Log` section under today's date (add a new `### YYYY-MM-DD` heading if today doesn't have one yet; otherwise add to the existing one), or add a line to `## Open questions` if it's unresolved. If the insight resulted in a CLAUDE.md or memory change, link to it rather than restating its content. Only edit LEARNINGS.md — nothing else.",
+                        "timeout": 120
+                    }
+                ]
+            }
+        ]
     }
 }

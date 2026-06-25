@@ -2,6 +2,21 @@
 
 Guidance for Claude Code when working in this repository. For setup, the full npm scripts table, and content-editing walkthroughs, see [README.md](README.md) — this file covers conventions and gotchas that aren't obvious from a first read.
 
+## Learnings
+
+[LEARNINGS.md](LEARNINGS.md) is a dated, append-only log of what was discovered while working on this repo — decisions and their reasoning, dead ends, domain knowledge about the tooling itself, open questions. It's distinct from this file (current-state instructions, kept in sync via `doc-sync`) and from Claude's own cross-session memory (feedback about working style) — don't duplicate either of those into it. A `SessionStart` hook reads it into context automatically; a `SessionEnd` hook reviews each session and appends to it if something meets the bar. Use the `log-learning` skill to record something immediately instead of waiting for that sweep — necessary for anything decided in conversation that won't show up in a git diff.
+
+## Claude Code skills
+
+Repeatable workflows for this repo are captured as skills in `.claude/skills/` — invoke with `/<name>` or let them auto-trigger:
+
+- `add-content` — adding a case study, principle, or blog post, including which e2e tests need updating
+- `preflight` — the verification sequence below, with the conditional logic for which steps apply
+- `conventional-commits` — commit/PR type+scope conventions
+- `doc-sync` — checking whether README/CLAUDE.md need updating after a code change
+- `self-review` — forking an independent subagent for a fresh-eyes review before declaring feature work done
+- `log-learning` — recording something into LEARNINGS.md right now instead of waiting for the automatic session-end sweep
+
 ## What this is
 
 Personal portfolio site for Philipp Storl — Astro v6, Tailwind v4, a couple of React islands, deployed on Netlify. Content (case studies, principles, blog posts) lives in `src/content/` as Markdown/MDX with zod-validated frontmatter.
@@ -45,6 +60,10 @@ npm test                          # if components/pages/content changed
 ```
 
 These mirror the CI jobs in `.github/workflows/ci.yml` (repository-hygiene, format, lint, typecheck, build, test) — if these pass locally, CI should pass.
+
+For non-trivial feature, fix, or refactor work, follow these with the `self-review` skill before considering the change done. It forks an independent subagent with no memory of this conversation to review the diff — reviewing your own just-written code in the same context that wrote it tends to rubber-stamp it. Fix high-confidence bugs it reports directly; surface debatable or stylistic findings instead of changing them unasked. Re-run the relevant steps above if the fixes touched anything they cover.
+
+This only closes the loop when _you_ invoke `self-review` mid-task and stay in the same turn to act on its findings. If a human runs `/self-review` directly as a standalone command, the findings are returned as plain output with nothing to automatically continue the loop — fixing them then requires an explicit follow-up turn.
 
 ## Testing
 
