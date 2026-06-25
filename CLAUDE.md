@@ -2,6 +2,10 @@
 
 Guidance for Claude Code when working in this repository. For setup, the full npm scripts table, and content-editing walkthroughs, see [README.md](README.md) — this file covers conventions and gotchas that aren't obvious from a first read.
 
+## Learnings
+
+[LEARNINGS.md](LEARNINGS.md) is a dated, append-only log of what was discovered while working on this repo — decisions and their reasoning, dead ends, domain knowledge about the tooling itself, open questions. It's distinct from this file (current-state instructions, kept in sync via `doc-sync`) and from Claude's own cross-session memory (feedback about working style) — don't duplicate either of those into it. A `SessionStart` hook reads it into context automatically; a `SessionEnd` hook reviews each session and appends to it if something meets the bar. Use the `log-learning` skill to record something immediately instead of waiting for that sweep — necessary for anything decided in conversation that won't show up in a git diff.
+
 ## Claude Code skills
 
 Repeatable workflows for this repo are captured as skills in `.claude/skills/` — invoke with `/<name>` or let them auto-trigger:
@@ -11,6 +15,7 @@ Repeatable workflows for this repo are captured as skills in `.claude/skills/` �
 - `conventional-commits` — commit/PR type+scope conventions
 - `doc-sync` — checking whether README/CLAUDE.md need updating after a code change
 - `self-review` — forking an independent subagent for a fresh-eyes review before declaring feature work done
+- `log-learning` — recording something into LEARNINGS.md right now instead of waiting for the automatic session-end sweep
 
 ## What this is
 
