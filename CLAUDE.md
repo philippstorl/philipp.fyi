@@ -69,6 +69,7 @@ This only closes the loop when _you_ invoke `self-review` mid-task and stay in t
 
 - E2E only, via Playwright, in `e2e/`. Tests run against the plain Astro dev server (`astro dev`, port 4321) — not `netlify dev` — started automatically by `playwright.config.ts`.
 - Projects run on Desktop Chrome and Pixel 5; update the relevant `e2e/*.spec.ts` when changing routes, copy, or component structure it asserts on.
+- `playwright.config.ts`'s `webServer.env` sets `ASTRO_DEV_BACKGROUND: '1'` — don't remove it. Astro 7 auto-detects agentic CLI environments (e.g. Claude Code, via the `CLAUDECODE` env var) and silently daemonizes `astro dev` in the background instead of blocking in the foreground. Without this override, Playwright loses ownership of that process: the orphaned daemon survives past the test run, and a later `npm run build` can overwrite its shared Vite dependency cache out from under it, breaking React island hydration (`_jsxDEV is not a function`) for every test run that reuses it. See the comment at `playwright.config.ts:37` for the full mechanism.
 
 ## Git conventions
 

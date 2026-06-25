@@ -25,6 +25,16 @@ export default defineConfig({
         url: 'http://localhost:4321',
         reuseExistingServer: !process.env.CI,
         timeout: 60_000,
+        // Astro 7 auto-detects agentic environments (e.g. Claude Code, via
+        // the CLAUDECODE env var) and silently daemonizes `astro dev` in the
+        // background instead of running it in the foreground. That breaks
+        // Playwright's process ownership: the spawned command exits
+        // immediately, the orphaned daemon survives past this test run, and
+        // a later `npm run build` can overwrite its shared Vite dep cache
+        // out from under it — corrupting React hydration for as long as the
+        // daemon lives. Setting this env var opts back into normal
+        // foreground behavior regardless of who invokes the command.
+        env: { ASTRO_DEV_BACKGROUND: '1' },
     },
 
     projects: [
