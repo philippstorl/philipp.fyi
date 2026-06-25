@@ -20,7 +20,8 @@ export const hero: HeroData = {
     availabilityText: 'Open to new opportunities',
     headline: 'I build things that last.',
     subheading: "Principal Web Developer — full-stack, with a designer's eye.",
-    description: 'Eight years turning a one-person web setup into a scalable platform.',
+    description:
+        'Eight years turning a one-person web setup into a scalable platform.',
     location: 'Leipzig / Chemnitz area, Germany · Remote-first.',
     links: [
         {

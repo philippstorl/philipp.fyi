@@ -4,8 +4,9 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Footer from '@/components/layout/Footer.astro'
 
-const principles = (await getCollection('principles'))
-    .sort((a, b) => a.id.localeCompare(b.id))
+const principles = (await getCollection('principles')).sort((a, b) =>
+    a.id.localeCompare(b.id),
+)
 ---
 
 <BaseLayout
@@ -15,52 +16,52 @@ const principles = (await getCollection('principles'))
 >
     <Header />
     <main>
-
-        <div class="mx-auto max-w-3xl px-6 pb-16 pt-24 md:pt-32">
+        <div class="mx-auto max-w-3xl px-6 pt-24 pb-16 md:pt-32">
             <p class="mb-4 text-sm font-medium text-muted">How I work</p>
             <h1
-                class="mb-6 font-display text-4xl font-normal leading-tight tracking-tight text-foreground md:text-5xl"
+                class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"
                 style="font-variation-settings: 'opsz' 72"
             >
                 Principles
             </h1>
             <p class="text-lg leading-relaxed text-muted">
-                These aren't principles I wrote down once and then tried to follow.
-                They're patterns that emerged from eight years of decisions, conversations,
-                mistakes, and a consistent attempt to act with integrity even when it
-                wasn't the convenient choice.
+                These aren't principles I wrote down once and then tried to
+                follow. They're patterns that emerged from eight years of
+                decisions, conversations, mistakes, and a consistent attempt to
+                act with integrity even when it wasn't the convenient choice.
             </p>
         </div>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
             <ol class="flex flex-col gap-4">
-                {principles.map(async (entry) => {
-                    const { Content } = await render(entry)
-                    const number = entry.id.split('-')[0]
-                    const slug = entry.id.replace(/\.md$/, '')
-                    return (
-                        <li
-                            id={slug}
-                            class="scroll-mt-24 rounded-xl border border-border bg-card p-8 md:p-10"
-                        >
-                            <span class="mb-4 block font-mono text-xs text-muted">
-                                {number}
-                            </span>
-                            <h2
-                                class="mb-4 font-display text-2xl font-normal leading-snug tracking-tight text-foreground md:text-3xl"
-                                style="font-variation-settings: 'opsz' 36"
+                {
+                    principles.map(async (entry) => {
+                        const { Content } = await render(entry)
+                        const number = entry.id.split('-')[0]
+                        const slug = entry.id.replace(/\.md$/, '')
+                        return (
+                            <li
+                                id={slug}
+                                class="scroll-mt-24 rounded-xl border border-border bg-card p-8 md:p-10"
                             >
-                                {entry.data.title}
-                            </h2>
-                            <div class="prose prose-neutral max-w-none text-muted dark:prose-invert">
-                                <Content />
-                            </div>
-                        </li>
-                    )
-                })}
+                                <span class="mb-4 block font-mono text-xs text-muted">
+                                    {number}
+                                </span>
+                                <h2
+                                    class="mb-4 font-display text-2xl leading-snug font-normal tracking-tight text-foreground md:text-3xl"
+                                    style="font-variation-settings: 'opsz' 36"
+                                >
+                                    {entry.data.title}
+                                </h2>
+                                <div class="prose max-w-none text-muted prose-neutral dark:prose-invert">
+                                    <Content />
+                                </div>
+                            </li>
+                        )
+                    })
+                }
             </ol>
         </div>
-
     </main>
     <Footer />
 </BaseLayout>

@@ -36,18 +36,18 @@ npm run dev:astro  # http://localhost:4321
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start dev server via Netlify CLI (recommended) |
-| `npm run dev:astro` | Start Astro dev server directly |
-| `npm run build` | Type-check + build to `dist/` |
-| `npm run typecheck` | Run `astro check` (TypeScript only) |
-| `npm run lint` | Run ESLint (TypeScript, Astro, accessibility) |
+| Command                          | What it does                                   |
+| -------------------------------- | ---------------------------------------------- |
+| `npm run dev`                    | Start dev server via Netlify CLI (recommended) |
+| `npm run dev:astro`              | Start Astro dev server directly                |
+| `npm run build`                  | Type-check + build to `dist/`                  |
+| `npm run typecheck`              | Run `astro check` (TypeScript only)            |
+| `npm run lint`                   | Run ESLint (TypeScript, Astro, accessibility)  |
 | `npm run check:trailing-slashes` | Validate every internal link/route ends in `/` |
-| `npm run format` | Format all files with Prettier |
-| `npm run preview` | Preview the production build locally |
-| `npm test` | Run Playwright E2E tests |
-| `npm run test:ui` | Run Playwright tests in interactive UI mode |
+| `npm run format`                 | Format all files with Prettier                 |
+| `npm run preview`                | Preview the production build locally           |
+| `npm test`                       | Run Playwright E2E tests                       |
+| `npm run test:ui`                | Run Playwright tests in interactive UI mode    |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
@@ -57,13 +57,13 @@ Every pull request, and every push to `main`, runs the workflow in `.github/work
 
 Five jobs run in parallel, all on Node 26:
 
-| Job | What it does |
-|---|---|
-| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git |
-| `lint` | `npm run lint` |
-| `typecheck` | `npm run typecheck` |
-| `build` | `npm run check:trailing-slashes`, then `npm run build` |
-| `test` | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail |
+| Job                  | What it does                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git                                            |
+| `lint`               | `npm run lint`                                                                                                                                                     |
+| `typecheck`          | `npm run typecheck`                                                                                                                                                |
+| `build`              | `npm run check:trailing-slashes`, then `npm run build`                                                                                                             |
+| `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail |
 
 Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at 5 open at a time, labeled `dependencies`.
 
@@ -99,14 +99,14 @@ npx playwright test e2e/home.spec.ts --debug
 
 ### Test coverage
 
-| File | What it covers |
-|---|---|
-| `e2e/home.spec.ts` | Title, headline, 4 work cards, 6 principle cards, contact section |
-| `e2e/navigation.spec.ts` | Header, nav links, name mark, theme toggle |
-| `e2e/work.spec.ts` | All 4 case study pages render, card links resolve correctly |
-| `e2e/lightbox.spec.ts` | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence |
-| `e2e/principles.spec.ts` | 15 principles shown, numbered 01–15, CTA links to /principles |
-| `e2e/404.spec.ts` | 404 status on unknown routes, correct headline, back home link |
+| File                     | What it covers                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| `e2e/home.spec.ts`       | Title, headline, 4 work cards, 6 principle cards, contact section                              |
+| `e2e/navigation.spec.ts` | Header, nav links, name mark, theme toggle                                                     |
+| `e2e/work.spec.ts`       | All 4 case study pages render, card links resolve correctly                                    |
+| `e2e/lightbox.spec.ts`   | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence |
+| `e2e/principles.spec.ts` | 15 principles shown, numbered 01–15, CTA links to /principles                                  |
+| `e2e/404.spec.ts`        | 404 status on unknown routes, correct headline, back home link                                 |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
@@ -127,15 +127,15 @@ All content lives in `src/content/`. No code changes needed for most edits.
 Each `.mdx` file is a case study. Frontmatter fields:
 
 ```yaml
-title: "Your title"
-description: "One sentence shown on the work card."
-category: "Engineering" # or "Design" or "Leadership"
-tags: ["Tag One", "Tag Two"]
-year: "2024–2025"
-featured: true     # true = wide card in the grid (only one should be featured)
-order: 1           # controls display order — keep as integers, 1 = first
-draft: false       # true = hidden from the site
-coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
+title: 'Your title'
+description: 'One sentence shown on the work card.'
+category: 'Engineering' # or "Design" or "Leadership"
+tags: ['Tag One', 'Tag Two']
+year: '2024–2025'
+featured: true # true = wide card in the grid (only one should be featured)
+order: 1 # controls display order — keep as integers, 1 = first
+draft: false # true = hidden from the site
+coverImage: './your-screenshot.png' # optional — teaser shown on the home page card
 ```
 
 Any screenshots used in the case study body (via `<Image>` inside a `<figure>`) automatically get a click-to-enlarge lightbox — no markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
@@ -145,8 +145,8 @@ Any screenshots used in the case study body (via `<Image>` inside a `<figure>`) 
 Fifteen `.md` files named `01-title.md` through `15-title.md`. The filename prefix controls sort order — rename a file to reorder it. No `order` field in frontmatter.
 
 ```yaml
-title: "Principle title"
-description: "One or two sentences shown on the home page card."
+title: 'Principle title'
+description: 'One or two sentences shown on the home page card.'
 ```
 
 ### Blog posts — `src/content/blog/`
@@ -154,11 +154,11 @@ description: "One or two sentences shown on the home page card."
 All posts start as `draft: true` and are hidden from the site. To publish:
 
 ```yaml
-title: "Post title"
-description: "Short description."
+title: 'Post title'
+description: 'Short description.'
 date: 2026-01-15
 draft: false
-tags: ["tag"]
+tags: ['tag']
 ```
 
 Create the file as `src/content/blog/your-post-slug.md`.

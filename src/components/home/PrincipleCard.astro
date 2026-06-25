@@ -26,13 +26,12 @@ const href = `/principles/#${slug}`
         'focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-background',
     ]}
 >
-
     <!-- Order number -->
     <span class="mb-4 font-mono text-xs text-muted">{number}</span>
 
     <!-- Title — the actual <a> element, extended to full card via ::after -->
     <h3
-        class="mb-3 font-display text-lg font-normal leading-snug tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent"
+        class="mb-3 font-display text-lg leading-snug font-normal tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent"
         style="font-variation-settings: 'opsz' 24"
     >
         <a
@@ -48,5 +47,4 @@ const href = `/principles/#${slug}`
     <p class="text-sm leading-relaxed text-muted">
         {description}
     </p>
-
 </article>

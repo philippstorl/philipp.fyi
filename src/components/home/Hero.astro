@@ -3,21 +3,25 @@ import SocialIcon from '@/components/ui/SocialIcon.astro'
 import { hero } from '@/data/hero'
 ---
 
-<section aria-label="Introduction" class="mx-auto max-w-6xl px-6 py-32 md:py-44 lg:py-52">
-
+<section
+    aria-label="Introduction"
+    class="mx-auto max-w-6xl px-6 py-32 md:py-44 lg:py-52"
+>
     <!-- Availability badge -->
-    {hero.available && (
-        <div class="mb-10 animate-fade-up">
-            <span class="inline-flex items-center gap-2 rounded-full border border-accent/30 px-3.5 py-1 text-xs font-medium text-accent">
-                <span class="size-1.5 rounded-full bg-accent"></span>
-                {hero.availabilityText}
-            </span>
-        </div>
-    )}
+    {
+        hero.available && (
+            <div class="mb-10 animate-fade-up">
+                <span class="inline-flex items-center gap-2 rounded-full border border-accent/30 px-3.5 py-1 text-xs font-medium text-accent">
+                    <span class="size-1.5 rounded-full bg-accent" />
+                    {hero.availabilityText}
+                </span>
+            </div>
+        )
+    }
 
     <!-- Headline -->
     <h1
-        class="mb-6 max-w-4xl animate-fade-up font-display text-5xl font-normal leading-[1.05] tracking-tight text-foreground [animation-delay:100ms] md:text-6xl lg:text-7xl"
+        class="mb-6 max-w-4xl animate-fade-up font-display text-5xl leading-[1.05] font-normal tracking-tight text-foreground [animation-delay:100ms] md:text-6xl lg:text-7xl"
         style="font-variation-settings: 'opsz' 80"
     >
         {hero.headline}
@@ -36,18 +40,21 @@ import { hero } from '@/data/hero'
     </div>
 
     <!-- CTAs -->
-    <div class="flex flex-wrap items-center gap-3 animate-fade-up [animation-delay:300ms]">
-        {hero.links.map((link) => (
-            <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-150 hover:border-accent hover:text-accent"
-            >
-                <SocialIcon icon={link.icon} size={15} />
-                {link.label}
-            </a>
-        ))}
+    <div
+        class="flex animate-fade-up flex-wrap items-center gap-3 [animation-delay:300ms]"
+    >
+        {
+            hero.links.map((link) => (
+                <a
+                    href={link.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-2 rounded-full border border-border px-5 py-2.5 text-sm font-medium text-foreground transition-colors duration-150 hover:border-accent hover:text-accent"
+                >
+                    <SocialIcon icon={link.icon} size={15} />
+                    {link.label}
+                </a>
+            ))
+        }
     </div>
-
 </section>

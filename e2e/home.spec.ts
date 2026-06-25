@@ -4,7 +4,9 @@ test.describe('Home page', () => {
     test('has correct title and headline', async ({ page }) => {
         await page.goto('/')
         await expect(page).toHaveTitle('Philipp Storl')
-        await expect(page.getByRole('heading', { level: 1 })).toContainText('I build things that last.')
+        await expect(page.getByRole('heading', { level: 1 })).toContainText(
+            'I build things that last.',
+        )
     })
 
     test('shows availability badge', async ({ page }) => {

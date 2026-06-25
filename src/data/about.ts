@@ -14,9 +14,9 @@ export const about: AboutData = {
         "Full-stack in the real sense: PHP/Symfony backends, JavaScript frontends, infrastructure as code, and headless CMS — with a designer's eye from years of building interfaces myself. I care most about building things that last: systems, documentation, and processes that outlive their creator and scale beyond one person.",
     ],
     facts: [
-        { label: 'Based',       value: 'Leipzig / Chemnitz area, Germany' },
-        { label: 'Background',  value: '8 years web development'          },
-        { label: 'Focus',       value: 'Full-stack · DevOps · Design'     },
-        { label: 'Working',     value: 'Remote-first'                     },
+        { label: 'Based', value: 'Leipzig / Chemnitz area, Germany' },
+        { label: 'Background', value: '8 years web development' },
+        { label: 'Focus', value: 'Full-stack · DevOps · Design' },
+        { label: 'Working', value: 'Remote-first' },
     ],
 }

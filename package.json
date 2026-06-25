@@ -11,6 +11,7 @@
         "lint": "eslint .",
         "check:trailing-slashes": "node scripts/check-trailing-slashes.js",
         "format": "prettier --write .",
+        "format:check": "prettier --check .",
         "test": "playwright test",
         "test:ui": "playwright test --ui"
     },
@@ -44,6 +45,7 @@
         "netlify-cli": "^26.1.0",
         "prettier": "^3.8.4",
         "prettier-plugin-astro": "^0.14.0",
+        "prettier-plugin-tailwindcss": "^0.8.0",
         "tailwindcss": "^4.3.0",
         "typescript": "^6.0.3",
         "typescript-eslint": "^8.62.0"

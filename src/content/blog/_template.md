@@ -1,9 +1,9 @@
 ---
-title: "Post title here"
-description: "One sentence description shown in the blog list and as the meta description."
+title: 'Post title here'
+description: 'One sentence description shown in the blog list and as the meta description.'
 date: 2026-01-15
 draft: true
-tags: ["web", "development"]
+tags: ['web', 'development']
 ---
 
 Your post content here. Standard Markdown supported.

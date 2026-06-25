@@ -5,17 +5,23 @@ import { ArrowRight } from 'lucide-react'
 
 // Sort by entry.id — the filename prefix (01-, 02-, …) determines order.
 // To reorder: rename the file. No frontmatter to touch.
-const all = (await getCollection('principles'))
-    .sort((a, b) => a.id.localeCompare(b.id))
+const all = (await getCollection('principles')).sort((a, b) =>
+    a.id.localeCompare(b.id),
+)
 
 const preview = all.slice(0, 6)
 const totalCount = all.length
 ---
 
-<section id="principles" aria-labelledby="principles-heading" class="mx-auto max-w-6xl px-6 py-24 md:py-32">
-
+<section
+    id="principles"
+    aria-labelledby="principles-heading"
+    class="mx-auto max-w-6xl px-6 py-24 md:py-32"
+>
     <!-- Section header -->
-    <div class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div
+        class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+    >
         <h2
             id="principles-heading"
             class="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
@@ -39,9 +45,6 @@ const totalCount = all.length
 
     <!-- 3-column card grid, first 6 principles -->
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {preview.map((entry) => (
-            <PrincipleCard entry={entry} />
-        ))}
+        {preview.map((entry) => <PrincipleCard entry={entry} />)}
     </div>
-
 </section>

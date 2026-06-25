@@ -13,9 +13,9 @@ export const GET: APIRoute = () => {
     const lines = [
         `LAST BUILD: ${new Date().toISOString()}`,
         `ENV:        ${import.meta.env.MODE}`,
-        `CONTEXT:    ${process.env.CONTEXT    ?? 'local'}`,
-        `BRANCH:     ${process.env.HEAD        ?? 'unknown'}`,
-        `COMMIT:     ${process.env.COMMIT_REF  ?? 'unknown'}`,
+        `CONTEXT:    ${process.env.CONTEXT ?? 'local'}`,
+        `BRANCH:     ${process.env.HEAD ?? 'unknown'}`,
+        `COMMIT:     ${process.env.COMMIT_REF ?? 'unknown'}`,
     ]
 
     return new Response(lines.join('\n') + '\n', {

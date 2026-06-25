@@ -13,7 +13,6 @@ const { title, description, category, year, tags } = Astro.props
 ---
 
 <div class="mx-auto max-w-3xl px-6 py-24">
-
     <!-- Back navigation -->
     <a
         href="/#work"
@@ -23,12 +22,12 @@ const { title, description, category, year, tags } = Astro.props
     </a>
 
     <!-- Article header -->
-    <header class="mb-12 mt-10">
+    <header class="mt-10 mb-12">
         <p class="mb-5 text-sm font-medium text-muted">
             {category} &middot; {year}
         </p>
         <h1
-            class="mb-6 font-display text-4xl font-normal leading-tight tracking-tight text-foreground md:text-5xl"
+            class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"
             style="font-variation-settings: 'opsz' 72"
         >
             {title}
@@ -39,22 +38,22 @@ const { title, description, category, year, tags } = Astro.props
 
         <!-- Tech / topic tags -->
         <ul class="flex flex-wrap gap-2" aria-label="Technologies and topics">
-            {tags.map((tag) => (
-                <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
-                    {tag}
-                </li>
-            ))}
+            {
+                tags.map((tag) => (
+                    <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
+                        {tag}
+                    </li>
+                ))
+            }
         </ul>
     </header>
 
     <hr class="mb-12 border-border" />
 
     <!-- MDX content -->
-    <div class="prose prose-neutral max-w-none dark:prose-invert
-                prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight
-                prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-                prose-code:font-mono prose-code:text-sm
-                prose-blockquote:border-accent prose-blockquote:text-muted">
+    <div
+        class="prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-blockquote:border-accent prose-blockquote:text-muted prose-code:font-mono prose-code:text-sm"
+    >
         <slot />
     </div>
 
@@ -69,5 +68,4 @@ const { title, description, category, year, tags } = Astro.props
             ← Back to all work
         </a>
     </div>
-
 </div>

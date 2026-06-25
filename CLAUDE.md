@@ -17,9 +17,9 @@ Personal portfolio site for Philipp Storl — Astro v6, Tailwind v4, a couple of
 
 - **Trailing slashes are mandatory** on every internal route (`trailingSlash: 'always'` in `astro.config.mjs`). Every `href`, `page.goto()`, and `toHaveURL()` must end in `/`. This is enforced in CI by `npm run check:trailing-slashes` (`scripts/check-trailing-slashes.js`) — run it locally after touching any route/link, since a missing slash fails the build job, not just lint.
 - **Content collections** (`src/content.config.ts`) define three collections with different ordering rules — easy to mix up:
-  - `work/` — order comes from a frontmatter `order` field (filenames become URL slugs, so they can't encode order). `coverImage` is optional (uses the `image()` schema helper, not a plain string) — only one case study has it today; the home page card falls back to its text-only layout when absent.
-  - `principles/` — order comes from the filename prefix (`01-`, `02-`, …); there's no `order` field. Renaming a file reorders it.
-  - `blog/` — posts default to `draft: true`; never flip to `false` unless asked to publish.
+    - `work/` — order comes from a frontmatter `order` field (filenames become URL slugs, so they can't encode order). `coverImage` is optional (uses the `image()` schema helper, not a plain string) — only one case study has it today; the home page card falls back to its text-only layout when absent.
+    - `principles/` — order comes from the filename prefix (`01-`, `02-`, …); there's no `order` field. Renaming a file reorders it.
+    - `blog/` — posts default to `draft: true`; never flip to `false` unless asked to publish.
 - **OG image generation** (`src/utils/og-image.ts`) intentionally uses `@fontsource/fraunces` (non-variable) alongside the variable font used by the site, because Satori can read WOFF/TTF/OTF but not WOFF2, and the variable font only ships WOFF2. Don't consolidate these to "simplify" — it'll break OG images.
 - **CSP lives in `netlify.toml`**, not just in markup. If you add any third-party script (analytics, embeds, etc.), update the `Content-Security-Policy` header there too — there's a `TODO` already marking where Plausible will go.
 - **Dark mode** is a manual `.dark` class on `<html>`, set by an inline pre-paint script in `src/layouts/BaseLayout.astro` and toggled by `ThemeToggle.tsx` via `localStorage`. Don't introduce a theming library for this.
