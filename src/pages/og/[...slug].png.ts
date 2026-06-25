@@ -1,6 +1,7 @@
 import type { APIRoute, GetStaticPaths } from 'astro'
 import { getCollection } from 'astro:content'
 import { generateOgImage } from '@/utils/og-image'
+import { getYearsOfExperience } from '@/utils/experience'
 
 export const getStaticPaths: GetStaticPaths = async () => {
     const workEntries = await getCollection('work', ({ data }) => !data.draft)
@@ -8,7 +9,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
     return [
         {
             params: { slug: 'home' },
-            props: { title: 'I build things that last.', label: undefined },
+            props: {
+                title: 'I build things that last.',
+                label: `${getYearsOfExperience()} years building for the web`,
+            },
         },
         {
             params: { slug: 'principles' },

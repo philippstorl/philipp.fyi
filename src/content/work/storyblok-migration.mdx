@@ -1,6 +1,6 @@
 ---
 title: "Migrating staffbase.com to Storyblok & Symfony"
-description: "A full-stack migration of Staffbase's entire marketing website from WordPress to a headless CMS — the most complex, highest-stakes project of eight years."
+description: "A full-stack migration of Staffbase's entire marketing website from WordPress to a headless CMS — the most complex, highest-stakes project of 8 years."
 category: "Engineering"
 tags:
     ["PHP", "Symfony", "Storyblok", "Tailwind CSS", "Upsun", "Twig", "Varnish"]
@@ -9,6 +9,8 @@ featured: true
 order: 1
 draft: false
 ---
+
+import { getStaffbaseTenureYears } from "@/utils/experience"
 
 By 2024, staffbase.com had outgrown WordPress. The platform had served us well for years — and I'd built a great deal of it by hand — but a monolithic CMS was no longer the right tool. Content management was developer-dependent. The codebase had accumulated years of custom code. And as Staffbase scaled, we needed something that could grow with us: a clear separation between content and presentation, self-service publishing for marketing, and a foundation built to last.
 
@@ -34,10 +36,10 @@ I also invested in making the editorial knowledge transfer stick. SensioLabs ran
 
 The complexity wasn't in any single piece — it was in the accumulation. Multiple languages in production simultaneously, with more added later. A component library that needed cleaning up and streamlining from what existed, then rebuilding to be functionally solid on the new architecture. A VarnishCache layer that needed to be understood and configured correctly or you'd introduce subtle caching bugs that only appeared in production. Integrations with Iframely for rich embeds, CookieYes for consent management, and a range of marketing tools that all had opinions about how they were implemented.
 
-The highest-stakes moment was go-live: switching primary domains on a live commercial website that generates significant demand for a B2B SaaS company. There was no tolerance for downtime, missed redirects, or broken tracking. The coordination required — across the web team, SensioLabs, marketing, and infrastructure — was among the most demanding of my eight years at Staffbase.
+The highest-stakes moment was go-live: switching primary domains on a live commercial website that generates significant demand for a B2B SaaS company. There was no tolerance for downtime, missed redirects, or broken tracking. The coordination required — across the web team, SensioLabs, marketing, and infrastructure — was among the most demanding of my {getStaffbaseTenureYears()} years at Staffbase.
 
 ## The outcome
 
 Marketing self-publishes in Storyblok. The number of web support tickets driven by content management — which had been significant — dropped materially. By go-live, the web team was running the Symfony application independently, calling on SensioLabs only for the rare edge case — proof that the knowledge transfer had actually worked, not just the migration itself. And the new setup proved its value quickly: adding French and Spanish after launch was straightforward, exactly as the architecture intended.
 
-What replaced eight years of accumulated WordPress was built — with strong outside expertise and close collaboration — to last.
+What replaced {getStaffbaseTenureYears()} years of accumulated WordPress was built — with strong outside expertise and close collaboration — to last.

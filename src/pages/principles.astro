@@ -3,10 +3,12 @@ import { getCollection, render } from 'astro:content'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Footer from '@/components/layout/Footer.astro'
+import { getYearsOfExperience } from '@/utils/experience'
 
 const principles = (await getCollection('principles')).sort((a, b) =>
     a.id.localeCompare(b.id),
 )
+const years = getYearsOfExperience()
 ---
 
 <BaseLayout
@@ -26,9 +28,9 @@ const principles = (await getCollection('principles')).sort((a, b) =>
             </h1>
             <p class="text-lg leading-relaxed text-muted">
                 These aren't principles I wrote down once and then tried to
-                follow. They're patterns that emerged from eight years of
-                decisions, conversations, mistakes, and a consistent attempt to
-                act with integrity even when it wasn't the convenient choice.
+                follow. They're patterns that emerged from {years} years of decisions,
+                conversations, mistakes, and a consistent attempt to act with integrity
+                even when it wasn't the convenient choice.
             </p>
         </div>
 
