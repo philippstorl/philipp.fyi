@@ -15,5 +15,18 @@
             "Bash(git log)",
             "Bash(git log *)"
         ]
+    },
+    "hooks": {
+        "Stop": [
+            {
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "node scripts/check-doc-sync.js 2>/dev/null || true",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ]
     }
 }
