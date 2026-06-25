@@ -127,15 +127,15 @@ All content lives in `src/content/`. No code changes needed for most edits.
 Each `.mdx` file is a case study. Frontmatter fields:
 
 ```yaml
-title: 'Your title'
-description: 'One sentence shown on the work card.'
-category: 'Engineering' # or "Design" or "Leadership"
-tags: ['Tag One', 'Tag Two']
-year: '2024–2025'
+title: "Your title"
+description: "One sentence shown on the work card."
+category: "Engineering" # or "Design" or "Leadership"
+tags: ["Tag One", "Tag Two"]
+year: "2024–2025"
 featured: true # true = wide card in the grid (only one should be featured)
 order: 1 # controls display order — keep as integers, 1 = first
 draft: false # true = hidden from the site
-coverImage: './your-screenshot.png' # optional — teaser shown on the home page card
+coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
 ```
 
 Any screenshots used in the case study body (via `<Image>` inside a `<figure>`) automatically get a click-to-enlarge lightbox — no markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
@@ -145,8 +145,8 @@ Any screenshots used in the case study body (via `<Image>` inside a `<figure>`) 
 Fifteen `.md` files named `01-title.md` through `15-title.md`. The filename prefix controls sort order — rename a file to reorder it. No `order` field in frontmatter.
 
 ```yaml
-title: 'Principle title'
-description: 'One or two sentences shown on the home page card.'
+title: "Principle title"
+description: "One or two sentences shown on the home page card."
 ```
 
 ### Blog posts — `src/content/blog/`
@@ -154,11 +154,11 @@ description: 'One or two sentences shown on the home page card.'
 All posts start as `draft: true` and are hidden from the site. To publish:
 
 ```yaml
-title: 'Post title'
-description: 'Short description.'
+title: "Post title"
+description: "Short description."
 date: 2026-01-15
 draft: false
-tags: ['tag']
+tags: ["tag"]
 ```
 
 Create the file as `src/content/blog/your-post-slug.md`.

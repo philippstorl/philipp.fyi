@@ -1,6 +1,6 @@
 ---
-title: 'Communicate transparently, directly, and honestly'
-description: 'When people know they will get an honest answer from you — even an uncomfortable one — they trust the comfortable answers too. Nothing buried, nothing softened into uselessness.'
+title: "Communicate transparently, directly, and honestly"
+description: "When people know they will get an honest answer from you — even an uncomfortable one — they trust the comfortable answers too. Nothing buried, nothing softened into uselessness."
 ---
 
 I've never been good at hiding how I feel about something. I've come to see that not as a weakness but as the foundation of trust. When people know they'll get an honest answer from you — even an uncomfortable one — they trust the comfortable answers too.

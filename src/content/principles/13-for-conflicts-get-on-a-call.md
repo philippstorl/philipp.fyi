@@ -1,6 +1,6 @@
 ---
-title: 'For conflicts and complexity — get on a call'
-description: 'Written text strips tone, creates ambiguity, and invites misinterpretation. A five-minute call resolves what text threads drag out for days. When in doubt, switch medium.'
+title: "For conflicts and complexity — get on a call"
+description: "Written text strips tone, creates ambiguity, and invites misinterpretation. A five-minute call resolves what text threads drag out for days. When in doubt, switch medium."
 ---
 
 Written text is efficient for many things. It is a poor tool for resolving tension, clarifying something nuanced, or having a conversation where tone matters. Almost anything that starts to escalate in a text thread resolves much faster in a five-minute video call.

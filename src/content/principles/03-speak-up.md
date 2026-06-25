@@ -1,6 +1,6 @@
 ---
 title: "Speak up, even when it's uncomfortable"
-description: 'Honest feedback, delivered with care, is one of the most valuable things a colleague can give. Staying silent when something is wrong is always the worse choice.'
+description: "Honest feedback, delivered with care, is one of the most valuable things a colleague can give. Staying silent when something is wrong is always the worse choice."
 ---
 
 I believe that honest feedback, delivered with care, is one of the most valuable things a colleague can give. I've sent messages to managers, executives, and peers that were genuinely difficult to write — not because I enjoy conflict, but because staying silent felt like the worse choice.

@@ -1,6 +1,6 @@
 ---
 title: "Enable people — don't just do things for them"
-description: 'Doing a task for someone creates a dependency. Showing them how, documenting it, and giving them the tools to do it themselves creates capacity that outlasts you.'
+description: "Doing a task for someone creates a dependency. Showing them how, documenting it, and giving them the tools to do it themselves creates capacity that outlasts you."
 ---
 
 There's a meaningful difference between helping someone and enabling them. Doing a task for someone creates a dependency. Showing them how, documenting it, and giving them the tools and confidence to do it themselves creates capacity.

@@ -1,6 +1,6 @@
 ---
-title: 'People matter — name them, celebrate them'
-description: 'Specific, named recognition of what someone did and why it mattered is one of the most undervalued tools in any team. There is no meaningful cost to praising everyone — only a cost to leaving people out.'
+title: "People matter — name them, celebrate them"
+description: "Specific, named recognition of what someone did and why it mattered is one of the most undervalued tools in any team. There is no meaningful cost to praising everyone — only a cost to leaving people out."
 ---
 
 I've always believed that recognition, done well, is one of the most undervalued tools in any team. Not generic praise in a meeting — specific, named, public acknowledgment of what someone did and why it mattered.

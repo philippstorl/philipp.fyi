@@ -1,6 +1,6 @@
 ---
-title: 'Think in systems, communicate the why'
-description: 'Most problems are symptoms of something structural. Finding the root cause — and explaining it clearly — is the only way to stop the same issue coming back.'
+title: "Think in systems, communicate the why"
+description: "Most problems are symptoms of something structural. Finding the root cause — and explaining it clearly — is the only way to stop the same issue coming back."
 ---
 
 Most problems I've encountered weren't isolated incidents — they were symptoms of something structural. The antidote, every time, has been to step back and find the root cause rather than patching the visible thing and moving on.

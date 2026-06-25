@@ -1,6 +1,6 @@
 ---
-title: 'From coder to orchestrator — treat AI as a force multiplier'
-description: 'Your value shifts from writing code to deciding what gets built, what gets reused, and what will hurt you in three years. AI makes generation cheap; judgment remains irreplaceable.'
+title: "From coder to orchestrator — treat AI as a force multiplier"
+description: "Your value shifts from writing code to deciding what gets built, what gets reused, and what will hurt you in three years. AI makes generation cheap; judgment remains irreplaceable."
 ---
 
 The most significant professional shift of the last few years isn't a new framework or programming language — it's a fundamental change in where value comes from as an engineer.

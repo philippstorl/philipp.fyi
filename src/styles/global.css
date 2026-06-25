@@ -1,16 +1,16 @@
 /* ─── Tailwind v4 ───────────────────────────────────────────── */
-@import 'tailwindcss';
+@import "tailwindcss";
 
 /* ─── Typography plugin ──────────────────────────────────────── */
 /* Provides `prose` classes for rendering MDX content            */
-@plugin '@tailwindcss/typography';
+@plugin "@tailwindcss/typography";
 
 /* ─── Fonts ─────────────────────────────────────────────────── */
-@import '@fontsource-variable/fraunces/index.css';
-@import '@fontsource/dm-sans/latin-400.css';
-@import '@fontsource/dm-sans/latin-500.css';
-@import '@fontsource/dm-sans/latin-600.css';
-@import '@fontsource/jetbrains-mono/latin-400.css';
+@import "@fontsource-variable/fraunces/index.css";
+@import "@fontsource/dm-sans/latin-400.css";
+@import "@fontsource/dm-sans/latin-500.css";
+@import "@fontsource/dm-sans/latin-600.css";
+@import "@fontsource/jetbrains-mono/latin-400.css";
 
 /* ─── Dark mode — official Tailwind v4 class strategy ──────── */
 /* https://tailwindcss.com/docs/dark-mode                        */
@@ -23,9 +23,9 @@
 */
 @theme {
     /* Typography */
-    --font-display: 'Fraunces Variable', serif;
-    --font-sans: 'DM Sans', sans-serif;
-    --font-mono: 'JetBrains Mono', monospace;
+    --font-display: "Fraunces Variable", serif;
+    --font-sans: "DM Sans", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
 
     /* Colors — light mode defaults */
     --color-background: oklch(98% 0.004 80);

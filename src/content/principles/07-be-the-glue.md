@@ -1,5 +1,5 @@
 ---
-title: 'Be the glue'
+title: "Be the glue"
 description: "Someone always needs to close the loop, connect the dots, and make sure nothing falls through the cracks. Glue work doesn't always get attributed — do it anyway."
 ---
 

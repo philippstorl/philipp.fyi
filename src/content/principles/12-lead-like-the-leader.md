@@ -1,6 +1,6 @@
 ---
-title: 'Lead like the leader you always wished for'
-description: 'Lead the way you would have wanted to be led. Not perfectly, but intentionally — investing in people, showing up, and making space for honest conversations.'
+title: "Lead like the leader you always wished for"
+description: "Lead the way you would have wanted to be led. Not perfectly, but intentionally — investing in people, showing up, and making space for honest conversations."
 ---
 
 This one is personal. For years I navigated leadership that felt distant, misaligned, or disconnected from the reality of the work. I know what it feels like to not be seen, to have contributions overlooked, to receive feedback that's technically correct but not actually useful.

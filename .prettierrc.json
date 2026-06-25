@@ -10,6 +10,12 @@
             "options": {
                 "parser": "astro"
             }
+        },
+        {
+            "files": ["*.css", "*.md", "*.mdx", "*.yml", "*.yaml"],
+            "options": {
+                "singleQuote": false
+            }
         }
     ]
 }

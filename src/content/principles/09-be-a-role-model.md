@@ -1,6 +1,6 @@
 ---
-title: 'Be a role model — act as you want others to act'
-description: 'Show people what good looks like. Hold yourself to the standards you set for others — first. Leadership shows up in the small things as much as the big ones.'
+title: "Be a role model — act as you want others to act"
+description: "Show people what good looks like. Hold yourself to the standards you set for others — first. Leadership shows up in the small things as much as the big ones."
 ---
 
 The principle isn't "tell people what to do." It's "show people what good looks like." The most effective thing a leader or senior team member can do is behave in the way they want the team to behave — not as performance, but as a genuine expression of their standards.

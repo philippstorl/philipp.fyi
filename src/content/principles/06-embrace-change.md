@@ -1,6 +1,6 @@
 ---
-title: 'Embrace change as opportunity, not threat'
-description: 'Stop resisting the waves — learn to surf them. Adaptability is a skill, and it gets easier the more deliberately you practice it.'
+title: "Embrace change as opportunity, not threat"
+description: "Stop resisting the waves — learn to surf them. Adaptability is a skill, and it gets easier the more deliberately you practice it."
 ---
 
 Eight years at a company going through funding rounds, acquisitions, restructures, leadership changes, and multiple technology migrations taught me one thing above all: nothing stays constant, and resistance is almost always more exhausting than adaptation.

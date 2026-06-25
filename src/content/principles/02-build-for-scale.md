@@ -1,5 +1,5 @@
 ---
-title: 'Build for scale from day one'
+title: "Build for scale from day one"
 description: "Every system I build is designed to outlast me — modular, documented, and ready for a team that hasn't joined yet. Scaling applies to processes, teams, and knowledge, not just code."
 ---
 

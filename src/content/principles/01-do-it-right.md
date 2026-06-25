@@ -1,6 +1,6 @@
 ---
-title: 'Do it right, not just fast'
-description: 'The right way and the fast way are rarely the same. Quality up front — clean architecture, clear conventions, documented decisions — saves far more time than the hours saved by cutting corners.'
+title: "Do it right, not just fast"
+description: "The right way and the fast way are rarely the same. Quality up front — clean architecture, clear conventions, documented decisions — saves far more time than the hours saved by cutting corners."
 ---
 
 I've always believed that the "right way" is rarely the same as the "fast way" — and that the accumulated cost of choosing speed over quality eventually always catches up. Not as a philosophical position, but as a practical one: proper engineering, clear naming conventions, documented decisions, and clean architecture save far more time in the long run than the hours "saved" by cutting corners.
