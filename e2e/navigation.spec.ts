@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Navigation', () => {
     test('header is sticky and shows name mark', async ({ page }) => {
         await page.goto('/')
-        const header = page.locator('header')
+        const header = page.locator('#site-header')
         await expect(header).toBeVisible()
         await expect(header.getByText('Philipp Storl')).toBeVisible()
     })
@@ -20,7 +20,7 @@ test.describe('Navigation', () => {
 
     test('logo/name mark navigates home', async ({ page }) => {
         await page.goto('/principles/')
-        await page.click('header a[href="/"]')
+        await page.click('#site-header a[href="/"]')
         await expect(page).toHaveURL('/')
     })
 
