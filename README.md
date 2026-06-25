@@ -180,7 +180,7 @@ When ready to add Plausible (or another provider):
 
 ## Key paths
 
-```
+```text
 src/
   components/
     home/          → Hero, WorkSection, WorkCard, PrinciplesSection, PrincipleCard, AboutSection, ContactSection

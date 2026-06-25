@@ -35,7 +35,7 @@ Personal portfolio site for Philipp Storl — Astro v6, Tailwind v4, a couple of
 
 After any non-trivial change, in this order:
 
-```
+```bash
 npm run format:check              # or `npm run format` to auto-fix
 npm run lint
 npm run typecheck
