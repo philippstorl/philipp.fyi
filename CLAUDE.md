@@ -33,6 +33,7 @@ Personal portfolio site for Philipp Storl — Astro v6, Tailwind v4, a couple of
 After any non-trivial change, in this order:
 
 ```
+npm run format:check              # or `npm run format` to auto-fix
 npm run lint
 npm run typecheck
 npm run check:trailing-slashes   # if routes/links/tests changed
@@ -40,7 +41,7 @@ npm run build
 npm test                          # if components/pages/content changed
 ```
 
-These mirror the CI jobs in `.github/workflows/ci.yml` (repository-hygiene, lint, typecheck, build, test) — if these pass locally, CI should pass.
+These mirror the CI jobs in `.github/workflows/ci.yml` (repository-hygiene, format, lint, typecheck, build, test) — if these pass locally, CI should pass.
 
 ## Testing
 
