@@ -1,0 +1,28 @@
+{
+    "tabWidth": 4,
+    "singleQuote": true,
+    "semi": false,
+    "plugins": [
+        "prettier-plugin-astro",
+        "prettier-plugin-toml",
+        "prettier-plugin-tailwindcss"
+    ],
+    "tailwindStylesheet": "./src/styles/global.css",
+    "indentEntries": true,
+    "indentTables": true,
+    "alignEntries": true,
+    "overrides": [
+        {
+            "files": "*.astro",
+            "options": {
+                "parser": "astro"
+            }
+        },
+        {
+            "files": ["*.css", "*.md", "*.mdx", "*.yml", "*.yaml"],
+            "options": {
+                "singleQuote": false
+            }
+        }
+    ]
+}

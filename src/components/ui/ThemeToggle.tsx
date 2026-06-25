@@ -10,7 +10,10 @@ function applyTheme(theme: Theme) {
     } else if (theme === 'light') {
         html.classList.remove('dark')
     } else {
-        html.classList.toggle('dark', window.matchMedia('(prefers-color-scheme: dark)').matches)
+        html.classList.toggle(
+            'dark',
+            window.matchMedia('(prefers-color-scheme: dark)').matches,
+        )
     }
 }
 
@@ -45,9 +48,9 @@ export default function ThemeToggle() {
     }
 
     const options: { value: Theme; Icon: typeof Sun; label: string }[] = [
-        { value: 'light',  Icon: Sun,     label: 'Light mode'        },
+        { value: 'light', Icon: Sun, label: 'Light mode' },
         { value: 'system', Icon: Monitor, label: 'System preference' },
-        { value: 'dark',   Icon: Moon,    label: 'Dark mode'         },
+        { value: 'dark', Icon: Moon, label: 'Dark mode' },
     ]
 
     return (

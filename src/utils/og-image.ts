@@ -11,13 +11,19 @@ type FontCache = { fraunces: ArrayBuffer; dmSans: ArrayBuffer } | null
 let fontCache: FontCache = null
 
 function nodeBufferToArrayBuffer(buf: Buffer): ArrayBuffer {
-    return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer
+    return buf.buffer.slice(
+        buf.byteOffset,
+        buf.byteOffset + buf.byteLength,
+    ) as ArrayBuffer
 }
 
 function findFontFile(dir: string, matcher: (name: string) => boolean): string {
     const files = readdirSync(dir)
     const match = files.find(matcher)
-    if (!match) throw new Error(`Font file not found in ${dir}. Files: ${files.join(', ')}`)
+    if (!match)
+        throw new Error(
+            `Font file not found in ${dir}. Files: ${files.join(', ')}`,
+        )
     return resolve(dir, match)
 }
 
@@ -31,11 +37,19 @@ function loadFonts(): NonNullable<FontCache> {
     const dmSansDir = resolve('./node_modules/@fontsource/dm-sans/files')
 
     // Match WOFF files — both packages ship latin-400-normal.woff alongside .woff2
-    const frauncesPath = findFontFile(frauncesDir, (f) =>
-        f.includes('latin-400-normal') && f.endsWith('.woff') && !f.endsWith('.woff2')
+    const frauncesPath = findFontFile(
+        frauncesDir,
+        (f) =>
+            f.includes('latin-400-normal') &&
+            f.endsWith('.woff') &&
+            !f.endsWith('.woff2'),
     )
-    const dmSansPath = findFontFile(dmSansDir, (f) =>
-        f.includes('latin-400-normal') && f.endsWith('.woff') && !f.endsWith('.woff2')
+    const dmSansPath = findFontFile(
+        dmSansDir,
+        (f) =>
+            f.includes('latin-400-normal') &&
+            f.endsWith('.woff') &&
+            !f.endsWith('.woff2'),
     )
 
     fontCache = {
@@ -50,12 +64,12 @@ function loadFonts(): NonNullable<FontCache> {
 const colors = {
     background: '#FAF9F6',
     foreground: '#0D0D0C',
-    muted:      '#6B6865',
-    accent:     '#C85A2A',
-    border:     '#E4E0DA',
+    muted: '#6B6865',
+    accent: '#C85A2A',
+    border: '#E4E0DA',
 }
 
-const OG_WIDTH  = 1200
+const OG_WIDTH = 1200
 const OG_HEIGHT = 630
 
 // ─── Template ─────────────────────────────────────────────────
@@ -166,15 +180,28 @@ function buildTemplate(title: string, label?: string): any {
 
 // ─── Public API ───────────────────────────────────────────────
 
-export async function generateOgImage(title: string, label?: string): Promise<Response> {
+export async function generateOgImage(
+    title: string,
+    label?: string,
+): Promise<Response> {
     const fonts = loadFonts()
 
     const svg = await satori(buildTemplate(title, label), {
         width: OG_WIDTH,
         height: OG_HEIGHT,
         fonts: [
-            { name: 'Fraunces', data: fonts.fraunces, weight: 400, style: 'normal' },
-            { name: 'DM Sans',  data: fonts.dmSans,   weight: 400, style: 'normal' },
+            {
+                name: 'Fraunces',
+                data: fonts.fraunces,
+                weight: 400,
+                style: 'normal',
+            },
+            {
+                name: 'DM Sans',
+                data: fonts.dmSans,
+                weight: 400,
+                style: 'normal',
+            },
         ],
     })
 

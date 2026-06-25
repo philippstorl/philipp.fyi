@@ -36,18 +36,19 @@ npm run dev:astro  # http://localhost:4321
 
 ## Scripts
 
-| Command | What it does |
-|---|---|
-| `npm run dev` | Start dev server via Netlify CLI (recommended) |
-| `npm run dev:astro` | Start Astro dev server directly |
-| `npm run build` | Type-check + build to `dist/` |
-| `npm run typecheck` | Run `astro check` (TypeScript only) |
-| `npm run lint` | Run ESLint (TypeScript, Astro, accessibility) |
+| Command                          | What it does                                   |
+| -------------------------------- | ---------------------------------------------- |
+| `npm run dev`                    | Start dev server via Netlify CLI (recommended) |
+| `npm run dev:astro`              | Start Astro dev server directly                |
+| `npm run build`                  | Type-check + build to `dist/`                  |
+| `npm run typecheck`              | Run `astro check` (TypeScript only)            |
+| `npm run lint`                   | Run ESLint (TypeScript, Astro, accessibility)  |
 | `npm run check:trailing-slashes` | Validate every internal link/route ends in `/` |
-| `npm run format` | Format all files with Prettier |
-| `npm run preview` | Preview the production build locally |
-| `npm test` | Run Playwright E2E tests |
-| `npm run test:ui` | Run Playwright tests in interactive UI mode |
+| `npm run format`                 | Format all files with Prettier                 |
+| `npm run format:check`           | Check formatting without writing (used in CI)  |
+| `npm run preview`                | Preview the production build locally           |
+| `npm test`                       | Run Playwright E2E tests                       |
+| `npm run test:ui`                | Run Playwright tests in interactive UI mode    |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
@@ -55,15 +56,16 @@ The `build` script runs `astro check` before `astro build` — TypeScript errors
 
 Every pull request, and every push to `main`, runs the workflow in `.github/workflows/ci.yml`. It can also be triggered manually (`workflow_dispatch`). Runs are canceled and restarted if you push again to the same branch before the previous run finishes.
 
-Five jobs run in parallel, all on Node 26:
+Six jobs run in parallel, all on Node 26:
 
-| Job | What it does |
-|---|---|
-| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git |
-| `lint` | `npm run lint` |
-| `typecheck` | `npm run typecheck` |
-| `build` | `npm run check:trailing-slashes`, then `npm run build` |
-| `test` | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail |
+| Job                  | What it does                                                                                                                                                       |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git                                            |
+| `lint`               | `npm run lint`                                                                                                                                                     |
+| `format`             | `npm run format:check`                                                                                                                                             |
+| `typecheck`          | `npm run typecheck`                                                                                                                                                |
+| `build`              | `npm run check:trailing-slashes`, then `npm run build`                                                                                                             |
+| `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail |
 
 Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at 5 open at a time, labeled `dependencies`.
 
@@ -99,14 +101,14 @@ npx playwright test e2e/home.spec.ts --debug
 
 ### Test coverage
 
-| File | What it covers |
-|---|---|
-| `e2e/home.spec.ts` | Title, headline, 4 work cards, 6 principle cards, contact section |
-| `e2e/navigation.spec.ts` | Header, nav links, name mark, theme toggle |
-| `e2e/work.spec.ts` | All 4 case study pages render, card links resolve correctly |
-| `e2e/lightbox.spec.ts` | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence |
-| `e2e/principles.spec.ts` | 15 principles shown, numbered 01–15, CTA links to /principles |
-| `e2e/404.spec.ts` | 404 status on unknown routes, correct headline, back home link |
+| File                     | What it covers                                                                                 |
+| ------------------------ | ---------------------------------------------------------------------------------------------- |
+| `e2e/home.spec.ts`       | Title, headline, 4 work cards, 6 principle cards, contact section                              |
+| `e2e/navigation.spec.ts` | Header, nav links, name mark, theme toggle                                                     |
+| `e2e/work.spec.ts`       | All 4 case study pages render, card links resolve correctly                                    |
+| `e2e/lightbox.spec.ts`   | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence |
+| `e2e/principles.spec.ts` | 15 principles shown, numbered 01–15, CTA links to /principles                                  |
+| `e2e/404.spec.ts`        | 404 status on unknown routes, correct headline, back home link                                 |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
@@ -132,9 +134,9 @@ description: "One sentence shown on the work card."
 category: "Engineering" # or "Design" or "Leadership"
 tags: ["Tag One", "Tag Two"]
 year: "2024–2025"
-featured: true     # true = wide card in the grid (only one should be featured)
-order: 1           # controls display order — keep as integers, 1 = first
-draft: false       # true = hidden from the site
+featured: true # true = wide card in the grid (only one should be featured)
+order: 1 # controls display order — keep as integers, 1 = first
+draft: false # true = hidden from the site
 coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
 ```
 
@@ -178,7 +180,7 @@ When ready to add Plausible (or another provider):
 
 ## Key paths
 
-```
+```text
 src/
   components/
     home/          → Hero, WorkSection, WorkCard, PrinciplesSection, PrincipleCard, AboutSection, ContactSection

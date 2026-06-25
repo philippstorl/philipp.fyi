@@ -7,16 +7,23 @@ import ContactForm from '@/components/ui/ContactForm'
     detect and register the form. The actual submission is handled by the
     React ContactForm component via fetch().
 -->
-<form name="contact" data-netlify="true" data-netlify-honeypot="bot-field" hidden>
-    <input type="text"     name="name"      />
-    <input type="email"    name="email"     />
-    <textarea              name="message"   ></textarea>
+<form
+    name="contact"
+    data-netlify="true"
+    data-netlify-honeypot="bot-field"
+    hidden
+>
+    <input type="text" name="name" />
+    <input type="email" name="email" />
+    <textarea name="message"></textarea>
 </form>
 
-<section id="contact" aria-labelledby="contact-heading" class="mx-auto max-w-6xl px-6 py-24 md:py-32">
-
+<section
+    id="contact"
+    aria-labelledby="contact-heading"
+    class="mx-auto max-w-6xl px-6 py-24 md:py-32"
+>
     <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
-
         <!-- Left: heading + invitation text -->
         <div class="flex flex-col justify-center">
             <h2
@@ -27,8 +34,8 @@ import ContactForm from '@/components/ui/ContactForm'
                 Get in touch
             </h2>
             <p class="mb-6 text-base leading-relaxed text-muted">
-                Whether you have a role in mind, a project to discuss,
-                or just want to connect — I'd love to hear from you.
+                Whether you have a role in mind, a project to discuss, or just
+                want to connect — I'd love to hear from you.
             </p>
             <p class="text-sm text-muted">
                 Based in Leipzig / Chemnitz area, Germany.<br />
@@ -40,7 +47,5 @@ import ContactForm from '@/components/ui/ContactForm'
         <div>
             <ContactForm client:load />
         </div>
-
     </div>
-
 </section>

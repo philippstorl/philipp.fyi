@@ -4,20 +4,21 @@ import { z } from 'zod'
 
 const work = defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/work' }),
-    schema: ({ image }) => z.object({
-        title: z.string(),
-        description: z.string(),
-        category: z.enum(['Engineering', 'Leadership', 'Design']),
-        tags: z.array(z.string()),
-        year: z.string(),
-        /** First case study gets the featured (wide) card treatment */
-        featured: z.boolean().default(false),
-        /** Controls display order — kept because filenames become URLs */
-        order: z.number(),
-        draft: z.boolean().default(false),
-        /** Optional teaser screenshot shown on the homepage card */
-        coverImage: image().optional(),
-    }),
+    schema: ({ image }) =>
+        z.object({
+            title: z.string(),
+            description: z.string(),
+            category: z.enum(['Engineering', 'Leadership', 'Design']),
+            tags: z.array(z.string()),
+            year: z.string(),
+            /** First case study gets the featured (wide) card treatment */
+            featured: z.boolean().default(false),
+            /** Controls display order — kept because filenames become URLs */
+            order: z.number(),
+            draft: z.boolean().default(false),
+            /** Optional teaser screenshot shown on the homepage card */
+            coverImage: image().optional(),
+        }),
 })
 
 const principles = defineCollection({

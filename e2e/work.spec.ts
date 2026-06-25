@@ -22,7 +22,9 @@ const caseStudies = [
 for (const { slug, title } of caseStudies) {
     test(`case study: ${slug} renders correctly`, async ({ page }) => {
         await page.goto(`/work/${slug}/`)
-        await expect(page.getByRole('heading', { level: 1 })).toContainText(title)
+        await expect(page.getByRole('heading', { level: 1 })).toContainText(
+            title,
+        )
         // Back to work link should be present
         await expect(page.getByText('← All work').first()).toBeVisible()
     })

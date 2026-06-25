@@ -1,114 +1,114 @@
 # ─── Build ───────────────────────────────────────────────────
 [build]
-  command = "npm run build"
-  publish = "dist"
+    command = "npm run build"
+    publish = "dist"
 
-[build.environment]
-  NODE_VERSION = "26"
+    [build.environment]
+        NODE_VERSION = "26"
 
 # ─── Plugins ─────────────────────────────────────────────────
 # Runs Lighthouse automatically after every deploy and reports
 # scores in the Netlify UI. No further configuration needed.
 [[plugins]]
-  package = "@netlify/plugin-lighthouse"
+    package = "@netlify/plugin-lighthouse"
 
 # ─── Local dev ───────────────────────────────────────────────
 # `netlify dev` starts Astro via the command below and proxies
 # it through Netlify's runtime (forms, redirects, headers, etc.)
 [dev]
-  command    = "astro dev"
-  targetPort = 4321
-  port       = 8888
-  autoLaunch = false
+    command    = "astro dev"
+    targetPort = 4321
+    port       = 8888
+    autoLaunch = false
 
 # ─── 404 ─────────────────────────────────────────────────────
 [[redirects]]
-  from   = "/*"
-  to     = "/404"
-  status = 404
+    from   = "/*"
+    to     = "/404"
+    status = 404
 
 # ─── Global security headers ─────────────────────────────────
 [[headers]]
-  for = "/*"
+    for = "/*"
 
-  [headers.values]
-    # Enforce HTTPS for 1 year; instructs the browser to refuse
-    # plain HTTP before it even hits the server.
-    Strict-Transport-Security  = "max-age=31536000; includeSubDomains"
+    [headers.values]
+        # Enforce HTTPS for 1 year; instructs the browser to refuse
+        # plain HTTP before it even hits the server.
+        Strict-Transport-Security = "max-age=31536000; includeSubDomains"
 
-    # Prevent clickjacking — this site should never be framed.
-    X-Frame-Options            = "DENY"
+        # Prevent clickjacking — this site should never be framed.
+        X-Frame-Options = "DENY"
 
-    # Prevent MIME type sniffing.
-    X-Content-Type-Options     = "nosniff"
+        # Prevent MIME type sniffing.
+        X-Content-Type-Options = "nosniff"
 
-    # Send only the origin (not the full URL path) to cross-origin
-    # destinations; send nothing on HTTP downgrade.
-    Referrer-Policy            = "strict-origin-when-cross-origin"
+        # Send only the origin (not the full URL path) to cross-origin
+        # destinations; send nothing on HTTP downgrade.
+        Referrer-Policy = "strict-origin-when-cross-origin"
 
-    # Disable browser features this site doesn't use.
-    Permissions-Policy         = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+        # Disable browser features this site doesn't use.
+        Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
 
-    # Prevent cross-origin window references (Spectre / tab-nabbing).
-    Cross-Origin-Opener-Policy = "same-origin"
+        # Prevent cross-origin window references (Spectre / tab-nabbing).
+        Cross-Origin-Opener-Policy = "same-origin"
 
-    # Explicitly disable the deprecated XSS auditor. Modern browsers
-    # have removed it entirely; setting 0 disables it in legacy browsers
-    # that still respond to it. CSP (below) is the modern replacement.
-    X-XSS-Protection           = "0"
+        # Explicitly disable the deprecated XSS auditor. Modern browsers
+        # have removed it entirely; setting 0 disables it in legacy browsers
+        # that still respond to it. CSP (below) is the modern replacement.
+        X-XSS-Protection = "0"
 
-    # Content Security Policy.
-    # — unsafe-inline in script-src: required for Astro's dark mode
-    #   inline script and ViewTransitions runtime.
-    # — unsafe-inline in style-src: required for Tailwind's runtime styles.
-    # — img-src https:: allows external images in MDX case study content.
-    # — TODO: when Plausible analytics is added, append
-    #         "https://plausible.io" to script-src and connect-src.
-    Content-Security-Policy    = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+        # Content Security Policy.
+        # — unsafe-inline in script-src: required for Astro's dark mode
+        #   inline script and ViewTransitions runtime.
+        # — unsafe-inline in style-src: required for Tailwind's runtime styles.
+        # — img-src https:: allows external images in MDX case study content.
+        # — TODO: when Plausible analytics is added, append
+        #         "https://plausible.io" to script-src and connect-src.
+        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 
 # ─── Long-term caching for Astro's hashed assets ─────────────
 # Astro outputs content-hashed filenames to /_astro/. These are
 # safe to cache for a year — any change produces a new hash.
 [[headers]]
-  for = "/_astro/*"
+    for = "/_astro/*"
 
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+    [headers.values]
+        Cache-Control = "public, max-age=31536000, immutable"
 
 # ─── Prevent direct indexing of binary assets ─────────────────
 # Keeps search results on the authored pages, not raw files.
 # Visitors should land on /work/storyblok-migration, not screenshot.png.
 [[headers]]
-  for = "*.pdf"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+    for = "*.pdf"
+    [headers.values]
+        X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
-  for = "*.jpg"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+    for = "*.jpg"
+    [headers.values]
+        X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
-  for = "*.jpeg"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+    for = "*.jpeg"
+    [headers.values]
+        X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
-  for = "*.png"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+    for = "*.png"
+    [headers.values]
+        X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
-  for = "*.webp"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+    for = "*.webp"
+    [headers.values]
+        X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
-  for = "*.avif"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+    for = "*.avif"
+    [headers.values]
+        X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
-  for = "*.svg"
-  [headers.values]
-    X-Robots-Tag = "noindex, nofollow"
+    for = "*.svg"
+    [headers.values]
+        X-Robots-Tag = "noindex, nofollow"

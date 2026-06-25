@@ -2,7 +2,11 @@
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 ---
 
-<dialog id="lightbox" aria-label="Enlarged screenshot" class="m-0 max-h-none max-w-none border-none bg-black/90 p-0">
+<dialog
+    id="lightbox"
+    aria-label="Enlarged screenshot"
+    class="m-0 max-h-none max-w-none border-none bg-black/90 p-0"
+>
     <div class="relative flex h-dvh w-dvw flex-col p-4">
         <button
             id="lightbox-close"
@@ -69,24 +73,41 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
     // without listeners. Re-running setup on astro:page-load (which fires
     // after the initial load too) keeps it working across every navigation.
     function initLightbox() {
-        const dialog = document.getElementById('lightbox') as HTMLDialogElement | null
+        const dialog = document.getElementById(
+            'lightbox',
+        ) as HTMLDialogElement | null
         const track = document.getElementById('lightbox-track')
         const caption = document.getElementById('lightbox-caption')
         const counter = document.getElementById('lightbox-counter')
-        const closeBtn = document.getElementById('lightbox-close') as HTMLButtonElement | null
-        const prevBtn = document.getElementById('lightbox-prev') as HTMLButtonElement | null
-        const nextBtn = document.getElementById('lightbox-next') as HTMLButtonElement | null
+        const closeBtn = document.getElementById(
+            'lightbox-close',
+        ) as HTMLButtonElement | null
+        const prevBtn = document.getElementById(
+            'lightbox-prev',
+        ) as HTMLButtonElement | null
+        const nextBtn = document.getElementById(
+            'lightbox-next',
+        ) as HTMLButtonElement | null
         const proseRoot = document.querySelector('.prose')
 
-        if (!dialog || !track || !caption || !counter || !closeBtn || !prevBtn || !nextBtn || !proseRoot) {
+        if (
+            !dialog ||
+            !track ||
+            !caption ||
+            !counter ||
+            !closeBtn ||
+            !prevBtn ||
+            !nextBtn ||
+            !proseRoot
+        ) {
             return
         }
 
         // Every screenshot in the case study is one gallery, in document
         // order — prev/next steps through the whole article, not just the
         // section the clicked image happened to be grouped in.
-        const figures = Array.from(proseRoot.querySelectorAll('figure')).filter((figure) =>
-            figure.querySelector('img'),
+        const figures = Array.from(proseRoot.querySelectorAll('figure')).filter(
+            (figure) => figure.querySelector('img'),
         )
 
         let currentIndex = 0
@@ -111,7 +132,9 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         const updateCaption = () => {
             caption.textContent = slides[currentIndex].caption
             counter.textContent =
-                figures.length > 1 ? `${currentIndex + 1} / ${figures.length}` : ''
+                figures.length > 1
+                    ? `${currentIndex + 1} / ${figures.length}`
+                    : ''
             prevBtn.disabled = currentIndex === 0
             nextBtn.disabled = currentIndex === figures.length - 1
         }
@@ -127,7 +150,11 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             // skip it rather than let it stomp an index goTo() already set.
             const isSettled = Math.abs(rawIndex - index) < 0.02
             if (!isSettled) return
-            if (index !== currentIndex && index >= 0 && index < figures.length) {
+            if (
+                index !== currentIndex &&
+                index >= 0 &&
+                index < figures.length
+            ) {
                 currentIndex = index
                 updateCaption()
             }
@@ -143,7 +170,10 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
                 currentIndex = clamped
                 updateCaption()
             }
-            track.scrollTo({ left: clamped * track.clientWidth, behavior: 'smooth' })
+            track.scrollTo({
+                left: clamped * track.clientWidth,
+                behavior: 'smooth',
+            })
         }
 
         const openLightbox = (index: number, trigger: HTMLElement) => {
@@ -155,7 +185,10 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             // direct scrollLeft assignment inherits that and animates too —
             // it would visibly slide through every image in between on
             // open. Force an instant jump to the clicked slide instead.
-            track.scrollTo({ left: index * track.clientWidth, behavior: 'instant' })
+            track.scrollTo({
+                left: index * track.clientWidth,
+                behavior: 'instant',
+            })
             updateCaption()
         }
 

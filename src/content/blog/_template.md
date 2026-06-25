@@ -14,7 +14,7 @@ Paragraph text with **bold** and _italic_ and `inline code`.
 
 ```js
 // Code blocks with syntax highlighting
-const example = 'hello'
+const example = "hello"
 ```
 
 > A blockquote for emphasis or quotes.

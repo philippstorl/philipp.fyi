@@ -24,16 +24,20 @@
 @theme {
     /* Typography */
     --font-display: "Fraunces Variable", serif;
-    --font-sans:    "DM Sans", sans-serif;
-    --font-mono:    "JetBrains Mono", monospace;
+    --font-sans: "DM Sans", sans-serif;
+    --font-mono: "JetBrains Mono", monospace;
 
     /* Colors — light mode defaults */
-    --color-background: oklch(98%   0.004  80);
-    --color-card:       oklch(93%   0.006  80);
-    --color-foreground: oklch(12%   0.005  80);
-    --color-muted:      oklch(44%   0.007  80);  /* was 48% — improved to AAA on bg (7.33:1) */
-    --color-accent:     oklch(52%   0.170  35);  /* was 56% — fixed FAIL on card (4.10→4.86) */
-    --color-border:     oklch(89%   0.006  80);
+    --color-background: oklch(98% 0.004 80);
+    --color-card: oklch(93% 0.006 80);
+    --color-foreground: oklch(12% 0.005 80);
+    --color-muted: oklch(
+        44% 0.007 80
+    ); /* was 48% — improved to AAA on bg (7.33:1) */
+    --color-accent: oklch(
+        52% 0.17 35
+    ); /* was 56% — fixed FAIL on card (4.10→4.86) */
+    --color-border: oklch(89% 0.006 80);
 
     /* Hero fade-up animation */
     --animate-fade-up: fade-up 0.5s ease-out both;
@@ -41,12 +45,16 @@
 
 /* ─── Dark mode overrides ────────────────────────────────────── */
 .dark {
-    --color-background: oklch(11%   0.005  80);
-    --color-card:       oklch(15%   0.006  80);
-    --color-foreground: oklch(96%   0.005  80);
-    --color-muted:      oklch(68%   0.007  80);  /* was 64% — improved to AAA on bg (7.10:1) */
-    --color-accent:     oklch(70%   0.150  35);  /* was 64% — improved to AAA on bg (7.21:1) */
-    --color-border:     oklch(21%   0.006  80);
+    --color-background: oklch(11% 0.005 80);
+    --color-card: oklch(15% 0.006 80);
+    --color-foreground: oklch(96% 0.005 80);
+    --color-muted: oklch(
+        68% 0.007 80
+    ); /* was 64% — improved to AAA on bg (7.10:1) */
+    --color-accent: oklch(
+        70% 0.15 35
+    ); /* was 64% — improved to AAA on bg (7.21:1) */
+    --color-border: oklch(21% 0.006 80);
 }
 
 /* ─── Animations ─────────────────────────────────────────────── */

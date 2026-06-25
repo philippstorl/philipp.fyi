@@ -13,7 +13,11 @@ const SITE_NAME = 'Philipp Storl'
 const DEFAULT_DESC =
     "Principal Web Developer — full-stack, with a designer's eye. Based in Leipzig / Chemnitz area, Germany."
 
-const { title, description = DEFAULT_DESC, ogImage = '/og/home.png' } = Astro.props
+const {
+    title,
+    description = DEFAULT_DESC,
+    ogImage = '/og/home.png',
+} = Astro.props
 
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
 const canonicalURL = new URL(Astro.url.pathname, Astro.site)
@@ -49,8 +53,16 @@ const ogImageURL = new URL(ogImage, Astro.site)
         <meta name="twitter:image" content={ogImageURL} />
 
         <!-- Mobile browser chrome color -->
-        <meta name="theme-color" media="(prefers-color-scheme: light)" content="#FAF9F6" />
-        <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0C0B09" />
+        <meta
+            name="theme-color"
+            media="(prefers-color-scheme: light)"
+            content="#FAF9F6"
+        />
+        <meta
+            name="theme-color"
+            media="(prefers-color-scheme: dark)"
+            content="#0C0B09"
+        />
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
@@ -67,10 +79,12 @@ const ogImageURL = new URL(ogImage, Astro.site)
             ;(function () {
                 function applyStoredTheme() {
                     const stored = localStorage.getItem('theme')
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+                    const prefersDark = window.matchMedia(
+                        '(prefers-color-scheme: dark)',
+                    ).matches
                     document.documentElement.classList.toggle(
                         'dark',
-                        stored === 'dark' || (!stored && prefersDark)
+                        stored === 'dark' || (!stored && prefersDark),
                     )
                 }
                 applyStoredTheme()
@@ -79,7 +93,7 @@ const ogImageURL = new URL(ogImage, Astro.site)
         </script>
     </head>
 
-    <body class="bg-background text-foreground font-sans">
+    <body class="bg-background font-sans text-foreground">
         <slot />
     </body>
 </html>

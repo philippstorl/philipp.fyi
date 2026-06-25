@@ -29,7 +29,9 @@ test.describe('Navigation', () => {
         await expect(page.getByRole('group')).toBeVisible()
     })
 
-    test('dark mode persists across client-side navigation', async ({ page }) => {
+    test('dark mode persists across client-side navigation', async ({
+        page,
+    }) => {
         await page.goto('/')
 
         // The toggle is a client:load React island; retry the click in case
