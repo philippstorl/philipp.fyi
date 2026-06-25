@@ -45,6 +45,7 @@ npm run dev:astro  # http://localhost:4321
 | `npm run lint`                   | Run ESLint (TypeScript, Astro, accessibility)  |
 | `npm run check:trailing-slashes` | Validate every internal link/route ends in `/` |
 | `npm run format`                 | Format all files with Prettier                 |
+| `npm run format:check`           | Check formatting without writing (used in CI)  |
 | `npm run preview`                | Preview the production build locally           |
 | `npm test`                       | Run Playwright E2E tests                       |
 | `npm run test:ui`                | Run Playwright tests in interactive UI mode    |
@@ -55,12 +56,13 @@ The `build` script runs `astro check` before `astro build` — TypeScript errors
 
 Every pull request, and every push to `main`, runs the workflow in `.github/workflows/ci.yml`. It can also be triggered manually (`workflow_dispatch`). Runs are canceled and restarted if you push again to the same branch before the previous run finishes.
 
-Five jobs run in parallel, all on Node 26:
+Six jobs run in parallel, all on Node 26:
 
 | Job                  | What it does                                                                                                                                                       |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git                                            |
 | `lint`               | `npm run lint`                                                                                                                                                     |
+| `format`             | `npm run format:check`                                                                                                                                             |
 | `typecheck`          | `npm run typecheck`                                                                                                                                                |
 | `build`              | `npm run check:trailing-slashes`, then `npm run build`                                                                                                             |
 | `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail |
