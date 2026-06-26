@@ -76,6 +76,22 @@ html {
 }
 
 /*
+    Tailwind's preflight intentionally leaves `button` at its native
+    browser cursor (`default`), not `pointer` — set it globally here so
+    every button reads as clickable on hover. Scoped to `@layer base` so a
+    future per-button `cursor-*` utility still wins via normal layer order.
+*/
+@layer base {
+    button:not(:disabled) {
+        cursor: pointer;
+    }
+
+    button:disabled {
+        cursor: not-allowed;
+    }
+}
+
+/*
     Applies to any open native <dialog> (e.g. ImageLightbox), not just one
     feature — kept here rather than in a component so it stays correct if
     more dialogs are added later.
