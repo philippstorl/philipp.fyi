@@ -44,12 +44,13 @@ voices-2025.png
   DE homepage. "VOICES 2025", "ASPIRE TO INSPIRE" teaser, "LINE-UP 2025",
   "016 Tage noch".
 
-voices-2026.png / voices-2026-de.png
+voices-2026.png
   https://web.archive.org/web/20260326115343/https://voices.staffbase.com/de/
   DE homepage, pre-event state. "29. und 30. April 2026", "Arena Berlin",
-  "VOICES 2026", "034 Tage noch". Same snapshot used for both files — the
-  region-comparison "de" copy and the evolution-grid "2026" copy are
-  identical source images.
+  "VOICES 2026", "034 Tage noch". One file, imported twice in the MDX (as
+  voices2026 and voices2026De) — the region-comparison "de" copy and the
+  evolution-grid "2026" copy are the same screenshot, so there's no separate
+  voices-2026-de.png on disk.
 
 voices-2026-de-mobile.png
   https://web.archive.org/web/20260326115343/https://voices.staffbase.com/de/

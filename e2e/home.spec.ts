@@ -20,6 +20,21 @@ test.describe('Home page', () => {
         await expect(cards).toHaveCount(4)
     })
 
+    test('cards with a cover image show a screenshot, cards without fall back to text-only', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const withCover = page
+            .locator('#work article')
+            .filter({ hasText: '8 years of brand evolution on staffbase.com' })
+        await expect(withCover.locator('img')).toBeVisible()
+
+        const withoutCover = page.locator('#work article').filter({
+            hasText: 'Building a team, a career track, and an operating model',
+        })
+        await expect(withoutCover.locator('img')).toHaveCount(0)
+    })
+
     test('shows 6 principle cards', async ({ page }) => {
         await page.goto('/')
         const cards = page.locator('#principles article')
