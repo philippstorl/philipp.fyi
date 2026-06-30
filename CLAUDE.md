@@ -19,7 +19,7 @@ Repeatable workflows for this repo are captured as skills in `.claude/skills/` �
 
 ## What this is
 
-Personal portfolio site for Philipp Storl — Astro v6, Tailwind v4, a couple of React islands, deployed on Netlify. Content (case studies, principles, blog posts) lives in `src/content/` as Markdown/MDX with zod-validated frontmatter.
+Personal portfolio site for Philipp Storl — Astro v7, Tailwind v4, a couple of React islands, deployed on Netlify. Content (case studies, principles, blog posts) lives in `src/content/` as Markdown/MDX with zod-validated frontmatter.
 
 ## Stack facts that shape how to make changes
 
