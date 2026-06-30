@@ -182,6 +182,8 @@ When ready to add Plausible (or another provider):
 
 ```text
 src/
+  assets/
+    hero-figure.png → Standalone image imported directly via astro:assets (not part of a content collection)
   components/
     home/          → Hero, WorkSection, WorkCard, PrinciplesSection, PrincipleCard, AboutSection, ContactSection
     layout/        → Header, Footer
