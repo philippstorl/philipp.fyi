@@ -15,25 +15,25 @@ year: "2020–2026"
 featured: false
 order: 4
 draft: false
-coverImage: "./voices-2026.png"
+coverImage: "./voices-conference-website/voices-2026.png"
 ---
 
 import { Image } from "astro:assets"
-import voices2020 from "./voices-2020.png"
-import voices2020PreEleventy from "./voices-2020-pre-eleventy.png"
-import voices2022 from "./voices-2022.png"
-import voices2023 from "./voices-2023.png"
-import voices2024 from "./voices-2024.png"
-import voices2025 from "./voices-2025.png"
-import voices2026 from "./voices-2026.png"
-import voices2026De from "./voices-2026-de.png"
-import voices2026En from "./voices-2026-en.png"
-import voices2026Emea from "./voices-2026-emea.png"
-import voices2026Overview from "./voices-2026-overview.png"
-import voices2026Agenda from "./voices-2026-agenda.png"
-import voices2026Recordings from "./voices-2026-recordings.png"
-import voices2026DeMobile from "./voices-2026-de-mobile.png"
-import voices2026DeMobileNav from "./voices-2026-de-mobile-nav.png"
+import voices2020 from "./voices-conference-website/voices-2020.png"
+import voices2020PreEleventy from "./voices-conference-website/voices-2020-pre-eleventy.png"
+import voices2022 from "./voices-conference-website/voices-2022.png"
+import voices2023 from "./voices-conference-website/voices-2023.png"
+import voices2024 from "./voices-conference-website/voices-2024.png"
+import voices2025 from "./voices-conference-website/voices-2025.png"
+import voices2026 from "./voices-conference-website/voices-2026.png"
+import voices2026De from "./voices-conference-website/voices-2026.png"
+import voices2026En from "./voices-conference-website/voices-2026-en.png"
+import voices2026Emea from "./voices-conference-website/voices-2026-emea.png"
+import voices2026Overview from "./voices-conference-website/voices-2026-overview.png"
+import voices2026Agenda from "./voices-conference-website/voices-2026-agenda.png"
+import voices2026Recordings from "./voices-conference-website/voices-2026-recordings.png"
+import voices2026DeMobile from "./voices-conference-website/voices-2026-de-mobile.png"
+import voices2026DeMobileNav from "./voices-conference-website/voices-2026-de-mobile-nav.png"
 
 VOICES is Staffbase's flagship annual conference for internal communications and employee experience professionals, running since 2019. The website promoting it — voices.staffbase.com — is a different kind of problem than the main marketing site: it has to serve three distinct lifecycle states, support multiple simultaneous regional editions, and be rebuilt from scratch for each annual event while retaining accumulated improvements. I owned it solo from the ground up for six years.
 
@@ -46,18 +46,20 @@ When I took on the VOICES website in mid-2020, the existing setup was plain HTML
         <Image
             src={voices2020PreEleventy}
             alt="VOICES website homepage in April 2020, the plain-HTML site maintained by an external agency"
+            class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            Before — April 2020, plain HTML, agency-maintained
+            {"Before — April 2020, plain HTML, agency-maintained"}
         </figcaption>
     </figure>
     <figure>
         <Image
             src={voices2020}
             alt="VOICES website homepage in October 2020, the first Eleventy build"
+            class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            After — October 2020, the first Eleventy build
+            {"After — October 2020, the first Eleventy build"}
         </figcaption>
     </figure>
 </div>
@@ -68,42 +70,57 @@ The visual design came mostly from the brand team. My job was translating that i
 
 <div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <figure>
-        <Image src={voices2020} alt="VOICES website homepage in 2020" />
+        <Image
+            src={voices2020}
+            alt="VOICES website homepage in 2020"
+            class="rounded-xl border border-border"
+        />
         <figcaption class="mt-2 text-sm text-muted">2020</figcaption>
     </figure>
     <figure>
         <Image
             src={voices2022}
             alt="VOICES website homepage after the 2022 rebrand"
+            class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            2022 — first rebrand
+            {"2022 — first rebrand"}
         </figcaption>
     </figure>
     <figure>
-        <Image src={voices2023} alt="VOICES website homepage in 2023" />
+        <Image
+            src={voices2023}
+            alt="VOICES website homepage in 2023"
+            class="rounded-xl border border-border"
+        />
         <figcaption class="mt-2 text-sm text-muted">2023</figcaption>
     </figure>
     <figure>
-        <Image src={voices2024} alt="VOICES website homepage in 2024" />
+        <Image
+            src={voices2024}
+            alt="VOICES website homepage in 2024"
+            class="rounded-xl border border-border"
+        />
         <figcaption class="mt-2 text-sm text-muted">2024</figcaption>
     </figure>
     <figure>
         <Image
             src={voices2025}
             alt="VOICES website homepage after the 2025 rebrand"
+            class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            2025 — second rebrand
+            {"2025 — second rebrand"}
         </figcaption>
     </figure>
     <figure>
         <Image
             src={voices2026}
             alt="VOICES website homepage in 2026, current state"
+            class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            2026 — current state
+            {"2026 — current state"}
         </figcaption>
     </figure>
 </div>
@@ -119,18 +136,20 @@ Three lifecycle states govern every section: pre-event (promoting registration, 
         <Image
             src={voices2026DeMobile}
             alt="VOICES Berlin homepage on mobile, 2026"
+            class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-center text-sm text-muted">
-            Mobile — homepage
+            {"Mobile — homepage"}
         </figcaption>
     </figure>
     <figure class="max-w-xs">
         <Image
             src={voices2026DeMobileNav}
             alt="VOICES Berlin mobile navigation menu open, 2026"
+            class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-center text-sm text-muted">
-            Mobile — navigation
+            {"Mobile — navigation"}
         </figcaption>
     </figure>
 </div>
@@ -143,21 +162,33 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
 </p>
 <div class="my-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
     <figure>
-        <Image src={voices2026De} alt="VOICES Berlin (DE) homepage, 2026" />
+        <Image
+            src={voices2026De}
+            alt="VOICES Berlin (DE) homepage, 2026"
+            class="rounded-xl border border-border"
+        />
         <figcaption class="mt-2 text-sm text-muted">
-            Berlin — in-person, German
+            {"Berlin — in-person, German"}
         </figcaption>
     </figure>
     <figure>
-        <Image src={voices2026En} alt="VOICES Americas (NA) homepage, 2026" />
+        <Image
+            src={voices2026En}
+            alt="VOICES Americas (NA) homepage, 2026"
+            class="rounded-xl border border-border"
+        />
         <figcaption class="mt-2 text-sm text-muted">
-            Americas — virtual
+            {"Americas — virtual"}
         </figcaption>
     </figure>
     <figure>
-        <Image src={voices2026Emea} alt="VOICES London (EMEA) homepage, 2026" />
+        <Image
+            src={voices2026Emea}
+            alt="VOICES London (EMEA) homepage, 2026"
+            class="rounded-xl border border-border"
+        />
         <figcaption class="mt-2 text-sm text-muted">
-            London — in-person
+            {"London — in-person"}
         </figcaption>
     </figure>
 </div>
@@ -165,9 +196,10 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
     <Image
         src={voices2026Overview}
         alt="VOICES region picker hub page, listing all four editions"
+        class="rounded-xl border border-border"
     />
     <figcaption class="mt-2 text-sm text-muted">
-        The hub page that routes to each regional edition
+        {"The hub page that routes to each regional edition"}
     </figcaption>
 </figure>
 
@@ -177,9 +209,10 @@ The component library is substantial — speaker lineups, multi-track agendas, r
     <Image
         src={voices2026Agenda}
         alt="VOICES Americas multi-track agenda page, 2026"
+        class="rounded-xl border border-border"
     />
     <figcaption class="mt-2 text-sm text-muted">
-        The multi-track agenda component, populated for VOICES Americas 2026
+        {"The multi-track agenda component, populated for VOICES Americas 2026"}
     </figcaption>
 </figure>
 
@@ -193,9 +226,12 @@ This is the "right tool for the job" principle applied cleanly: event recordings
     <Image
         src={voices2026Recordings}
         alt="VOICES Americas recordings page, the after-event lifecycle state, 2026"
+        class="rounded-xl border border-border"
     />
     <figcaption class="mt-2 text-sm text-muted">
-        The after-event state — recordings populated automatically from YouTube
+        {
+            "The after-event state — recordings populated automatically from YouTube"
+        }
     </figcaption>
 </figure>
 

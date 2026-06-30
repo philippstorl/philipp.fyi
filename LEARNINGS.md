@@ -11,6 +11,11 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-06-30
+
+- Discovered Astro's `<Image>` crops server-side via Sharp when explicit `width`/`height` are passed, so a CSS `object-position` class on the rendered `<img>` is a no-op against an already-cropped file — only the component's own `position` prop actually controls the crop anchor. Caught by reading the generated webp asset directly (`sips -g pixelWidth -g pixelHeight`) rather than trusting a Playwright screenshot, after a CSS-only `object-top` fix visibly changed nothing. Promoted to [CLAUDE.md](CLAUDE.md)'s "Conventions to respect" section.
+- A dev server started manually outside the documented `npm test` flow (e.g. for ad-hoc Playwright screenshots during visual verification) hit the same Astro 7 background-daemonizing behavior as the PR #40 `CLAUDECODE` issue logged on 2026-06-25, but `pkill -f "astro dev"` didn't always catch the actual daemonized process — it silently kept squatting the port. A later `npm test` run then reused that stale server (Playwright's `webServer.reuseExistingServer`) and produced a misleadingly small, slow result (24/60 "passed" instead of 60/60) with no error. `lsof -i :4321` was needed to find and `kill -9` the real PID before tests would run cleanly again — `pkill` pattern-matching on the command name isn't reliable for this daemon.
+
 ### 2026-06-25
 
 - Creating a brand-new top-level `.claude/skills/` directory mid-session isn't picked up by Claude Code's live file watcher — it only watches directories that already existed when the session started. A restart (or fresh session) is required before any skill in a newly-created directory becomes invocable. Editing skills inside an already-watched directory does take effect live.

@@ -151,3 +151,50 @@ test.describe('Image lightbox', () => {
         )
     })
 })
+
+// brand-evolution's figcaptions mix two markup shapes — plain JSX text for
+// short captions, and a `{'...'}` JS string expression for any caption long
+// enough that Prettier would otherwise break it onto its own line (which
+// MDX would then silently wrap in a <p>, see CLAUDE.md). Covering one of
+// each here guards against that regression in either direction.
+const BRAND_EVOLUTION_TOTAL_IMAGES = 25
+const brandEvolutionCounterText = (index: number) =>
+    `${index} / ${BRAND_EVOLUTION_TOTAL_IMAGES}`
+
+test.describe('Image lightbox — brand-evolution', () => {
+    test.beforeEach(async ({ page }) => {
+        await page.goto('/work/brand-evolution/')
+    })
+
+    test('renders a plain-text figcaption', async ({ page }) => {
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+        await expect(page.locator('#lightbox-caption')).toHaveText('March 2018')
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            brandEvolutionCounterText(1),
+        )
+    })
+
+    test('renders a figcaption written as a JS string expression', async ({
+        page,
+    }) => {
+        const bananatag = page
+            .locator('.prose')
+            .getByAltText(
+                'staffbase.com homepage in March 2021 announcing the Bananatag merger',
+            )
+        await openLightboxOn(page, bananatag)
+        await expect(page.locator('#lightbox-caption')).toHaveText(
+            'March 2021 — Bananatag merger announcement',
+        )
+    })
+
+    test('the gallery covers every image in the article', async ({ page }) => {
+        const lastImage = page
+            .locator('.prose')
+            .getByAltText('staffbase.com homepage on mobile in May 2026')
+        await openLightboxOn(page, lastImage)
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            brandEvolutionCounterText(BRAND_EVOLUTION_TOTAL_IMAGES),
+        )
+    })
+})

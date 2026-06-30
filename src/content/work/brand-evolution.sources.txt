@@ -1,0 +1,172 @@
+Screenshot sources — staffbase.com brand evolution
+====================================================
+
+Reference list for the screenshots used in brand-evolution.mdx.
+Maps each image file to the page it was captured from, with exact
+Wayback Machine timestamps, so a date in a caption is always
+traceable back to a real snapshot.
+
+Note on dates: most captions use the Wayback snapshot date directly.
+Two images are an exception — the December 2018 relaunch (see below) —
+where the caption shows the actual relaunch date rather than the date
+of the earliest available archive snapshot, because those aren't the
+same thing and the gap between them is documented here, not silently
+collapsed.
+
+Wayback Machine snapshots
+--------------------------
+staffbase-2018-03.png
+  https://web.archive.org/web/20180304014245/https://staffbase.com/en/
+  March 4, 2018.
+
+staffbase-2018-07.png
+  https://web.archive.org/web/20180729065822/https://staffbase.com/en/
+  July 29, 2018.
+
+staffbase-2018-09.png
+  https://web.archive.org/web/20180927005740/https://staffbase.com/en/
+  September 27, 2018. Composite image — this specific Wayback snapshot
+  failed to render the navigation bar (a Wayback capture gap, not a
+  real site state; see "Not used" below for the discarded raw version).
+  The nav shown is reconstructed from the July 29, 2018 snapshot above;
+  the hero and all body content are from the genuine September 27, 2018
+  capture.
+
+staffbase-2018-12-en.png
+  https://web.archive.org/web/20190128120050/https://staffbase.com/en/
+  Site relaunch was in December 2018 — that's the date shown in the
+  case study. This is the earliest available Wayback snapshot of that
+  design, dated January 28, 2019; the archive didn't crawl it until
+  roughly seven weeks after the actual relaunch.
+
+staffbase-2018-12-de.png
+  https://web.archive.org/web/20190402184240/https://staffbase.com/de/
+  Same December 2018 relaunch as above, German-language version. This
+  is the earliest available Wayback snapshot, dated April 2, 2019 —
+  about four months after the actual relaunch. Also promoting the
+  VOICES conference of April 4–5, 2019, captured two days before that
+  event.
+
+staffbase-2019-04.png
+  https://web.archive.org/web/20190418023823/https://staffbase.com/en/
+  April 18, 2019.
+
+staffbase-2019-10.png
+  https://web.archive.org/web/20191017001618/https://staffbase.com/en/
+  October 17, 2019.
+
+staffbase-2020-04.png
+  https://web.archive.org/web/20200401223922/https://staffbase.com/en/
+  April 1, 2020.
+
+staffbase-2020-08.png
+  https://web.archive.org/web/20200805172621/https://staffbase.com/en/
+  August 5, 2020.
+
+staffbase-2021-03-bananatag.png
+  https://web.archive.org/web/20210304085431/https://staffbase.com/en/
+  March 4, 2021 — the exact day the Bananatag merger was publicly
+  announced. Confirmed against external coverage (PRNewswire, T-Net,
+  and Staffbase's own press release all give March 4, 2021). Unlike
+  the December 2018 pair above, there's no separate "intended date"
+  here — the capture date and the real-world event date are the same
+  thing, so the caption uses it directly.
+
+staffbase-2021-04-seriesd.png
+  https://web.archive.org/web/20210403190525/https://staffbase.com/en/
+  April 3, 2021 — four days after the $145M Series D round (led by
+  General Atlantic) was announced on March 30, 2021. The homepage
+  banner in this capture reflects that announcement.
+
+staffbase-2021-09.png
+  https://web.archive.org/web/20210921105843/https://staffbase.com/en/
+  September 21, 2021.
+
+staffbase-2022-03.png
+  https://web.archive.org/web/20220322090501/https://staffbase.com/en/
+  March 22, 2022.
+
+staffbase-2022-11.png
+  https://web.archive.org/web/20221111183652/https://staffbase.com/en/
+  November 11, 2022.
+
+staffbase-2023-06.png
+  https://web.archive.org/web/20230628114112/https://staffbase.com/en/
+  June 28, 2023.
+
+staffbase-2023-12.png
+  https://web.archive.org/web/20231231122352/https://staffbase.com/en/
+  December 31, 2023.
+
+staffbase-2024-02.png
+  https://web.archive.org/web/20240229213102/https://staffbase.com/en/
+  February 29, 2024.
+
+staffbase-2025-01.png
+  https://web.archive.org/web/20250123162705/https://staffbase.com/en/
+  January 23, 2025. Pre-migration WordPress site.
+
+staffbase-2025-09.png
+  https://web.archive.org/web/20250916023038/https://staffbase.com/
+  September 16, 2025 — the day of the Employee AI pivot announcement.
+  Post-Storyblok-migration, captured before the new Employee AI brand
+  and headline had rolled out to the homepage itself.
+
+staffbase-2025-11.png
+  https://web.archive.org/web/20251107115003/https://staffbase.com/
+  November 7, 2025. Post-Employee-AI-pivot redesign ("Your Intranet.
+  Reborn.").
+
+staffbase-2026-01.png
+  https://web.archive.org/web/20260108142136/https://staffbase.com/
+  January 8, 2026.
+
+staffbase-2026-03.png
+  https://web.archive.org/web/20260305111920/https://staffbase.com/
+  March 5, 2026. Post-navigation-rebuild ("Built For Everyone").
+
+staffbase-2026-05-mobile.png
+  https://web.archive.org/web/20260507084654/https://staffbase.com/
+  May 7, 2026. Captured at mobile viewport (iPhone 14 Pro Max,
+  1290x2796).
+
+
+Live captures (production site, not archived)
+-----------------------------------------------
+staffbase-2026-05.png
+  https://staffbase.com/
+  Captured directly from the live site, not via Wayback Machine. Exact
+  date/time not recorded; filename dates it to May 2026.
+
+staffbase-2026-05-nav.png
+  https://staffbase.com/
+  Captured directly from the live site, not via Wayback Machine. Same
+  live session as staffbase-2026-05.png. Shows the Platform mega-menu
+  expanded — the navigation rebuilt from scratch by SensioLabs.
+
+
+Not used in the MDX
+---------------------
+Sept 2018, raw broken capture
+  https://web.archive.org/web/20180927005740/https://staffbase.com/en/
+  Same underlying snapshot as staffbase-2018-09.png, but captured
+  without the "if_" URL suffix, so the Wayback toolbar is visible and
+  the page layout renders malformed. Discarded in favor of the
+  composited version (see staffbase-2018-09.png above).
+
+
+Gaps / things worth double-checking
+--------------------------------------
+- staffbase-2018-12-en.png and staffbase-2018-12-de.png are dated
+  "December 2018" in the case study, but the underlying Wayback
+  snapshots are from January and April 2019 respectively — the
+  earliest archive coverage available, not the relaunch date itself.
+  This is a deliberate choice, not an error: the relaunch happened in
+  December 2018 per the actual project record, Wayback just didn't
+  crawl it until later. Flagging here so the gap is documented rather
+  than invisible.
+- staffbase-2021-03-bananatag.png was originally mislabeled "April
+  2021" before being checked against this list; the Wayback date and
+  the public merger-announcement date both independently point to
+  March 4, 2021, so this one was a genuine correction rather than an
+  intended-vs-archived gap like the December 2018 pair.

@@ -69,13 +69,48 @@ const colors = {
 const OG_WIDTH = 1200
 const OG_HEIGHT = 630
 
+// Size of the inset screenshot panel when a case study has a coverImage.
+// Same 16:10 aspect ratio as the home page's WorkCard cover — a 1:1 crop
+// of a full-page screenshot looked broken rather than like a real preview.
+const COVER_PANEL_WIDTH = 480
+const COVER_PANEL_HEIGHT = 300
+
+async function buildCoverImageDataUri(coverImagePath: string): Promise<string> {
+    // Crop from the top, same reasoning as WorkCard.astro's cover image: a
+    // full-page screenshot's nav/hero is the most recognizable part, and the
+    // panel is taller than it is wide, so a center crop would lose it.
+    const cropped = await sharp(coverImagePath)
+        .resize(COVER_PANEL_WIDTH, COVER_PANEL_HEIGHT, {
+            fit: 'cover',
+            position: 'top',
+        })
+        .png()
+        .toBuffer()
+    return `data:image/png;base64,${cropped.toString('base64')}`
+}
+
 // Satori does not accept JSX in a .ts file — the template is
 // written using plain nested objects (equivalent to h() calls).
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildTemplate(title: string, label?: string): any {
-    // Scale title font size to avoid overflow on longer strings
-    const titleSize = title.length < 45 ? 72 : title.length < 75 ? 58 : 46
+function buildTemplate(
+    title: string,
+    label?: string,
+    coverImageDataUri?: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): any {
+    // A cover image narrows the text column, so longer titles need a smaller
+    // size sooner than the text-only layout does.
+    const titleSize = coverImageDataUri
+        ? title.length < 45
+            ? 56
+            : title.length < 75
+              ? 44
+              : 34
+        : title.length < 45
+          ? 72
+          : title.length < 75
+            ? 58
+            : 46
 
     const labelNode = label
         ? {
@@ -126,7 +161,9 @@ function buildTemplate(title: string, label?: string): any {
                             display: 'flex',
                             flexDirection: 'column',
                             flex: 1,
-                            padding: '64px 80px',
+                            padding: coverImageDataUri
+                                ? '64px 0 64px 80px'
+                                : '64px 80px',
                         },
                         children: [
                             // Category / page label
@@ -169,7 +206,35 @@ function buildTemplate(title: string, label?: string): any {
                         ],
                     },
                 },
-            ],
+                // Cover image panel — only for case studies that have one.
+                // Top-aligned with the same 64px offset as the text column's
+                // padding, so the panel's top edge lines up with the
+                // category label instead of floating at vertical center.
+                coverImageDataUri && {
+                    type: 'div',
+                    props: {
+                        style: {
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            padding: '64px 64px 0',
+                        },
+                        children: {
+                            type: 'img',
+                            props: {
+                                src: coverImageDataUri,
+                                width: COVER_PANEL_WIDTH,
+                                height: COVER_PANEL_HEIGHT,
+                                style: {
+                                    borderRadius: 16,
+                                    border: `1px solid ${colors.border}`,
+                                    boxShadow:
+                                        '0 20px 40px rgba(13, 13, 12, 0.18)',
+                                },
+                            },
+                        },
+                    },
+                },
+            ].filter(Boolean),
         },
     }
 }
@@ -177,10 +242,14 @@ function buildTemplate(title: string, label?: string): any {
 export async function generateOgImage(
     title: string,
     label?: string,
+    coverImagePath?: string,
 ): Promise<Response> {
     const fonts = loadFonts()
+    const coverImageDataUri = coverImagePath
+        ? await buildCoverImageDataUri(coverImagePath)
+        : undefined
 
-    const svg = await satori(buildTemplate(title, label), {
+    const svg = await satori(buildTemplate(title, label, coverImageDataUri), {
         width: OG_WIDTH,
         height: OG_HEIGHT,
         fonts: [
