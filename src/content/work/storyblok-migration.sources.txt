@@ -1,0 +1,35 @@
+Screenshot sources — Storyblok & Symfony migration
+====================================================
+
+Reference list for the screenshots used in storyblok-migration.mdx.
+Maps each image file to the page it was captured from, so a locale or
+date claim in a caption is always traceable back to a real source.
+
+Wayback Machine snapshots
+--------------------------
+staffbase-com-de.png
+  https://web.archive.org/web/20260326115423/https://staffbase.com/de/
+  March 26, 2026. German locale, live on the new Storyblok/Symfony
+  stack.
+
+Live captures (production site, not archived)
+-----------------------------------------------
+staffbase-com-jp.png
+  https://staffbase.com/jp/
+  Captured directly from the live site, not via Wayback Machine.
+  July 1, 2026. Japanese locale.
+
+staffbase-com-fr.png
+  https://staffbase.com/fr/
+  Captured directly from the live site, not via Wayback Machine.
+  July 1, 2026. French locale, added post-launch.
+
+staffbase-com-es.png
+  https://staffbase.com/es/
+  Captured directly from the live site, not via Wayback Machine.
+  July 1, 2026. Spanish locale, added post-launch.
+
+staffbase-com-mobile-nav.png
+  https://staffbase.com/
+  Captured directly from the live site, not via Wayback Machine.
+  July 1, 2026. Mobile navigation overlay, rebuilt late 2025.

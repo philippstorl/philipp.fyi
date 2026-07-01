@@ -8,9 +8,16 @@ year: "2024–2025"
 featured: true
 order: 1
 draft: false
+coverImage: "./storyblok-migration/staffbase-com-jp.png"
 ---
 
 import { getStaffbaseTenureYears } from "@/utils/experience"
+import { Image } from "astro:assets"
+import imgJp from "./storyblok-migration/staffbase-com-jp.png"
+import imgDe from "./storyblok-migration/staffbase-com-de.png"
+import imgFr from "./storyblok-migration/staffbase-com-fr.png"
+import imgEs from "./storyblok-migration/staffbase-com-es.png"
+import imgMobileNav from "./storyblok-migration/staffbase-com-mobile-nav.png"
 
 By 2024, staffbase.com had outgrown WordPress. The platform had served us well for years — and I'd built a great deal of it by hand — but a monolithic CMS was no longer the right tool. Content management was developer-dependent. The codebase had accumulated years of custom code. And as Staffbase scaled, we needed something that could grow with us: a clear separation between content and presentation, self-service publishing for marketing, and a foundation built to last.
 
@@ -22,6 +29,33 @@ What I brought to that partnership wasn't Symfony expertise — at least not at 
 
 The scope was substantial. The migration covered the full staffbase.com estate — all product pages, and a lot of other content types. We launched with English (default), German, and Japanese. French and Spanish were added later, well after go-live — a good proof point that the new architecture made expanding to additional languages straightforward rather than a fresh engineering effort.
 
+<div class="my-8 grid grid-cols-2 gap-4">
+    <figure>
+        <Image
+            src={imgJp}
+            alt="staffbase.com Japanese locale — one of three markets live at launch"
+            class="rounded-xl border border-border"
+        />
+        <figcaption class="mt-2 text-sm text-muted">
+            {
+                "Japanese locale at launch — the most immediately legible proof of a working multilingual architecture."
+            }
+        </figcaption>
+    </figure>
+    <figure>
+        <Image
+            src={imgDe}
+            alt="staffbase.com German locale — Staffbase's home market, live on the new stack at go-live"
+            class="rounded-xl border border-border"
+        />
+        <figcaption class="mt-2 text-sm text-muted">
+            {
+                "German locale — Staffbase's home market, live on the new stack on the same day."
+            }
+        </figcaption>
+    </figure>
+</div>
+
 DNS — Route53 and Cloudflare, Terraform-managed — was already part of Staffbase's standing infrastructure; for this migration, that meant adapting existing DNS settings for go-live rather than building that layer from scratch. What was new was the application hosting itself: Upsun for the Symfony application, and a VarnishCache layer in front of it for performance. That let the team focus its energy on the application layer and content migration, rather than also standing up DNS infrastructure from zero.
 
 ## My role
@@ -29,6 +63,20 @@ DNS — Route53 and Cloudflare, Terraform-managed — was already part of Staffb
 Early on, my contribution was mostly making sure SensioLabs' Symfony expertise stayed grounded in our reality — flagging where a textbook pattern would break against our actual content model, or where marketing's workflow needed something the framework didn't assume by default. As the project went on, I also contributed directly to implementation, and reviewed code across both the Staffbase team and SensioLabs' work — though SensioLabs, as the framework experts, had merge authority on much of the more technical work themselves. We ran it as a genuinely agile, iterative collaboration: constant feedback loops, including on already-merged PRs, rather than a single gate of final sign-off.
 
 Together with my manager, I helped manage the agency relationship — aligning on scope and approach, coordinating the GitHub repository structure (codeowners, branch strategy, CI/CD), and helping maintain the quality bar across releases. When the navigation needed to be fully rebuilt in late 2025 — a structural overhaul under a tight external deadline — I coordinated the implementation directly: reviewing code, giving implementation feedback, and signing off before it went live.
+
+<figure class="my-8">
+    <Image
+        src={imgMobileNav}
+        alt="staffbase.com mobile navigation overlay — rebuilt late 2025"
+        width={430}
+        class="mx-auto rounded-xl border border-border"
+    />
+    <figcaption class="mt-2 text-sm text-muted">
+        {
+            "The navigation rebuild: sticky header, backdrop blur, and mobile overlay with body-scroll lock — a full structural overhaul shipped to a hard external deadline."
+        }
+    </figcaption>
+</figure>
 
 I also invested in making the editorial knowledge transfer stick. SensioLabs ran the initial Storyblok editorial workshops for the marketing team — covering page building, component usage, and how content publishing would change. I documented the workshops thoroughly in Confluence so the material could be reused, and followed up afterward with additional onboarding and enablement sessions for various marketing colleagues as they ramped up. The goal was for marketing to publish independently, without raising a ticket to the web team for every content change. That goal was met.
 
@@ -41,5 +89,32 @@ The highest-stakes moment was go-live: switching primary domains on a live comme
 ## The outcome
 
 Marketing self-publishes in Storyblok. The number of web support tickets driven by content management — which had been significant — dropped materially. By go-live, the web team was running the Symfony application independently, calling on SensioLabs only for the rare edge case — proof that the knowledge transfer had actually worked, not just the migration itself. And the new setup proved its value quickly: adding French and Spanish after launch was straightforward, exactly as the architecture intended.
+
+<div class="my-8 grid grid-cols-2 gap-4">
+    <figure>
+        <Image
+            src={imgFr}
+            alt="staffbase.com French locale — added post-launch"
+            class="rounded-xl border border-border"
+        />
+        <figcaption class="mt-2 text-sm text-muted">
+            {
+                "French locale — added post-launch as a configuration change, not a rebuild."
+            }
+        </figcaption>
+    </figure>
+    <figure>
+        <Image
+            src={imgEs}
+            alt="staffbase.com Spanish locale — added post-launch alongside French"
+            class="rounded-xl border border-border"
+        />
+        <figcaption class="mt-2 text-sm text-muted">
+            {
+                "Spanish, added the same way. Two new markets without a single architectural change."
+            }
+        </figcaption>
+    </figure>
+</div>
 
 What replaced {getStaffbaseTenureYears()} years of accumulated WordPress was built — with strong outside expertise and close collaboration — to last.

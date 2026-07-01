@@ -5,9 +5,10 @@ import { ArrowRight } from 'lucide-react'
 
 interface Props {
     entry: CollectionEntry<'work'>
+    showCover?: boolean
 }
 
-const { entry } = Astro.props
+const { entry, showCover = true } = Astro.props
 const { title, description, category, tags, year, featured, coverImage } =
     entry.data
 const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
@@ -41,7 +42,12 @@ const categoryStyle = categoryStyles[category] ?? 'border-border text-muted'
     <!-- Teaser screenshot — optional, falls back to today's text-only card -->
     {
         coverImage && (
-            <div class="aspect-[16/10] w-full overflow-hidden rounded-t-[inherit] bg-muted">
+            <div
+                class:list={[
+                    'aspect-[16/10] w-full overflow-hidden rounded-t-[inherit] bg-muted',
+                    !showCover && 'md:hidden',
+                ]}
+            >
                 <Image
                     src={coverImage}
                     alt=""
