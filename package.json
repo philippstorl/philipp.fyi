@@ -24,7 +24,7 @@
         "@fontsource/dm-sans": "^5.1.0",
         "@fontsource/fraunces": "^5.2.9",
         "@fontsource/jetbrains-mono": "^5.1.0",
-        "astro": "^7.0.4",
+        "astro": "7.0.2",
         "lucide-react": "^1.23.0",
         "react": "^19.0.0",
         "react-dom": "^19.0.0",
