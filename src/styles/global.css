@@ -56,6 +56,22 @@
     .animate-fade-up {
         animation: var(--animate-fade-up);
     }
+
+    @keyframes dot-breathe {
+        0%,
+        100% {
+            opacity: 0.3;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    @layer base {
+        .animate-dot-breathe {
+            animation: dot-breathe 2.4s ease-in-out infinite backwards;
+        }
+    }
 }
 
 html {

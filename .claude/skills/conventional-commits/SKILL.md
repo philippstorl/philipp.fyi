@@ -5,6 +5,8 @@ description: Determine the Conventional Commit type and scope for a change in ph
 
 # Conventional commits and PR titles
 
+**Before writing the commit message**, confirm `npm run format:check` has passed since the last code change. If it hasn't, run it now (or `npm run format` to auto-fix) — a format failure in CI after an already-opened PR is avoidable friction. When in doubt, run `preflight` first.
+
 This repo follows `type(scope): description` for both commit messages and PR titles (they should match). Getting the type right is usually easy; the scope is where this has gone wrong before.
 
 ## Type
