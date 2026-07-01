@@ -8,8 +8,13 @@ Updated automatically at the end of each session; read automatically at the star
 
 - Whether `preflight/SKILL.md` should stop restating CLAUDE.md's command list verbatim (flagged by `self-review` on 2026-06-25) — redundant but arguably more robust against either file being edited in isolation; undecided.
 - Trailing slashes are only ever generated (`astro.config.mjs`'s `trailingSlash: 'always'`), never enforced server-side — noted as a possible future addition when trailing-slash generation was first added (PR #9, 2026-06-17) but never revisited. Both `/route` and `/route/` currently resolve; no `netlify.toml` redirect exists for this.
+- `astro` is pinned to exact `7.0.2` in `package.json` (commit f2a93f51) pending an upstream fix for the 7.0.4 build regression logged 2026-07-02 below — retry the bump once a release past 7.0.5 ships, and run `npm run build` before unpinning since dependabot won't retry a manually-pinned exact version on its own.
 
 ## Log
+
+### 2026-07-02
+
+- Astro 7.0.4 (via upstream PR #17224, "fixes trailing slash handling for dynamic file endpoints in dev mode") introduced a production-build regression for dynamic file endpoints combined with `trailingSlash: 'always'`: `src/pages/og/[...slug].png.ts` fails with `NoMatchingStaticPathFound` for `/og/home.png/` during `astro build`, even though dev mode and the `getStaticPaths` params are unaffected. Confirmed by bisecting locally with `npm install astro@<version> --no-save`: 7.0.2 builds clean; 7.0.4 and 7.0.5 (latest published at the time) both fail identically. Fixed by pinning astro to exact `7.0.2` in `package.json` (commit f2a93f51, on the `dependabot/npm_and_yarn/minor-and-patch-8ef9cc3800` branch) while keeping the other 8 dependency bumps from that same dependabot commit.
 
 ### 2026-07-01
 
