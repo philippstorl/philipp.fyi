@@ -24,7 +24,7 @@ Personal portfolio site for Philipp Storl — Astro v7, Tailwind v4, a couple of
 ## Stack facts that shape how to make changes
 
 - **Astro-first, React only where needed.** The only React components are `src/components/ui/ContactForm.tsx` and `src/components/ui/ThemeToggle.tsx`. Everything else is `.astro`. Don't reach for React for new components unless there's real interactivity that needs it.
-- **Tailwind v4 is CSS-first** — there is no `tailwind.config.js`. Theme tokens (fonts, colors, animations) live in the `@theme` block in `src/styles/global.css`.
+- **Tailwind v4 is CSS-first** — there is no `tailwind.config.js`. Theme tokens (fonts, colors, animations) live in the `@theme` block in `src/styles/global.css`. **Do not put infinite animation tokens in `@theme`** (e.g. `--animate-foo: foo 2s infinite`): Tailwind v4 auto-generates an unconditional `.animate-foo` utility class from every `--animate-*` token, which overrides any media-query-guarded manual class definition and silently breaks `prefers-reduced-motion` gating. Define infinite animations only as a `@keyframes` + `.animate-foo { animation: ... }` class, both inside the `@media (prefers-reduced-motion: no-preference)` block — no `@theme` token.
 - **TypeScript strict mode** (`astro/tsconfigs/strict.json`), path alias `@/*` → `src/*` (see `tsconfig.json`).
 - **Node 26** is pinned in both `netlify.toml` and CI — match it locally.
 

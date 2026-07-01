@@ -11,6 +11,12 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-07-01
+
+- Adding a second animated element (a ping ring) to a pulsing dot creates visual beat interference that reads as a "double breathe" regardless of how the two durations are synchronized — the ring's scale+opacity expansion is a distinct visual event that competes with the inner dot's opacity breathe. The fix was to drop the ring and use a single dot with a symmetric `ease-in-out` opacity cycle; the ping ring idea is a dead end for this "constant breathe" use case.
+- Tailwind v4 auto-generates an unconditional `.animate-*` utility class from every `--animate-*` token in `@theme`, which silently overrides any `@media (prefers-reduced-motion: no-preference)`-gated manual class definition on the same element — the motion guard only holds if the keyframe is also undefined outside the media block (undefined keyframe = animation none). Promoted to [CLAUDE.md](CLAUDE.md) under the Tailwind v4 stack-facts bullet.
+- An infinite CSS animation whose first keyframe is below the element's natural property value needs `animation-fill-mode: backwards` (or `both`) — without it, the browser renders one frame at the natural value before snapping to the keyframe value when the first tick fires. Caught by `self-review` on this session's `dot-breathe` keyframe (`opacity: 0.3` at 0% vs. the span's default `opacity: 1`).
+
 ### 2026-06-30
 
 - Discovered Astro's `<Image>` crops server-side via Sharp when explicit `width`/`height` are passed, so a CSS `object-position` class on the rendered `<img>` is a no-op against an already-cropped file — only the component's own `position` prop actually controls the crop anchor. Caught by reading the generated webp asset directly (`sips -g pixelWidth -g pixelHeight`) rather than trusting a Playwright screenshot, after a CSS-only `object-top` fix visibly changed nothing. Promoted to [CLAUDE.md](CLAUDE.md)'s "Conventions to respect" section.
