@@ -16,10 +16,12 @@ const years = getYearsOfExperience()
     <main
         class="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center px-6 py-24 text-center"
     >
-        <!--
+        {
+            /*
             The large "404" is purely decorative — aria-hidden keeps
             screen readers focused on the meaningful h1 below.
-        -->
+        */
+        }
         <p
             class="mb-0 font-display leading-none font-normal text-accent/10 select-none"
             style="font-size: clamp(8rem, 28vw, 18rem); font-variation-settings: 'opsz' 80"
@@ -28,7 +30,6 @@ const years = getYearsOfExperience()
             404
         </p>
 
-        <!-- Title — the actual heading -->
         <h1
             class="-mt-4 mb-5 font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
             style="font-variation-settings: 'opsz' 48"

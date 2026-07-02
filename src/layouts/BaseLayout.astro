@@ -31,12 +31,10 @@ const ogImageURL = new URL(ogImage, Astro.site)
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="generator" content={Astro.generator} />
 
-        <!-- Primary -->
         <title>{fullTitle}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
 
-        <!-- Open Graph -->
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalURL} />
         <meta property="og:title" content={fullTitle} />
@@ -46,13 +44,11 @@ const ogImageURL = new URL(ogImage, Astro.site)
         <meta property="og:image:height" content="630" />
         <meta property="og:site_name" content={SITE_NAME} />
 
-        <!-- Twitter / X -->
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={fullTitle} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={ogImageURL} />
 
-        <!-- Mobile browser chrome color -->
         <meta
             name="theme-color"
             media="(prefers-color-scheme: light)"
@@ -68,13 +64,15 @@ const ogImageURL = new URL(ogImage, Astro.site)
 
         <ClientRouter />
 
-        <!--
+        {
+            /*
             Dark mode: runs synchronously before first paint to prevent flash.
             Reads localStorage, falls back to OS preference. Also reapplied on
             astro:after-swap, since the view-transitions router replaces the
             <html> element's attributes (including class) with the incoming
             page's static markup, which doesn't have the class baked in.
-        -->
+        */
+        }
         <script is:inline>
             ;(function () {
                 function applyStoredTheme() {

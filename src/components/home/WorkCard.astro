@@ -15,7 +15,8 @@ const { title, description, category, tags, year, featured, coverImage } =
 const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
 ---
 
-<!--
+{
+    /*
     Card uses the stretched-link pattern:
     - Outer element is <article>, not <a>
     - The <a> wraps only the title text
@@ -23,7 +24,8 @@ const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
       to cover the entire card via a CSS pseudo-element
     - Any future interactive elements inside the card remain accessible
       (they sit above the pseudo-element in stacking order)
--->
+*/
+}
 <article
     class:list={[
         'group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-card',
@@ -32,7 +34,6 @@ const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
         'focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-background',
     ]}
 >
-    <!-- Teaser screenshot — optional, falls back to today's text-only card -->
     {
         coverImage && (
             <div
@@ -54,13 +55,11 @@ const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
     }
 
     <div class="flex flex-1 flex-col p-6 md:p-8">
-        <!-- Top: category badge + year -->
         <div class="mb-4 flex items-start justify-between gap-4">
             <CategoryBadge category={category} />
             <span class="text-xs text-muted">{year}</span>
         </div>
 
-        <!-- Title — the actual <a> element, extended to full card via ::after -->
         <h3
             class:list={[
                 'mb-3 font-display leading-snug font-normal tracking-tight text-foreground',
@@ -78,12 +77,10 @@ const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
             </a>
         </h3>
 
-        <!-- Description -->
         <p class="mb-6 grow text-sm leading-relaxed text-muted">
             {description}
         </p>
 
-        <!-- Bottom: tags + arrow -->
         <div class="flex items-end justify-between gap-4">
             <ul class="flex flex-wrap gap-1.5">
                 {

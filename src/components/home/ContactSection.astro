@@ -2,11 +2,13 @@
 import ContactForm from '@/components/ui/ContactForm'
 ---
 
-<!--
+{
+    /*
     The hidden <form> below is required for Netlify's deploy-time spider to
     detect and register the form. The actual submission is handled by the
     React ContactForm component via fetch().
--->
+*/
+}
 <form
     name="contact"
     data-netlify="true"
@@ -24,7 +26,6 @@ import ContactForm from '@/components/ui/ContactForm'
     class="mx-auto max-w-6xl px-6 py-24 md:py-32"
 >
     <div class="grid grid-cols-1 gap-12 md:grid-cols-2">
-        <!-- Left: heading + invitation text -->
         <div class="flex flex-col justify-center">
             <h2
                 id="contact-heading"
@@ -43,7 +44,6 @@ import ContactForm from '@/components/ui/ContactForm'
             </p>
         </div>
 
-        <!-- Right: contact form -->
         <div>
             <ContactForm client:load />
         </div>

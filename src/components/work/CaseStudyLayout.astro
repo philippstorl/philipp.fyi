@@ -15,7 +15,6 @@ const { title, description, category, year, tags } = Astro.props
 ---
 
 <div class="mx-auto max-w-3xl px-6 py-24">
-    <!-- Back navigation -->
     <a
         href="/#work"
         class="mb-12 inline-flex items-center gap-1.5 text-sm text-muted transition-colors duration-150 hover:text-accent"
@@ -23,7 +22,6 @@ const { title, description, category, year, tags } = Astro.props
         ← All work
     </a>
 
-    <!-- Article header -->
     <header class="mt-10 mb-12">
         <div class="mb-5 flex items-center gap-3">
             <CategoryBadge category={category} />
@@ -39,7 +37,6 @@ const { title, description, category, year, tags } = Astro.props
             {description}
         </p>
 
-        <!-- Tech / topic tags -->
         <ul class="flex flex-wrap gap-2" aria-label="Technologies and topics">
             {
                 tags.map((tag) => (
@@ -53,7 +50,6 @@ const { title, description, category, year, tags } = Astro.props
 
     <hr class="mb-12 border-border" />
 
-    <!-- MDX content -->
     <div
         class="prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-blockquote:border-accent prose-blockquote:text-muted prose-code:font-mono prose-code:text-sm"
     >
@@ -62,7 +58,6 @@ const { title, description, category, year, tags } = Astro.props
 
     <ImageLightbox />
 
-    <!-- Footer navigation -->
     <div class="mt-20 border-t border-border pt-10">
         <a
             href="/#work"
