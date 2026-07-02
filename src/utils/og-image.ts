@@ -2,6 +2,7 @@ import satori from 'satori'
 import sharp from 'sharp'
 import { readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
+import { CATEGORY_HEX_COLORS, type WorkCategory } from '@/utils/category-colors'
 
 // readdirSync lets us find the correct filename without hardcoding it.
 
@@ -92,10 +93,60 @@ async function buildCoverImageDataUri(coverImagePath: string): Promise<string> {
 // Satori does not accept JSX in a .ts file — the template is
 // written using plain nested objects (equivalent to h() calls).
 
+// Shared by both label node variants below.
+const labelBaseStyle = {
+    fontSize: 20,
+    fontFamily: 'DM Sans',
+    marginBottom: '20px',
+    letterSpacing: '-0.01em',
+}
+
+// A case study's category renders as the same pill badge used by
+// WorkCard.astro/CategoryBadge.astro (see category-colors.ts) — borderRadius
+// 9999 and the 6px/16px padding are Satori's equivalent of that component's
+// `rounded-full` and `px-2.5 py-0.5` Tailwind classes, scaled up for
+// OG-image poster legibility.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildCategoryBadgeNode(category: WorkCategory): any {
+    const { text, border } = CATEGORY_HEX_COLORS[category]
+    return {
+        type: 'div',
+        props: {
+            style: {
+                ...labelBaseStyle,
+                display: 'flex',
+                alignItems: 'center',
+                // Parent column defaults to align-items: stretch — without
+                // this the bordered pill would stretch full-width.
+                alignSelf: 'flex-start',
+                fontWeight: 500,
+                color: text,
+                border: `1px solid ${border}`,
+                borderRadius: 9999,
+                padding: '6px 16px',
+            },
+            children: category,
+        },
+    }
+}
+
+// Plain-text top label used by non-category OG images (home/principles).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function buildPlainLabelNode(label: string): any {
+    return {
+        type: 'div',
+        props: {
+            style: { ...labelBaseStyle, color: colors.accent },
+            children: label,
+        },
+    }
+}
+
 function buildTemplate(
     title: string,
     label?: string,
     coverImageDataUri?: string,
+    category?: WorkCategory,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): any {
     // A cover image narrows the text column, so longer titles need a smaller
@@ -112,21 +163,11 @@ function buildTemplate(
             ? 58
             : 46
 
-    const labelNode = label
-        ? {
-              type: 'div',
-              props: {
-                  style: {
-                      fontSize: 20,
-                      fontFamily: 'DM Sans',
-                      color: colors.accent,
-                      marginBottom: '20px',
-                      letterSpacing: '-0.01em',
-                  },
-                  children: label,
-              },
-          }
-        : { type: 'div', props: { style: { height: '40px' } } }
+    const labelNode = category
+        ? buildCategoryBadgeNode(category)
+        : label
+          ? buildPlainLabelNode(label)
+          : { type: 'div', props: { style: { height: '40px' } } }
 
     return {
         type: 'div',
@@ -243,30 +284,34 @@ export async function generateOgImage(
     title: string,
     label?: string,
     coverImagePath?: string,
+    category?: WorkCategory,
 ): Promise<Response> {
     const fonts = loadFonts()
     const coverImageDataUri = coverImagePath
         ? await buildCoverImageDataUri(coverImagePath)
         : undefined
 
-    const svg = await satori(buildTemplate(title, label, coverImageDataUri), {
-        width: OG_WIDTH,
-        height: OG_HEIGHT,
-        fonts: [
-            {
-                name: 'Fraunces',
-                data: fonts.fraunces,
-                weight: 400,
-                style: 'normal',
-            },
-            {
-                name: 'DM Sans',
-                data: fonts.dmSans,
-                weight: 400,
-                style: 'normal',
-            },
-        ],
-    })
+    const svg = await satori(
+        buildTemplate(title, label, coverImageDataUri, category),
+        {
+            width: OG_WIDTH,
+            height: OG_HEIGHT,
+            fonts: [
+                {
+                    name: 'Fraunces',
+                    data: fonts.fraunces,
+                    weight: 400,
+                    style: 'normal',
+                },
+                {
+                    name: 'DM Sans',
+                    data: fonts.dmSans,
+                    weight: 400,
+                    style: 'normal',
+                },
+            ],
+        },
+    )
 
     const png = await sharp(Buffer.from(svg)).png().toBuffer()
 

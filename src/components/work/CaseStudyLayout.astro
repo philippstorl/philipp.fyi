@@ -1,10 +1,12 @@
 ---
 import ImageLightbox from './ImageLightbox.astro'
+import CategoryBadge from '@/components/ui/CategoryBadge.astro'
+import type { WorkCategory } from '@/utils/category-colors'
 
 interface Props {
     title: string
     description: string
-    category: string
+    category: WorkCategory
     year: string
     tags: string[]
 }
@@ -23,9 +25,10 @@ const { title, description, category, year, tags } = Astro.props
 
     <!-- Article header -->
     <header class="mt-10 mb-12">
-        <p class="mb-5 text-sm font-medium text-muted">
-            {category} &middot; {year}
-        </p>
+        <div class="mb-5 flex items-center gap-3">
+            <CategoryBadge category={category} />
+            <span class="text-sm text-muted">{year}</span>
+        </div>
         <h1
             class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"
             style="font-variation-settings: 'opsz' 72"
