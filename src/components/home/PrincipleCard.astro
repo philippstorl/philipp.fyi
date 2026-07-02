@@ -12,13 +12,9 @@ const number = slug.split('-')[0]
 const href = `/principles/#${slug}`
 ---
 
-<!--
-    Card uses the stretched-link pattern (see WorkCard.astro):
-    - Outer element is <article>, not <a>
-    - The <a> wraps only the title text
-    - after:absolute after:inset-0 on the <a> extends the click target
-      to cover the entire card via a CSS pseudo-element
--->
+{
+    /* Card uses the stretched-link pattern — see WorkCard.astro for the rationale. */
+}
 <article
     class:list={[
         'group relative flex cursor-pointer flex-col rounded-xl border border-border bg-card p-6',
@@ -26,10 +22,8 @@ const href = `/principles/#${slug}`
         'focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-background',
     ]}
 >
-    <!-- Order number -->
     <span class="mb-4 font-mono text-xs text-muted">{number}</span>
 
-    <!-- Title — the actual <a> element, extended to full card via ::after -->
     <h3
         class="mb-3 font-display text-lg leading-snug font-normal tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent"
         style="font-variation-settings: 'opsz' 24"
@@ -43,7 +37,6 @@ const href = `/principles/#${slug}`
         </a>
     </h3>
 
-    <!-- Description -->
     <p class="text-sm leading-relaxed text-muted">
         {description}
     </p>

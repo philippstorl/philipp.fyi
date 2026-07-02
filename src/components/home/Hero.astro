@@ -7,7 +7,6 @@ import { hero } from '@/data/hero'
     aria-label="Introduction"
     class="mx-auto max-w-6xl px-6 py-32 md:py-44 lg:py-52"
 >
-    <!-- Availability badge -->
     {
         hero.available && (
             <div class="mb-10 animate-fade-up">
@@ -19,7 +18,6 @@ import { hero } from '@/data/hero'
         )
     }
 
-    <!-- Headline -->
     <h1
         class="mb-6 max-w-4xl animate-fade-up font-display text-5xl leading-[1.05] font-normal tracking-tight text-foreground [animation-delay:100ms] md:text-6xl lg:text-7xl"
         style="font-variation-settings: 'opsz' 80"
@@ -27,7 +25,6 @@ import { hero } from '@/data/hero'
         {hero.headline}
     </h1>
 
-    <!-- Description -->
     <div class="mb-10 max-w-xl animate-fade-up [animation-delay:200ms]">
         <p class="text-lg leading-relaxed text-muted">
             {hero.subheading}
@@ -41,7 +38,6 @@ import { hero } from '@/data/hero'
         </p>
     </div>
 
-    <!-- CTAs -->
     <div
         class="flex animate-fade-up flex-wrap items-center gap-3 [animation-delay:300ms]"
     >

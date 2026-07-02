@@ -7,7 +7,6 @@ import { about } from '@/data/about'
     aria-labelledby="about-heading"
     class="mx-auto max-w-6xl px-6 py-24 md:py-32"
 >
-    <!-- Section heading -->
     <div class="mb-12">
         <h2
             id="about-heading"
@@ -18,9 +17,7 @@ import { about } from '@/data/about'
         </h2>
     </div>
 
-    <!-- Two-column: bio text (left) + key facts (right) -->
     <div class="grid grid-cols-1 gap-12 md:grid-cols-5">
-        <!-- Bio paragraphs — wider column -->
         <div class="space-y-5 md:col-span-3">
             {
                 about.paragraphs.map((para) => (
@@ -31,7 +28,6 @@ import { about } from '@/data/about'
             }
         </div>
 
-        <!-- Key facts — narrower column -->
         <div class="md:col-span-2">
             <dl
                 class="divide-y divide-border overflow-hidden rounded-xl border border-border bg-card"

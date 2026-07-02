@@ -11,7 +11,6 @@ const pathname = Astro.url.pathname
     transition:persist
 >
     <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <!-- Name mark -->
         <a
             href="/"
             class="font-display text-base font-normal tracking-tight text-foreground transition-colors duration-150 hover:text-accent"
@@ -20,7 +19,6 @@ const pathname = Astro.url.pathname
             Philipp Storl
         </a>
 
-        <!-- Desktop navigation -->
         <nav aria-label="Main navigation" class="hidden md:block">
             <ul class="flex items-center gap-8">
                 {
@@ -53,11 +51,9 @@ const pathname = Astro.url.pathname
             </ul>
         </nav>
 
-        <!-- Right side: theme toggle + mobile menu trigger -->
         <div class="flex items-center gap-1">
             <ThemeToggle client:load />
 
-            <!-- Mobile menu trigger -->
             <button
                 id="nav-toggle"
                 aria-label="Toggle navigation"
@@ -103,7 +99,6 @@ const pathname = Astro.url.pathname
         </div>
     </div>
 
-    <!-- Mobile navigation panel -->
     <nav
         id="mobile-nav"
         aria-label="Mobile navigation"
