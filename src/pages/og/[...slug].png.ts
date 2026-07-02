@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { generateOgImage } from '@/utils/og-image'
 import { getYearsOfExperience } from '@/utils/experience'
+import type { WorkCategory } from '@/utils/category-colors'
 
 // entry.data.coverImage only exposes the Astro-optimized public URL (e.g.
 // /_astro/hash.png), which isn't guaranteed to exist on disk yet during this
@@ -34,7 +35,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
             params: { slug: `work/${entry.id.replace(/\.(mdx?|md)$/, '')}` },
             props: {
                 title: entry.data.title,
-                label: entry.data.category,
+                category: entry.data.category,
                 coverImagePath:
                     entry.data.coverImage && entry.filePath
                         ? resolveCoverImagePath(entry.filePath)
@@ -45,10 +46,11 @@ export const getStaticPaths: GetStaticPaths = async () => {
 }
 
 export const GET: APIRoute = async ({ props }) => {
-    const { title, label, coverImagePath } = props as {
+    const { title, label, coverImagePath, category } = props as {
         title: string
         label?: string
         coverImagePath?: string
+        category?: WorkCategory
     }
-    return generateOgImage(title, label, coverImagePath)
+    return generateOgImage(title, label, coverImagePath, category)
 }

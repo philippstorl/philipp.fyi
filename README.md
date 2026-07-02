@@ -185,7 +185,7 @@ src/
   components/
     home/          → Hero, WorkSection, WorkCard, PrinciplesSection, PrincipleCard, AboutSection, ContactSection
     layout/        → Header, Footer
-    ui/            → ThemeToggle, ContactForm, SocialIcon
+    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge
     work/          → CaseStudyLayout, ImageLightbox
   content/
     work/          → Case study MDX files (4 entries)
@@ -210,8 +210,9 @@ src/
   styles/
     global.css     → Tailwind v4 config, design tokens, dark mode
   utils/
-    og-image.ts    → Satori template + Sharp PNG generation
-    experience.ts  → Computes career-length and Staffbase-tenure year figures from fixed dates
+    og-image.ts        → Satori template + Sharp PNG generation
+    experience.ts      → Computes career-length and Staffbase-tenure year figures from fixed dates
+    category-colors.ts → Shared category → badge-color mapping (Tailwind classes + Satori hex equivalents)
 e2e/               → Playwright E2E tests
 public/
   favicon.svg
