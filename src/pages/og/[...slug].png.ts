@@ -31,6 +31,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
             params: { slug: 'principles' },
             props: { title: 'Principles', label: 'How I work' },
         },
+        {
+            params: { slug: 'recommendations' },
+            props: { title: 'Recommendations', label: 'What others say' },
+        },
         ...workEntries.map((entry) => ({
             params: { slug: `work/${entry.id.replace(/\.(mdx?|md)$/, '')}` },
             props: {

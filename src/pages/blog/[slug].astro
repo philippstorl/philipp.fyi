@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Footer from '@/components/layout/Footer.astro'
+import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
 
 export async function getStaticPaths() {
     const posts = await getCollection('blog', ({ data }) => !data.draft)
@@ -62,7 +63,7 @@ const { title, description, date, tags } = post.data
         <hr class="mb-12 border-border" />
 
         <div
-            class="prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-blockquote:border-accent prose-blockquote:text-muted prose-code:font-mono prose-code:text-sm"
+            class={`prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline ${PROSE_BLOCKQUOTE_CLASSES} prose-code:font-mono prose-code:text-sm`}
         >
             <Content />
         </div>

@@ -101,14 +101,15 @@ npx playwright test e2e/home.spec.ts --debug
 
 ### Test coverage
 
-| File                     | What it covers                                                                                 |
-| ------------------------ | ---------------------------------------------------------------------------------------------- |
-| `e2e/home.spec.ts`       | Title, headline, 4 work cards, 6 principle cards, contact section                              |
-| `e2e/navigation.spec.ts` | Header, nav links, name mark, theme toggle                                                     |
-| `e2e/work.spec.ts`       | All 4 case study pages render, card links resolve correctly                                    |
-| `e2e/lightbox.spec.ts`   | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence |
-| `e2e/principles.spec.ts` | 15 principles shown, numbered 01–15, CTA links to /principles                                  |
-| `e2e/404.spec.ts`        | 404 status on unknown routes, correct headline, back home link                                 |
+| File                          | What it covers                                                                                 |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| `e2e/home.spec.ts`            | Title, headline, 4 work cards, 6 principle cards, 6 recommendation cards, contact section      |
+| `e2e/navigation.spec.ts`      | Header, nav links, name mark, theme toggle                                                     |
+| `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly                                    |
+| `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence |
+| `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles                                  |
+| `e2e/recommendations.spec.ts` | 13 recommendations shown, CTA links to /recommendations                                        |
+| `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                 |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
@@ -183,24 +184,26 @@ When ready to add Plausible (or another provider):
 ```text
 src/
   components/
-    home/          → Hero, WorkSection, WorkCard, PrinciplesSection, PrincipleCard, AboutSection, ContactSection
+    home/          → Hero, WorkSection, WorkCard, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, AboutSection, ContactSection
     layout/        → Header, Footer
-    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge
+    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar
     work/          → CaseStudyLayout, ImageLightbox
   content/
     work/          → Case study MDX files (4 entries)
     principles/    → Principle MD files (15 entries)
     blog/          → Blog post MD files (all draft by default)
   data/
-    about.ts       → About section copy and facts
-    hero.ts        → Hero section copy
-    navigation.ts  → Nav items
-    social.ts      → LinkedIn, GitHub, Contact links
+    about.ts            → About section copy and facts
+    hero.ts             → Hero section copy
+    navigation.ts       → Nav items
+    social.ts           → LinkedIn, GitHub, Contact links
+    recommendations.ts  → LinkedIn recommendations (13 entries, 6 featured on the home page)
   layouts/
     BaseLayout.astro
   pages/
     index.astro
     principles.astro
+    recommendations.astro
     work/[slug].astro
     blog/index.astro
     blog/[slug].astro

@@ -1,0 +1,82 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Header from '@/components/layout/Header.astro'
+import Footer from '@/components/layout/Footer.astro'
+import InitialsAvatar from '@/components/ui/InitialsAvatar.astro'
+import { recommendations } from '@/data/recommendations'
+import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
+---
+
+<BaseLayout
+    title="Recommendations"
+    description="What colleagues, managers, and partners have said about working with Philipp Storl."
+    ogImage="/og/recommendations.png"
+>
+    <Header />
+    <main>
+        <div class="mx-auto max-w-3xl px-6 pt-24 pb-16 md:pt-32">
+            <p class="mb-4 text-sm font-medium text-muted">What others say</p>
+            <h1
+                class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"
+                style="font-variation-settings: 'opsz' 72"
+            >
+                Recommendations
+            </h1>
+            <p class="text-lg leading-relaxed text-muted">
+                Recommendations from colleagues, managers, direct reports, and
+                external partners I've worked with over the years — collected
+                from{' '}
+                <a
+                    href="https://www.linkedin.com/in/philipp-storl/details/recommendations/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-accent no-underline hover:underline"
+                >
+                    LinkedIn
+                </a>, unedited except for formatting.
+            </p>
+        </div>
+
+        <div class="mx-auto max-w-3xl px-6 pb-32">
+            <ol class="flex flex-col gap-4">
+                {
+                    recommendations.map((r) => (
+                        <li
+                            id={r.slug}
+                            class="scroll-mt-24 rounded-xl border border-border bg-card p-8 md:p-10"
+                        >
+                            <div class="mb-6 flex items-center gap-4">
+                                <InitialsAvatar
+                                    name={r.name}
+                                    class="h-12 w-12 text-base"
+                                />
+                                <div>
+                                    <h2
+                                        class="font-display text-xl leading-snug font-normal tracking-tight text-foreground"
+                                        style="font-variation-settings: 'opsz' 24"
+                                    >
+                                        {r.name}
+                                    </h2>
+                                    <p class="text-sm text-muted">{r.title}</p>
+                                    <p class="text-sm text-muted">
+                                        {r.relationship} · {r.date}
+                                    </p>
+                                </div>
+                            </div>
+                            <div
+                                class={`prose max-w-none text-muted prose-neutral dark:prose-invert ${PROSE_BLOCKQUOTE_CLASSES} prose-blockquote:[quotes:none]`}
+                            >
+                                <blockquote>
+                                    {r.quote.map((paragraph) => (
+                                        <p>{paragraph}</p>
+                                    ))}
+                                </blockquote>
+                            </div>
+                        </li>
+                    ))
+                }
+            </ol>
+        </div>
+    </main>
+    <Footer />
+</BaseLayout>
