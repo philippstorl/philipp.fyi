@@ -1,0 +1,46 @@
+---
+import type { Recommendation } from '@/data/recommendations'
+import InitialsAvatar from '@/components/ui/InitialsAvatar.astro'
+
+interface Props {
+    recommendation: Recommendation
+}
+
+const { recommendation } = Astro.props
+const { slug, name, title, quote } = recommendation
+const href = `/recommendations/#${slug}`
+---
+
+{
+    /* Card uses the stretched-link pattern — see WorkCard.astro for the rationale. */
+}
+<article
+    class:list={[
+        'group relative flex cursor-pointer flex-col rounded-xl border border-border bg-card p-6',
+        'transition-colors duration-200 hover:border-accent/40',
+        'focus-within:ring-2 focus-within:ring-accent focus-within:ring-offset-2 focus-within:ring-offset-background',
+    ]}
+>
+    <div class="mb-4 flex items-center gap-3">
+        <InitialsAvatar name={name} class="h-10 w-10 text-sm" />
+        <div class="min-w-0">
+            <h3
+                class="truncate font-display text-base leading-snug font-normal tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent"
+                style="font-variation-settings: 'opsz' 24"
+            >
+                <a
+                    href={href}
+                    data-astro-prefetch
+                    class="after:absolute after:inset-0 after:rounded-xl focus-visible:outline-none"
+                >
+                    {name}
+                </a>
+            </h3>
+            <p class="truncate text-xs text-muted">{title}</p>
+        </div>
+    </div>
+
+    <p class="line-clamp-4 text-sm leading-relaxed text-muted">
+        {quote[0]}
+    </p>
+</article>

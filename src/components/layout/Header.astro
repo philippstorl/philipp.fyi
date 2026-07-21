@@ -24,9 +24,9 @@ const pathname = Astro.url.pathname
                 {
                     navItems.map((item) => {
                         const isActive =
-                            item.href === '/principles/' &&
-                            (pathname === '/principles/' ||
-                                pathname === '/principles')
+                            !item.href.includes('#') &&
+                            (pathname === item.href ||
+                                `${pathname}/` === item.href)
                         return (
                             <li>
                                 <a

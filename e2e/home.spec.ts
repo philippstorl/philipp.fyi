@@ -36,6 +36,12 @@ test.describe('Home page', () => {
         await expect(cards).toHaveCount(6)
     })
 
+    test('shows 6 recommendation cards', async ({ page }) => {
+        await page.goto('/')
+        const cards = page.locator('#recommendations article')
+        await expect(cards).toHaveCount(6)
+    })
+
     test('contact section is present', async ({ page }) => {
         await page.goto('/')
         await expect(page.locator('#contact')).toBeVisible()

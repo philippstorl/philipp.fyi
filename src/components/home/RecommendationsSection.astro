@@ -1,0 +1,42 @@
+---
+import RecommendationCard from './RecommendationCard.astro'
+import { recommendations } from '@/data/recommendations'
+import { ArrowRight } from 'lucide-react'
+
+const preview = recommendations.filter((r) => r.featured).slice(0, 6)
+const totalCount = recommendations.length
+---
+
+<section
+    id="recommendations"
+    aria-labelledby="recommendations-heading"
+    class="mx-auto max-w-6xl px-6 py-24 md:py-32"
+>
+    <div
+        class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
+    >
+        <h2
+            id="recommendations-heading"
+            class="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
+            style="font-variation-settings: 'opsz' 48"
+        >
+            What others say
+        </h2>
+        <a
+            href="/recommendations/"
+            data-astro-prefetch
+            class="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-muted transition-colors duration-150 hover:text-accent"
+        >
+            Read all {totalCount} recommendations
+            <ArrowRight
+                size={14}
+                strokeWidth={1.75}
+                className="transition-transform duration-150 group-hover:translate-x-0.5"
+            />
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {preview.map((r) => <RecommendationCard recommendation={r} />)}
+    </div>
+</section>

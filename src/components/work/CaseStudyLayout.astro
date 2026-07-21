@@ -2,6 +2,7 @@
 import ImageLightbox from './ImageLightbox.astro'
 import CategoryBadge from '@/components/ui/CategoryBadge.astro'
 import type { WorkCategory } from '@/utils/category-colors'
+import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
 
 interface Props {
     title: string
@@ -51,7 +52,7 @@ const { title, description, category, year, tags } = Astro.props
     <hr class="mb-12 border-border" />
 
     <div
-        class="prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline prose-blockquote:border-accent prose-blockquote:text-muted prose-code:font-mono prose-code:text-sm"
+        class={`prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline ${PROSE_BLOCKQUOTE_CLASSES} prose-code:font-mono prose-code:text-sm`}
     >
         <slot />
     </div>

@@ -23,6 +23,10 @@ const checks = [
         regex: /href\s*=\s*\{?\s*['"]\/principles(?=['"\s\}])/g,
     },
     {
+        name: 'missing trailing slash for /recommendations',
+        regex: /href\s*=\s*\{?\s*['"]\/recommendations(?=['"\s\}])/g,
+    },
+    {
         name: 'missing trailing slash for /blog',
         regex: /href\s*=\s*\{?\s*['"]\/blog(?=['"\s\}])/g,
     },
@@ -32,11 +36,11 @@ const checks = [
     },
     {
         name: 'missing trailing slash in page.goto',
-        regex: /page\.goto\(\s*['"]\/(principles|blog|work\/[^'"\s]+[^\/\s'"\}])['"]\s*\)/g,
+        regex: /page\.goto\(\s*['"]\/(principles|recommendations|blog|work\/[^'"\s]+[^\/\s'"\}])['"]\s*\)/g,
     },
     {
         name: 'missing trailing slash in toHaveURL',
-        regex: /toHaveURL\(\s*['"]\/(principles|blog|work\/[^'"\s]+[^\/\s'"\}])['"]\s*\)/g,
+        regex: /toHaveURL\(\s*['"]\/(principles|recommendations|blog|work\/[^'"\s]+[^\/\s'"\}])['"]\s*\)/g,
     },
 ]
 

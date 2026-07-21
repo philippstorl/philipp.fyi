@@ -1,0 +1,26 @@
+---
+interface Props {
+    name: string
+    class?: string
+}
+
+const { name, class: className } = Astro.props
+const initials = name
+    .replace(/^(Dr|Mr|Mrs|Ms)\.\s+/, '')
+    .split(' ')
+    .filter(Boolean)
+    .map((word) => word[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase()
+---
+
+<div
+    class:list={[
+        'flex shrink-0 items-center justify-center rounded-full border border-accent/20 bg-accent/10 font-display text-accent',
+        className,
+    ]}
+    aria-hidden="true"
+>
+    {initials}
+</div>

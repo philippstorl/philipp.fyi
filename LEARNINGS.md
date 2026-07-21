@@ -13,6 +13,11 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-07-21
+
+- Astro's compiler trims trailing line-whitespace before an inline tag to nothing, not a single space like JSX's line-join behavior — discovered while building the recommendations feature's LinkedIn link, confirmed by grepping the compiled `dist/` HTML (`collected from\n<a>` rendered as `collectedfromLinkedIn` with zero space until an explicit `{' '}` was added). Promoted to [CLAUDE.md](CLAUDE.md)'s conventions list, next to the related-but-distinct MDX figcaption gotcha.
+- Second confirmed case (see 2026-06-25 below for the first) of a `self-review` finding that was wrong and only refutable with context the isolated reviewer didn't have: it called `Header.astro`'s `${pathname}/ === item.href` fallback dead code, and the same `{' '}` above a no-op — both were correct, one relying on this file's own "trailing slashes aren't enforced server-side" open question (below) and the other on the empirical test from the same session. Re-verify `self-review` findings against session context before applying them, don't apply on trust.
+
 ### 2026-07-02
 
 - Issue #62 (Leadership badge reading too close to the Engineering/`--color-accent` hue in light mode): before landing on redistributing category hues across the wider warm range (promoted to [CLAUDE.md](CLAUDE.md)'s category-badge bullet, plus a new standing "prefer a named Tailwind swatch over arbitrary hex" convention), explored giving just the Leadership badge a subtle background-fill pill instead of the existing outline-only style, as a way to sidestep the AA-contrast-on-near-white-background chroma ceiling entirely. Rejected in favor of hue redistribution, since the user didn't want to restyle only one of the three badges — filled pills remain a viable option if a future category needs more separation than the ~95° of usable warm hue range (red through gold, before it reads as yellow-green) has room for.
