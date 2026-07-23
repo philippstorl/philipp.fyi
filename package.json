@@ -40,7 +40,7 @@
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
         "eslint": "^10.7.0",
-        "eslint-plugin-astro": "^2.1.1",
+        "eslint-plugin-astro": "^3.0.1",
         "eslint-plugin-jsx-a11y": "^6.0.0",
         "netlify-cli": "^26.2.0",
         "prettier": "^3.9.6",
