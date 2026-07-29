@@ -10,6 +10,21 @@ export interface Recommendation {
 
 export const recommendations: Recommendation[] = [
     {
+        slug: 'pooja-bhapkar',
+        name: 'Pooja Bhapkar',
+        title: 'Senior Graphic Designer at Staffbase',
+        date: 'July 29, 2026',
+        relationship: 'Pooja worked with Philipp on the same team',
+        featured: false,
+        quote: [
+            'I had the pleasure of working closely with Philipp at Staffbase over the past 4–5 years on a wide range of initiatives, from shaping the Staffbase website to delivering the VOICES event website.',
+            'Philipp was the person who onboarded me to our web development processes during my very first web project at Staffbase, and from then on he became my go-to expert for anything web-related. He is incredibly knowledgeable, process-driven, and always willing to help. If there was a question about our web setup, Philipp either had the answer or knew exactly how to find it.',
+            'What I appreciated most was collaborating with him on complex design and technical challenges. Our in-depth discussions always led to thoughtful, practical solutions that balanced user experience with technical excellence.',
+            'Beyond his technical expertise, Philipp genuinely cares about doing things the right way. He’s also (affectionately!) the "Slack police," helping keep communication organized and making sure nothing important slips through the cracks.',
+            'I can wholeheartedly recommend Philipp to anyone looking for a skilled web developer and a thoughtful collaborator. He’s someone you can always count on to bring expertise and structure to every project.',
+        ],
+    },
+    {
         slug: 'juliane-kiesenbauer',
         name: 'Dr. Juliane Kiesenbauer',
         title: 'General Manager / SVP at Staffbase',

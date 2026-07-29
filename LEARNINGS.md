@@ -13,6 +13,10 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-07-29
+
+- Adding a new `recommendations.ts` entry (Pooja Bhapkar) missed bumping `e2e/recommendations.spec.ts`'s hardcoded `toHaveCount(13)` to `14` — the `add-content` skill's "which e2e assertions need updating" coverage only applies to the three content collections (`work`/`principles`/`blog`), not the plain-array `recommendations.ts` pattern, so this gap wasn't caught until `self-review`. Promoted the count-bump requirement into [CLAUDE.md](CLAUDE.md)'s recommendations bullet.
+
 ### 2026-07-21
 
 - Astro's compiler trims trailing line-whitespace before an inline tag to nothing, not a single space like JSX's line-join behavior — discovered while building the recommendations feature's LinkedIn link, confirmed by grepping the compiled `dist/` HTML (`collected from\n<a>` rendered as `collectedfromLinkedIn` with zero space until an explicit `{' '}` was added). Promoted to [CLAUDE.md](CLAUDE.md)'s conventions list, next to the related-but-distinct MDX figcaption gotcha.

@@ -4,7 +4,7 @@ test.describe('Recommendations page', () => {
     test('shows all recommendations', async ({ page }) => {
         await page.goto('/recommendations/')
         const items = page.locator('ol li')
-        await expect(items).toHaveCount(13)
+        await expect(items).toHaveCount(14)
     })
 
     test('"What others say" CTA on home links to /recommendations/', async ({
