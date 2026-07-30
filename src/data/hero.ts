@@ -28,7 +28,7 @@ export const hero: HeroData = {
     subheading: "Principal Web Developer — full-stack, with a designer's eye.",
     description: `${getStaffbaseTenureYears()} years turning a one-person web setup into a scalable platform.`,
     experienceTagline: `${getYearsOfExperience()} years building for the web.`,
-    location: 'Leipzig / Chemnitz area, Germany · Remote-first.',
+    location: 'Chemnitz / Leipzig area, Germany · Remote-first.',
     links: [
         {
             label: 'LinkedIn',
