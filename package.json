@@ -42,7 +42,7 @@
         "eslint": "^10.8.0",
         "eslint-plugin-astro": "^3.0.1",
         "eslint-plugin-jsx-a11y": "^6.0.0",
-        "netlify-cli": "^26.2.0",
+        "netlify-cli": "^27.0.1",
         "prettier": "^3.9.6",
         "prettier-plugin-astro": "^0.14.0",
         "prettier-plugin-tailwindcss": "^0.8.1",
