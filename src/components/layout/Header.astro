@@ -123,6 +123,41 @@ const pathname = Astro.url.pathname
 </header>
 
 <script>
+    // Header persists across client-side navigations (transition:persist,
+    // so the ThemeToggle island and the listeners below don't get torn down
+    // on every page swap) — but that also means the desktop nav's "active
+    // link" classes, computed server-side from the page that was current
+    // when this DOM was first rendered, never get recomputed for the new
+    // URL. Re-running this on astro:page-load (which fires after every
+    // navigation, including ones that don't re-render persisted elements)
+    // keeps the active link in sync without needing a full nav re-render.
+    function updateActiveNav() {
+        const { pathname } = window.location
+        document
+            .querySelectorAll(
+                '#site-header nav[aria-label="Main navigation"] a',
+            )
+            .forEach((link) => {
+                const href = link.getAttribute('href')
+                const isActive =
+                    !!href &&
+                    !href.includes('#') &&
+                    (pathname === href || `${pathname}/` === href)
+                link.classList.toggle('text-foreground', isActive)
+                link.classList.toggle('after:w-full', isActive)
+                link.classList.toggle('text-muted', !isActive)
+                link.classList.toggle('hover:text-foreground', !isActive)
+                if (isActive) {
+                    link.setAttribute('aria-current', 'page')
+                } else {
+                    link.removeAttribute('aria-current')
+                }
+            })
+    }
+
+    updateActiveNav()
+    document.addEventListener('astro:page-load', updateActiveNav)
+
     const toggle = document.getElementById('nav-toggle')
     const nav = document.getElementById('mobile-nav')
     const iconMenu = document.getElementById('icon-menu')

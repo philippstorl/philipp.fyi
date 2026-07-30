@@ -1,0 +1,99 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Header from '@/components/layout/Header.astro'
+import Footer from '@/components/layout/Footer.astro'
+import InterlinkCard from '@/components/ui/InterlinkCard.astro'
+import { about } from '@/data/about'
+import { stack } from '@/data/stack'
+---
+
+<BaseLayout
+    title="About"
+    description="Principal Web Developer based in the Chemnitz / Leipzig area, Germany — full-stack, DevOps, and design, remote-first."
+    ogImage="/og/about.png"
+>
+    <Header />
+    <main>
+        <div class="mx-auto max-w-3xl px-6 pt-24 pb-16 md:pt-32">
+            <p class="mb-4 text-sm font-medium text-muted">Who I am</p>
+            <h1
+                class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"
+                style="font-variation-settings: 'opsz' 72"
+            >
+                About
+            </h1>
+            <p class="text-lg leading-relaxed text-muted">
+                Philipp Storl, Principal Web Developer based in the Chemnitz /
+                Leipzig area, Germany.
+            </p>
+        </div>
+
+        <div class="mx-auto max-w-3xl px-6 pb-24">
+            <div class="space-y-5">
+                {
+                    about.paragraphs.map((para) => (
+                        <p class="text-base leading-relaxed text-muted md:text-lg">
+                            {para}
+                        </p>
+                    ))
+                }
+            </div>
+
+            <dl class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {
+                    about.facts.map((fact) => (
+                        <div class="rounded-xl border border-border bg-card px-4 py-3.5">
+                            <dt class="text-xs font-medium text-muted">
+                                {fact.label}
+                            </dt>
+                            <dd class="mt-1 text-sm text-foreground">
+                                {fact.value}
+                            </dd>
+                        </div>
+                    ))
+                }
+            </dl>
+
+            <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <InterlinkCard
+                    href="/principles/"
+                    eyebrow="See how this plays out"
+                    label="Principles"
+                />
+                <InterlinkCard
+                    href="/recommendations/"
+                    eyebrow="Hear it from people I've worked with"
+                    label="Recommendations"
+                />
+            </div>
+        </div>
+
+        <div class="mx-auto max-w-3xl px-6 pb-32">
+            <h2
+                class="mb-4 font-display text-2xl leading-snug font-normal tracking-tight text-foreground md:text-3xl"
+                style="font-variation-settings: 'opsz' 36"
+            >
+                How this site is built
+            </h2>
+            <p class="mb-6 text-base leading-relaxed text-muted">
+                This site is itself a small example of the same approach:
+                static-first with Astro, JavaScript only for the two components
+                that actually need it, and linted for accessibility on every
+                push.
+            </p>
+            <ul class="flex flex-wrap gap-2">
+                {
+                    stack.map((item) => (
+                        <li
+                            class="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted"
+                            title={item.role}
+                        >
+                            {item.name}
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+    </main>
+    <Footer />
+</BaseLayout>

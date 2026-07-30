@@ -3,6 +3,7 @@ import { getCollection, render } from 'astro:content'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Footer from '@/components/layout/Footer.astro'
+import InterlinkCard from '@/components/ui/InterlinkCard.astro'
 import { getYearsOfExperience } from '@/utils/experience'
 
 const principles = (await getCollection('principles')).sort((a, b) =>
@@ -63,6 +64,21 @@ const years = getYearsOfExperience()
                     })
                 }
             </ol>
+        </div>
+
+        <div class="mx-auto max-w-3xl px-6 pb-32">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <InterlinkCard
+                    href="/about/"
+                    eyebrow="Meet the person behind them"
+                    label="About"
+                />
+                <InterlinkCard
+                    href="/recommendations/"
+                    eyebrow="See these principles in practice"
+                    label="Recommendations"
+                />
+            </div>
         </div>
     </main>
     <Footer />

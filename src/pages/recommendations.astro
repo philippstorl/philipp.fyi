@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Footer from '@/components/layout/Footer.astro'
 import InitialsAvatar from '@/components/ui/InitialsAvatar.astro'
+import InterlinkCard from '@/components/ui/InterlinkCard.astro'
 import { recommendations } from '@/data/recommendations'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
 ---
@@ -76,6 +77,21 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
                     ))
                 }
             </ol>
+        </div>
+
+        <div class="mx-auto max-w-3xl px-6 pb-32">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <InterlinkCard
+                    href="/about/"
+                    eyebrow="Meet the person they describe"
+                    label="About"
+                />
+                <InterlinkCard
+                    href="/principles/"
+                    eyebrow="The principles behind the work"
+                    label="Principles"
+                />
+            </div>
         </div>
     </main>
     <Footer />

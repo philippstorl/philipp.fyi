@@ -32,6 +32,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
             props: { title: 'Principles', label: 'How I work' },
         },
         {
+            params: { slug: 'about' },
+            props: { title: 'About', label: 'Who I am' },
+        },
+        {
             params: { slug: 'recommendations' },
             props: { title: 'Recommendations', label: 'What others say' },
         },

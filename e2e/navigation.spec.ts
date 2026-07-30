@@ -18,6 +18,44 @@ test.describe('Navigation', () => {
         await expect(page).toHaveURL('/principles/')
     })
 
+    test('About nav link leads to /about/', async ({ page }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/about/"]:visible').click()
+        await expect(page).toHaveURL('/about/')
+    })
+
+    test('active nav link updates after client-side navigation', async ({
+        page,
+    }) => {
+        // Header persists across client-side navigations (transition:persist),
+        // so the active-link state has to be recomputed on navigate rather
+        // than relying on the server-rendered class from the first page load.
+        await page.goto('/recommendations/')
+        const desktopNav = page.locator('nav[aria-label="Main navigation"]')
+        await expect(
+            desktopNav.locator('a[href="/recommendations/"]'),
+        ).toHaveAttribute('aria-current', 'page')
+
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/about/"]:visible').click()
+        await expect(page).toHaveURL('/about/')
+
+        await expect(desktopNav.locator('a[href="/about/"]')).toHaveAttribute(
+            'aria-current',
+            'page',
+        )
+        await expect(
+            desktopNav.locator('a[href="/recommendations/"]'),
+        ).not.toHaveAttribute('aria-current', 'page')
+    })
+
     test('logo/name mark navigates home', async ({ page }) => {
         await page.goto('/principles/')
         await page.click('#site-header a[href="/"]')
