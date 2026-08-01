@@ -75,7 +75,7 @@ export default function ContactForm() {
                     Message sent.
                 </p>
                 <p className="text-sm text-muted">
-                    Thank you for reaching out — I'll get back to you soon.
+                    Thank you for reaching out. I'll get back to you soon.
                 </p>
             </div>
         )

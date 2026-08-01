@@ -5,11 +5,15 @@ import Footer from '@/components/layout/Footer.astro'
 import InterlinkCard from '@/components/ui/InterlinkCard.astro'
 import { about } from '@/data/about'
 import { stack } from '@/data/stack'
+import {
+    getStaffbaseTenureYears,
+    getYearsOfExperience,
+} from '@/utils/experience'
 ---
 
 <BaseLayout
     title="About"
-    description="Principal Web Developer based in the Chemnitz / Leipzig area, Germany — full-stack, DevOps, and design, remote-first."
+    description={`Principal Web Developer with ${getYearsOfExperience()} years in web development, ${getStaffbaseTenureYears()} of them scaling staffbase.com. Full-stack, DevOps, and design. Chemnitz / Leipzig area, remote-first.`}
     ogImage="/og/about.png"
 >
     <Header />

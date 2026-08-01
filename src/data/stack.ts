@@ -10,7 +10,7 @@ export const stack: StackItem[] = [
     },
     {
         name: 'Tailwind CSS v4',
-        role: 'CSS-first config — theme tokens live in global.css, no config file',
+        role: 'CSS-first config: theme tokens live in global.css, no config file',
     },
     {
         name: 'React',

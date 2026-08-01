@@ -21,7 +21,7 @@ test.describe('Image lightbox', () => {
         await openLightboxOn(page, page.locator('.prose figure img').first())
 
         await expect(page.locator('#lightbox-caption')).toHaveText(
-            'Before — April 2020, plain HTML, agency-maintained',
+            'Before - April 2020, plain HTML, agency-maintained',
         )
         await expect(page.locator('#lightbox-counter')).toHaveText(
             counterText(1),
@@ -41,7 +41,7 @@ test.describe('Image lightbox', () => {
         await openLightboxOn(page, year2025)
 
         await expect(page.locator('#lightbox-caption')).toHaveText(
-            '2025 — second rebrand',
+            '2025 - second rebrand',
         )
         await expect(page.locator('#lightbox-counter')).toHaveText(
             counterText(7),
@@ -147,7 +147,7 @@ test.describe('Image lightbox', () => {
 
         await openLightboxOn(page, page.locator('.prose figure img').first())
         await expect(page.locator('#lightbox-caption')).toHaveText(
-            'Before — April 2020, plain HTML, agency-maintained',
+            'Before - April 2020, plain HTML, agency-maintained',
         )
     })
 })
@@ -184,7 +184,7 @@ test.describe('Image lightbox — brand-evolution', () => {
             )
         await openLightboxOn(page, bananatag)
         await expect(page.locator('#lightbox-caption')).toHaveText(
-            'March 2021 — Bananatag merger announcement',
+            'March 2021 - Bananatag merger announcement',
         )
     })
 
