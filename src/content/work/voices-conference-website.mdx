@@ -1,6 +1,6 @@
 ---
 title: "Six years evolving the VOICES conference website"
-description: "From introducing Eleventy as the framework to maintaining a multi-region, multi-state annual event website — and keeping it consistent through two complete rebrands."
+description: "From introducing Eleventy as the framework to maintaining a multi-region, multi-state annual event website, and keeping it consistent through two complete rebrands."
 category: "Engineering"
 tags:
     [
@@ -35,11 +35,11 @@ import voices2026Recordings from "./voices-conference-website/voices-2026-record
 import voices2026DeMobile from "./voices-conference-website/voices-2026-de-mobile.png"
 import voices2026DeMobileNav from "./voices-conference-website/voices-2026-de-mobile-nav.png"
 
-VOICES is Staffbase's flagship annual conference for internal communications and employee experience professionals, running since 2019. The website promoting it — voices.staffbase.com — is a different kind of problem than the main marketing site: it has to serve three distinct lifecycle states, support multiple simultaneous regional editions, and be rebuilt from scratch for each annual event while retaining accumulated improvements. I owned it solo from the ground up for six years.
+VOICES is Staffbase's flagship annual conference for internal communications and employee experience professionals, running since 2019. The website promoting it, voices.staffbase.com, is a different kind of problem than the main marketing site: it has to serve three distinct lifecycle states, support multiple simultaneous regional editions, and be rebuilt from scratch for each annual event while retaining accumulated improvements. I owned it solo from the ground up for six years.
 
 ## Introducing Eleventy
 
-When I took on the VOICES website in mid-2020, the existing setup was plain HTML, maintained by an external agency with some review from me along the way. "Deployment" meant uploading a zip file to AWS, where the domain itself was also hosted at the time. It worked, but it wasn't a system — there was no templating, no component reuse, and no real way to scale it as the conference grew into more regions. In July 2020 I ran a Proof of Concept with Eleventy — a lightweight static site generator — to validate whether it could handle the requirements: templating for components, data-driven content, multi-region support, and easy deployment through Netlify.
+When I took on the VOICES website in mid-2020, the existing setup was plain HTML, maintained by an external agency with some review from me along the way. "Deployment" meant uploading a zip file to AWS, where the domain itself was also hosted at the time. It worked, but it wasn't a system: there was no templating, no component reuse, and no real way to scale it as the conference grew into more regions. In July 2020 I ran a Proof of Concept with Eleventy, a lightweight static site generator, to validate whether it could handle the requirements: templating for components, data-driven content, multi-region support, and easy deployment through Netlify.
 
 <div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <figure>
@@ -49,7 +49,7 @@ When I took on the VOICES website in mid-2020, the existing setup was plain HTML
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"Before — April 2020, plain HTML, agency-maintained"}
+            {"Before - April 2020, plain HTML, agency-maintained"}
         </figcaption>
     </figure>
     <figure>
@@ -59,14 +59,14 @@ When I took on the VOICES website in mid-2020, the existing setup was plain HTML
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"After — October 2020, the first Eleventy build"}
+            {"After - October 2020, the first Eleventy build"}
         </figcaption>
     </figure>
 </div>
 
 The PoC worked. Eleventy was the right tool: simple enough to build quickly, powerful enough to handle the complexity, and producing purely static output that Netlify could serve without any server-side overhead. This was a JAMstack decision before "JAMstack" was a standard part of the marketing vocabulary.
 
-The visual design came mostly from the brand team. My job was translating that into the web — in a lot of cases that meant feasibility conversations and trade-offs with the brand team about what would hold up as a real, data-driven component system rather than a one-off page. I built the first full version of the new site from that design, establishing the component system that would carry forward across every subsequent edition.
+The visual design came mostly from the brand team. My job was translating that into the web: in a lot of cases that meant feasibility conversations and trade-offs with the brand team about what would hold up as a real, data-driven component system rather than a one-off page. I built the first full version of the new site from that design, establishing the component system that would carry forward across every subsequent edition.
 
 <div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <figure>
@@ -84,7 +84,7 @@ The visual design came mostly from the brand team. My job was translating that i
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"2022 — first rebrand"}
+            {"2022 - first rebrand"}
         </figcaption>
     </figure>
     <figure>
@@ -110,7 +110,7 @@ The visual design came mostly from the brand team. My job was translating that i
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"2025 — second rebrand"}
+            {"2025 - second rebrand"}
         </figcaption>
     </figure>
     <figure>
@@ -120,14 +120,14 @@ The visual design came mostly from the brand team. My job was translating that i
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"2026 — current state"}
+            {"2026 - current state"}
         </figcaption>
     </figure>
 </div>
 
 ## What the site actually is
 
-The VOICES website isn't just an event page — it's a small product with defined states and components.
+The VOICES website isn't just an event page: it's a small product with defined states and components.
 
 Three lifecycle states govern every section: pre-event (promoting registration, teasing the agenda), during-event (shifting to live-event content and thank-you flows), and after-event (showcasing recordings, promoting next year). Components are designed to handle all three states cleanly, switching between them via configuration rather than code changes.
 
@@ -139,7 +139,7 @@ Three lifecycle states govern every section: pre-event (promoting registration, 
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-center text-sm text-muted">
-            {"Mobile — homepage"}
+            {"Mobile - homepage"}
         </figcaption>
     </figure>
     <figure class="max-w-xs">
@@ -149,16 +149,16 @@ Three lifecycle states govern every section: pre-event (promoting registration, 
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-center text-sm text-muted">
-            {"Mobile — navigation"}
+            {"Mobile - navigation"}
         </figcaption>
     </figure>
 </div>
 
-Three regional editions run simultaneously on the same codebase: DACH (German), UK, and US/North America. Each has its own configuration for dates, copy, imagery, CTAs, and tracking — but shares the component library and style system. Adding a new region means configuring data, not rebuilding components.
+Three regional editions run simultaneously on the same codebase: DACH (German), UK, and US/North America. Each has its own configuration for dates, copy, imagery, CTAs, and tracking, but shares the component library and style system. Adding a new region means configuring data, not rebuilding components.
 
 <p class="mb-2 text-sm text-muted">
-    Same component library, three regional configurations — captured side by
-    side in 2026:
+    Same component library, three regional configurations, captured side by side
+    in 2026:
 </p>
 <div class="my-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
     <figure>
@@ -168,7 +168,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"Berlin — in-person, German"}
+            {"Berlin - in-person, German"}
         </figcaption>
     </figure>
     <figure>
@@ -178,7 +178,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"Americas — virtual"}
+            {"Americas - virtual"}
         </figcaption>
     </figure>
     <figure>
@@ -188,7 +188,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
             class="rounded-xl border border-border"
         />
         <figcaption class="mt-2 text-sm text-muted">
-            {"London — in-person"}
+            {"London - in-person"}
         </figcaption>
     </figure>
 </div>
@@ -203,7 +203,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
     </figcaption>
 </figure>
 
-The component library is substantial — speaker lineups, multi-track agendas, registration flows, post-event recording sections, award sections, FAQ — each component built to handle all three lifecycle states. Every component handles missing-data states gracefully, so the site can go live early while speakers, agenda items, and partners are still being confirmed.
+The component library is substantial: speaker lineups, multi-track agendas, registration flows, post-event recording sections, award sections, and FAQ, each built to handle all three lifecycle states. Every component handles missing-data states gracefully, so the site can go live early while speakers, agenda items, and partners are still being confirmed.
 
 <figure class="my-6">
     <Image
@@ -218,7 +218,7 @@ The component library is substantial — speaker lineups, multi-track agendas, r
 
 ## The YouTube API integration
 
-One of the most satisfying technical pieces was automating the post-event recordings section. Rather than manually adding videos, I built an Eleventy data source that pulls recordings directly from YouTube playlists via the YouTube API at build time. The recordings section populates automatically — as new videos are added to the YouTube playlist, the next site build picks them up.
+One of the most satisfying technical pieces was automating the post-event recordings section. Rather than manually adding videos, I built an Eleventy data source that pulls recordings directly from YouTube playlists via the YouTube API at build time. The recordings section populates automatically: as new videos are added to the YouTube playlist, the next site build picks them up.
 
 This is the "right tool for the job" principle applied cleanly: event recordings are a content management problem, not a development problem. Separating the concern meant the conference team could manage post-event content through YouTube directly, and the website handled the rest.
 
@@ -230,21 +230,21 @@ This is the "right tool for the job" principle applied cleanly: event recordings
     />
     <figcaption class="mt-2 text-sm text-muted">
         {
-            "The after-event state — recordings populated automatically from YouTube"
+            "The after-event state - recordings populated automatically from YouTube"
         }
     </figcaption>
 </figure>
 
 ## Consistency through change
 
-Six years is a long time in brand and technology terms. The VOICES website went through its own two complete rebrands — 2022 and 2025, on its own timeline distinct from the main staffbase.com brand evolution — plus annual updates for each event edition. Each year: new dates, new speakers, new imagery, new event theme, potential new regions or regional expansions.
+Six years is a long time in brand and technology terms. The VOICES website went through its own two complete rebrands (2022 and 2025, on its own timeline distinct from the main staffbase.com brand evolution) plus annual updates for each event edition. Each year: new dates, new speakers, new imagery, new event theme, potential new regions or regional expansions.
 
 What made this manageable was the component architecture established in 2020. New brand colors and typography get applied to the design system once; every component inherits the update. Annual content changes happen in data files rather than template code. The result is a site that looks purpose-built for each year's event while requiring significantly less effort than a ground-up rebuild would.
 
-The NA/US 2023 MVP introduced a third regional edition, extending a 2-region codebase to 3 without touching the underlying component system. By 2026 the platform serves three simultaneous global events — VOICES Berlin (in-person, German), VOICES Americas (virtual), and VOICES London (in-person) — each with its own configuration but sharing the same component library, the same styling system, and the same deployment pipeline I set up in 2020. A fourth event, the VOICES APJ Customer Awards, is linked from the site but lives on a separate HubSpot landing page outside the Eleventy platform.
+The NA/US 2023 MVP introduced a third regional edition, extending a 2-region codebase to 3 without touching the underlying component system. By 2026 the platform serves three simultaneous global events: VOICES Berlin (in-person, German), VOICES Americas (virtual), and VOICES London (in-person), each with its own configuration but sharing the same component library, the same styling system, and the same deployment pipeline I set up in 2020. A fourth event, the VOICES APJ Customer Awards, is linked from the site but lives on a separate HubSpot landing page outside the Eleventy platform.
 
 ## What six years of ownership produces
 
-The documentation I wrote for the VOICES website covers component states, styling guidelines, regional configuration, the deployment workflow, and the lifecycle management process. When the time came to hand it over, the knowledge was in the documentation — not just in my head.
+The documentation I wrote for the VOICES website covers component states, styling guidelines, regional configuration, the deployment workflow, and the lifecycle management process. When the time came to hand it over, the knowledge was in the documentation, not just in my head.
 
 That's the measure of a well-owned project: when you leave, the thing you built continues to work.
