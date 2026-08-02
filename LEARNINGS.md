@@ -14,6 +14,10 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-08-02
+
+- Principle frontmatter hyphens (05-10, 13-15 titles/descriptions) all originated from the same mechanical em-dash-to-hyphen substitution in commit `ade731dc`, not per-string deliberate choices, confirmed by diffing that commit. When scoping which of them to switch to colons (05/06, plus four `storyblok-migration.mdx` captions, per user request), the first CLAUDE.md wording claimed 05/06's hyphen was uniquely "mechanical" versus others being "deliberate," which `self-review` correctly flagged as false since it contradicted that same commit history; fixed to describe it as an editorial choice made on a case-by-case read instead of a provable mechanical-vs-deliberate split. See [CLAUDE.md](CLAUDE.md)'s em-dash bullet.
+
 ### 2026-08-01
 
 - Site-wide em-dash removal (user request, since em dashes read as an AI-generated tell) needed three explicit style calls rather than a mechanical find-replace: case-study headings/captions and principle frontmatter titles get a plain hyphen (structural label:value pairs, not prose), while `recommendations.ts` testimonial quotes and the `15-leave-it-better.md` Klopp attribution dash stay untouched (verbatim quote and citation convention, not prose em dashes). Promoted to [CLAUDE.md](CLAUDE.md)'s new em-dash bullet.

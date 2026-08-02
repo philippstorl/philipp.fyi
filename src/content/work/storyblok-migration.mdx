@@ -19,7 +19,19 @@ import imgFr from "./storyblok-migration/staffbase-com-fr.png"
 import imgEs from "./storyblok-migration/staffbase-com-es.png"
 import imgMobileNav from "./storyblok-migration/staffbase-com-mobile-nav.png"
 
-By 2024, staffbase.com had outgrown WordPress. The platform had served us well for years (I'd built a great deal of it by hand), but a monolithic CMS was no longer the right tool. Content management was developer-dependent. The codebase had accumulated years of custom code. And as Staffbase scaled, we needed something that could grow with us: a clear separation between content and presentation, self-service publishing for marketing, and a foundation built to last.
+## Making the case
+
+The migration didn't start in 2024. It started in 2022, when I first flagged that WordPress was becoming a business risk.
+
+The symptoms were already there: slow load times, unpredictable bugs, occasional outages, and development that got slower with every year of accumulated custom code. None of it was catastrophic. That was the problem. The site worked, we kept shipping what marketing asked for, and from the outside everything looked fine.
+
+That's what makes it hard to argue for replacing something that still functions. When a team reliably delivers, the cost of delivering becomes invisible. My manager at the time came from digital marketing rather than engineering, and the reasonable question from that side of the table was: it works, why change it?
+
+So the argument had to change. Not "the codebase has problems" but "this will cost us money, and here is roughly when." Not a technical complaint but a business risk: staffbase.com is the shop window and the first touchpoint for most prospects, and we were maintaining it in a permanently reactive mode, firefighting instead of building.
+
+It took two years. A new CMO joined in 2023, and by then the symptoms had grown visible without needing a technical background: pages too slow to load, outages nobody could schedule around, and a development pace that couldn't keep up with what marketing wanted to ship. The case I had been making finally matched what everyone else could see. The budget was approved.
+
+The platform had served us well for years (I'd built a great deal of it by hand), but a monolithic CMS was no longer the right tool. Content management was developer-dependent. The codebase had accumulated years of custom code. And as Staffbase scaled, we needed something that could grow with us: a clear separation between content and presentation, self-service publishing for marketing, and a foundation built to last.
 
 The answer was a headless architecture: Storyblok as the CMS, PHP/Symfony as the application layer, Twig for templating, and Tailwind CSS powering the entire frontend styling system. We partnered with SensioLabs, Symfony specialists, as the external engineering agency. Symfony at this depth was new territory for our team, and SensioLabs brought us up to speed on the framework while we worked side by side on implementation.
 
@@ -38,7 +50,7 @@ The scope was substantial. The migration covered the full staffbase.com estate: 
         />
         <figcaption class="mt-2 text-sm text-muted">
             {
-                "Japanese locale at launch - the most immediately legible proof of a working multilingual architecture."
+                "Japanese locale at launch: the most immediately legible proof of a working multilingual architecture."
             }
         </figcaption>
     </figure>
@@ -50,7 +62,7 @@ The scope was substantial. The migration covered the full staffbase.com estate: 
         />
         <figcaption class="mt-2 text-sm text-muted">
             {
-                "German locale - Staffbase's home market, live on the new stack on the same day."
+                "German locale: Staffbase's home market, live on the new stack on the same day."
             }
         </figcaption>
     </figure>
@@ -73,7 +85,7 @@ Together with my manager, I helped manage the agency relationship: aligning on s
     />
     <figcaption class="mt-2 text-sm text-muted">
         {
-            "The navigation rebuild: sticky header, backdrop blur, and mobile overlay with body-scroll lock - a full structural overhaul shipped to a hard external deadline."
+            "The navigation rebuild: sticky header, backdrop blur, and mobile overlay with body-scroll lock, a full structural overhaul shipped to a hard external deadline."
         }
     </figcaption>
 </figure>
@@ -88,7 +100,7 @@ The highest-stakes moment was go-live: switching primary domains on a live comme
 
 ## The outcome
 
-Marketing self-publishes in Storyblok. The number of web support tickets driven by content management, which had been significant, dropped materially. By go-live, the web team was running the Symfony application independently, calling on SensioLabs only for the rare edge case: proof that the knowledge transfer had actually worked, not just the migration itself. And the new setup proved its value quickly: adding French and Spanish after launch was straightforward, exactly as the architecture intended.
+I led the migration from initial scoping in late 2024 through go-live in July 2025 and stabilization through the rest of the year, delivering a faster, more stable site with a far better editor experience than WordPress, a better developer experience for the team, and an architecture built to scale. Marketing self-publishes in Storyblok, and the number of web support tickets driven by content management, which had been significant, dropped materially. By go-live, the web team was running the Symfony application independently, calling on SensioLabs only for the rare edge case: proof that the knowledge transfer had actually worked, not just the migration itself. And the new setup proved its value quickly: adding French and Spanish after launch was straightforward, exactly as the architecture intended. It was also the first step in unifying Staffbase's fragmented web properties onto one technical system.
 
 <div class="my-8 grid grid-cols-2 gap-4">
     <figure>
@@ -99,7 +111,7 @@ Marketing self-publishes in Storyblok. The number of web support tickets driven 
         />
         <figcaption class="mt-2 text-sm text-muted">
             {
-                "French locale - added post-launch as a configuration change, not a rebuild."
+                "French locale: added post-launch as a configuration change, not a rebuild."
             }
         </figcaption>
     </figure>
