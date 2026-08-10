@@ -87,4 +87,12 @@ test.describe('Navigation', () => {
         await expect(page).toHaveURL('/principles/')
         await expect(page.locator('html')).toHaveClass(/dark/)
     })
+
+    test('skip link moves keyboard focus to main content', async ({ page }) => {
+        await page.goto('/')
+        await page.keyboard.press('Tab')
+        await expect(page.getByText('Skip to main content')).toBeFocused()
+        await page.keyboard.press('Enter')
+        await expect(page.locator('#main-content')).toBeFocused()
+    })
 })
