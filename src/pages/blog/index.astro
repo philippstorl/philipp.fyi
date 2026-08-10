@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
+import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 
 const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
@@ -14,7 +15,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
     description="Writing on web development, tooling, and building things that last."
 >
     <Header />
-    <main class="mx-auto max-w-3xl px-6 py-24 md:py-32">
+    <Main class="mx-auto max-w-3xl px-6 py-24 md:py-32">
         <h1
             class="mb-12 font-display text-4xl font-normal tracking-tight text-foreground md:text-5xl"
             style="font-variation-settings: 'opsz' 72"
@@ -58,6 +59,6 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
                 </ol>
             )
         }
-    </main>
+    </Main>
     <Footer />
 </BaseLayout>

@@ -104,7 +104,7 @@ npx playwright test e2e/home.spec.ts --debug
 | File                          | What it covers                                                                                                        |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
 | `e2e/home.spec.ts`            | Title, headline, 4 work cards, 6 principle cards, 6 recommendation cards, contact section                             |
-| `e2e/navigation.spec.ts`      | Header, nav links (including About), name mark, theme toggle                                                          |
+| `e2e/navigation.spec.ts`      | Header, nav links (including About), name mark, theme toggle, skip-to-main-content link                               |
 | `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly                                                           |
 | `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence                        |
 | `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles, interlinks to /about and /recommendations              |

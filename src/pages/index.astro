@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
+import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import Hero from '@/components/home/Hero.astro'
 import WorkSection from '@/components/home/WorkSection.astro'
@@ -18,13 +19,13 @@ import {
     description={`Principal Web Developer, full-stack, DevOps, and design in one. ${getYearsOfExperience()} years building for the web, ${getStaffbaseTenureYears()} of them turning staffbase.com into a platform serving millions. Remote-first, Chemnitz / Leipzig area.`}
 >
     <Header />
-    <main>
+    <Main>
         <Hero />
         <WorkSection />
         <AboutSection />
         <PrinciplesSection />
         <RecommendationsSection />
         <ContactSection />
-    </main>
+    </Main>
     <Footer />
 </BaseLayout>

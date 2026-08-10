@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
+import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import InitialsAvatar from '@/components/ui/InitialsAvatar.astro'
 import InterlinkCard from '@/components/ui/InterlinkCard.astro'
@@ -14,7 +15,7 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
     ogImage="/og/recommendations.png"
 >
     <Header />
-    <main>
+    <Main>
         <div class="mx-auto max-w-3xl px-6 pt-24 pb-16 md:pt-32">
             <p class="mb-4 text-sm font-medium text-muted">What others say</p>
             <h1
@@ -93,6 +94,6 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
                 />
             </div>
         </div>
-    </main>
+    </Main>
     <Footer />
 </BaseLayout>

@@ -63,7 +63,7 @@ const colors = {
     background: '#FAF9F6',
     foreground: '#0D0D0C',
     muted: '#6B6865',
-    accent: '#C85A2A',
+    accent: '#AB2B03',
     border: '#E4E0DA',
 }
 
