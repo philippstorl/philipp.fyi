@@ -1,36 +1,21 @@
 ---
 import { about } from '@/data/about'
-import { ArrowRight } from 'lucide-react'
+import SectionHeader from './SectionHeader.astro'
+
+const headingId = 'about-heading'
 ---
 
 <section
     id="about"
-    aria-labelledby="about-heading"
+    aria-labelledby={headingId}
     class="mx-auto max-w-6xl px-6 py-24 md:py-32"
 >
-    <div
-        class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
-    >
-        <h2
-            id="about-heading"
-            class="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
-            style="font-variation-settings: 'opsz' 48"
-        >
-            About
-        </h2>
-        <a
-            href="/about/"
-            data-astro-prefetch
-            class="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-muted transition-colors duration-150 hover:text-accent"
-        >
-            Read more about me
-            <ArrowRight
-                size={14}
-                strokeWidth={1.75}
-                className="transition-transform duration-150 group-hover:translate-x-0.5"
-            />
-        </a>
-    </div>
+    <SectionHeader
+        headingId={headingId}
+        heading="About"
+        href="/about/"
+        label="Read more about me"
+    />
 
     <div class="grid grid-cols-1 gap-12 md:grid-cols-5">
         <div class="space-y-5 md:col-span-3">

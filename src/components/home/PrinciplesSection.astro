@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content'
 import PrincipleCard from './PrincipleCard.astro'
-import { ArrowRight } from 'lucide-react'
+import SectionHeader from './SectionHeader.astro'
 
 // Sort by entry.id — the filename prefix (01-, 02-, …) determines order.
 // To reorder: rename the file. No frontmatter to touch.
@@ -11,36 +11,21 @@ const all = (await getCollection('principles')).sort((a, b) =>
 
 const preview = all.slice(0, 6)
 const totalCount = all.length
+
+const headingId = 'principles-heading'
 ---
 
 <section
     id="principles"
-    aria-labelledby="principles-heading"
+    aria-labelledby={headingId}
     class="mx-auto max-w-6xl px-6 py-24 md:py-32"
 >
-    <div
-        class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
-    >
-        <h2
-            id="principles-heading"
-            class="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
-            style="font-variation-settings: 'opsz' 48"
-        >
-            How I work
-        </h2>
-        <a
-            href="/principles/"
-            data-astro-prefetch
-            class="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-muted transition-colors duration-150 hover:text-accent"
-        >
-            Read all {totalCount} principles
-            <ArrowRight
-                size={14}
-                strokeWidth={1.75}
-                className="transition-transform duration-150 group-hover:translate-x-0.5"
-            />
-        </a>
-    </div>
+    <SectionHeader
+        headingId={headingId}
+        heading="How I work"
+        href="/principles/"
+        label={`Read all ${totalCount} principles`}
+    />
 
     <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {preview.map((entry) => <PrincipleCard entry={entry} />)}
