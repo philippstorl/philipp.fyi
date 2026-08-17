@@ -101,16 +101,16 @@ npx playwright test e2e/home.spec.ts --debug
 
 ### Test coverage
 
-| File                          | What it covers                                                                                                        |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `e2e/home.spec.ts`            | Title, headline, 4 work cards, 6 principle cards, 6 recommendation cards, contact section                             |
-| `e2e/navigation.spec.ts`      | Header, nav links (including About), name mark, theme toggle, skip-to-main-content link                               |
-| `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly                                                           |
-| `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence                        |
-| `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles, interlinks to /about and /recommendations              |
-| `e2e/recommendations.spec.ts` | 13 recommendations shown, CTA links to /recommendations, interlinks to /about and /principles                         |
-| `e2e/about.spec.ts`           | About page heading/bio/facts, tech stack section, CTA links to /about, interlinks to /principles and /recommendations |
-| `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                                        |
+| File                          | What it covers                                                                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `e2e/home.spec.ts`            | Title, headline, 4 work cards, "See all work" CTA to /work, 6 principle cards, 6 recommendation cards, contact section                     |
+| `e2e/navigation.spec.ts`      | Header, nav links (Work, About, Principles), name mark, theme toggle, skip-to-main-content link                                            |
+| `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly; Work index page heading/cards, interlinks to About/Principles/Recommendations |
+| `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence                                             |
+| `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles, interlinks to /about, /work, and /recommendations                           |
+| `e2e/recommendations.spec.ts` | 13 recommendations shown, CTA links to /recommendations, interlinks to /about, /principles, and /work                                      |
+| `e2e/about.spec.ts`           | About page heading/bio/facts, tech stack section, CTA links to /about, interlinks to /work, /principles, and /recommendations              |
+| `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                                                             |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
@@ -185,10 +185,10 @@ When ready to add Plausible (or another provider):
 ```text
 src/
   components/
-    home/          → Hero, WorkSection, WorkCard, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection
+    home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection
     layout/        → Header, Footer
     ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard
-    work/          → CaseStudyLayout, ImageLightbox
+    work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid
   content/
     work/          → Case study MDX files (4 entries)
     principles/    → Principle MD files (15 entries)
@@ -207,6 +207,7 @@ src/
     about.astro
     principles.astro
     recommendations.astro
+    work/index.astro
     work/[slug].astro
     blog/index.astro
     blog/[slug].astro

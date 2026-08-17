@@ -1,0 +1,61 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Header from '@/components/layout/Header.astro'
+import Main from '@/components/layout/Main.astro'
+import Footer from '@/components/layout/Footer.astro'
+import InterlinkCard from '@/components/ui/InterlinkCard.astro'
+import WorkGrid from '@/components/work/WorkGrid.astro'
+import {
+    getStaffbaseTenureYears,
+    getYearsOfExperience,
+} from '@/utils/experience'
+---
+
+<BaseLayout
+    title="Work"
+    description={`Case studies from ${getYearsOfExperience()} years building for the web, including ${getStaffbaseTenureYears()} years scaling staffbase.com.`}
+    ogImage="/og/work.png"
+>
+    <Header />
+    <Main>
+        <div class="mx-auto max-w-3xl px-6 pt-24 pb-16 md:pt-32">
+            <p class="mb-4 text-sm font-medium text-muted">Selected work</p>
+            <h1
+                class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"
+                style="font-variation-settings: 'opsz' 72"
+            >
+                Work
+            </h1>
+            <p class="text-lg leading-relaxed text-muted">
+                Case studies from {getYearsOfExperience()} years building for the
+                web, {getStaffbaseTenureYears()} of them turning staffbase.com into
+                a platform serving millions.
+            </p>
+        </div>
+
+        <div class="mx-auto max-w-6xl px-6 pb-24">
+            <WorkGrid />
+        </div>
+
+        <div class="mx-auto max-w-3xl px-6 pb-32">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                <InterlinkCard
+                    href="/about/"
+                    eyebrow="Meet the person behind it"
+                    label="About"
+                />
+                <InterlinkCard
+                    href="/principles/"
+                    eyebrow="The principles behind these projects"
+                    label="Principles"
+                />
+                <InterlinkCard
+                    href="/recommendations/"
+                    eyebrow="Hear from the people I built it with"
+                    label="Recommendations"
+                />
+            </div>
+        </div>
+    </Main>
+    <Footer />
+</BaseLayout>

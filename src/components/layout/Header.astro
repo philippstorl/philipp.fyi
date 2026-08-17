@@ -3,6 +3,7 @@ import { navItems } from '@/data/navigation'
 import ThemeToggle from '@/components/ui/ThemeToggle'
 
 const pathname = Astro.url.pathname
+const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`
 ---
 
 <header
@@ -25,8 +26,7 @@ const pathname = Astro.url.pathname
                     navItems.map((item) => {
                         const isActive =
                             !item.href.includes('#') &&
-                            (pathname === item.href ||
-                                `${pathname}/` === item.href)
+                            normalizedPathname.startsWith(item.href)
                         return (
                             <li>
                                 <a
@@ -133,6 +133,9 @@ const pathname = Astro.url.pathname
     // keeps the active link in sync without needing a full nav re-render.
     function updateActiveNav() {
         const { pathname } = window.location
+        const normalizedPathname = pathname.endsWith('/')
+            ? pathname
+            : `${pathname}/`
         document
             .querySelectorAll(
                 '#site-header nav[aria-label="Main navigation"] a',
@@ -142,7 +145,7 @@ const pathname = Astro.url.pathname
                 const isActive =
                     !!href &&
                     !href.includes('#') &&
-                    (pathname === href || `${pathname}/` === href)
+                    normalizedPathname.startsWith(href)
                 link.classList.toggle('text-foreground', isActive)
                 link.classList.toggle('after:w-full', isActive)
                 link.classList.toggle('text-muted', !isActive)

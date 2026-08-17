@@ -8,6 +8,16 @@ test.describe('Navigation', () => {
         await expect(header.getByText('Philipp Storl')).toBeVisible()
     })
 
+    test('Work nav link leads to /work/', async ({ page }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/work/"]:visible').click()
+        await expect(page).toHaveURL('/work/')
+    })
+
     test('Principles nav link leads to /principles/', async ({ page }) => {
         await page.goto('/')
         const mobileToggle = page.locator('#nav-toggle')

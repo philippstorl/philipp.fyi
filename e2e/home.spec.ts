@@ -20,6 +20,14 @@ test.describe('Home page', () => {
         await expect(cards).toHaveCount(4)
     })
 
+    test('"See all work" CTA on home links to /work/', async ({ page }) => {
+        await page.goto('/')
+        const link = page.locator('#work a[href="/work/"]')
+        await expect(link).toBeVisible()
+        await link.click()
+        await expect(page).toHaveURL('/work/')
+    })
+
     test('non-featured cards with a cover image show a screenshot', async ({
         page,
     }) => {
