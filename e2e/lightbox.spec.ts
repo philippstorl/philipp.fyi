@@ -137,7 +137,7 @@ test.describe('Image lightbox', () => {
         // transitions (not a full reload) used to leave images without
         // click handlers the second time.
         await page.getByText('← All work').first().click()
-        await page.waitForURL('**/#work')
+        await page.waitForURL('**/work/')
 
         await page
             .locator('a[href="/work/voices-conference-website/"]')

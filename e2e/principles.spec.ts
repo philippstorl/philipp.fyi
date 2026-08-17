@@ -35,13 +35,19 @@ test.describe('Principles page', () => {
         await expect(page).toHaveURL('/principles/')
     })
 
-    test('links to About and Recommendations', async ({ page }) => {
+    test('links to About, Work, and Recommendations', async ({ page }) => {
         await page.goto('/principles/')
 
         const aboutLink = page.locator('main a[href="/about/"]')
         await expect(aboutLink).toBeVisible()
         await aboutLink.click()
         await expect(page).toHaveURL('/about/')
+
+        await page.goto('/principles/')
+        const workLink = page.locator('main a[href="/work/"]')
+        await expect(workLink).toBeVisible()
+        await workLink.click()
+        await expect(page).toHaveURL('/work/')
 
         await page.goto('/principles/')
         const recommendationsLink = page.locator(
