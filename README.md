@@ -185,7 +185,7 @@ When ready to add Plausible (or another provider):
 ```text
 src/
   components/
-    home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection
+    home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader
     layout/        → Header, Footer
     ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard
     work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid

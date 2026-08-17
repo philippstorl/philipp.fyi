@@ -1,36 +1,21 @@
 ---
 import WorkGrid from '@/components/work/WorkGrid.astro'
-import { ArrowRight } from 'lucide-react'
+import SectionHeader from './SectionHeader.astro'
+
+const headingId = 'work-heading'
 ---
 
 <section
     id="work"
-    aria-labelledby="work-heading"
+    aria-labelledby={headingId}
     class="mx-auto max-w-6xl px-6 py-24 md:py-32"
 >
-    <div
-        class="mb-12 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between"
-    >
-        <h2
-            id="work-heading"
-            class="font-display text-3xl font-normal tracking-tight text-foreground md:text-4xl"
-            style="font-variation-settings: 'opsz' 48"
-        >
-            Selected work
-        </h2>
-        <a
-            href="/work/"
-            data-astro-prefetch
-            class="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-muted transition-colors duration-150 hover:text-accent"
-        >
-            See all work
-            <ArrowRight
-                size={14}
-                strokeWidth={1.75}
-                className="transition-transform duration-150 group-hover:translate-x-0.5"
-            />
-        </a>
-    </div>
+    <SectionHeader
+        headingId={headingId}
+        heading="Selected work"
+        href="/work/"
+        label="See all work"
+    />
 
     <WorkGrid />
 </section>
