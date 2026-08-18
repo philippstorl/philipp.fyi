@@ -37,7 +37,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
                                     class="mb-2 block font-mono text-xs text-muted"
                                 >
                                     {post.data.date.toLocaleDateString(
-                                        'en-GB',
+                                        'en-US',
                                         {
                                             day: 'numeric',
                                             month: 'long',
