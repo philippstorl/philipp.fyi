@@ -60,13 +60,23 @@
         X-XSS-Protection = "0"
 
         # Content Security Policy.
-        # — unsafe-inline in script-src: required for Astro's dark mode
-        #   inline script and ViewTransitions runtime.
+        # — unsafe-inline in script-src: still required, not just for Astro's
+        #   dark-mode inline script — a built page also ships 3 more
+        #   Astro-runtime inline scripts (identical across pages, needed for
+        #   island hydration) plus a 5th, page-specific one from
+        #   ImageLightbox.astro on case-study pages. A hash allowlist would
+        #   need all of these enumerated with no automated check catching
+        #   drift the next time any of them changes (see CLAUDE.md).
         # — unsafe-inline in style-src: required for Tailwind's runtime styles.
-        # — img-src https:: allows external images in MDX case study content.
+        # — img-src scoped to 'self' data: only (https: dropped) — no
+        #   content currently loads an external image; the work schema's
+        #   image() helper only accepts local, Astro-processed assets
+        #   (blog/principles have no image field at all). Not enforced for
+        #   MDX body content specifically, only frontmatter — widen back to
+        #   include https: if a case study ever needs a real external image.
         # — TODO: when Plausible analytics is added, append
         #         "https://plausible.io" to script-src and connect-src.
-        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 
 # Astro outputs content-hashed filenames to /_astro/. These are
 # safe to cache for a year — any change produces a new hash.
