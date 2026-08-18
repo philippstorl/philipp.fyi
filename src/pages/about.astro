@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
-import InterlinkCard from '@/components/ui/InterlinkCard.astro'
+import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { about } from '@/data/about'
 import { stack } from '@/data/stack'
@@ -51,23 +51,26 @@ import {
                 }
             </dl>
 
-            <div class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <InterlinkCard
-                    href="/work/"
-                    eyebrow="See it put into practice"
-                    label="Work"
-                />
-                <InterlinkCard
-                    href="/principles/"
-                    eyebrow="See how this plays out"
-                    label="Principles"
-                />
-                <InterlinkCard
-                    href="/recommendations/"
-                    eyebrow="Hear it from people I've worked with"
-                    label="Recommendations"
-                />
-            </div>
+            <InterlinkRow
+                class="mt-10"
+                items={[
+                    {
+                        href: '/work/',
+                        eyebrow: 'See it put into practice',
+                        label: 'Work',
+                    },
+                    {
+                        href: '/principles/',
+                        eyebrow: 'See how this plays out',
+                        label: 'Principles',
+                    },
+                    {
+                        href: '/recommendations/',
+                        eyebrow: "Hear it from people I've worked with",
+                        label: 'Recommendations',
+                    },
+                ]}
+            />
         </div>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
