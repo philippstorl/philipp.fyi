@@ -3,7 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
-import InterlinkCard from '@/components/ui/InterlinkCard.astro'
+import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import WorkGrid from '@/components/work/WorkGrid.astro'
 import {
@@ -32,23 +32,25 @@ import {
         </div>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <InterlinkCard
-                    href="/about/"
-                    eyebrow="Meet the person behind it"
-                    label="About"
-                />
-                <InterlinkCard
-                    href="/principles/"
-                    eyebrow="The principles behind these projects"
-                    label="Principles"
-                />
-                <InterlinkCard
-                    href="/recommendations/"
-                    eyebrow="Hear from the people I built it with"
-                    label="Recommendations"
-                />
-            </div>
+            <InterlinkRow
+                items={[
+                    {
+                        href: '/about/',
+                        eyebrow: 'Meet the person behind it',
+                        label: 'About',
+                    },
+                    {
+                        href: '/principles/',
+                        eyebrow: 'The principles behind these projects',
+                        label: 'Principles',
+                    },
+                    {
+                        href: '/recommendations/',
+                        eyebrow: 'Hear from the people I built it with',
+                        label: 'Recommendations',
+                    },
+                ]}
+            />
         </div>
     </Main>
     <Footer />

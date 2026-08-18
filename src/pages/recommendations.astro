@@ -4,7 +4,7 @@ import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import InitialsAvatar from '@/components/ui/InitialsAvatar.astro'
-import InterlinkCard from '@/components/ui/InterlinkCard.astro'
+import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { recommendations } from '@/data/recommendations'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
@@ -74,23 +74,25 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
         </div>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
-            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                <InterlinkCard
-                    href="/about/"
-                    eyebrow="Meet the person they describe"
-                    label="About"
-                />
-                <InterlinkCard
-                    href="/principles/"
-                    eyebrow="The principles behind the work"
-                    label="Principles"
-                />
-                <InterlinkCard
-                    href="/work/"
-                    eyebrow="The projects these people are describing"
-                    label="Work"
-                />
-            </div>
+            <InterlinkRow
+                items={[
+                    {
+                        href: '/about/',
+                        eyebrow: 'Meet the person they describe',
+                        label: 'About',
+                    },
+                    {
+                        href: '/principles/',
+                        eyebrow: 'The principles behind the work',
+                        label: 'Principles',
+                    },
+                    {
+                        href: '/work/',
+                        eyebrow: 'The projects these people are describing',
+                        label: 'Work',
+                    },
+                ]}
+            />
         </div>
     </Main>
     <Footer />
