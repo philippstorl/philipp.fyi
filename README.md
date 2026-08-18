@@ -186,7 +186,7 @@ When ready to add Plausible (or another provider):
 src/
   components/
     home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader
-    layout/        → Header, Footer
+    layout/        → Header, NavLink, Footer
     ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard
     work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid
   content/
@@ -220,6 +220,7 @@ src/
     og-image.ts        → Satori template + Sharp PNG generation
     experience.ts      → Computes career-length and Staffbase-tenure year figures from fixed dates
     category-colors.ts → Shared category → badge-color mapping (Tailwind classes + Satori hex equivalents)
+    nav-active.ts      → Shared active-nav-link match + class vocabulary, used by NavLink.astro and Header.astro's client script
 e2e/               → Playwright E2E tests
 public/
   favicon.svg

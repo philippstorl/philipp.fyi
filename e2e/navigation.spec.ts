@@ -46,8 +46,12 @@ test.describe('Navigation', () => {
         // than relying on the server-rendered class from the first page load.
         await page.goto('/recommendations/')
         const desktopNav = page.locator('nav[aria-label="Main navigation"]')
+        const mobileNav = page.locator('#mobile-nav')
         await expect(
             desktopNav.locator('a[href="/recommendations/"]'),
+        ).toHaveAttribute('aria-current', 'page')
+        await expect(
+            mobileNav.locator('a[href="/recommendations/"]'),
         ).toHaveAttribute('aria-current', 'page')
 
         const mobileToggle = page.locator('#nav-toggle')
@@ -63,6 +67,13 @@ test.describe('Navigation', () => {
         )
         await expect(
             desktopNav.locator('a[href="/recommendations/"]'),
+        ).not.toHaveAttribute('aria-current', 'page')
+        await expect(mobileNav.locator('a[href="/about/"]')).toHaveAttribute(
+            'aria-current',
+            'page',
+        )
+        await expect(
+            mobileNav.locator('a[href="/recommendations/"]'),
         ).not.toHaveAttribute('aria-current', 'page')
     })
 
