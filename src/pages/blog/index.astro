@@ -28,34 +28,37 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
                 <p class="text-base text-muted">Writing coming soon.</p>
             ) : (
                 <ol class="flex flex-col divide-y divide-border">
-                    {posts.map((post) => (
-                        <li class="py-8">
-                            <time
-                                datetime={post.data.date.toISOString()}
-                                class="mb-2 block font-mono text-xs text-muted"
-                            >
-                                {post.data.date.toLocaleDateString('en-GB', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric',
-                                })}
-                            </time>
-                            <a
-                                href={`/blog/${post.id.replace(/\.(mdx?|md)$/, '')}`}
-                                class="group relative block"
-                            >
-                                <h2
-                                    class="mb-2 font-display text-xl font-normal tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent after:absolute after:inset-0"
-                                    style="font-variation-settings: 'opsz' 24"
+                    {posts.map((post) => {
+                        const href = `/blog/${post.id.replace(/\.(mdx?|md)$/, '')}/`
+                        return (
+                            <li class="py-8">
+                                <time
+                                    datetime={post.data.date.toISOString()}
+                                    class="mb-2 block font-mono text-xs text-muted"
                                 >
-                                    {post.data.title}
-                                </h2>
-                                <p class="text-sm leading-relaxed text-muted">
-                                    {post.data.description}
-                                </p>
-                            </a>
-                        </li>
-                    ))}
+                                    {post.data.date.toLocaleDateString(
+                                        'en-US',
+                                        {
+                                            day: 'numeric',
+                                            month: 'long',
+                                            year: 'numeric',
+                                        },
+                                    )}
+                                </time>
+                                <a href={href} class="group relative block">
+                                    <h2
+                                        class="mb-2 font-display text-xl font-normal tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent after:absolute after:inset-0"
+                                        style="font-variation-settings: 'opsz' 24"
+                                    >
+                                        {post.data.title}
+                                    </h2>
+                                    <p class="text-sm leading-relaxed text-muted">
+                                        {post.data.description}
+                                    </p>
+                                </a>
+                            </li>
+                        )
+                    })}
                 </ol>
             )
         }
