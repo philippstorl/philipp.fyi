@@ -60,6 +60,25 @@ jobs:
             - run: npm ci
             - run: npm run typecheck
 
+    audit:
+        name: Dependency Audit
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: "26"
+                  cache: "npm"
+            - run: npm ci
+            # --omit=dev: only vulnerabilities in packages actually shipped
+            # in the production build/runtime block CI. netlify-cli bundles
+            # its own dev-only tooling (a local functions bundler, image
+            # proxy) with a handful of high-severity advisories that only
+            # have a fix via a major-version downgrade of netlify-cli
+            # itself — not a reasonable tradeoff for tooling that never
+            # ships. See CLAUDE.md.
+            - run: npm run check:audit
+
     build:
         name: Build
         runs-on: ubuntu-latest
