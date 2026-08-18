@@ -60,26 +60,25 @@
         X-XSS-Protection = "0"
 
         # Content Security Policy. This header is deliberately permissive on
-        # script-src/style-src ('unsafe-inline' on both) — the real script
-        # hardening comes from astro.config.mjs's security.csp, which emits
-        # a <meta> CSP with an auto-generated SHA-256 hash allowlist. See
-        # CLAUDE.md's security.csp bullet for what's actually enforced, why
-        # this header's 'unsafe-inline' has to stay (removing it here without
-        # also adding matching hashes would break every inline script, since
-        # a header CSP and a meta CSP both apply independently — browsers
-        # enforce their intersection), and the ClientRouter compatibility
-        # caveat that governs whether this is safe to keep enabled at all.
+        # script-src/style-src ('unsafe-inline' on both) — astro.config.mjs's
+        # security.csp (an auto-generated, hash-only meta CSP) hardens most
+        # of what actually matters, but NOT everything: it can't cover
+        # BaseLayout.astro's own <head> content (the dark-mode script), only
+        # what Astro places in <body>. See CLAUDE.md's security.csp bullet
+        # for the full mechanism, why 'unsafe-inline' must stay here
+        # regardless, and the ClientRouter compatibility caveat.
         # — img-src scoped to 'self' data: only (https: dropped) — no
-        #   content currently loads an external image; the work schema's
-        #   image() helper only accepts local, Astro-processed assets
-        #   (blog/principles have no image field at all). Not enforced for
-        #   MDX body content specifically, only frontmatter — widen back to
+        #   content currently loads an external image; see CLAUDE.md's
+        #   img-src bullet for what this doesn't cover. Widen back to
         #   include https: if a case study ever needs a real external image.
         # — TODO: when Plausible analytics is added, append
-        #         "https://plausible.io" to connect-src here AND to
-        #         astro.config.mjs's security.csp.scriptDirective.resources
-        #         (a remote script URL needs adding to the meta CSP too,
-        #         not just this header, or the intersection blocks it).
+        #         "https://plausible.io" to BOTH script-src and connect-src
+        #         here (an external script source needs script-src's own
+        #         allowlist — 'unsafe-inline' only covers inline content, not
+        #         external URLs) AND to astro.config.mjs's
+        #         security.csp.scriptDirective.resources (a browser enforces
+        #         the intersection of the header and the meta CSP, so
+        #         missing either one blocks the script).
         Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
 
 # Astro outputs content-hashed filenames to /_astro/. These are

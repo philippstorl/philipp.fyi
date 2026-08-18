@@ -182,6 +182,7 @@ When ready to add Plausible (or another provider):
 
 1. Add the script tag to `src/layouts/BaseLayout.astro` inside `<head>`
 2. Update the `Content-Security-Policy` in `netlify.toml` — find the `TODO` comment and add `https://plausible.io` to `script-src` and `connect-src`
+3. **Also** add `https://plausible.io` to `astro.config.mjs`'s `security.csp.scriptDirective.resources` — a remote script URL needs to satisfy Astro's auto-generated `<meta>` CSP too, not just the `netlify.toml` header; a browser enforces the intersection of both, so missing this step leaves the script blocked even after step 2
 
 ## Key paths
 

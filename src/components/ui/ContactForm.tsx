@@ -96,10 +96,7 @@ export default function ContactForm() {
                 tabIndex={-1}
                 className="rounded-xl border border-border bg-card p-8 md:p-10"
             >
-                <p
-                    className="mb-2 font-display text-xl text-foreground"
-                    style={{ fontVariationSettings: "'opsz' 24" }}
-                >
+                <p className="opsz-24 mb-2 font-display text-xl text-foreground">
                     Message sent.
                 </p>
                 <p className="text-sm text-muted">

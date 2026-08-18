@@ -51,6 +51,25 @@ export default tseslint.config(
         },
     },
 
+    // security.csp (astro.config.mjs) generates a hash-only style-src with
+    // no 'unsafe-inline' carve-out, which only covers <style> elements, not
+    // inline style="..."/style={{...}} attributes. Every one of those was
+    // converted to a Tailwind arbitrary-value class (see CLAUDE.md's CSP
+    // section) — this rule stops a new one from silently creeping back in.
+    {
+        files: ['**/*.astro', '**/*.tsx'],
+        rules: {
+            'no-restricted-syntax': [
+                'error',
+                {
+                    selector: "JSXAttribute[name.name='style']",
+                    message:
+                        'Inline style attributes bypass the hash-only style-src CSP. Use a Tailwind arbitrary-value/arbitrary-property class instead.',
+                },
+            ],
+        },
+    },
+
     {
         ignores: ['dist/**', '.astro/**', 'node_modules/**'],
     },
