@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -27,8 +27,16 @@ function validate(data: FormData): FieldErrors {
 
 export default function ContactForm() {
     const formRef = useRef<HTMLFormElement>(null)
+    const nameInputRef = useRef<HTMLInputElement>(null)
+    const emailInputRef = useRef<HTMLInputElement>(null)
+    const messageInputRef = useRef<HTMLTextAreaElement>(null)
+    const successRef = useRef<HTMLDivElement>(null)
     const [status, setStatus] = useState<FormStatus>('idle')
     const [errors, setErrors] = useState<FieldErrors>({})
+
+    useEffect(() => {
+        if (status === 'success') successRef.current?.focus()
+    }, [status])
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -38,6 +46,9 @@ export default function ContactForm() {
         const fieldErrors = validate(data)
         if (Object.keys(fieldErrors).length > 0) {
             setErrors(fieldErrors)
+            if (fieldErrors.name) nameInputRef.current?.focus()
+            else if (fieldErrors.email) emailInputRef.current?.focus()
+            else if (fieldErrors.message) messageInputRef.current?.focus()
             return
         }
 
@@ -51,7 +62,10 @@ export default function ContactForm() {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
                 body: new URLSearchParams(
-                    data as unknown as Record<string, string>,
+                    Array.from(data.entries(), ([key, value]) => [
+                        key,
+                        String(value),
+                    ]),
                 ).toString(),
             })
             if (res.ok) {
@@ -67,7 +81,12 @@ export default function ContactForm() {
 
     if (status === 'success') {
         return (
-            <div className="rounded-xl border border-border bg-card p-8 md:p-10">
+            <div
+                ref={successRef}
+                role="status"
+                tabIndex={-1}
+                className="rounded-xl border border-border bg-card p-8 md:p-10"
+            >
                 <p
                     className="mb-2 font-display text-xl text-foreground"
                     style={{ fontVariationSettings: "'opsz' 24" }}
@@ -84,7 +103,13 @@ export default function ContactForm() {
     const inputBase =
         'w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted transition-colors duration-150 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent'
     const labelBase = 'mb-1.5 block text-xs font-medium text-muted'
-    const errorBase = 'mt-1.5 text-xs text-red-500 dark:text-red-400'
+    const errorBase = 'mt-1.5 text-xs text-red-700 dark:text-red-400'
+    const requiredMarker = (
+        <span className="text-red-700 dark:text-red-400" aria-hidden="true">
+            {' '}
+            *
+        </span>
+    )
 
     return (
         <form
@@ -107,12 +132,15 @@ export default function ContactForm() {
                 <div>
                     <label htmlFor="contact-name" className={labelBase}>
                         Name
+                        {requiredMarker}
                     </label>
                     <input
+                        ref={nameInputRef}
                         id="contact-name"
                         name="name"
                         type="text"
                         autoComplete="name"
+                        aria-required="true"
                         aria-describedby={
                             errors.name ? 'contact-name-error' : undefined
                         }
@@ -134,12 +162,15 @@ export default function ContactForm() {
                 <div>
                     <label htmlFor="contact-email" className={labelBase}>
                         Email
+                        {requiredMarker}
                     </label>
                     <input
+                        ref={emailInputRef}
                         id="contact-email"
                         name="email"
                         type="email"
                         autoComplete="email"
+                        aria-required="true"
                         aria-describedby={
                             errors.email ? 'contact-email-error' : undefined
                         }
@@ -161,11 +192,14 @@ export default function ContactForm() {
                 <div>
                     <label htmlFor="contact-message" className={labelBase}>
                         Message
+                        {requiredMarker}
                     </label>
                     <textarea
+                        ref={messageInputRef}
                         id="contact-message"
                         name="message"
                         rows={5}
+                        aria-required="true"
                         aria-describedby={
                             errors.message ? 'contact-message-error' : undefined
                         }
@@ -187,7 +221,7 @@ export default function ContactForm() {
                 {status === 'error' && (
                     <p
                         role="alert"
-                        className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400"
+                        className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-400"
                     >
                         Something went wrong. Please try again or reach out on
                         LinkedIn.
