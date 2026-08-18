@@ -18,6 +18,13 @@
     port       = 8888
     autoLaunch = false
 
+# Target is "/404", not "/404/", even though trailingSlash: 'always'
+# governs every other route. Astro special-cases 404/500 pages to always
+# emit a flat dist/404.html instead of dist/404/index.html, regardless of
+# the trailingSlash setting (node_modules/astro/dist/core/output-filename.js,
+# STATUS_CODE_PAGES). This is undocumented, version-specific Astro behavior,
+# not a guaranteed contract — re-verify dist/404.html still exists at the
+# build root after any Astro major-version bump.
 [[redirects]]
     from   = "/*"
     to     = "/404"
