@@ -17,32 +17,92 @@ const ignoreDirs = new Set([
     '.idea',
 ])
 
-const checks = [
-    {
-        name: 'missing trailing slash for /principles',
-        regex: /href\s*=\s*\{?\s*['"]\/principles(?=['"\s\}])/g,
-    },
-    {
-        name: 'missing trailing slash for /recommendations',
-        regex: /href\s*=\s*\{?\s*['"]\/recommendations(?=['"\s\}])/g,
-    },
-    {
-        name: 'missing trailing slash for /blog',
-        regex: /href\s*=\s*\{?\s*['"]\/blog(?=['"\s\}])/g,
-    },
-    {
-        name: 'missing trailing slash for /work route',
-        regex: /href\s*=\s*\{?\s*['"]\/work\/[^'"\s]+[^\/\s'"\}](['"]\s*\}?)/g,
-    },
-    {
+const excludedStaticPageNames = new Set(['index', '404'])
+
+function escapeRegex(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+async function deriveRoutes() {
+    const pagesDir = path.join(root, 'src/pages')
+    const entries = await fs.readdir(pagesDir, { withFileTypes: true })
+    const staticRoutes = []
+    const dynamicPrefixes = []
+
+    for (const entry of entries) {
+        if (entry.isFile() && entry.name.endsWith('.astro')) {
+            const name = entry.name.replace(/\.astro$/, '')
+            if (!excludedStaticPageNames.has(name)) staticRoutes.push(name)
+        } else if (entry.isDirectory()) {
+            const subEntries = await fs.readdir(path.join(pagesDir, entry.name))
+            if (subEntries.includes('index.astro')) {
+                staticRoutes.push(entry.name)
+            }
+            if (subEntries.some((f) => /^\[\.{0,3}slug\]\.astro$/.test(f))) {
+                dynamicPrefixes.push(entry.name)
+            }
+        }
+    }
+
+    return { staticRoutes, dynamicPrefixes }
+}
+
+function buildChecks({ staticRoutes, dynamicPrefixes }) {
+    const checks = []
+
+    for (const route of staticRoutes) {
+        const escaped = escapeRegex(route)
+        checks.push({
+            name: `missing trailing slash for /${route}`,
+            regex: new RegExp(
+                `href\\s*=\\s*\\{?\\s*['"]\\/${escaped}(?=['"\\s\\}])`,
+                'g',
+            ),
+        })
+    }
+
+    for (const prefix of dynamicPrefixes) {
+        const escaped = escapeRegex(prefix)
+        checks.push({
+            name: `missing trailing slash for /${prefix} route`,
+            regex: new RegExp(
+                `href\\s*=\\s*\\{?\\s*['"]\\/${escaped}\\/[^'"\\s]+[^\\/\\s'"\\}](['"]\\s*\\}?)`,
+                'g',
+            ),
+        })
+        checks.push({
+            name: `missing trailing slash in template-literal href for /${prefix} route`,
+            regex: new RegExp(
+                `(?:href\\s*=\\s*\\{\\s*|(?:const|let)\\s+\\w+\\s*=\\s*)\`\\/${escaped}\\/[^\`#]*\\$\\{[^}]*\\}[^\`\\/]*\``,
+                'g',
+            ),
+        })
+    }
+
+    const gotoPattern = [
+        ...staticRoutes.map((r) => escapeRegex(r)),
+        ...dynamicPrefixes.map(
+            (p) => `${escapeRegex(p)}\\/[^'"\\s]+[^\\/\\s'"\\}]`,
+        ),
+    ].join('|')
+
+    checks.push({
         name: 'missing trailing slash in page.goto',
-        regex: /page\.goto\(\s*['"]\/(principles|recommendations|blog|work\/[^'"\s]+[^\/\s'"\}])['"]\s*\)/g,
-    },
-    {
+        regex: new RegExp(
+            `page\\.goto\\(\\s*['"]\\/(${gotoPattern})['"]\\s*\\)`,
+            'g',
+        ),
+    })
+    checks.push({
         name: 'missing trailing slash in toHaveURL',
-        regex: /toHaveURL\(\s*['"]\/(principles|recommendations|blog|work\/[^'"\s]+[^\/\s'"\}])['"]\s*\)/g,
-    },
-]
+        regex: new RegExp(
+            `toHaveURL\\(\\s*['"]\\/(${gotoPattern})['"]\\s*\\)`,
+            'g',
+        ),
+    })
+
+    return checks
+}
 
 async function walk(dir) {
     const entries = await fs.readdir(dir, { withFileTypes: true })
@@ -62,6 +122,8 @@ async function walk(dir) {
 }
 
 async function main() {
+    const routes = await deriveRoutes()
+    const checks = buildChecks(routes)
     const files = await walk(root)
     const violations = []
 
