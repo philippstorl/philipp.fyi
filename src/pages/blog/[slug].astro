@@ -5,11 +5,12 @@ import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
+import { stripContentExtension, formatBlogDate } from '@/utils/slug'
 
 export async function getStaticPaths() {
     const posts = await getCollection('blog', ({ data }) => !data.draft)
     return posts.map((post) => ({
-        params: { slug: post.id.replace(/\.(mdx?|md)$/, '') },
+        params: { slug: stripContentExtension(post.id) },
         props: { post },
     }))
 }
@@ -34,13 +35,7 @@ const { title, description, date, tags } = post.data
                 datetime={date.toISOString()}
                 class="mb-5 block font-mono text-xs text-muted"
             >
-                {
-                    date.toLocaleDateString('en-US', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric',
-                    })
-                }
+                {formatBlogDate(date)}
             </time>
             <h1
                 class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"

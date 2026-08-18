@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { getYearsOfExperience } from '@/utils/experience'
+import { stripContentExtension } from '@/utils/slug'
 
 const principles = (await getCollection('principles')).sort((a, b) =>
     a.id.localeCompare(b.id),
@@ -34,7 +35,7 @@ const years = getYearsOfExperience()
                     principles.map(async (entry) => {
                         const { Content } = await render(entry)
                         const number = entry.id.split('-')[0]
-                        const slug = entry.id.replace(/\.md$/, '')
+                        const slug = stripContentExtension(entry.id)
                         return (
                             <li
                                 id={slug}

@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content'
 import { Image } from 'astro:assets'
 import { ArrowRight } from 'lucide-react'
 import CategoryBadge from '@/components/ui/CategoryBadge.astro'
+import { stripContentExtension } from '@/utils/slug'
 
 interface Props {
     entry: CollectionEntry<'work'>
@@ -12,7 +13,7 @@ interface Props {
 const { entry, showCover = true } = Astro.props
 const { title, description, category, tags, year, featured, coverImage } =
     entry.data
-const href = `/work/${entry.id.replace(/\.(mdx?|md)$/, '')}/`
+const href = `/work/${stripContentExtension(entry.id)}/`
 ---
 
 {

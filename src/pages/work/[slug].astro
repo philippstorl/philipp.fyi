@@ -5,11 +5,12 @@ import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import CaseStudyLayout from '@/components/work/CaseStudyLayout.astro'
+import { stripContentExtension } from '@/utils/slug'
 
 export async function getStaticPaths() {
     const entries = await getCollection('work', ({ data }) => !data.draft)
     return entries.map((entry) => ({
-        params: { slug: entry.id.replace(/\.(mdx?|md)$/, '') },
+        params: { slug: stripContentExtension(entry.id) },
         props: { entry },
     }))
 }
@@ -17,7 +18,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props
 const { Content } = await render(entry)
 const { title, description, category, tags, year } = entry.data
-const slug = entry.id.replace(/\.(mdx?|md)$/, '')
+const slug = stripContentExtension(entry.id)
 ---
 
 <BaseLayout
