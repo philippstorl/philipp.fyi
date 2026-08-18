@@ -5,6 +5,7 @@ import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import InitialsAvatar from '@/components/ui/InitialsAvatar.astro'
 import InterlinkCard from '@/components/ui/InterlinkCard.astro'
+import PageHeader from '@/components/ui/PageHeader.astro'
 import { recommendations } from '@/data/recommendations'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
 ---
@@ -16,28 +17,20 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
 >
     <Header />
     <Main>
-        <div class="mx-auto max-w-3xl px-6 pt-24 pb-16 md:pt-32">
-            <p class="mb-4 text-sm font-medium text-muted">What others say</p>
-            <h1
-                class="mb-6 font-display text-4xl leading-tight font-normal tracking-tight text-foreground md:text-5xl"
-                style="font-variation-settings: 'opsz' 72"
+        <PageHeader eyebrow="What others say" title="Recommendations">
+            Recommendations from colleagues, managers, direct reports, and
+            external partners I've worked with over the years, collected from{
+                ' '
+            }
+            <a
+                href="https://www.linkedin.com/in/philipp-storl/details/recommendations/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-accent no-underline hover:underline"
             >
-                Recommendations
-            </h1>
-            <p class="text-lg leading-relaxed text-muted">
-                Recommendations from colleagues, managers, direct reports, and
-                external partners I've worked with over the years, collected
-                from{' '}
-                <a
-                    href="https://www.linkedin.com/in/philipp-storl/details/recommendations/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    class="text-accent no-underline hover:underline"
-                >
-                    LinkedIn
-                </a>, unedited except for formatting.
-            </p>
-        </div>
+                LinkedIn
+            </a>, unedited except for formatting.
+        </PageHeader>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
             <ol class="flex flex-col gap-4">

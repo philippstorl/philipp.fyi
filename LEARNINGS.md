@@ -14,6 +14,10 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-08-18
+
+- Implemented #98 (`PageHeader.astro` extraction, filed 2026-08-17 below). `self-review` caught a whitespace regression introduced by the extraction itself, not present before it: `work/index.astro`'s intro paragraph had gained a line break directly before `{getStaffbaseTenureYears()}` with no `{' '}`, which Astro's compiler collapses to zero space in the built HTML (confirmed by grepping `dist/work/index.html`, not just eyeballing source) — the exact `.astro`-template gotcha CLAUDE.md already documents elsewhere, but easy to reintroduce when Prettier reflows JSX-adjacent text across a refactor. Fixed with an explicit `{' '}`; reinforces that this class of bug needs a built-output check, not a source-level review, to catch reliably.
+
 ### 2026-08-17
 
 - Splitting Work into a homepage teaser + dedicated `/work/` page (mirroring the earlier About extraction, see 2026-07-30) tipped two more pre-existing 3-copy duplication patterns to 4: the section-header+CTA row (`WorkSection`/`AboutSection`/`PrinciplesSection`/`RecommendationsSection`) and the page-header block (`about`/`principles`/`recommendations`/`work/index.astro`). Extending the interlink structure from a triangle (About/Principles/Recommendations) to a square (adding Work) made the `InterlinkCard` row wrapper a 4th copy too. Filed as three separate follow-up issues (#97, #98, #99) rather than fixed inline, to keep the Work-page PR scoped to the feature — the user initially had the `InterlinkCard`-row candidate framed as too weak/context-dependent to bother with, then pushed back and asked for it filed anyway. Each issue explicitly rules out React for the extracted component, since none of the three involve client-side interactivity (matches CLAUDE.md's Astro-first convention).
