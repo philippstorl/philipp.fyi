@@ -64,7 +64,7 @@ const colors = {
     foreground: '#0D0D0C',
     muted: '#6B6865',
     accent: '#AB2B03',
-    border: '#E4E0DA',
+    border: '#82807C',
 }
 
 const OG_WIDTH = 1200
