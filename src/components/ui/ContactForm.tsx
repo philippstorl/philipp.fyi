@@ -38,17 +38,26 @@ export default function ContactForm() {
         if (status === 'success') successRef.current?.focus()
     }, [status])
 
+    // Deferred to an effect (rather than called inline in handleSubmit) so
+    // it runs after React commits aria-invalid/aria-describedby for the
+    // newly-erroring field, not before — focusing synchronously during the
+    // submit handler would move focus a render early, while the DOM still
+    // reflects the previous (valid) state.
+    useEffect(() => {
+        if (errors.name) nameInputRef.current?.focus()
+        else if (errors.email) emailInputRef.current?.focus()
+        else if (errors.message) messageInputRef.current?.focus()
+    }, [errors])
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
+        if (status === 'submitting') return
         const form = e.currentTarget
         const data = new FormData(form)
 
         const fieldErrors = validate(data)
         if (Object.keys(fieldErrors).length > 0) {
             setErrors(fieldErrors)
-            if (fieldErrors.name) nameInputRef.current?.focus()
-            else if (fieldErrors.email) emailInputRef.current?.focus()
-            else if (fieldErrors.message) messageInputRef.current?.focus()
             return
         }
 
