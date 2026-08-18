@@ -1,0 +1,36 @@
+---
+import {
+    isNavLinkActive,
+    NAV_LINK_ACTIVE_CLASS,
+    NAV_LINK_INACTIVE_CLASSES,
+    NAV_LINK_DESKTOP_UNDERLINE_ACTIVE_CLASS,
+} from '@/utils/nav-active'
+
+interface Props {
+    href: string
+    label: string
+    pathname: string
+    variant: 'desktop' | 'mobile'
+}
+
+const { href, label, pathname, variant } = Astro.props
+const isActive = isNavLinkActive(pathname, href)
+const isDesktop = variant === 'desktop'
+---
+
+<a
+    href={href}
+    data-astro-prefetch
+    data-nav-variant={variant}
+    class:list={[
+        'text-sm font-medium transition-colors duration-150',
+        isDesktop ? 'relative' : 'block py-3',
+        isDesktop &&
+            'after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-accent after:transition-[width] after:duration-200 hover:after:w-full',
+        isDesktop && isActive && NAV_LINK_DESKTOP_UNDERLINE_ACTIVE_CLASS,
+        isActive ? NAV_LINK_ACTIVE_CLASS : NAV_LINK_INACTIVE_CLASSES,
+    ]}
+    aria-current={isActive ? 'page' : undefined}
+>
+    {label}
+</a>

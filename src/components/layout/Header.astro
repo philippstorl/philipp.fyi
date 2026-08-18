@@ -1,9 +1,9 @@
 ---
 import { navItems } from '@/data/navigation'
 import ThemeToggle from '@/components/ui/ThemeToggle'
+import NavLink from '@/components/layout/NavLink.astro'
 
 const pathname = Astro.url.pathname
-const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`
 ---
 
 <header
@@ -23,30 +23,16 @@ const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`
         <nav aria-label="Main navigation" class="hidden md:block">
             <ul class="flex items-center gap-8">
                 {
-                    navItems.map((item) => {
-                        const isActive =
-                            !item.href.includes('#') &&
-                            normalizedPathname.startsWith(item.href)
-                        return (
-                            <li>
-                                <a
-                                    href={item.href}
-                                    data-astro-prefetch
-                                    class:list={[
-                                        'relative text-sm font-medium transition-colors duration-150',
-                                        'after:absolute after:-bottom-0.5 after:left-0 after:h-px after:bg-accent',
-                                        'after:w-0 after:transition-[width] after:duration-200 hover:after:w-full',
-                                        isActive
-                                            ? 'text-foreground after:w-full'
-                                            : 'text-muted hover:text-foreground',
-                                    ]}
-                                    aria-current={isActive ? 'page' : undefined}
-                                >
-                                    {item.label}
-                                </a>
-                            </li>
-                        )
-                    })
+                    navItems.map((item) => (
+                        <li>
+                            <NavLink
+                                href={item.href}
+                                label={item.label}
+                                pathname={pathname}
+                                variant="desktop"
+                            />
+                        </li>
+                    ))
                 }
             </ul>
         </nav>
@@ -108,13 +94,12 @@ const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`
             {
                 navItems.map((item) => (
                     <li>
-                        <a
+                        <NavLink
                             href={item.href}
-                            data-astro-prefetch
-                            class="block py-3 text-sm font-medium text-muted transition-colors duration-150 hover:text-foreground"
-                        >
-                            {item.label}
-                        </a>
+                            label={item.label}
+                            pathname={pathname}
+                            variant="mobile"
+                        />
                     </li>
                 ))
             }
@@ -123,38 +108,48 @@ const normalizedPathname = pathname.endsWith('/') ? pathname : `${pathname}/`
 </header>
 
 <script>
+    import {
+        isNavLinkActive,
+        NAV_LINK_ACTIVE_CLASS,
+        NAV_LINK_INACTIVE_CLASSES,
+        NAV_LINK_DESKTOP_UNDERLINE_ACTIVE_CLASS,
+    } from '@/utils/nav-active'
+
     // Header persists across client-side navigations (transition:persist,
     // so the ThemeToggle island and the listeners below don't get torn down
-    // on every page swap) — but that also means the desktop nav's "active
-    // link" classes, computed server-side from the page that was current
-    // when this DOM was first rendered, never get recomputed for the new
-    // URL. Re-running this on astro:page-load (which fires after every
+    // on every page swap) — but that also means the nav's "active link"
+    // classes, computed server-side from the page that was current when
+    // this DOM was first rendered, never get recomputed for the new URL.
+    // Re-running this on astro:page-load (which fires after every
     // navigation, including ones that don't re-render persisted elements)
     // keeps the active link in sync without needing a full nav re-render.
+    function setLinkActive(link: Element, isActive: boolean) {
+        link.classList.toggle(NAV_LINK_ACTIVE_CLASS, isActive)
+        NAV_LINK_INACTIVE_CLASSES.forEach((cls) =>
+            link.classList.toggle(cls, !isActive),
+        )
+        if (isActive) {
+            link.setAttribute('aria-current', 'page')
+        } else {
+            link.removeAttribute('aria-current')
+        }
+    }
+
     function updateActiveNav() {
         const { pathname } = window.location
-        const normalizedPathname = pathname.endsWith('/')
-            ? pathname
-            : `${pathname}/`
+
         document
-            .querySelectorAll(
-                '#site-header nav[aria-label="Main navigation"] a',
-            )
+            .querySelectorAll('#site-header a[data-nav-variant]')
             .forEach((link) => {
                 const href = link.getAttribute('href')
-                const isActive =
-                    !!href &&
-                    !href.includes('#') &&
-                    normalizedPathname.startsWith(href)
-                link.classList.toggle('text-foreground', isActive)
-                link.classList.toggle('after:w-full', isActive)
-                link.classList.toggle('text-muted', !isActive)
-                link.classList.toggle('hover:text-foreground', !isActive)
-                if (isActive) {
-                    link.setAttribute('aria-current', 'page')
-                } else {
-                    link.removeAttribute('aria-current')
+                const isActive = !!href && isNavLinkActive(pathname, href)
+                if (link.getAttribute('data-nav-variant') === 'desktop') {
+                    link.classList.toggle(
+                        NAV_LINK_DESKTOP_UNDERLINE_ACTIVE_CLASS,
+                        isActive,
+                    )
                 }
+                setLinkActive(link, isActive)
             })
     }
 
