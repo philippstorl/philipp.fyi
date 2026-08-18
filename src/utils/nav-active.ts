@@ -16,4 +16,4 @@ export function isNavLinkActive(pathname: string, href: string): boolean {
 // client-side re-sync.
 export const NAV_LINK_ACTIVE_CLASS = 'text-foreground'
 export const NAV_LINK_INACTIVE_CLASSES = ['text-muted', 'hover:text-foreground']
-export const NAV_LINK_DESKTOP_UNDERLINE_ACTIVE_CLASS = 'after:w-full'
+export const NAV_LINK_UNDERLINE_ACTIVE_CLASS = 'after:w-full'

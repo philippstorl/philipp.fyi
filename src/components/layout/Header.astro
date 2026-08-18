@@ -112,7 +112,7 @@ const pathname = Astro.url.pathname
         isNavLinkActive,
         NAV_LINK_ACTIVE_CLASS,
         NAV_LINK_INACTIVE_CLASSES,
-        NAV_LINK_DESKTOP_UNDERLINE_ACTIVE_CLASS,
+        NAV_LINK_UNDERLINE_ACTIVE_CLASS,
     } from '@/utils/nav-active'
 
     // Header persists across client-side navigations (transition:persist,
@@ -128,6 +128,7 @@ const pathname = Astro.url.pathname
         NAV_LINK_INACTIVE_CLASSES.forEach((cls) =>
             link.classList.toggle(cls, !isActive),
         )
+        link.classList.toggle(NAV_LINK_UNDERLINE_ACTIVE_CLASS, isActive)
         if (isActive) {
             link.setAttribute('aria-current', 'page')
         } else {
@@ -139,17 +140,10 @@ const pathname = Astro.url.pathname
         const { pathname } = window.location
 
         document
-            .querySelectorAll('#site-header a[data-nav-variant]')
+            .querySelectorAll('#site-header a[data-nav-link]')
             .forEach((link) => {
                 const href = link.getAttribute('href')
-                const isActive = !!href && isNavLinkActive(pathname, href)
-                if (link.getAttribute('data-nav-variant') === 'desktop') {
-                    link.classList.toggle(
-                        NAV_LINK_DESKTOP_UNDERLINE_ACTIVE_CLASS,
-                        isActive,
-                    )
-                }
-                setLinkActive(link, isActive)
+                setLinkActive(link, !!href && isNavLinkActive(pathname, href))
             })
     }
 
