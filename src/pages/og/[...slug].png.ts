@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { generateOgImage } from '@/utils/og-image'
 import { getYearsOfExperience } from '@/utils/experience'
+import { stripContentExtension } from '@/utils/slug'
 import type { WorkCategory } from '@/utils/category-colors'
 
 // entry.data.coverImage only exposes the Astro-optimized public URL (e.g.
@@ -44,7 +45,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
             props: { title: 'Work', label: 'Selected work' },
         },
         ...workEntries.map((entry) => ({
-            params: { slug: `work/${entry.id.replace(/\.(mdx?|md)$/, '')}` },
+            params: { slug: `work/${stripContentExtension(entry.id)}` },
             props: {
                 title: entry.data.title,
                 category: entry.data.category,

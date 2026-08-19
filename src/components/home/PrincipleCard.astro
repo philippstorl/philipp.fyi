@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content'
+import { stripContentExtension } from '@/utils/slug'
 
 interface Props {
     entry: CollectionEntry<'principles'>
@@ -7,7 +8,7 @@ interface Props {
 
 const { entry } = Astro.props
 const { title, description } = entry.data
-const slug = entry.id.replace(/\.md$/, '')
+const slug = stripContentExtension(entry.id)
 const number = slug.split('-')[0]
 const href = `/principles/#${slug}`
 ---
