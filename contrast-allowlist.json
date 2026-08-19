@@ -1,0 +1,8 @@
+[
+    {
+        "page": "/404",
+        "theme": "light",
+        "selector": ".mb-0",
+        "reason": "Decorative aria-hidden '404' numeral at 10% opacity behind the real heading (src/pages/404.astro) — not perceivable as text content to any user, sighted or assistive-tech."
+    }
+]

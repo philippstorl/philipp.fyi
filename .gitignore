@@ -11,6 +11,7 @@ node_modules/
 dist/
 playwright-report/
 test-results/
+contrast-results/
 
 # Editor / IDE folders
 .vscode/

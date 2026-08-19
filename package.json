@@ -17,7 +17,9 @@
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "test": "playwright test",
-        "test:ui": "playwright test --ui"
+        "test:ui": "playwright test --ui",
+        "test:contrast": "playwright test --config=playwright.contrast.config.ts",
+        "check:contrast": "node scripts/check-contrast.mjs"
     },
     "dependencies": {
         "@astrojs/markdown-satteri": "^0.3.5",
@@ -37,6 +39,7 @@
     },
     "devDependencies": {
         "@astrojs/check": "^0.9.10",
+        "@axe-core/playwright": "^4.13.0",
         "@playwright/test": "^1.62.1",
         "@tailwindcss/typography": "^0.5.20",
         "@tailwindcss/vite": "^4.3.3",
