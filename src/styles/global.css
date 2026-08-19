@@ -29,7 +29,8 @@
     --color-muted: oklch(44% 0.007 80);
     --color-accent: oklch(49% 0.17 35);
     --color-available: oklch(44% 0.13 145);
-    --color-border: oklch(60% 0.006 80);
+    --color-border: oklch(89% 0.006 80);
+    --color-border-strong: oklch(60% 0.006 80);
 
     --animate-fade-up: fade-up 0.5s ease-out both;
 }
@@ -41,7 +42,8 @@
     --color-muted: oklch(68% 0.007 80);
     --color-accent: oklch(70% 0.15 35);
     --color-available: oklch(68% 0.13 145);
-    --color-border: oklch(49% 0.006 80);
+    --color-border: oklch(21% 0.006 80);
+    --color-border-strong: oklch(49% 0.006 80);
 }
 
 @media (prefers-reduced-motion: no-preference) {
