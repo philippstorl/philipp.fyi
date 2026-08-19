@@ -1,7 +1,16 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useLayoutEffect } from 'react'
 import { Sun, Moon, Monitor } from 'lucide-react'
 
 type Theme = 'light' | 'dark' | 'system'
+
+function getStoredTheme(): Theme {
+    try {
+        const stored = localStorage.getItem('theme')
+        return stored === 'light' || stored === 'dark' ? stored : 'system'
+    } catch {
+        return 'system'
+    }
+}
 
 function applyTheme(theme: Theme) {
     const html = document.documentElement
@@ -20,9 +29,8 @@ function applyTheme(theme: Theme) {
 export default function ThemeToggle() {
     const [theme, setTheme] = useState<Theme>('system')
 
-    useEffect(() => {
-        const stored = localStorage.getItem('theme') as Theme | null
-        setTheme(stored ?? 'system')
+    useLayoutEffect(() => {
+        setTheme(getStoredTheme())
     }, [])
 
     useEffect(() => {
