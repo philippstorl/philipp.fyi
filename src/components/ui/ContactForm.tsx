@@ -110,7 +110,7 @@ export default function ContactForm() {
     }
 
     const inputBase =
-        'w-full rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted transition-colors duration-150 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent'
+        'w-full rounded-lg border border-border-strong bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted transition-colors duration-150 focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent'
     const labelBase = 'mb-1.5 block text-xs font-medium text-muted'
     const errorBase = 'mt-1.5 text-xs text-red-700 dark:text-red-400'
     const requiredMarker = (
