@@ -1,9 +1,15 @@
-import { useState, useEffect, useLayoutEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { Sun, Moon, Monitor } from 'lucide-react'
 
 type Theme = 'light' | 'dark' | 'system'
 
+// Mirrors the synchronous DOM patch in Header.astro's inline script, which
+// runs before this island hydrates and corrects the same buttons' aria-pressed/
+// class attributes from the same localStorage read. Computing the identical
+// value here means hydration's client render matches what's already in the
+// DOM, so React never sees (or needs to repaint past) a mismatch.
 function getStoredTheme(): Theme {
+    if (typeof window === 'undefined') return 'system'
     try {
         const stored = localStorage.getItem('theme')
         return stored === 'light' || stored === 'dark' ? stored : 'system'
@@ -27,11 +33,7 @@ function applyTheme(theme: Theme) {
 }
 
 export default function ThemeToggle() {
-    const [theme, setTheme] = useState<Theme>('system')
-
-    useLayoutEffect(() => {
-        setTheme(getStoredTheme())
-    }, [])
+    const [theme, setTheme] = useState<Theme>(getStoredTheme)
 
     useEffect(() => {
         if (theme !== 'system') return
@@ -68,6 +70,7 @@ export default function ThemeToggle() {
             {options.map(({ value, Icon, label }) => (
                 <button
                     key={value}
+                    data-theme-value={value}
                     onClick={() => select(value)}
                     aria-label={label}
                     aria-pressed={theme === value}

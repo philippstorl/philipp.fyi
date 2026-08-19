@@ -39,6 +39,51 @@ const pathname = Astro.url.pathname
 
         <div class="flex items-center gap-1">
             <ThemeToggle client:load />
+            {
+                /* Runs synchronously, before ThemeToggle's client:load hydration
+                (a deferred module script), and before the browser paints —
+                correcting the buttons' aria-pressed/class from localStorage so
+                the SSR-baked 'system' state is never visible. Mirrors
+                BaseLayout.astro's dark-mode pre-paint script; ThemeToggle.tsx's
+                getStoredTheme() computes the same value so hydration matches
+                what this script already put in the DOM instead of mismatching it. */
+            }
+            <script is:inline>
+                ;(function () {
+                    try {
+                        const stored = localStorage.getItem('theme')
+                        const theme =
+                            stored === 'light' || stored === 'dark'
+                                ? stored
+                                : 'system'
+                        document
+                            .querySelectorAll('[data-theme-value]')
+                            .forEach(function (btn) {
+                                const active =
+                                    btn.getAttribute('data-theme-value') ===
+                                    theme
+                                btn.setAttribute(
+                                    'aria-pressed',
+                                    active ? 'true' : 'false',
+                                )
+                                btn.classList.toggle('bg-accent/10', active)
+                                btn.classList.toggle('text-accent', active)
+                                btn.classList.toggle('text-muted', !active)
+                                btn.classList.toggle(
+                                    'hover:bg-foreground/5',
+                                    !active,
+                                )
+                                btn.classList.toggle(
+                                    'hover:text-foreground',
+                                    !active,
+                                )
+                            })
+                    } catch {
+                        // no-op: if localStorage is unavailable, leave
+                        // ThemeToggle's SSR-baked 'system' state as-is.
+                    }
+                })()
+            </script>
 
             <button
                 id="nav-toggle"
