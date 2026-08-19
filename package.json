@@ -2,6 +2,9 @@
     "name": "philipp-fyi",
     "type": "module",
     "version": "0.1.0",
+    "engines": {
+        "node": "26.x"
+    },
     "scripts": {
         "dev": "netlify dev",
         "dev:astro": "astro dev",
