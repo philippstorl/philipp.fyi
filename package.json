@@ -13,6 +13,7 @@
         "typecheck": "astro check",
         "lint": "eslint .",
         "check:trailing-slashes": "node scripts/check-trailing-slashes.js",
+        "check:audit": "npm audit --omit=dev --audit-level=high",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "test": "playwright test",
