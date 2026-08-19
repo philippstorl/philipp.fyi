@@ -20,7 +20,6 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
     <Main class="mx-auto max-w-3xl px-6 py-24 md:py-32">
         <h1
             class="mb-12 font-display text-4xl font-normal tracking-tight text-foreground md:text-5xl"
-            style="font-variation-settings: 'opsz' 72"
         >
             Blog
         </h1>
@@ -41,10 +40,7 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
                                     {formatBlogDate(post.data.date)}
                                 </time>
                                 <a href={href} class="group relative block">
-                                    <h2
-                                        class="mb-2 font-display text-xl font-normal tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent after:absolute after:inset-0"
-                                        style="font-variation-settings: 'opsz' 24"
-                                    >
+                                    <h2 class="mb-2 font-display text-xl font-normal tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent after:absolute after:inset-0">
                                         {post.data.title}
                                     </h2>
                                     <p class="text-sm leading-relaxed text-muted">

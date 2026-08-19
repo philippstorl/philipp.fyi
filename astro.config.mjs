@@ -8,6 +8,9 @@ export default defineConfig({
     site: 'https://philipp.fyi',
     trailingSlash: 'always',
     prefetch: true,
+    security: {
+        csp: true,
+    },
     integrations: [
         mdx(),
         react(),
