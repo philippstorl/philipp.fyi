@@ -1,6 +1,19 @@
 ---
 import { ClientRouter } from 'astro:transitions'
 import '../styles/global.css'
+// Preloaded below since Fraunces renders the hero <h1> (the page's likely
+// LCP element) but is otherwise only discovered via global.css's @import
+// chain, costing an extra round trip. The `-latin-` subset covers this
+// site's English copy; the `?url` suffix resolves Vite's hashed build
+// output path rather than the raw node_modules path. Both DM Sans weights
+// actually painted above the fold are preloaded: 500 for the header nav
+// links (NavLink.astro) and hero availability badge, and 400 for the hero
+// subheading paragraph (Hero.astro's <p class="text-lg ...">) right below
+// the <h1> — self-review caught that an earlier version of this only
+// preloaded 500, missing the subheading despite it being above the fold too.
+import frauncesWoff2Url from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url'
+import dmSansWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2?url'
+import dmSansRegularWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2?url'
 
 interface Props {
     /** Page title — shown as "Title | Philipp Storl", omit for home page */
@@ -61,6 +74,28 @@ const ogImageURL = new URL(ogImage, Astro.site)
         />
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={frauncesWoff2Url}
+            crossorigin
+        />
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={dmSansWoff2Url}
+            crossorigin
+        />
+        <link
+            rel="preload"
+            as="font"
+            type="font/woff2"
+            href={dmSansRegularWoff2Url}
+            crossorigin
+        />
 
         <ClientRouter />
 
