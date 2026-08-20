@@ -108,14 +108,15 @@ npx playwright test e2e/home.spec.ts --debug
 
 | File                          | What it covers                                                                                                                                              |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `e2e/home.spec.ts`            | Title, headline, 4 work cards, "See all work" CTA to /work, 6 principle cards, 6 recommendation cards, contact section                                      |
-| `e2e/navigation.spec.ts`      | Header, nav links (Work, About, Principles), name mark, theme toggle, skip-to-main-content link                                                             |
+| `e2e/home.spec.ts`            | Title, headline, 4 work cards, "See all work" CTA to /work, 6 principle cards, 6 recommendation cards, contact teaser section                               |
+| `e2e/navigation.spec.ts`      | Header, nav links (Work, About, Principles, Contact), name mark, theme toggle, skip-to-main-content link                                                    |
 | `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly; Work index page heading/cards, interlinks to About/Principles/Recommendations                  |
 | `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence                                                              |
 | `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles, interlinks to /about, /work, and /recommendations                                            |
 | `e2e/recommendations.spec.ts` | 13 recommendations shown, CTA links to /recommendations, interlinks to /about, /principles, and /work                                                       |
 | `e2e/about.spec.ts`           | About page heading/bio/facts, tech stack section, CTA links to /about, interlinks to /work, /principles, and /recommendations                               |
 | `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                                                                              |
+| `e2e/contact.spec.ts`         | Contact page heading/form, LinkedIn/GitHub links, "Send me a message" CTA on home links to /contact, footer mail icon links to /contact                     |
 | `e2e/contact-form.spec.ts`    | Contact form validation errors + focus, invalid-email message, mocked failed submission (error banner), mocked successful submission (confirmation + focus) |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
@@ -214,6 +215,7 @@ src/
   pages/
     index.astro
     about.astro
+    contact.astro
     principles.astro
     recommendations.astro
     work/index.astro

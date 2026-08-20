@@ -38,6 +38,16 @@ test.describe('Navigation', () => {
         await expect(page).toHaveURL('/about/')
     })
 
+    test('Contact nav link leads to /contact/', async ({ page }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/contact/"]:visible').click()
+        await expect(page).toHaveURL('/contact/')
+    })
+
     test('active nav link updates after client-side navigation', async ({
         page,
     }) => {
