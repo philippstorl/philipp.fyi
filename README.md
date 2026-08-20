@@ -7,7 +7,7 @@ Personal portfolio site for Philipp Storl — built with Astro v7, Tailwind CSS 
 
 ## Prerequisites
 
-- **Node.js 26** — matches the version set in `netlify.toml` and pinned in `.nvmrc`/`package.json`'s `engines` field (Current release, enters LTS October 2026). Run `nvm use` to switch automatically if you use nvm.
+- **Node.js 26** — matches the version set in `netlify.toml` and pinned in `.nvmrc`/`package.json`'s `engines` field (Current release, enters LTS October 2026). Run `nvm use` to switch automatically if you use nvm. This is enforced, not just a suggestion: the committed `.npmrc` sets `engine-strict=true`, so `npm install` hard-fails with `EBADENGINE` on any other Node version.
 - **Netlify CLI** — installed as a devDependency, used for local development
 
 ## Setup
