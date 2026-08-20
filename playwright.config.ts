@@ -3,6 +3,10 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
     testDir: './e2e',
 
+    // Contrast checks run separately via playwright.contrast.config.ts —
+    // report-only, not part of the pass/fail test suite. See CLAUDE.md.
+    testIgnore: '**/contrast.spec.ts',
+
     fullyParallel: true,
 
     // Fail the build on CI if test.only is left in

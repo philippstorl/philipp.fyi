@@ -9,7 +9,7 @@ import { hero } from '@/data/hero'
 >
     {
         hero.available && (
-            <div class="mb-10 animate-fade-up">
+            <div class="animate-fade-up mb-10">
                 <span class="inline-flex items-center gap-2 rounded-full border border-available/30 px-3.5 py-1 text-xs font-medium text-available">
                     <span class="animate-dot-breathe size-1.5 rounded-full bg-available" />
                     {hero.availabilityText}
@@ -19,12 +19,12 @@ import { hero } from '@/data/hero'
     }
 
     <h1
-        class="mb-6 max-w-4xl animate-fade-up font-display text-5xl leading-[1.05] font-normal tracking-tight text-foreground [animation-delay:100ms] md:text-6xl lg:text-7xl"
+        class="animate-fade-up mb-6 max-w-4xl font-display text-5xl leading-[1.05] font-normal tracking-tight text-foreground [animation-delay:100ms] md:text-6xl lg:text-7xl"
     >
         {hero.headline}
     </h1>
 
-    <div class="mb-10 max-w-xl animate-fade-up [animation-delay:200ms]">
+    <div class="animate-fade-up mb-10 max-w-xl [animation-delay:200ms]">
         <p class="text-lg leading-relaxed text-muted">
             {hero.subheading}
             <br />
@@ -38,7 +38,7 @@ import { hero } from '@/data/hero'
     </div>
 
     <div
-        class="flex animate-fade-up flex-wrap items-center gap-3 [animation-delay:300ms]"
+        class="animate-fade-up flex flex-wrap items-center gap-3 [animation-delay:300ms]"
     >
         {
             hero.links.map((link) => (

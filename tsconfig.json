@@ -8,5 +8,10 @@
         }
     },
     "include": [".astro/types.d.ts", "**/*"],
-    "exclude": ["dist", "e2e", "playwright.config.ts"]
+    "exclude": [
+        "dist",
+        "e2e",
+        "playwright.config.ts",
+        "playwright.contrast.config.ts"
+    ]
 }
