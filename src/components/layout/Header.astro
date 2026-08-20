@@ -11,7 +11,9 @@ const pathname = Astro.url.pathname
     class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm"
     transition:persist
 >
-    <div class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+    <div
+        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6"
+    >
         <a
             href="/"
             class="font-display text-base font-normal tracking-tight text-foreground transition-colors duration-150 hover:text-accent"
@@ -90,7 +92,7 @@ const pathname = Astro.url.pathname
                 aria-label="Toggle navigation"
                 aria-expanded="false"
                 aria-controls="mobile-nav"
-                class="flex h-9 w-9 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground md:hidden"
+                class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground md:hidden"
             >
                 <svg
                     id="icon-menu"
