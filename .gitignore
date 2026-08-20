@@ -20,7 +20,6 @@ contrast-results/
 # Local environment files
 .env
 .env.*
-.npmrc
 .yarnrc
 
 # Claude Code personal overrides (shared project settings live in .claude/settings.json)

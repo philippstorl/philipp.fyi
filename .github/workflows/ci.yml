@@ -17,7 +17,12 @@ jobs:
         steps:
             - uses: actions/checkout@v4
             - run: |
-                  forbidden=$(git ls-files | grep -E '^(node_modules|\.astro|dist|playwright-report|test-results|contrast-results|\.vscode|\.idea|\.env$|\.env\.|\.npmrc|\.yarnrc)' || true)
+                  # .npmrc is deliberately not in this list: the repo commits one with
+                  # engine-strict=true (see CLAUDE.md's Node 26 bullet) to enforce the
+                  # `engines` field, rather than leaving it advisory-only. Everything
+                  # else here stays forbidden as local/generated config that shouldn't
+                  # be tracked.
+                  forbidden=$(git ls-files | grep -E '^(node_modules|\.astro|dist|playwright-report|test-results|contrast-results|\.vscode|\.idea|\.env$|\.env\.|\.yarnrc)' || true)
                   if [ -n "$forbidden" ]; then
                     echo "Forbidden tracked files found:"
                     echo "$forbidden"
