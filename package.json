@@ -9,6 +9,7 @@
         "dev": "netlify dev",
         "dev:astro": "astro dev",
         "build": "astro check && astro build",
+        "build:app": "astro build",
         "preview": "astro preview",
         "typecheck": "astro check",
         "lint": "eslint .",
