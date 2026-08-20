@@ -149,7 +149,7 @@ npx playwright test e2e/home.spec.ts --debug
 | `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly; Work index page heading/cards, interlinks to About/Principles/Recommendations                  |
 | `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence                                                              |
 | `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles, interlinks to /about, /work, and /recommendations                                            |
-| `e2e/recommendations.spec.ts` | 13 recommendations shown, CTA links to /recommendations, interlinks to /about, /principles, and /work                                                       |
+| `e2e/recommendations.spec.ts` | 14 recommendations shown, CTA links to /recommendations, interlinks to /about, /principles, and /work                                                       |
 | `e2e/about.spec.ts`           | About page heading/bio/facts, tech stack section, CTA links to /about, interlinks to /work, /principles, and /recommendations                               |
 | `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                                                                              |
 | `e2e/contact.spec.ts`         | Contact page heading/form, LinkedIn/GitHub links, "Send me a message" CTA on home links to /contact, footer mail icon links to /contact                     |
@@ -244,7 +244,7 @@ src/
     hero.ts             → Hero section copy
     navigation.ts       → Nav items
     social.ts           → LinkedIn, GitHub, Contact links
-    recommendations.ts  → LinkedIn recommendations (13 entries, 6 featured on the home page)
+    recommendations.ts  → LinkedIn recommendations (14 entries, 6 featured on the home page)
     stack.ts            → This site's own tech stack, shown on the About page
   layouts/
     BaseLayout.astro
