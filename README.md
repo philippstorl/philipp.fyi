@@ -77,9 +77,27 @@ Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at
 
 ## Deployment
 
-Netlify builds automatically from the `main` branch. Configuration lives entirely in `netlify.toml` — no dashboard settings to worry about.
+Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml` — the one dashboard-only setting is `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below), which can't be committed.
 
 Check what's deployed at any time: `https://philipp.fyi/build.txt`
+
+## CSP violation reporting
+
+`netlify/functions/csp-report.ts` receives the browser's CSP violation reports (wired up via `netlify.toml`'s `report-to`/`report-uri` directives — see CLAUDE.md's CSP section for the full mechanism), logs each one to a `csp-reports` Netlify Blobs store, and posts a summary to Slack.
+
+Setup (one-time):
+
+1. In a Slack workspace, add an "Incoming Webhooks" app and create a webhook for the channel that should get violation alerts.
+2. In the Netlify dashboard for this site, add an environment variable named `SLACK_WEBHOOK_URL` with that webhook's URL. Never commit it to `netlify.toml` or anywhere else in the repo.
+
+If `SLACK_WEBHOOK_URL` isn't set (e.g. local dev), the function still writes to Blobs, it just skips the Slack post silently.
+
+Review stored reports without a dashboard:
+
+```bash
+npx netlify blobs:list csp-reports
+npx netlify blobs:get csp-reports <key>
+```
 
 ## Lighthouse CI
 
@@ -237,6 +255,9 @@ e2e/               → Playwright E2E tests
 public/
   favicon.svg
   robots.txt
-netlify.toml       → Build, Node version, Lighthouse plugin, security headers, 404 redirect
+netlify/
+  functions/
+    csp-report.ts  → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
+netlify.toml       → Build, Node version, Lighthouse plugin, security headers, 404 redirect, CSP reporting headers
 playwright.config.ts
 ```
