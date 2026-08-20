@@ -19,13 +19,10 @@ const { entry } = Astro.props
 const { Content } = await render(entry)
 const { title, description, category, tags, year } = entry.data
 const slug = stripContentExtension(entry.id)
+const ogImage = `/og/work/${slug}.png`
 ---
 
-<BaseLayout
-    title={title}
-    description={description}
-    ogImage={`/og/work/${slug}.png`}
->
+<BaseLayout title={title} description={description} ogImage={ogImage}>
     <Header />
     <Main>
         <CaseStudyLayout
@@ -34,6 +31,7 @@ const slug = stripContentExtension(entry.id)
             category={category}
             year={year}
             tags={tags}
+            ogImage={ogImage}
         >
             <Content />
         </CaseStudyLayout>

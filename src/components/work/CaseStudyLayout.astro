@@ -1,8 +1,10 @@
 ---
 import ImageLightbox from './ImageLightbox.astro'
 import CategoryBadge from '@/components/ui/CategoryBadge.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
 import type { WorkCategory } from '@/utils/category-colors'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
+import { buildCreativeWorkSchema } from '@/utils/schema'
 
 interface Props {
     title: string
@@ -10,12 +12,25 @@ interface Props {
     category: WorkCategory
     year: string
     tags: string[]
+    /** Per-slug OG image path (e.g. "/og/work/foo.png"), reused as the schema's image */
+    ogImage?: string
 }
 
-const { title, description, category, year, tags } = Astro.props
+const { title, description, category, year, tags, ogImage } = Astro.props
+
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString()
+const imageUrl = ogImage ? new URL(ogImage, Astro.site).toString() : undefined
+const creativeWorkSchema = buildCreativeWorkSchema({
+    title,
+    description,
+    year,
+    url: pageUrl,
+    image: imageUrl,
+})
 ---
 
 <div class="mx-auto max-w-3xl px-6 py-24">
+    <JsonLd data={creativeWorkSchema} />
     <a
         href="/work/"
         class="mb-12 inline-flex items-center gap-1.5 text-sm text-muted transition-colors duration-150 hover:text-accent"
