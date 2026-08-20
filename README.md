@@ -41,6 +41,7 @@ npm run dev:astro  # http://localhost:4321
 | `npm run dev`                    | Start dev server via Netlify CLI (recommended)                   |
 | `npm run dev:astro`              | Start Astro dev server directly                                  |
 | `npm run build`                  | Type-check + build to `dist/`                                    |
+| `npm run build:app`              | Build to `dist/` without the type-check prefix (used by CI)      |
 | `npm run typecheck`              | Run `astro check` (TypeScript only)                              |
 | `npm run lint`                   | Run ESLint (TypeScript, Astro, accessibility)                    |
 | `npm run check:trailing-slashes` | Validate every internal link/route ends in `/`                   |
@@ -68,7 +69,7 @@ Eight jobs run in parallel, all on Node 26:
 | `format`             | `npm run format:check`                                                                                                                                                                                                                                                                                         |
 | `typecheck`          | `npm run typecheck`                                                                                                                                                                                                                                                                                            |
 | `audit`              | `npm run check:audit` — production dependencies only, see CLAUDE.md for why                                                                                                                                                                                                                                    |
-| `build`              | `npm run check:trailing-slashes`, then `npm run build`                                                                                                                                                                                                                                                         |
+| `build`              | `npm run check:trailing-slashes`, then `npm run build:app` (skips the `astro check` prefix — the `typecheck` job already covers that on the same commit)                                                                                                                                                       |
 | `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail                                                                                                                                             |
 | `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md |
 
