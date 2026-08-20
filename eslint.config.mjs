@@ -70,6 +70,13 @@ export default tseslint.config(
     },
 
     {
-        ignores: ['dist/**', '.astro/**', 'node_modules/**'],
+        // .netlify is `netlify dev`/`netlify build`'s local output — esbuild
+        // bundles each function's full dependency tree into
+        // .netlify/functions-serve/, which lint has no business scanning
+        // (it's not source, and its bundled deps fail this repo's own
+        // rules). Not an issue until this repo had its first Netlify
+        // Function (issue #146); anyone who's run `netlify dev` locally
+        // hits a lint failure without this.
+        ignores: ['dist/**', '.astro/**', 'node_modules/**', '.netlify/**'],
     },
 )

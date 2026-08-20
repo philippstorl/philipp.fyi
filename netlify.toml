@@ -79,7 +79,22 @@
         #         security.csp.scriptDirective.resources (a browser enforces
         #         the intersection of the header and the meta CSP, so
         #         missing either one blocks the script).
-        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+        # — report-to/report-uri (issue #146) send violation reports to
+        #   netlify/functions/csp-report.ts, which logs each one to Netlify
+        #   Blobs and posts a summary to Slack. Both directives point at the
+        #   same endpoint: report-to is the modern Reporting API (needs the
+        #   Reporting-Endpoints header below to define the "csp-endpoint"
+        #   group), report-uri is the older, still widely-supported
+        #   fallback for browsers that don't implement Reporting API. Only
+        #   this header-delivered CSP can carry them — the CSP spec
+        #   excludes report-uri/report-to from <meta>-delivered policies, so
+        #   astro.config.mjs's auto-generated meta CSP doesn't need (and
+        #   can't use) either directive.
+        Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests; report-to csp-endpoint; report-uri /.netlify/functions/csp-report"
+
+        # Defines the "csp-endpoint" group the CSP header's report-to
+        # directive references, per the Reporting API spec.
+        Reporting-Endpoints = "csp-endpoint=\"/.netlify/functions/csp-report\""
 
 # Astro outputs content-hashed filenames to /_astro/. These are
 # safe to cache for a year — any change produces a new hash.
