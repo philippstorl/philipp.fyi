@@ -154,8 +154,11 @@ npx playwright test e2e/home.spec.ts --debug
 | `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                                                                              |
 | `e2e/contact.spec.ts`         | Contact page heading/form, LinkedIn/GitHub links, "Send me a message" CTA on home links to /contact, footer mail icon links to /contact                     |
 | `e2e/contact-form.spec.ts`    | Contact form validation errors + focus, invalid-email message, mocked failed submission (error banner), mocked successful submission (confirmation + focus) |
+| `e2e/blog.spec.ts`            | Title/meta description, the "Writing coming soon." empty state (all posts are currently `draft: true`), header/footer chrome                                |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
+
+`e2e/blog.spec.ts` only covers `/blog/`'s current empty state, not `/blog/[slug]/` post content — there's no published post to test against yet. Add slug-page coverage once a post ships (see the `add-content` skill).
 
 `e2e/contrast.spec.ts` is not part of this table or `npm test` — it's a report-only color-contrast scan (light and dark, Desktop Chrome only) run separately via `npm run test:contrast` / `playwright.contrast.config.ts`, aggregated by `npm run check:contrast` against `contrast-allowlist.json`. See the `contrast` CI job above and CLAUDE.md for how it's wired up.
 
