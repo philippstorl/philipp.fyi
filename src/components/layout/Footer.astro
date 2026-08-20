@@ -23,7 +23,11 @@ const year = new Date().getFullYear()
                         <li>
                             <a
                                 href={link.href}
-                                aria-label={link.label}
+                                aria-label={
+                                    isExternal
+                                        ? `${link.label} (opens in a new tab)`
+                                        : link.label
+                                }
                                 target={isExternal ? '_blank' : undefined}
                                 rel={
                                     isExternal

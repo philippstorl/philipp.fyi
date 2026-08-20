@@ -66,6 +66,7 @@ const contactLinkLabels: Record<HeroLink['icon'], string> = {
                         >
                             <SocialIcon icon={link.icon} size={15} />
                             {contactLinkLabels[link.icon]}
+                            <span class="sr-only"> (opens in a new tab)</span>
                         </a>
                     ))
                 }

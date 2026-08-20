@@ -50,11 +50,11 @@ const { title, description, category, year, tags } = Astro.props
 
     <hr class="mb-12 border-border" />
 
-    <div
+    <article
         class={`prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline ${PROSE_BLOCKQUOTE_CLASSES} prose-code:font-mono prose-code:text-sm`}
     >
         <slot />
-    </div>
+    </article>
 
     <ImageLightbox />
 
