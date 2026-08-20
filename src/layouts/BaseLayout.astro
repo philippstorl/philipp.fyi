@@ -14,6 +14,7 @@ import '../styles/global.css'
 import frauncesWoff2Url from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url'
 import dmSansWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2?url'
 import dmSansRegularWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2?url'
+import { SITE_NAME, DEFAULT_DESCRIPTION } from '@/data/site'
 
 interface Props {
     /** Page title — shown as "Title | Philipp Storl", omit for home page */
@@ -22,13 +23,9 @@ interface Props {
     ogImage?: string
 }
 
-const SITE_NAME = 'Philipp Storl'
-const DEFAULT_DESC =
-    "Principal Web Developer, full-stack, with a designer's eye. Based in Chemnitz / Leipzig area, Germany."
-
 const {
     title,
-    description = DEFAULT_DESC,
+    description = DEFAULT_DESCRIPTION,
     ogImage = '/og/home.png',
 } = Astro.props
 
@@ -47,6 +44,12 @@ const ogImageURL = new URL(ogImage, Astro.site)
         <title>{fullTitle}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonicalURL} />
+        <link
+            rel="alternate"
+            type="application/rss+xml"
+            title={`${SITE_NAME} Blog`}
+            href="/rss.xml"
+        />
 
         <meta property="og:type" content="website" />
         <meta property="og:url" content={canonicalURL} />
