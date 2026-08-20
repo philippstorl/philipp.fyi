@@ -36,20 +36,22 @@ npm run dev:astro  # http://localhost:4321
 
 ## Scripts
 
-| Command                          | What it does                                                    |
-| -------------------------------- | --------------------------------------------------------------- |
-| `npm run dev`                    | Start dev server via Netlify CLI (recommended)                  |
-| `npm run dev:astro`              | Start Astro dev server directly                                 |
-| `npm run build`                  | Type-check + build to `dist/`                                   |
-| `npm run typecheck`              | Run `astro check` (TypeScript only)                             |
-| `npm run lint`                   | Run ESLint (TypeScript, Astro, accessibility)                   |
-| `npm run check:trailing-slashes` | Validate every internal link/route ends in `/`                  |
-| `npm run check:audit`            | Audit production dependencies for high-severity vulnerabilities |
-| `npm run format`                 | Format all files with Prettier                                  |
-| `npm run format:check`           | Check formatting without writing (used in CI)                   |
-| `npm run preview`                | Preview the production build locally                            |
-| `npm test`                       | Run Playwright E2E tests                                        |
-| `npm run test:ui`                | Run Playwright tests in interactive UI mode                     |
+| Command                          | What it does                                                     |
+| -------------------------------- | ---------------------------------------------------------------- |
+| `npm run dev`                    | Start dev server via Netlify CLI (recommended)                   |
+| `npm run dev:astro`              | Start Astro dev server directly                                  |
+| `npm run build`                  | Type-check + build to `dist/`                                    |
+| `npm run typecheck`              | Run `astro check` (TypeScript only)                              |
+| `npm run lint`                   | Run ESLint (TypeScript, Astro, accessibility)                    |
+| `npm run check:trailing-slashes` | Validate every internal link/route ends in `/`                   |
+| `npm run check:audit`            | Audit production dependencies for high-severity vulnerabilities  |
+| `npm run format`                 | Format all files with Prettier                                   |
+| `npm run format:check`           | Check formatting without writing (used in CI)                    |
+| `npm run preview`                | Preview the production build locally                             |
+| `npm test`                       | Run Playwright E2E tests                                         |
+| `npm run test:ui`                | Run Playwright tests in interactive UI mode                      |
+| `npm run test:contrast`          | Run the report-only color-contrast scan (not part of `npm test`) |
+| `npm run check:contrast`         | Aggregate `test:contrast`'s output against the allowlist         |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
@@ -57,17 +59,18 @@ The `build` script runs `astro check` before `astro build` — TypeScript errors
 
 Every pull request, and every push to `main`, runs the workflow in `.github/workflows/ci.yml`. It can also be triggered manually (`workflow_dispatch`). Runs are canceled and restarted if you push again to the same branch before the previous run finishes.
 
-Seven jobs run in parallel, all on Node 26:
+Eight jobs run in parallel, all on Node 26:
 
-| Job                  | What it does                                                                                                                                                       |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git                                            |
-| `lint`               | `npm run lint`                                                                                                                                                     |
-| `format`             | `npm run format:check`                                                                                                                                             |
-| `typecheck`          | `npm run typecheck`                                                                                                                                                |
-| `audit`              | `npm run check:audit` — production dependencies only, see CLAUDE.md for why                                                                                        |
-| `build`              | `npm run check:trailing-slashes`, then `npm run build`                                                                                                             |
-| `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail |
+| Job                  | What it does                                                                                                                                                                                                                                                                                                   |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git                                                                                                                                                                                        |
+| `lint`               | `npm run lint`                                                                                                                                                                                                                                                                                                 |
+| `format`             | `npm run format:check`                                                                                                                                                                                                                                                                                         |
+| `typecheck`          | `npm run typecheck`                                                                                                                                                                                                                                                                                            |
+| `audit`              | `npm run check:audit` — production dependencies only, see CLAUDE.md for why                                                                                                                                                                                                                                    |
+| `build`              | `npm run check:trailing-slashes`, then `npm run build`                                                                                                                                                                                                                                                         |
+| `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail                                                                                                                                             |
+| `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md |
 
 Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at 5 open at a time, labeled `dependencies`.
 
@@ -116,6 +119,8 @@ npx playwright test e2e/home.spec.ts --debug
 | `e2e/contact-form.spec.ts`    | Contact form validation errors + focus, invalid-email message, mocked failed submission (error banner), mocked successful submission (confirmation + focus) |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
+
+`e2e/contrast.spec.ts` is not part of this table or `npm test` — it's a report-only color-contrast scan (light and dark, Desktop Chrome only) run separately via `npm run test:contrast` / `playwright.contrast.config.ts`, aggregated by `npm run check:contrast` against `contrast-allowlist.json`. See the `contrast` CI job above and CLAUDE.md for how it's wired up.
 
 ### First run
 
