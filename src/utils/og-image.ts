@@ -2,9 +2,28 @@ import satori from 'satori'
 import sharp from 'sharp'
 import { readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
+import type { ReactNode } from 'react'
 import { CATEGORY_HEX_COLORS, type WorkCategory } from '@/utils/category-colors'
 
 // readdirSync lets us find the correct filename without hardcoding it.
+
+// Minimal structural type for the plain nested-object tree the builder
+// functions below return — Satori's JSX-equivalent *input* format (this .ts
+// file can't use JSX, so the template is written as plain objects shaped
+// like `h()` calls, per the note further down). Satori's own package does
+// export a type named `SatoriNode`, but it describes the *output* of
+// rendering — a measured layout node with `left`/`top`/`width`/`height`/
+// `textContent` (used by its `onNodeDetected` callback) — not this input
+// shape, so it isn't reused here under the same name to avoid conflating
+// the two. `props` stays a loose `Record<string, unknown>` rather than
+// enumerating `style`/`children`/`src`/etc., since different node types
+// (div/img) use different prop sets and the real value of this type is
+// catching a wrong return shape at these 3 call sites, not modeling every
+// possible Satori prop.
+interface SatoriTemplateNode {
+    type: string
+    props: Record<string, unknown>
+}
 
 type FontCache = { fraunces: ArrayBuffer; dmSans: ArrayBuffer } | null
 let fontCache: FontCache = null
@@ -106,8 +125,7 @@ const labelBaseStyle = {
 // 9999 and the 6px/16px padding are Satori's equivalent of that component's
 // `rounded-full` and `px-2.5 py-0.5` Tailwind classes, scaled up for
 // OG-image poster legibility.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildCategoryBadgeNode(category: WorkCategory): any {
+function buildCategoryBadgeNode(category: WorkCategory): SatoriTemplateNode {
     const { text, border } = CATEGORY_HEX_COLORS[category]
     return {
         type: 'div',
@@ -131,8 +149,7 @@ function buildCategoryBadgeNode(category: WorkCategory): any {
 }
 
 // Plain-text top label used by non-category OG images (home/principles).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildPlainLabelNode(label: string): any {
+function buildPlainLabelNode(label: string): SatoriTemplateNode {
     return {
         type: 'div',
         props: {
@@ -147,8 +164,7 @@ function buildTemplate(
     label?: string,
     coverImageDataUri?: string,
     category?: WorkCategory,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any {
+): SatoriTemplateNode {
     // A cover image narrows the text column, so longer titles need a smaller
     // size sooner than the text-only layout does.
     const titleSize = coverImageDataUri
@@ -292,7 +308,21 @@ export async function generateOgImage(
         : undefined
 
     const svg = await satori(
-        buildTemplate(title, label, coverImageDataUri, category),
+        // Satori's public satori() signature expects a real React `ReactNode`
+        // (it imports React's own types), but buildTemplate() returns plain
+        // { type, props } objects rather than actual React elements — this
+        // file can't use JSX (see the note above), and Satori itself accepts
+        // this plain-object shape at runtime regardless of what its types
+        // declare. This is the one unavoidable cast at that library
+        // boundary; SatoriTemplateNode above still gives real type-checking
+        // to how buildTemplate/buildCategoryBadgeNode/buildPlainLabelNode
+        // compose with each other.
+        buildTemplate(
+            title,
+            label,
+            coverImageDataUri,
+            category,
+        ) as unknown as ReactNode,
         {
             width: OG_WIDTH,
             height: OG_HEIGHT,
