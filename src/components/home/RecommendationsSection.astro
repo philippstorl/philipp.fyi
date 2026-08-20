@@ -21,7 +21,13 @@ const headingId = 'recommendations-heading'
         label={`Read all ${totalCount} recommendations`}
     />
 
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {preview.map((r) => <RecommendationCard recommendation={r} />)}
-    </div>
+    {
+        preview.length > 0 && (
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {preview.map((r) => (
+                    <RecommendationCard recommendation={r} />
+                ))}
+            </div>
+        )
+    }
 </section>
