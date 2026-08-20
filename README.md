@@ -215,6 +215,8 @@ tags: ["tag"]
 
 Create the file as `src/content/blog/your-post-slug.md`.
 
+Published posts (`draft: false`) also appear automatically in the RSS feed at `/rss.xml` (`src/pages/rss.xml.ts`) — no separate step needed. The feed is empty while every post is still a draft.
+
 ## OG images
 
 OG images are generated at build time using Satori + Sharp. Satori accepts TTF, OTF, and WOFF — but not WOFF2. Because `@fontsource-variable/fraunces` only ships WOFF2, the project uses `@fontsource/fraunces` (non-variable, 400 weight) specifically for OG image generation. The website itself still uses the variable font via `@fontsource-variable/fraunces`.
@@ -249,6 +251,7 @@ src/
     social.ts           → LinkedIn, GitHub, Contact links
     recommendations.ts  → LinkedIn recommendations (14 entries, 6 featured on the home page)
     stack.ts            → This site's own tech stack, shown on the About page
+    site.ts             → Site name/default description, shared by BaseLayout.astro and rss.xml.ts
   layouts/
     BaseLayout.astro
   pages/
@@ -263,6 +266,7 @@ src/
     blog/[slug].astro
     404.astro
     build.txt.ts
+    rss.xml.ts
     og/[...slug].png.ts
   styles/
     global.css     → Tailwind v4 config, design tokens, dark mode
@@ -271,6 +275,7 @@ src/
     experience.ts      → Computes career-length and Staffbase-tenure year figures from fixed dates
     category-colors.ts → Shared category → badge-color mapping (Tailwind classes + Satori hex equivalents)
     nav-active.ts      → Shared active-nav-link match + class vocabulary, used by NavLink.astro and Header.astro's client script
+    blog-posts.ts      → getPublishedBlogPosts(), the shared draft-filter + sort used by blog/index.astro and rss.xml.ts
 e2e/               → Playwright E2E tests
 public/
   favicon.svg
