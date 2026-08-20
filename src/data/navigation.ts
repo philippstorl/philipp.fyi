@@ -1,6 +1,6 @@
 export interface NavItem {
     label: string
-    /** Full href — anchor links (#contact) scroll on home, prefix with / on sub-pages */
+    /** Full href — every nav item points at its own dedicated route */
     href: string
     /** Mark as external to open in new tab */
     external?: boolean
@@ -11,5 +11,5 @@ export const navItems: NavItem[] = [
     { label: 'About', href: '/about/' },
     { label: 'Principles', href: '/principles/' },
     { label: 'Recommendations', href: '/recommendations/' },
-    { label: 'Contact', href: '/#contact' },
+    { label: 'Contact', href: '/contact/' },
 ]

@@ -18,9 +18,9 @@ export const socialLinks: SocialLink[] = [
         icon: 'github',
     },
     {
-        // Mail icon links to the contact section — no email address exposed
+        // Mail icon links to the contact page — no email address exposed
         label: 'Contact',
-        href: '/#contact',
+        href: '/contact/',
         icon: 'mail',
     },
 ]
