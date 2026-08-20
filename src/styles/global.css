@@ -77,10 +77,15 @@
             animation: dot-breathe 2.4s ease-in-out infinite backwards;
         }
     }
+
+    @layer base {
+        html {
+            scroll-behavior: smooth;
+        }
+    }
 }
 
 html {
-    scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }

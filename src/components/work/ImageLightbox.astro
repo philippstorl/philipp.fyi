@@ -35,7 +35,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
         <div
             id="lightbox-track"
-            class="flex flex-1 snap-x snap-mandatory overflow-x-auto scroll-smooth"
+            class="flex flex-1 snap-x snap-mandatory overflow-x-auto"
         >
         </div>
 
@@ -114,6 +114,12 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         let lastTrigger: HTMLElement | null = null
         let scrollTimeout: ReturnType<typeof setTimeout>
 
+        // Checked at call time (not cached) so a mid-session OS-level
+        // preference change takes effect on the very next scroll, same as
+        // the rest of the site's reduced-motion gating.
+        const prefersReducedMotion = () =>
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
         const describe = (figure: Element) => {
             const img = figure.querySelector('img')
             const figcaption = figure.querySelector('figcaption')
@@ -172,7 +178,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             }
             track.scrollTo({
                 left: clamped * track.clientWidth,
-                behavior: 'smooth',
+                behavior: prefersReducedMotion() ? 'instant' : 'smooth',
             })
         }
 
@@ -181,10 +187,10 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             lastTrigger = trigger
 
             dialog.showModal()
-            // The track has `scroll-behavior: smooth` for prev/next, but a
-            // direct scrollLeft assignment inherits that and animates too —
-            // it would visibly slide through every image in between on
-            // open. Force an instant jump to the clicked slide instead.
+            // Always instant regardless of motion preference — this is the
+            // initial jump to the clicked slide, not a navigation animation,
+            // and sliding through every image in between on open would look
+            // broken either way.
             track.scrollTo({
                 left: index * track.clientWidth,
                 behavior: 'instant',
