@@ -232,8 +232,8 @@ When ready to add Plausible (or another provider):
 src/
   components/
     home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader
-    layout/        → Header, NavLink, Footer
-    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard
+    layout/        → Header, NavLink, Footer, Main
+    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard, InterlinkRow, PageHeader
     work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid
   content/
     work/          → Case study MDX files (4 entries)
