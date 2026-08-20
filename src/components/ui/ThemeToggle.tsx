@@ -65,7 +65,7 @@ export default function ThemeToggle() {
         <div
             role="group"
             aria-label="Color theme"
-            className="flex items-center gap-[2px] rounded-lg border border-border bg-card p-[3px]"
+            className="flex items-center gap-1 rounded-lg border border-border bg-card p-[3px]"
         >
             {options.map(({ value, Icon, label }) => (
                 <button
@@ -76,7 +76,7 @@ export default function ThemeToggle() {
                     aria-pressed={theme === value}
                     title={label}
                     className={[
-                        'flex size-[34px] items-center justify-center rounded-md transition-colors duration-150',
+                        'flex size-11 items-center justify-center rounded-md transition-colors duration-150',
                         theme === value
                             ? 'bg-accent/10 text-accent'
                             : 'text-muted hover:bg-foreground/5 hover:text-foreground',
