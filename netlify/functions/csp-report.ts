@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs'
+import { postToSlack } from './_shared/slack'
 
 interface NormalizedViolation {
     documentUri?: string
@@ -79,22 +80,13 @@ export default async (req: Request): Promise<Response> => {
     const webhookUrl = process.env.SLACK_WEBHOOK_URL
     if (webhookUrl) {
         await Promise.all(
-            reports.map(async (report) => {
-                try {
-                    await fetch(webhookUrl, {
-                        method: 'POST',
-                        headers: { 'content-type': 'application/json' },
-                        body: JSON.stringify({
-                            text: summarize(normalize(report)),
-                        }),
-                    })
-                } catch (error) {
-                    console.error(
-                        'Failed to post CSP violation to Slack',
-                        error,
-                    )
-                }
-            }),
+            reports.map((report) =>
+                postToSlack(
+                    webhookUrl,
+                    summarize(normalize(report)),
+                    'Failed to post CSP violation to Slack',
+                ),
+            ),
         )
     }
 

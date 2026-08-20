@@ -77,7 +77,7 @@ Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at
 
 ## Deployment
 
-Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml` — the one dashboard-only setting is `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below), which can't be committed.
+Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml` — the dashboard-only settings are `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below) and `SLACK_DEPLOY_WEBHOOK_URL` (see [Deploy notifications](#deploy-notifications) below), neither of which can be committed.
 
 Check what's deployed at any time: `https://philipp.fyi/build.txt`
 
@@ -98,6 +98,18 @@ Review stored reports without a dashboard:
 npx netlify blobs:list csp-reports
 npx netlify blobs:get csp-reports <key>
 ```
+
+## Deploy notifications
+
+Netlify's native Slack notification type is gated behind Pro/Enterprise, and its generic Outgoing Webhook posts a raw deploy-object JSON that Slack's Incoming Webhook endpoint rejects (`400 no_text`) since it isn't shaped for Slack. `netlify/functions/deploy-notification.ts` receives that raw Outgoing Webhook POST, reformats it into a Slack-compatible message (✅ succeeded / ❌ failed, with the branch, context, and a link to the deploy or the error message), and forwards it to a Slack Incoming Webhook. It's a separate function and a separate Slack channel from CSP violation reporting above, on purpose.
+
+Setup (one-time):
+
+1. In a Slack workspace, add an "Incoming Webhooks" app and create a webhook for the channel that should get deploy alerts.
+2. In the Netlify dashboard for this site, add an environment variable named `SLACK_DEPLOY_WEBHOOK_URL` with that webhook's URL. Never commit it to `netlify.toml` or anywhere else in the repo.
+3. In the Netlify dashboard, Site settings → Notifications → Deploy notifications, point the "Deploy succeeded" and "Deploy failed" Outgoing Webhook notifications at `https://philipp.fyi/.netlify/functions/deploy-notification` instead of a raw `hooks.slack.com` URL.
+
+If `SLACK_DEPLOY_WEBHOOK_URL` isn't set (e.g. local dev without a `.env` entry for it), the function silently skips the Slack post.
 
 ## Lighthouse CI
 
@@ -257,7 +269,10 @@ public/
   robots.txt
 netlify/
   functions/
-    csp-report.ts  → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
+    _shared/
+      slack.ts             → Shared postToSlack() helper used by both functions below
+    csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
+    deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
 netlify.toml       → Build, Node version, Lighthouse plugin, security headers, 404 redirect, CSP reporting headers
 playwright.config.ts
 ```
