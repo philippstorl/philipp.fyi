@@ -7,13 +7,8 @@ interface NormalizedViolation {
     disposition?: string
 }
 
-// Browsers send two incompatible shapes depending on which directive
-// delivered the report: legacy `report-uri` wraps a single violation in
-// `{ "csp-report": {...} }` (hyphenated keys), while the modern Reporting
-// API (`report-to`) sends a batch of `{ type, url, body: {...} }` objects
-// (camelCase keys) as an array. Normalize both down to the same shape
-// rather than picking one and losing coverage for browsers that only
-// support the other.
+// Handles both the legacy report-uri shape ({ "csp-report": {...} }) and
+// the modern report-to/Reporting API shape ({ type, url, body: {...} }).
 function normalize(raw: unknown): NormalizedViolation {
     const record = raw as Record<string, unknown>
     const legacy = record['csp-report'] as Record<string, unknown> | undefined
@@ -69,21 +64,13 @@ export default async (req: Request): Promise<Response> => {
     await Promise.all(
         reports.map(async (report) => {
             try {
-                // crypto.randomUUID() keeps keys unique even when two
-                // requests land in the same millisecond (a real CSP-policy
-                // regression trips the same violation for many visitors at
-                // once) — an index alone would collide and silently
-                // overwrite an earlier report under the same key.
+                // Random suffix avoids key collisions when multiple reports land in the same millisecond.
                 await store.setJSON(`${receivedAt}-${crypto.randomUUID()}`, {
                     receivedAt,
                     userAgent: req.headers.get('user-agent'),
                     report,
                 })
             } catch (error) {
-                // Don't let a Blobs write failure take down the whole
-                // request — the Slack notification below is the fallback
-                // signal, and it shouldn't be silently skipped just
-                // because storage had a hiccup.
                 console.error('Failed to write CSP report to Blobs', error)
             }
         }),
