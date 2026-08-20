@@ -31,7 +31,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: "26"
+                  node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
             - run: npm run lint
@@ -43,7 +43,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: "26"
+                  node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
             - run: npm run format:check
@@ -55,7 +55,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: "26"
+                  node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
             - run: npm run typecheck
@@ -67,7 +67,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: "26"
+                  node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
             # --omit=dev: only vulnerabilities in packages actually shipped
@@ -86,7 +86,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: "26"
+                  node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
             - run: npm run check:trailing-slashes
@@ -99,7 +99,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: "26"
+                  node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
             - run: npm run check:trailing-slashes
@@ -124,7 +124,7 @@ jobs:
             - uses: actions/checkout@v4
             - uses: actions/setup-node@v4
               with:
-                  node-version: "26"
+                  node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
             - run: npx playwright install chromium
