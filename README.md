@@ -77,7 +77,7 @@ Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at
 
 ## Deployment
 
-Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml` — the dashboard-only settings are `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below) and `SLACK_DEPLOY_WEBHOOK_URL` (see [Deploy notifications](#deploy-notifications) below), neither of which can be committed.
+Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml` — the dashboard-only settings are `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below) and `SLACK_DEPLOY_WEBHOOK_URL`/`DEPLOY_NOTIFICATION_WEBHOOK_SECRET` (see [Deploy notifications](#deploy-notifications) below), none of which can be committed.
 
 Check what's deployed at any time: `https://philipp.fyi/build.txt`
 
@@ -91,6 +91,8 @@ Setup (one-time):
 2. In the Netlify dashboard for this site, add an environment variable named `SLACK_WEBHOOK_URL` with that webhook's URL. Never commit it to `netlify.toml` or anywhere else in the repo.
 
 If `SLACK_WEBHOOK_URL` isn't set (e.g. local dev), the function still writes to Blobs, it just skips the Slack post silently.
+
+Unlike deploy notifications below, this endpoint has no signature check: it's hit directly by browsers via the CSP `report-to`/`report-uri` directives, not by a Netlify Outgoing Webhook, so there's no Netlify-signed `X-Webhook-Signature` to verify — it's unauthenticated by design, the same as any CSP reporting endpoint.
 
 Review stored reports without a dashboard:
 
@@ -107,9 +109,12 @@ Setup (one-time):
 
 1. In a Slack workspace, add an "Incoming Webhooks" app and create a webhook for the channel that should get deploy alerts.
 2. In the Netlify dashboard for this site, add an environment variable named `SLACK_DEPLOY_WEBHOOK_URL` with that webhook's URL. Never commit it to `netlify.toml` or anywhere else in the repo.
-3. In the Netlify dashboard, Site settings → Notifications → Deploy notifications, point the "Deploy succeeded" and "Deploy failed" Outgoing Webhook notifications at `https://philipp.fyi/.netlify/functions/deploy-notification` instead of a raw `hooks.slack.com` URL.
+3. Generate a random secret (e.g. `openssl rand -hex 32`) and add it as an environment variable named `DEPLOY_NOTIFICATION_WEBHOOK_SECRET`.
+4. In the Netlify dashboard, Site settings → Notifications → Deploy notifications, point the "Deploy succeeded" and "Deploy failed" Outgoing Webhook notifications at `https://philipp.fyi/.netlify/functions/deploy-notification` instead of a raw `hooks.slack.com` URL. Each of these is a separate notification config — paste the same secret from step 3 into **both** notifications' JWS secret field, not just one, or the one left unsigned will 401 forever.
 
 If `SLACK_DEPLOY_WEBHOOK_URL` isn't set (e.g. local dev without a `.env` entry for it), the function silently skips the Slack post.
+
+`DEPLOY_NOTIFICATION_WEBHOOK_SECRET` is required, not optional: the function verifies Netlify's `X-Webhook-Signature` JWS against it and fails closed with `401` (logging an error) if the secret isn't configured or the signature doesn't check out — without it, the endpoint's URL being public (documented right here) would let anyone POST a crafted deploy payload and get an attacker-controlled message relayed into Slack. If steps 3 and 4 haven't both been done yet on a fresh setup, deploy notifications will 401 rather than post — configure the secret in both places together.
 
 ## Lighthouse CI
 
