@@ -284,3 +284,7 @@ netlify/
 netlify.toml       → Build, Node version, Lighthouse plugin, security headers, 404 redirect, CSP reporting headers
 playwright.config.ts
 ```
+
+## License
+
+All rights reserved. This is a personal portfolio repository, not open source; see [LICENSE](LICENSE).
