@@ -1,4 +1,5 @@
 import { postToSlack } from './_shared/slack'
+import { verifyNetlifySignature } from './_shared/verify-netlify-signature'
 
 interface DeployNotification {
     id?: string
@@ -44,9 +45,37 @@ export default async (req: Request): Promise<Response> => {
         return new Response('Method Not Allowed', { status: 405 })
     }
 
+    const secret = process.env.DEPLOY_NOTIFICATION_WEBHOOK_SECRET
+    if (!secret) {
+        console.error(
+            'DEPLOY_NOTIFICATION_WEBHOOK_SECRET is not configured; rejecting deploy notification',
+        )
+        return new Response('Unauthorized', { status: 401 })
+    }
+
+    let rawBody: string
+    try {
+        rawBody = await req.text()
+    } catch {
+        return new Response('Invalid request body', { status: 400 })
+    }
+
+    if (
+        !verifyNetlifySignature(
+            rawBody,
+            req.headers.get('x-webhook-signature'),
+            secret,
+        )
+    ) {
+        console.error(
+            'Deploy notification signature verification failed; rejecting request',
+        )
+        return new Response('Unauthorized', { status: 401 })
+    }
+
     let payload: unknown
     try {
-        payload = await req.json()
+        payload = JSON.parse(rawBody)
     } catch {
         return new Response('Invalid JSON body', { status: 400 })
     }

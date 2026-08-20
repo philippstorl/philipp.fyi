@@ -46,6 +46,11 @@ function summarize(violation: NormalizedViolation): string {
         .join('\n')
 }
 
+// No X-Webhook-Signature check here, unlike deploy-notification.ts: this
+// endpoint is hit directly by browsers via the CSP report-to/report-uri
+// directives, not by a Netlify Outgoing Webhook notification, so there's no
+// Netlify-signed JWS to verify — the endpoint is unauthenticated by design,
+// same as any CSP reporting endpoint on the web (see issue #157).
 export default async (req: Request): Promise<Response> => {
     if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 })
