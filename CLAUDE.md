@@ -104,7 +104,7 @@ npm run build
 npm test                          # if components/pages/content changed
 ```
 
-These mirror the CI jobs in `.github/workflows/ci.yml` (repository-hygiene, lint, format, typecheck, audit, build, test) — if these pass locally, CI should pass.
+These mirror the CI jobs in `.github/workflows/ci.yml` (repository-hygiene, lint, format, typecheck, audit, build, test) — if these pass locally, CI should pass. The `contrast` job isn't in this list on purpose: it's report-only and never fails the build (see the bullet above), so it's not part of the "CI should pass" guarantee this sequence gives — run `npm run test:contrast && npm run check:contrast` separately if you want to check it locally after touching page markup or color tokens.
 
 For non-trivial feature, fix, or refactor work, follow these with the `self-review` skill before considering the change done. It forks an independent subagent with no memory of this conversation to review the diff — reviewing your own just-written code in the same context that wrote it tends to rubber-stamp it. Fix high-confidence bugs it reports directly; surface debatable or stylistic findings instead of changing them unasked. Re-run the relevant steps above if the fixes touched anything they cover.
 

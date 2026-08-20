@@ -10,6 +10,7 @@ import { defineConfig, devices } from '@playwright/test'
 export default defineConfig({
     testDir: './e2e',
     testMatch: '**/contrast.spec.ts',
+    globalSetup: './e2e/contrast.global-setup.ts',
 
     fullyParallel: true,
 

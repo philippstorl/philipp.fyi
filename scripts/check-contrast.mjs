@@ -1,6 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { expectedResultFileNames } from './contrast-pages.mjs'
 
 // Aggregates the per-page/theme axe-core results written by
 // e2e/contrast.spec.ts (via `npm run test:contrast`) into a single list of
@@ -9,10 +10,10 @@ import { fileURLToPath } from 'node:url'
 // readable status for CI to turn into a PR comment. This check itself is
 // intentionally report-only about the *site's* contrast (see CLAUDE.md/
 // issue #149) — it never fails merely because a page has a violation — but
-// it does exit non-zero if the scan produced no results at all, since that
-// means the pipeline itself is broken (e.g. the dev server never came up),
-// which is a different failure mode than "the site is clean" and shouldn't
-// look identical to it.
+// it does exit non-zero if the scan is missing results for any page/theme
+// it's supposed to cover (checked against contrast-pages.mjs's own list,
+// so a crashed or timed-out individual test can't hide as "nothing to
+// report"), since a partial scan is a pipeline failure, not a clean result.
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -101,10 +102,14 @@ function buildSummary(newViolations) {
 }
 
 const resultFiles = loadResultFiles()
+const foundFiles = new Set(resultFiles)
+const missingFiles = expectedResultFileNames().filter(
+    (name) => !foundFiles.has(name),
+)
 
-if (resultFiles.length === 0) {
+if (missingFiles.length > 0) {
     console.error(
-        'No contrast scan results found in contrast-results/ — the scan itself likely failed to run (e.g. `npm run test:contrast` errored before writing any output). This is a pipeline failure, not a clean result.',
+        `Missing ${missingFiles.length} of ${expectedResultFileNames().length} expected contrast scan result(s) — the scan itself likely failed or timed out for these page/theme combinations before writing output: ${missingFiles.join(', ')}. This is a pipeline failure, not a clean result.`,
     )
     process.exit(1)
 }

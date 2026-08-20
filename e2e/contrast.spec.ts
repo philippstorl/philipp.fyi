@@ -2,6 +2,7 @@ import { test, type Page } from '@playwright/test'
 import AxeBuilder from '@axe-core/playwright'
 import fs from 'node:fs'
 import path from 'node:path'
+import { pages, themes, resultFileName } from '../scripts/contrast-pages.mjs'
 
 // Report-only color-contrast scan (issue #149). Never asserts/fails — it
 // writes each page/theme's axe-core `color-contrast` violations to
@@ -9,41 +10,22 @@ import path from 'node:path'
 // against contrast-allowlist.json, and turn into a PR comment. Runs via its
 // own `npm run test:contrast` / playwright.contrast.config.ts, not the
 // regular `npm test`, so it can never gate the build. See CLAUDE.md.
-
-// Mirrors the page set the rest of e2e/ already exercises (see the goto()
-// calls across e2e/*.spec.ts) rather than inventing a separate route list.
-const pages = [
-    '/',
-    '/about/',
-    '/principles/',
-    '/recommendations/',
-    '/work/',
-    '/work/brand-evolution/',
-    '/work/leadership-operating-model/',
-    '/work/storyblok-migration/',
-    '/work/voices-conference-website/',
-]
-
-const themes = ['light', 'dark'] as const
+//
+// contrast-results/ is cleared once, up front, by
+// e2e/contrast.global-setup.ts — not here — since that needs to happen
+// exactly once before any worker starts, not once per worker.
 
 const outDir = path.join(process.cwd(), 'contrast-results')
 
-async function scanAndWrite(
-    page: Page,
-    reportKey: string,
-    pagePath: string,
-    theme: string,
-) {
+async function scanAndWrite(page: Page, reportedPath: string, theme: string) {
     const results = await new AxeBuilder({ page })
         .withRules(['color-contrast'])
         .analyze()
 
-    fs.mkdirSync(outDir, { recursive: true })
-    const safeName = reportKey.replace(/[^a-z0-9_-]/gi, '_')
     fs.writeFileSync(
-        path.join(outDir, `${safeName}.json`),
+        path.join(outDir, resultFileName(reportedPath, theme)),
         JSON.stringify(
-            { page: pagePath, theme, violations: results.violations },
+            { page: reportedPath, theme, violations: results.violations },
             null,
             2,
         ),
@@ -51,9 +33,9 @@ async function scanAndWrite(
 }
 
 test.describe('color contrast (report only)', () => {
-    for (const pagePath of pages) {
+    for (const { reportedPath, gotoPath } of pages) {
         for (const theme of themes) {
-            test(`${pagePath} - ${theme}`, async ({ page }) => {
+            test(`${reportedPath} - ${theme}`, async ({ page }) => {
                 // The config-level `use.reducedMotion` option doesn't
                 // reliably take effect for the actual page's matchMedia —
                 // set it explicitly instead. See the comment on
@@ -62,24 +44,9 @@ test.describe('color contrast (report only)', () => {
                 await page.addInitScript((t: string) => {
                     window.localStorage.setItem('theme', t)
                 }, theme)
-                await page.goto(pagePath)
-                await scanAndWrite(
-                    page,
-                    `${pagePath}__${theme}`,
-                    pagePath,
-                    theme,
-                )
+                await page.goto(gotoPath)
+                await scanAndWrite(page, reportedPath, theme)
             })
         }
     }
-
-    test('404 page', async ({ page }) => {
-        await page.emulateMedia({ reducedMotion: 'reduce' })
-        await page.addInitScript(() => {
-            window.localStorage.setItem('theme', 'light')
-        })
-        // Same nonexistent-route convention as e2e/404.spec.ts.
-        await page.goto('/this-page-does-not-exist/')
-        await scanAndWrite(page, '404__light', '/404', 'light')
-    })
 })
