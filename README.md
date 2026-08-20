@@ -182,10 +182,10 @@ Each `.mdx` file is a case study. Frontmatter fields:
 title: "Your title"
 description: "One sentence shown on the work card."
 category: "Engineering" # or "Design" or "Leadership"
-tags: ["Tag One", "Tag Two"]
-year: "2024–2025"
+tags: ["Tag One", "Tag Two"] # at least 1 required
+year: "2024–2025" # a single 4-digit year ("2024") or an en-dash range like this one
 featured: true # true = wide card in the grid (only one should be featured)
-order: 1 # controls display order — keep as integers, 1 = first
+order: 1 # controls display order — non-negative integers, 1 = first
 draft: false # true = hidden from the site
 coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
 ```
@@ -210,10 +210,10 @@ title: "Post title"
 description: "Short description."
 date: 2026-01-15
 draft: false
-tags: ["tag"]
+tags: ["tag"] # at least 1 required
 ```
 
-Create the file as `src/content/blog/your-post-slug.md`.
+Create the file as `src/content/blog/your-post-slug.md`. Publishing (flipping `draft` to `false`) also gets the post a per-slug OG image automatically — see [OG images](#og-images) below.
 
 Published posts (`draft: false`) also appear automatically in the RSS feed at `/rss.xml` (`src/pages/rss.xml.ts`) — no separate step needed. The feed is empty while every post is still a draft.
 
@@ -222,6 +222,12 @@ Published posts (`draft: false`) also appear automatically in the RSS feed at `/
 OG images are generated at build time using Satori + Sharp. Satori accepts TTF, OTF, and WOFF — but not WOFF2. Because `@fontsource-variable/fraunces` only ships WOFF2, the project uses `@fontsource/fraunces` (non-variable, 400 weight) specifically for OG image generation. The website itself still uses the variable font via `@fontsource-variable/fraunces`.
 
 Both fonts are loaded from their respective `node_modules/*/files/*.woff` paths at build time. If OG image generation fails, the error message includes a directory listing to help verify the exact filename against the matcher in `src/utils/og-image.ts`.
+
+Every static page, case study, and published blog post gets its own `/og/<slug>.png` — see `src/pages/og/[...slug].png.ts`'s `getStaticPaths`. Since every blog post currently ships as `draft: true`, no `/og/blog/*` images exist yet; the wiring is in place and generates automatically the moment a post is published.
+
+## Structured data (JSON-LD)
+
+The homepage renders a `Person` schema (name, job title, and `sameAs` links to LinkedIn/GitHub) and each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), both as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
 
 ## Adding analytics
 
@@ -238,6 +244,7 @@ src/
   components/
     home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader
     layout/        → Header, NavLink, Footer, Main
+    seo/           → JsonLd (renders Person/CreativeWork JSON-LD, see src/utils/schema.ts)
     ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard, InterlinkRow, PageHeader
     work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid
   content/
@@ -272,6 +279,7 @@ src/
     global.css     → Tailwind v4 config, design tokens, dark mode
   utils/
     og-image.ts        → Satori template + Sharp PNG generation
+    schema.ts          → Person/CreativeWork JSON-LD schema builders, rendered by components/seo/JsonLd.astro
     experience.ts      → Computes career-length and Staffbase-tenure year figures from fixed dates
     category-colors.ts → Shared category → badge-color mapping (Tailwind classes + Satori hex equivalents)
     nav-active.ts      → Shared active-nav-link match + class vocabulary, used by NavLink.astro and Header.astro's client script
