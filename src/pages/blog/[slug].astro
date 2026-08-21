@@ -45,17 +45,15 @@ const ogImage = `/og/blog/${stripContentExtension(post.id)}.png`
             >
                 {title}
             </h1>
-            {
-                tags.length > 0 && (
-                    <ul class="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                            <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
-                                {tag}
-                            </li>
-                        ))}
-                    </ul>
-                )
-            }
+            <ul class="flex flex-wrap gap-2">
+                {
+                    tags.map((tag) => (
+                        <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
+                            {tag}
+                        </li>
+                    ))
+                }
+            </ul>
         </header>
 
         <hr class="mb-12 border-border" />

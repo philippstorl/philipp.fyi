@@ -52,8 +52,10 @@ function resolveCoverImagePath(filePath: string): string | undefined {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const workEntries = await getPublishedEntries('work')
-    const blogEntries = await getPublishedBlogPosts()
+    const [workEntries, blogEntries] = await Promise.all([
+        getPublishedEntries('work'),
+        getPublishedBlogPosts(),
+    ])
 
     return [
         {

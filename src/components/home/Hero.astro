@@ -1,5 +1,6 @@
 ---
 import SocialIcon from '@/components/ui/SocialIcon.astro'
+import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
 import { hero } from '@/data/hero'
 ---
 
@@ -50,7 +51,7 @@ import { hero } from '@/data/hero'
                 >
                     <SocialIcon icon={link.icon} size={15} />
                     {link.label}
-                    <span class="sr-only"> (opens in a new tab)</span>
+                    <NewTabIndicator />
                 </a>
             ))
         }

@@ -5,6 +5,7 @@ import JsonLd from '@/components/seo/JsonLd.astro'
 import type { WorkCategory } from '@/utils/category-colors'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
 import { buildCreativeWorkSchema } from '@/utils/schema'
+import { toAbsoluteUrl } from '@/utils/url'
 
 interface Props {
     title: string
@@ -18,8 +19,8 @@ interface Props {
 
 const { title, description, category, year, tags, ogImage } = Astro.props
 
-const pageUrl = new URL(Astro.url.pathname, Astro.site).toString()
-const imageUrl = ogImage ? new URL(ogImage, Astro.site).toString() : undefined
+const pageUrl = toAbsoluteUrl(Astro.url.pathname, Astro.site)
+const imageUrl = ogImage ? toAbsoluteUrl(ogImage, Astro.site) : undefined
 const creativeWorkSchema = buildCreativeWorkSchema({
     title,
     description,

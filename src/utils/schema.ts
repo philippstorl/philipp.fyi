@@ -1,12 +1,5 @@
 import { hero } from '@/data/hero'
-
-// No single data source currently stores the person's plain display name —
-// Footer.astro hardcodes the same string in its copyright line. Duplicating
-// it here (rather than threading a new field through hero.ts/about.ts) keeps
-// this file's only real "pull from existing data" job focused on the two
-// values that genuinely exist as structured data elsewhere: the social
-// profile URLs (hero.links) used below for `sameAs`.
-const PERSON_NAME = 'Philipp Storl'
+import { SITE_NAME } from '@/data/site'
 
 export interface PersonSchema {
     '@context': 'https://schema.org'
@@ -22,7 +15,7 @@ export function buildPersonSchema(url: string): PersonSchema {
     return {
         '@context': 'https://schema.org',
         '@type': 'Person',
-        name: PERSON_NAME,
+        name: SITE_NAME,
         // hero.subheading reads "Principal Web Developer, full-stack, with a
         // designer's eye." — the clause before the first comma is the actual
         // job title; the rest is descriptive copy that doesn't belong in a
@@ -58,12 +51,16 @@ export interface CreativeWorkSchemaParams {
 // value — a bare 4-digit year ("2024") is valid ISO 8601 reduced precision,
 // but an en-dash range ("2018–2026", the shape content.config.ts's work
 // schema allows for multi-year case studies) is not a date at all. Since
-// datePublished is a single point in time, the range's later year is used —
-// the point at which the described work was most current — rather than
-// fabricating a day/month or asserting the range itself as a date.
+// datePublished is a single point in time, the range's *earlier* year is
+// used — the point the work began, which is fixed. Two current case studies
+// use an open-ended range that still ends in the current year
+// (brand-evolution: "2018–2026", voices-conference-website: "2020–2026"),
+// so using the later year would make datePublished silently re-date itself
+// forward every time that range gets bumped for another year of ongoing
+// work — not what a "published" date is supposed to mean.
 function extractSchemaYear(year: string): string {
     const parts = year.split('–')
-    return parts[parts.length - 1]
+    return parts[0]
 }
 
 /** CreativeWork schema for a case study page — used over Article since these are portfolio project write-ups, not news/blog content. */
@@ -77,7 +74,7 @@ export function buildCreativeWorkSchema(
         name: params.title,
         description: params.description,
         datePublished: extractSchemaYear(params.year),
-        author: { '@type': 'Person', name: PERSON_NAME },
+        author: { '@type': 'Person', name: SITE_NAME },
         url: params.url,
         ...(params.image ? { image: params.image } : {}),
     }

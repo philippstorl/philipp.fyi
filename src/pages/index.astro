@@ -15,9 +15,10 @@ import {
     getYearsOfExperience,
 } from '@/utils/experience'
 import { buildPersonSchema } from '@/utils/schema'
+import { toAbsoluteUrl } from '@/utils/url'
 
 const personSchema = buildPersonSchema(
-    new URL(Astro.url.pathname, Astro.site).toString(),
+    toAbsoluteUrl(Astro.url.pathname, Astro.site),
 )
 ---
 

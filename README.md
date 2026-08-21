@@ -245,7 +245,7 @@ src/
     home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader
     layout/        → Header, NavLink, Footer, Main
     seo/           → JsonLd (renders Person/CreativeWork JSON-LD, see src/utils/schema.ts)
-    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard, InterlinkRow, PageHeader
+    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard, InterlinkRow, PageHeader, NewTabIndicator
     work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid
   content/
     work/          → Case study MDX files (4 entries)
@@ -285,6 +285,8 @@ src/
     nav-active.ts      → Shared active-nav-link match + class vocabulary, used by NavLink.astro and Header.astro's client script
     blog-posts.ts      → getPublishedBlogPosts(), the shared draft-filter + sort used by every blog page/route
     collections.ts     → getPublishedEntries(collection), the shared draft-filter behind work and blog
+    url.ts             → toAbsoluteUrl(path, site), the shared canonical/OG/JSON-LD absolute-URL builder
+    a11y.ts            → NEW_TAB_SUFFIX, the shared "(opens in a new tab)" wording used by NewTabIndicator.astro and Footer.astro
 e2e/               → Playwright E2E tests
 public/
   favicon.svg

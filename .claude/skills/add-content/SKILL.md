@@ -11,9 +11,11 @@ This site has three content collections, each with different ordering rules and 
 
 1. Create `src/content/work/<slug>.mdx` — the filename **is** the URL slug (`/work/<slug>/`), so pick it deliberately; it can't be changed later without breaking links.
 2. Frontmatter:
-    - `title`, `description`, `year`, `tags: [...]` — plain strings/arrays.
+    - `title`, `description` — plain strings.
+    - `year` — a 4-digit year (`"2024"`) or an en-dash year range for multi-year work (`"2022–2024"`, using an actual en dash `–`, not a hyphen `-`) — validated by a zod regex, anything else fails the build.
+    - `tags: [...]` — at least one tag; an empty array fails the build.
     - `category` — must be exactly `"Engineering"`, `"Leadership"`, or `"Design"` (zod enum, anything else fails the build).
-    - `order` — an integer. List the existing files in this directory and use one higher than the current max.
+    - `order` — a nonnegative integer (zod `.int().nonnegative()`). List the existing files in this directory and use one higher than the current max.
     - `featured` — boolean, defaults to `false`. Check the existing entries first: the homepage's `WorkSection.astro` destructures `[featured, ...rest]` from the collection, so **exactly one** entry across the whole collection should have `featured: true`. Don't add a second one.
     - `draft` — defaults to `false`.
     - `coverImage` — optional, e.g. `"./screenshot.png"`. Only set it if you actually have a screenshot in the same folder; it's the teaser shown on the homepage work card. Omitting it is fine — the card falls back to a text-only layout.
@@ -33,7 +35,7 @@ This site has three content collections, each with different ordering rules and 
 ## Blog post (`src/content/blog/`)
 
 1. Copy `src/content/blog/_template.md` to `src/content/blog/<slug>.md` and fill it in — it already has the right frontmatter shape and a reminder note at the bottom.
-2. Frontmatter: `title`, `description`, `date`, `tags: [...]`. `draft` defaults to `true` in the schema.
+2. Frontmatter: `title`, `description`, `date`, `tags: [...]` — at least one tag required, there's no default so it can't be omitted. `draft` defaults to `true` in the schema.
 3. **Never set `draft: false` on your own initiative** — leave new posts as drafts unless the user explicitly asks you to publish this one. This is a standing project rule, not a one-off judgment call.
 4. No e2e test currently asserts anything about blog post count or content — nothing else to update.
 

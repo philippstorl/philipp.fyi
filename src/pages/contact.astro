@@ -5,6 +5,7 @@ import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import SocialIcon from '@/components/ui/SocialIcon.astro'
+import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
 import ContactForm from '@/components/ui/ContactForm'
 import { hero, type HeroLink } from '@/data/hero'
 
@@ -66,7 +67,7 @@ const contactLinkLabels: Record<HeroLink['icon'], string> = {
                         >
                             <SocialIcon icon={link.icon} size={15} />
                             {contactLinkLabels[link.icon]}
-                            <span class="sr-only"> (opens in a new tab)</span>
+                            <NewTabIndicator />
                         </a>
                     ))
                 }

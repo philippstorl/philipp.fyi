@@ -15,6 +15,7 @@ import frauncesWoff2Url from '@fontsource-variable/fraunces/files/fraunces-latin
 import dmSansWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2?url'
 import dmSansRegularWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2?url'
 import { SITE_NAME, DEFAULT_DESCRIPTION } from '@/data/site'
+import { toAbsoluteUrl } from '@/utils/url'
 
 interface Props {
     /** Page title — shown as "Title | Philipp Storl", omit for home page */
@@ -30,8 +31,8 @@ const {
 } = Astro.props
 
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
-const canonicalURL = new URL(Astro.url.pathname, Astro.site)
-const ogImageURL = new URL(ogImage, Astro.site)
+const canonicalURL = toAbsoluteUrl(Astro.url.pathname, Astro.site)
+const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
 ---
 
 <!doctype html>
