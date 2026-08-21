@@ -118,12 +118,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
                 } satisfies OgImageProps,
             }
         }),
-        // Blog posts use the plain-text `label` slot (a formatted publish
-        // date), not the `category` badge slot — the blog schema has no
-        // category field. Every current post is draft: true (see
-        // content.config.ts), so this map is empty today and no /og/blog/*
-        // routes are actually generated yet — the wiring is still correct
-        // and will produce real OG images the moment a post is published.
+        // Blog has no category field, so it uses the plain-text `label`
+        // slot instead of the badge. Empty today since every post is a draft.
         ...blogEntries.map((entry) => ({
             params: { slug: `blog/${stripContentExtension(entry.id)}` },
             props: {

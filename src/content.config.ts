@@ -10,11 +10,8 @@ const work = defineCollection({
             description: z.string(),
             category: z.enum(['Engineering', 'Leadership', 'Design']),
             tags: z.array(z.string()).min(1),
-            /**
-             * A single 4-digit year ("2022") or an en-dash year range
-             * ("2022–2024") — every existing case study uses the range form,
-             * since each spans multiple years of work.
-             */
+            /** A 4-digit year or an en-dash range (e.g. "2022–2024") for
+             * multi-year work — every existing case study uses the range form. */
             year: z
                 .string()
                 .regex(
@@ -48,11 +45,8 @@ const blog = defineCollection({
         description: z.string(),
         date: z.date(),
         draft: z.boolean().default(true),
-        // Required with at least one tag — a bare `.default([])` would let a
-        // post silently skip tagging entirely (Zod's default() short-circuits
-        // .min(1) when the field is omitted, only enforcing it when an empty
-        // array is passed explicitly), which defeats the point of the
-        // constraint.
+        // No .default([]) — Zod's default() bypasses .min(1) when the field
+        // is omitted entirely, which would let a post silently skip tagging.
         tags: z.array(z.string()).min(1),
     }),
 })

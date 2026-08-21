@@ -5,10 +5,7 @@ interface Props {
 
 const { data } = Astro.props
 
-// `<` is escaped so a value containing something like "</script>" can't break
-// out of the element early — the data here is always our own structured
-// content (see src/utils/schema.ts), never user input, but this is cheap
-// insurance and the standard way to safely embed JSON in a <script> tag.
+// Escapes `<` so a stray "</script>" in the data can't break out early.
 const json = JSON.stringify(data).replace(/</g, '\\u003c')
 ---
 

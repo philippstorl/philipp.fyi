@@ -7,19 +7,11 @@ import { CATEGORY_HEX_COLORS, type WorkCategory } from '@/utils/category-colors'
 
 // readdirSync lets us find the correct filename without hardcoding it.
 
-// Minimal structural type for the plain nested-object tree the builder
-// functions below return — Satori's JSX-equivalent *input* format (this .ts
-// file can't use JSX, so the template is written as plain objects shaped
-// like `h()` calls, per the note further down). Satori's own package does
-// export a type named `SatoriNode`, but it describes the *output* of
-// rendering — a measured layout node with `left`/`top`/`width`/`height`/
-// `textContent` (used by its `onNodeDetected` callback) — not this input
-// shape, so it isn't reused here under the same name to avoid conflating
-// the two. `props` stays a loose `Record<string, unknown>` rather than
-// enumerating `style`/`children`/`src`/etc., since different node types
-// (div/img) use different prop sets and the real value of this type is
-// catching a wrong return shape at these 3 call sites, not modeling every
-// possible Satori prop.
+// Local type for the plain-object tree the builder functions below return
+// (Satori's JSX-equivalent input; this file has no JSX). Not named
+// `SatoriNode` — Satori already exports that name for its rendered
+// *output* shape, which is different. `props` stays loose since div/img
+// nodes use different prop sets.
 interface SatoriTemplateNode {
     type: string
     props: Record<string, unknown>
@@ -308,15 +300,10 @@ export async function generateOgImage(
         : undefined
 
     const svg = await satori(
-        // Satori's public satori() signature expects a real React `ReactNode`
-        // (it imports React's own types), but buildTemplate() returns plain
-        // { type, props } objects rather than actual React elements — this
-        // file can't use JSX (see the note above), and Satori itself accepts
-        // this plain-object shape at runtime regardless of what its types
-        // declare. This is the one unavoidable cast at that library
-        // boundary; SatoriTemplateNode above still gives real type-checking
-        // to how buildTemplate/buildCategoryBadgeNode/buildPlainLabelNode
-        // compose with each other.
+        // satori() expects a real ReactNode, but this file has no JSX and
+        // returns plain { type, props } objects instead — Satori accepts
+        // that shape at runtime regardless of its types. Unavoidable cast
+        // at this one library boundary.
         buildTemplate(
             title,
             label,

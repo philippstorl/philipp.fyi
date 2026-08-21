@@ -16,10 +16,8 @@ export function buildPersonSchema(url: string): PersonSchema {
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: SITE_NAME,
-        // hero.subheading reads "Principal Web Developer, full-stack, with a
-        // designer's eye." — the clause before the first comma is the actual
-        // job title; the rest is descriptive copy that doesn't belong in a
-        // schema.org jobTitle field.
+        // The clause before the first comma is the actual job title; the
+        // rest of hero.subheading is descriptive copy, not a jobTitle.
         jobTitle: hero.subheading.split(',')[0].trim(),
         url,
         sameAs: hero.links.map((link) => link.href),
@@ -47,17 +45,11 @@ export interface CreativeWorkSchemaParams {
     image?: string
 }
 
-// schema.org's Date datatype (which datePublished uses) requires an ISO 8601
-// value — a bare 4-digit year ("2024") is valid ISO 8601 reduced precision,
-// but an en-dash range ("2018–2026", the shape content.config.ts's work
-// schema allows for multi-year case studies) is not a date at all. Since
-// datePublished is a single point in time, the range's *earlier* year is
-// used — the point the work began, which is fixed. Two current case studies
-// use an open-ended range that still ends in the current year
-// (brand-evolution: "2018–2026", voices-conference-website: "2020–2026"),
-// so using the later year would make datePublished silently re-date itself
-// forward every time that range gets bumped for another year of ongoing
-// work — not what a "published" date is supposed to mean.
+// A bare year is valid reduced-precision ISO 8601; an en-dash range isn't a
+// date at all. Use the range's earlier (fixed) year, not the later one —
+// some case studies use an open-ended range that still ends in the current
+// year, and datePublished shouldn't silently creep forward as that range
+// gets bumped each year.
 function extractSchemaYear(year: string): string {
     const parts = year.split('–')
     return parts[0]
