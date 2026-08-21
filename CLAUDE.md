@@ -16,6 +16,7 @@ Repeatable workflows for this repo are captured as skills in `.claude/skills/` �
 - `doc-sync` — checking whether README/CLAUDE.md need updating after a code change
 - `self-review` — forking an independent subagent for a fresh-eyes review before declaring feature work done
 - `log-learning` — recording something into LEARNINGS.md right now instead of waiting for the automatic session-end sweep
+- `project-audit` — full or targeted repository audit (security, accessibility, performance, code quality, UX/SEO, and more) via parallel independent agents plus an independent verification pass, filing one GitHub issue per confirmed finding
 
 ## What this is
 
