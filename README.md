@@ -283,7 +283,8 @@ src/
     experience.ts      → Computes career-length and Staffbase-tenure year figures from fixed dates
     category-colors.ts → Shared category → badge-color mapping (Tailwind classes + Satori hex equivalents)
     nav-active.ts      → Shared active-nav-link match + class vocabulary, used by NavLink.astro and Header.astro's client script
-    blog-posts.ts      → getPublishedBlogPosts(), the shared draft-filter + sort used by blog/index.astro and rss.xml.ts
+    blog-posts.ts      → getPublishedBlogPosts(), the shared draft-filter + sort used by every blog page/route
+    collections.ts     → getPublishedEntries(collection), the shared draft-filter behind work and blog
 e2e/               → Playwright E2E tests
 public/
   favicon.svg

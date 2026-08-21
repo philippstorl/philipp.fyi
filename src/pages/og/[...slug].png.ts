@@ -1,10 +1,11 @@
 import type { APIRoute, GetStaticPaths } from 'astro'
-import { getCollection } from 'astro:content'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { load as parseYaml } from 'js-yaml'
 import { generateOgImage } from '@/utils/og-image'
 import { getYearsOfExperience } from '@/utils/experience'
+import { getPublishedEntries } from '@/utils/collections'
+import { getPublishedBlogPosts } from '@/utils/blog-posts'
 import { stripContentExtension } from '@/utils/slug'
 import { formatBlogDate } from '@/utils/date'
 import type { WorkCategory } from '@/utils/category-colors'
@@ -51,8 +52,8 @@ function resolveCoverImagePath(filePath: string): string | undefined {
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
-    const workEntries = await getCollection('work', ({ data }) => !data.draft)
-    const blogEntries = await getCollection('blog', ({ data }) => !data.draft)
+    const workEntries = await getPublishedEntries('work')
+    const blogEntries = await getPublishedBlogPosts()
 
     return [
         {

@@ -1,14 +1,15 @@
 ---
-import { getCollection, render } from 'astro:content'
+import { render } from 'astro:content'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import CaseStudyLayout from '@/components/work/CaseStudyLayout.astro'
+import { getPublishedEntries } from '@/utils/collections'
 import { stripContentExtension } from '@/utils/slug'
 
 export async function getStaticPaths() {
-    const entries = await getCollection('work', ({ data }) => !data.draft)
+    const entries = await getPublishedEntries('work')
     return entries.map((entry) => ({
         params: { slug: stripContentExtension(entry.id) },
         props: { entry },

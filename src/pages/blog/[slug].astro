@@ -1,15 +1,16 @@
 ---
-import { getCollection, render } from 'astro:content'
+import { render } from 'astro:content'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
+import { getPublishedBlogPosts } from '@/utils/blog-posts'
 import { stripContentExtension } from '@/utils/slug'
 import { formatBlogDate } from '@/utils/date'
 
 export async function getStaticPaths() {
-    const posts = await getCollection('blog', ({ data }) => !data.draft)
+    const posts = await getPublishedBlogPosts()
     return posts.map((post) => ({
         params: { slug: stripContentExtension(post.id) },
         props: { post },

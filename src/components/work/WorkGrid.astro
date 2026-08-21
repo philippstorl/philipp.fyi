@@ -1,8 +1,8 @@
 ---
-import { getCollection } from 'astro:content'
+import { getPublishedEntries } from '@/utils/collections'
 import WorkCard from './WorkCard.astro'
 
-const entries = (await getCollection('work', ({ data }) => !data.draft)).sort(
+const entries = (await getPublishedEntries('work')).sort(
     (a, b) => a.data.order - b.data.order,
 )
 
