@@ -2,9 +2,20 @@ import satori from 'satori'
 import sharp from 'sharp'
 import { readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
+import type { ReactNode } from 'react'
 import { CATEGORY_HEX_COLORS, type WorkCategory } from '@/utils/category-colors'
 
 // readdirSync lets us find the correct filename without hardcoding it.
+
+// Local type for the plain-object tree the builder functions below return
+// (Satori's JSX-equivalent input; this file has no JSX). Not named
+// `SatoriNode` — Satori already exports that name for its rendered
+// *output* shape, which is different. `props` stays loose since div/img
+// nodes use different prop sets.
+interface SatoriTemplateNode {
+    type: string
+    props: Record<string, unknown>
+}
 
 type FontCache = { fraunces: ArrayBuffer; dmSans: ArrayBuffer } | null
 let fontCache: FontCache = null
@@ -106,8 +117,7 @@ const labelBaseStyle = {
 // 9999 and the 6px/16px padding are Satori's equivalent of that component's
 // `rounded-full` and `px-2.5 py-0.5` Tailwind classes, scaled up for
 // OG-image poster legibility.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildCategoryBadgeNode(category: WorkCategory): any {
+function buildCategoryBadgeNode(category: WorkCategory): SatoriTemplateNode {
     const { text, border } = CATEGORY_HEX_COLORS[category]
     return {
         type: 'div',
@@ -131,8 +141,7 @@ function buildCategoryBadgeNode(category: WorkCategory): any {
 }
 
 // Plain-text top label used by non-category OG images (home/principles).
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function buildPlainLabelNode(label: string): any {
+function buildPlainLabelNode(label: string): SatoriTemplateNode {
     return {
         type: 'div',
         props: {
@@ -147,8 +156,7 @@ function buildTemplate(
     label?: string,
     coverImageDataUri?: string,
     category?: WorkCategory,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-): any {
+): SatoriTemplateNode {
     // A cover image narrows the text column, so longer titles need a smaller
     // size sooner than the text-only layout does.
     const titleSize = coverImageDataUri
@@ -292,7 +300,16 @@ export async function generateOgImage(
         : undefined
 
     const svg = await satori(
-        buildTemplate(title, label, coverImageDataUri, category),
+        // satori() expects a real ReactNode, but this file has no JSX and
+        // returns plain { type, props } objects instead — Satori accepts
+        // that shape at runtime regardless of its types. Unavoidable cast
+        // at this one library boundary.
+        buildTemplate(
+            title,
+            label,
+            coverImageDataUri,
+            category,
+        ) as unknown as ReactNode,
         {
             width: OG_WIDTH,
             height: OG_HEIGHT,

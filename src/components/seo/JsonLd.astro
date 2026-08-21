@@ -1,0 +1,12 @@
+---
+interface Props {
+    data: object
+}
+
+const { data } = Astro.props
+
+// Escapes `<` so a stray "</script>" in the data can't break out early.
+const json = JSON.stringify(data).replace(/</g, '\\u003c')
+---
+
+<script type="application/ld+json" is:inline set:html={json} />

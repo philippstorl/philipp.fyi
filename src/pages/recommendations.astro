@@ -5,6 +5,7 @@ import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import InitialsAvatar from '@/components/ui/InitialsAvatar.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
+import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { recommendations } from '@/data/recommendations'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
@@ -28,7 +29,7 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
                 rel="noopener noreferrer"
                 class="text-accent no-underline hover:underline"
             >
-                LinkedIn
+                LinkedIn<NewTabIndicator />
             </a>, unedited except for formatting.
         </PageHeader>
 

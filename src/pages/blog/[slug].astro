@@ -1,15 +1,16 @@
 ---
-import { getCollection, render } from 'astro:content'
+import { render } from 'astro:content'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
+import { getPublishedBlogPosts } from '@/utils/blog-posts'
 import { stripContentExtension } from '@/utils/slug'
 import { formatBlogDate } from '@/utils/date'
 
 export async function getStaticPaths() {
-    const posts = await getCollection('blog', ({ data }) => !data.draft)
+    const posts = await getPublishedBlogPosts()
     return posts.map((post) => ({
         params: { slug: stripContentExtension(post.id) },
         props: { post },
@@ -19,9 +20,10 @@ export async function getStaticPaths() {
 const { post } = Astro.props
 const { Content } = await render(post)
 const { title, description, date, tags } = post.data
+const ogImage = `/og/blog/${stripContentExtension(post.id)}.png`
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} ogImage={ogImage}>
     <Header />
     <Main class="mx-auto max-w-3xl px-6 py-24">
         <a
@@ -43,17 +45,15 @@ const { title, description, date, tags } = post.data
             >
                 {title}
             </h1>
-            {
-                tags.length > 0 && (
-                    <ul class="flex flex-wrap gap-2">
-                        {tags.map((tag) => (
-                            <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
-                                {tag}
-                            </li>
-                        ))}
-                    </ul>
-                )
-            }
+            <ul class="flex flex-wrap gap-2">
+                {
+                    tags.map((tag) => (
+                        <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
+                            {tag}
+                        </li>
+                    ))
+                }
+            </ul>
         </header>
 
         <hr class="mb-12 border-border" />

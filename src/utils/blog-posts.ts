@@ -1,11 +1,11 @@
-import { getCollection, type CollectionEntry } from 'astro:content'
+import type { CollectionEntry } from 'astro:content'
+import { getPublishedEntries } from './collections'
 
-/** Published (non-draft) blog posts, newest first — the single source both
- * /blog/ and rss.xml.ts query from, so draft-filtering and sort order can't
- * drift apart between the two. */
+/** Published (non-draft) blog posts, newest first — the single source
+ * every blog call site queries from, so sort order can't drift between them. */
 export async function getPublishedBlogPosts(): Promise<
     CollectionEntry<'blog'>[]
 > {
-    const posts = await getCollection('blog', ({ data }) => !data.draft)
+    const posts = await getPublishedEntries('blog')
     return posts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
 }
