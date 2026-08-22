@@ -1,0 +1,58 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+type Props = {
+    src: ImageMetadata
+    alt: string
+    width: number
+    class?: string
+    /** A full-resolution URL for a consumer (e.g. a lightbox) that needs a source larger than the responsive one rendered here — forwarded as-is, unused by this component. */
+    'data-lightbox-src'?: string
+} & (
+    | {
+          /** For a fixed-width image. Default 1x/2x/3x — narrow it to avoid upscaling past a small source's native resolution (see CLAUDE.md). */
+          densities?: (number | `${number}x`)[]
+          sizes?: never
+          widths?: never
+      }
+    | {
+          densities?: never
+          /** For an image whose width changes across breakpoints (e.g. a grid with `sm:`/`lg:` column counts) — see CLAUDE.md. */
+          sizes: string
+          /**
+           * The exact srcset candidate widths for `sizes` to pick from.
+           * Astro's own `layout="constrained"` default only ever generates
+           * 1x/2x of the `width` prop, which under-resolves any larger
+           * breakpoint tier a custom `sizes` string describes — pass this
+           * explicitly rather than relying on that default (see CLAUDE.md).
+           */
+          widths: number[]
+      }
+)
+
+const {
+    src,
+    alt,
+    width,
+    class: className,
+    densities = [1, 2, 3],
+    sizes,
+    widths,
+    'data-lightbox-src': lightboxSrc,
+} = Astro.props
+
+// Only this option set differs between the two modes (see Props above).
+const responsiveProps = sizes
+    ? ({ layout: 'constrained', sizes, widths } as const)
+    : { densities }
+---
+
+<Image
+    src={src}
+    alt={alt}
+    width={width}
+    class={className}
+    data-lightbox-src={lightboxSrc}
+    {...responsiveProps}
+/>
