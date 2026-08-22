@@ -28,6 +28,25 @@ test.describe('Image lightbox', () => {
         )
     })
 
+    test('the enlarged image is a full-resolution source, not the downscaled inline one', async ({
+        page,
+    }) => {
+        // Regression check: the lightbox must use the figure's full-resolution
+        // `data-lightbox-src`, not its deliberately downscaled inline `src`.
+        const inlineImage = page.locator('.prose figure img').first()
+        const [inlineSrc, lightboxSrc] = await Promise.all([
+            inlineImage.getAttribute('src'),
+            inlineImage.getAttribute('data-lightbox-src'),
+        ])
+        expect(lightboxSrc).toBeTruthy()
+        expect(lightboxSrc).not.toBe(inlineSrc)
+
+        await openLightboxOn(page, inlineImage)
+        await expect(
+            page.locator('#lightbox-track img').first(),
+        ).toHaveAttribute('src', lightboxSrc!)
+    })
+
     test('opens directly on the clicked image, not an earlier one', async ({
         page,
     }) => {

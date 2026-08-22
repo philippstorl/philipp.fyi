@@ -1,0 +1,61 @@
+---
+import type { ImageMetadata } from 'astro'
+import { getImage } from 'astro:assets'
+import ResponsiveImage from './ResponsiveImage.astro'
+
+type Props = {
+    src: ImageMetadata
+    alt: string
+    caption: string
+    width: number
+    class?: string
+    captionClass?: string
+    imgClass?: string
+} & (
+    | {
+          densities?: (number | `${number}x`)[]
+          sizes?: never
+          widths?: never
+      }
+    | {
+          densities?: never
+          sizes: string
+          widths: number[]
+      }
+)
+
+const {
+    src,
+    alt,
+    caption,
+    width,
+    densities,
+    sizes,
+    widths,
+    class: figureClass,
+    captionClass = 'mt-2 text-sm text-muted',
+    imgClass,
+} = Astro.props
+
+// The inline image is deliberately downscaled; the lightbox needs a full-
+// resolution source of its own, handed off via `data-lightbox-src`.
+const lightboxImage = await getImage({ src, format: 'webp' })
+
+// Only this option set differs between the two modes (see ResponsiveImage's
+// Props for what each means) — reconstructed here so it stays a single
+// well-typed object matching ResponsiveImage's own discriminated union,
+// rather than forwarding `densities`/`sizes`/`widths` as always-present props.
+const responsiveProps = sizes ? { sizes, widths } : { densities }
+---
+
+<figure class:list={[figureClass]}>
+    <ResponsiveImage
+        src={src}
+        alt={alt}
+        width={width}
+        data-lightbox-src={lightboxImage.src}
+        class:list={['rounded-xl border border-border', imgClass]}
+        {...responsiveProps}
+    />
+    <figcaption class:list={[captionClass]}>{caption}</figcaption>
+</figure>

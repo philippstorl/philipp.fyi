@@ -21,7 +21,11 @@ coverImage: "./brand-evolution/staffbase-2026-05.png"
 ---
 
 import { getStaffbaseTenureYears } from "@/utils/experience"
-import { Image } from "astro:assets"
+import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
+import {
+    gridFigureSizing,
+    fullWidthFigureSizing,
+} from "@/utils/content-image-sizing"
 
 import img2018_03 from "./brand-evolution/staffbase-2018-03.png"
 import img2018_07 from "./brand-evolution/staffbase-2018-07.png"
@@ -56,52 +60,38 @@ From the moment I joined Staffbase in March 2018 as the company's first dedicate
 ## 2018 - The blank page
 
 <div class="my-8 grid grid-cols-3 gap-4">
-    <figure>
-        <Image
-            src={img2018_03}
-            alt="staffbase.com homepage in March 2018, the site Philipp inherited on joining"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">March 2018</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2018_07}
-            alt="staffbase.com homepage in July 2018 with a new people-led hero"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">July 2018</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2018_09}
-            alt="staffbase.com homepage in September 2018 with the Make the Difference hero"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">September 2018</figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2018_03}
+        alt="staffbase.com homepage in March 2018, the site Philipp inherited on joining"
+        caption="March 2018"
+        {...gridFigureSizing(img2018_03, 3)}
+    />
+    <ResponsiveFigure
+        src={img2018_07}
+        alt="staffbase.com homepage in July 2018 with a new people-led hero"
+        caption="July 2018"
+        {...gridFigureSizing(img2018_07, 3)}
+    />
+    <ResponsiveFigure
+        src={img2018_09}
+        alt="staffbase.com homepage in September 2018 with the Make the Difference hero"
+        caption="September 2018"
+        {...gridFigureSizing(img2018_09, 3)}
+    />
 </div>
 <div class="my-8 grid grid-cols-2 gap-4">
-    <figure>
-        <Image
-            src={img2018_12en}
-            alt="staffbase.com English homepage in December 2018"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">December 2018</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2018_12de}
-            alt="staffbase.com German-language homepage in December 2018 promoting the VOICES conference"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {
-                "December 2018 - Staffbase also ran a German-language version of the homepage alongside English, this one promoting the 2019 VOICES conference."
-            }
-        </figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2018_12en}
+        alt="staffbase.com English homepage in December 2018"
+        caption="December 2018"
+        {...gridFigureSizing(img2018_12en, 2)}
+    />
+    <ResponsiveFigure
+        src={img2018_12de}
+        alt="staffbase.com German-language homepage in December 2018 promoting the VOICES conference"
+        caption="December 2018 - Staffbase also ran a German-language version of the homepage alongside English, this one promoting the 2019 VOICES conference."
+        {...gridFigureSizing(img2018_12de, 2)}
+    />
 </div>
 
 When I arrived, staffbase.com was a basic WordPress site with no real design system. Some modules existed, but they were built to solve immediate needs: not to scale, not to be reused consistently, not to grow into something others could build on. There were no documented standards and no conventions for how pages should be built.
@@ -111,22 +101,18 @@ I started from that. Within the first year, our art director and I rebuilt the d
 ## 2019 - First voice
 
 <div class="my-8 grid grid-cols-2 gap-4">
-    <figure>
-        <Image
-            src={img2019_04}
-            alt="staffbase.com homepage in April 2019"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">April 2019</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2019_10}
-            alt="staffbase.com homepage in October 2019"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">October 2019</figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2019_04}
+        alt="staffbase.com homepage in April 2019"
+        caption="April 2019"
+        {...gridFigureSizing(img2019_04, 2)}
+    />
+    <ResponsiveFigure
+        src={img2019_10}
+        alt="staffbase.com homepage in October 2019"
+        caption="October 2019"
+        {...gridFigureSizing(img2019_10, 2)}
+    />
 </div>
 
 By 2019, the site had a voice. Module patterns were emerging, landing pages were consistent, and the webinar and events infrastructure was in place. The VOICES conference website also existed during this period, though at the time it was plain HTML maintained by an external agency; I collaborated with them, gave feedback, and pushed code live, but it wasn't yet something the web team owned end to end.
@@ -136,22 +122,18 @@ The year was about depth: not just building pages, but building a system that co
 ## 2020 - The team grows
 
 <div class="my-8 grid grid-cols-2 gap-4">
-    <figure>
-        <Image
-            src={img2020_04}
-            alt="staffbase.com homepage in April 2020"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">April 2020</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2020_08}
-            alt="staffbase.com homepage in August 2020"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">August 2020</figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2020_04}
+        alt="staffbase.com homepage in April 2020"
+        caption="April 2020"
+        {...gridFigureSizing(img2020_04, 2)}
+    />
+    <ResponsiveFigure
+        src={img2020_08}
+        alt="staffbase.com homepage in August 2020"
+        caption="August 2020"
+        {...gridFigureSizing(img2020_08, 2)}
+    />
 </div>
 
 My first hire joined in January 2020. I had his onboarding ready before his first morning: Confluence documentation, a module styleguide, Jira access, everything structured to get him building on day one rather than reading emails.
@@ -161,34 +143,24 @@ The website began to reflect what a small, focused team could do when not stretc
 ## 2021 - Acquisition complexity
 
 <div class="my-8 grid grid-cols-3 gap-4">
-    <figure>
-        <Image
-            src={img2021_03bananatag}
-            alt="staffbase.com homepage in March 2021 announcing the Bananatag merger"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"March 2021 - Bananatag merger announcement"}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2021_04seriesd}
-            alt="staffbase.com homepage in April 2021 with a Series D funding announcement banner"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"April 2021 - Series D funding round"}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2021_09}
-            alt="staffbase.com homepage in September 2021"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">September 2021</figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2021_03bananatag}
+        alt="staffbase.com homepage in March 2021 announcing the Bananatag merger"
+        caption="March 2021 - Bananatag merger announcement"
+        {...gridFigureSizing(img2021_03bananatag, 3)}
+    />
+    <ResponsiveFigure
+        src={img2021_04seriesd}
+        alt="staffbase.com homepage in April 2021 with a Series D funding announcement banner"
+        caption="April 2021 - Series D funding round"
+        {...gridFigureSizing(img2021_04seriesd, 3)}
+    />
+    <ResponsiveFigure
+        src={img2021_09}
+        alt="staffbase.com homepage in September 2021"
+        caption="September 2021"
+        {...gridFigureSizing(img2021_09, 3)}
+    />
 </div>
 
 2021 was the year complexity arrived. Bananatag was acquired and its web presence (domain, content, brand) needed integrating into the Staffbase web estate. A second developer and UX designer joined, based in Vancouver. I flew there to onboard him in person.
@@ -198,26 +170,18 @@ Suddenly the web team wasn't managing one brand but several: staffbase.com, bana
 ## 2022 - Beneath the surface
 
 <div class="my-8 grid grid-cols-2 gap-4">
-    <figure>
-        <Image
-            src={img2022_03}
-            alt="staffbase.com homepage in March 2022, mid-acquisition integration period"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">March 2022</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2022_11}
-            alt="staffbase.com homepage in November 2022, visually almost unchanged from March while integration work continued underneath"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {
-                "November 2022 - Eight months apart, nearly identical: the work that year wasn't visual."
-            }
-        </figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2022_03}
+        alt="staffbase.com homepage in March 2022, mid-acquisition integration period"
+        caption="March 2022"
+        {...gridFigureSizing(img2022_03, 2)}
+    />
+    <ResponsiveFigure
+        src={img2022_11}
+        alt="staffbase.com homepage in November 2022, visually almost unchanged from March while integration work continued underneath"
+        caption="November 2022 - Eight months apart, nearly identical: the work that year wasn't visual."
+        {...gridFigureSizing(img2022_11, 2)}
+    />
 </div>
 
 In 2022, Staffbase absorbed three more acquisitions (dirico, Valo, and Teambay), each arriving with its own domains, content, design assets, and brand language. From the outside, the homepage barely changed that year, as the screenshots above show. That stability was the point: there was no single rebrand moment to capture, because the work wasn't visual. It was absorption: reconciling four companies' worth of web presence into one coherent system before any unified visual identity could land cleanly on top of it.
@@ -229,22 +193,18 @@ The payoff of that integration work showed up over the next two years, not in a 
 ## 2023 - Iteration at scale
 
 <div class="my-8 grid grid-cols-2 gap-4">
-    <figure>
-        <Image
-            src={img2023_06}
-            alt="staffbase.com homepage in June 2023"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">June 2023</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2023_12}
-            alt="staffbase.com homepage in December 2023"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">December 2023</figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2023_06}
+        alt="staffbase.com homepage in June 2023"
+        caption="June 2023"
+        {...gridFigureSizing(img2023_06, 2)}
+    />
+    <ResponsiveFigure
+        src={img2023_12}
+        alt="staffbase.com homepage in December 2023"
+        caption="December 2023"
+        {...gridFigureSizing(img2023_12, 2)}
+    />
 </div>
 
 As 2022's integration work matured into a single coherent visual identity, 2023 was the year the brand found its confidence. The homepage received its first major rework since the acquisitions began. New content formats arrived (podcast, new product pages, campaign work), each one demanding module patterns that hadn't existed before and leaving them behind for everything that came next. Acquisition integrations completed. A/B tests ran and sharpened what was already there.
@@ -253,14 +213,13 @@ Every week that year, something shipped. Not from a formal design system, but fr
 
 ## 2024 - The brand matures
 
-<figure class="my-8">
-    <Image
-        src={img2024_02}
-        alt="staffbase.com homepage in February 2024 with the Inspired Teams Achieve More headline"
-        class="rounded-xl border border-border"
-    />
-    <figcaption class="mt-2 text-sm text-muted">February 2024</figcaption>
-</figure>
+<ResponsiveFigure
+    src={img2024_02}
+    alt="staffbase.com homepage in February 2024 with the Inspired Teams Achieve More headline"
+    caption="February 2024"
+    {...fullWidthFigureSizing(img2024_02)}
+    class="my-8"
+/>
 
 2024 brought the subtler, more confident refinements of a brand that had found its register. The navigation shifted from Staffbase blue to midnight blue across the product website and blog, a change that sounds minor but touched hundreds of pages and required careful regression testing. A second major homepage rework shipped. The Japanese website launched, applying the full brand identity to an APAC expansion from day one.
 
@@ -269,30 +228,24 @@ This was also the year the Web UI Guidelines formalized what had been building f
 ## 2025 - The platform shifts
 
 <div class="my-8 grid grid-cols-3 gap-4">
-    <figure>
-        <Image
-            src={img2025_01}
-            alt="staffbase.com homepage in January 2025, the pre-migration WordPress site"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">January 2025</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2025_09}
-            alt="staffbase.com homepage in September 2025, after the Storyblok migration but before the Employee AI pivot"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">September 2025</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2025_11}
-            alt="staffbase.com homepage in November 2025 after the Employee AI pivot, with the Your Intranet Reborn headline"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">November 2025</figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2025_01}
+        alt="staffbase.com homepage in January 2025, the pre-migration WordPress site"
+        caption="January 2025"
+        {...gridFigureSizing(img2025_01, 3)}
+    />
+    <ResponsiveFigure
+        src={img2025_09}
+        alt="staffbase.com homepage in September 2025, after the Storyblok migration but before the Employee AI pivot"
+        caption="September 2025"
+        {...gridFigureSizing(img2025_09, 3)}
+    />
+    <ResponsiveFigure
+        src={img2025_11}
+        alt="staffbase.com homepage in November 2025 after the Employee AI pivot, with the Your Intranet Reborn headline"
+        caption="November 2025"
+        {...gridFigureSizing(img2025_11, 3)}
+    />
 </div>
 
 September 16, 2025 was the highest-stakes day. Staffbase made its company-defining pivot to Employee AI, announced by the founders, with embargoed press breaking the same week. The web team delivered the public face of it: a new homepage announcement, a new Employee AI product page, and brand and heading changes rolled out across the entire site. All against a hard, immovable media date.
@@ -302,52 +255,38 @@ Earlier that year, at the end of July, the WordPress-to-Storyblok migration laun
 ## 2026 - The last iteration
 
 <div class="my-8 grid grid-cols-3 gap-4">
-    <figure>
-        <Image
-            src={img2026_01}
-            alt="staffbase.com homepage in January 2026"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">January 2026</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2026_03}
-            alt="staffbase.com homepage in March 2026 with the Built For Everyone headline, after the navigation rebuild"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">March 2026</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2026_05}
-            alt="staffbase.com homepage in May 2026, the current platform and brand"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">May 2026</figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2026_01}
+        alt="staffbase.com homepage in January 2026"
+        caption="January 2026"
+        {...gridFigureSizing(img2026_01, 3)}
+    />
+    <ResponsiveFigure
+        src={img2026_03}
+        alt="staffbase.com homepage in March 2026 with the Built For Everyone headline, after the navigation rebuild"
+        caption="March 2026"
+        {...gridFigureSizing(img2026_03, 3)}
+    />
+    <ResponsiveFigure
+        src={img2026_05}
+        alt="staffbase.com homepage in May 2026, the current platform and brand"
+        caption="May 2026"
+        {...gridFigureSizing(img2026_05, 3)}
+    />
 </div>
 <div class="my-8 grid grid-cols-2 gap-4">
-    <figure>
-        <Image
-            src={img2026_05nav}
-            alt="The rebuilt staffbase.com navigation, expanded to show the Platform menu"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"May 2026 - The navigation, rebuilt from scratch by SensioLabs."}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={img2026_05mobile}
-            alt="staffbase.com homepage on mobile in May 2026"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"May 2026 - The same homepage on mobile."}
-        </figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={img2026_05nav}
+        alt="The rebuilt staffbase.com navigation, expanded to show the Platform menu"
+        caption="May 2026 - The navigation, rebuilt from scratch by SensioLabs."
+        {...gridFigureSizing(img2026_05nav, 2)}
+    />
+    <ResponsiveFigure
+        src={img2026_05mobile}
+        alt="staffbase.com homepage on mobile in May 2026"
+        caption="May 2026 - The same homepage on mobile."
+        {...gridFigureSizing(img2026_05mobile, 2)}
+    />
 </div>
 
 The final stretch was a sprint to leave things well. The navigation was rebuilt from scratch by SensioLabs, going live right before Christmas 2025, with bug fixes and refinements continuing into early 2026, becoming the clearest expression yet of how far the design language had come. The homepage was reworked again against a hard external deadline: the kind that can't move.
