@@ -10,7 +10,12 @@ draft: false
 coverImage: "./leadership-operating-model/leadership-vancouver-cover.jpg"
 ---
 
-import { Image } from "astro:assets"
+import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
+import {
+    gridFigureSizing,
+    fullWidthFigureSizing,
+    fixedWidthFigureSizing,
+} from "@/utils/content-image-sizing"
 import img2021 from "./leadership-operating-model/leadership-2021-office.jpg"
 import img2022 from "./leadership-operating-model/leadership-2022-working.jpg"
 import img2023 from "./leadership-operating-model/leadership-2023-staffbase.jpg"
@@ -24,56 +29,37 @@ The team I led grew to four people, including me. The Vancouver-based Web Design
 
 When the Vancouver-based team member came into the team, I flew to Canada to spend a week onboarding him in person, the first of six trips over the following three years. The 9-hour time difference made remote-only onboarding a significant risk; there was no substitute for being in the same room during the first week. It turned out there was no substitute for it afterward either. Roughly every six months from November 2021 through November 2024, I flew to Vancouver: a consistent investment in closing a gap that time zones don't make disappear on their own.
 
-<figure class="my-8">
-    <Image
-        src={img2021}
-        alt="The Bananatag Vancouver office during the first onboarding trip, November 2021"
-        class="rounded-xl border border-border"
-    />
-    <figcaption class="mt-2 text-sm text-muted">
-        {
-            "November 2021, first trip - the Bananatag Vancouver office, week one of the onboarding."
-        }
-    </figcaption>
-</figure>
+<ResponsiveFigure
+    src={img2021}
+    alt="The Bananatag Vancouver office during the first onboarding trip, November 2021"
+    caption="November 2021, first trip - the Bananatag Vancouver office, week one of the onboarding."
+    {...fullWidthFigureSizing(img2021)}
+    class="my-8"
+/>
 
 The trips continued, each with its own official agenda (working sessions, planning cycles, design reviews) and an unofficial one running underneath: the trust a distributed team runs on doesn't build over video calls. It builds over the meals, the downtime, the hours that have nothing on the agenda. Same underlying logic every time: some things work better in person.
 
 <div class="my-8 grid grid-cols-2 gap-4">
     <div class="flex flex-col gap-4">
-        <figure>
-            <Image
-                src={img2022}
-                alt="A working session in Vancouver, June 2022"
-                class="rounded-xl border border-border"
-            />
-            <figcaption class="mt-2 text-sm text-muted">
-                {"June 2022, second trip - a working session in Vancouver."}
-            </figcaption>
-        </figure>
-        <figure>
-            <Image
-                src={img2023}
-                alt="At the Staffbase Vancouver desk, June 2023"
-                class="rounded-xl border border-border"
-            />
-            <figcaption class="mt-2 text-sm text-muted">
-                {"June 2023, fourth trip - at the Staffbase Vancouver desk."}
-            </figcaption>
-        </figure>
-    </div>
-    <figure>
-        <Image
-            src={img2024}
-            alt="Working from a coworking space overlooking Vancouver harbor, November 2024"
-            class="rounded-xl border border-border"
+        <ResponsiveFigure
+            src={img2022}
+            alt="A working session in Vancouver, June 2022"
+            caption="June 2022, second trip - a working session in Vancouver."
+            {...gridFigureSizing(img2022, 2)}
         />
-        <figcaption class="mt-2 text-sm text-muted">
-            {
-                "November 2024, sixth and final trip - a coworking space overlooking the harbor, German keyboard a long way from home."
-            }
-        </figcaption>
-    </figure>
+        <ResponsiveFigure
+            src={img2023}
+            alt="At the Staffbase Vancouver desk, June 2023"
+            caption="June 2023, fourth trip - at the Staffbase Vancouver desk."
+            {...gridFigureSizing(img2023, 2)}
+        />
+    </div>
+    <ResponsiveFigure
+        src={img2024}
+        alt="Working from a coworking space overlooking Vancouver harbor, November 2024"
+        caption="November 2024, sixth and final trip - a coworking space overlooking the harbor, German keyboard a long way from home."
+        {...gridFigureSizing(img2024, 2)}
+    />
 </div>
 
 ## Building the structures

@@ -124,7 +124,9 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             const img = figure.querySelector('img')
             const figcaption = figure.querySelector('figcaption')
             return {
-                src: img?.src || '',
+                // Prefer the full-resolution source over the inline
+                // image's own deliberately-downscaled one (ResponsiveFigure.astro).
+                src: img?.dataset.lightboxSrc || img?.src || '',
                 alt: img?.alt || '',
                 caption: figcaption?.textContent?.trim() || '',
             }
