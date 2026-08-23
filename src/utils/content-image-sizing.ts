@@ -70,8 +70,11 @@ function buildSizesAttr(tiers: SizeTier[], fallbackExpr: string): string {
 // Combining multiple tiers' own 1x/2x/3x ladders can land two candidates
 // within a few percent of each other (e.g. 704px and 720px) — each still
 // costs a full separate build-time encode for no real browser-selection
-// benefit. Drops a candidate only when another survives within `threshold`
-// of it, so this never removes a genuinely distinct tier's own size.
+// benefit. Drops a candidate whenever another survives within `threshold` of
+// it — this can drop a tier's own exact value in favor of a close neighbor
+// from a different tier (not "only ever removes true duplicates"), which is
+// fine: `threshold` (24px, a few percent of any real width here) is chosen
+// specifically to be well under any perceptible quality difference.
 function mergeCloseWidths(widths: number[], threshold = 24): number[] {
     const sorted = [...widths].sort((a, b) => a - b)
     const merged: number[] = []
@@ -141,8 +144,30 @@ export function responsiveGridFigureSizing(
             { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
         ]
     })
+    // The fallback tier's own `sizes` condition (no `minWidth`) only ever
+    // wins below the narrowest real tier's breakpoint, where the container
+    // is fluid and never reaches that tier's full columnWidth() — using
+    // columnWidth() as this one tier's ladder base would generate 2x/3x
+    // candidates no viewport in the fallback's actual active range could
+    // ever request. Cap it at the narrowest real tier's own breakpoint
+    // (minus the container padding) instead, the true upper bound of the
+    // fallback's fluid width.
+    const realTiers = tiers.filter(
+        (tier): tier is { minWidth: number; columns: number } =>
+            'minWidth' in tier,
+    )
+    const narrowestRealTierMinWidth = realTiers[realTiers.length - 1].minWidth
     const widths = mergeCloseWidths(
-        tiers.flatMap((tier) => widthLadder(columnWidth(tier.columns))),
+        tiers.flatMap((tier) => {
+            const base =
+                tier === fallback
+                    ? Math.min(
+                          columnWidth(tier.columns),
+                          narrowestRealTierMinWidth - CONTAINER_PADDING_PX,
+                      )
+                    : columnWidth(tier.columns)
+            return widthLadder(base)
+        }),
     )
     return {
         width: columnWidth(tiers[0].columns),
@@ -177,13 +202,26 @@ export function fixedWidthFigureSizing(
             width * row.siblings +
             (row.siblings - 1) * GRID_GAP_PX +
             CONTAINER_PADDING_PX
-        tiers.push(
-            { minWidth: rowFixedBreakpoint, expr: `${width}px` },
-            {
-                minWidth: row.breakpoint,
-                expr: columnFluidExpr(row.siblings),
-            },
-        )
+        if (rowFixedBreakpoint > row.breakpoint) {
+            // The normal case: siblings don't all fit at their full `width`
+            // the moment the row starts sharing (row.breakpoint) — there's a
+            // real squeezed range in between where the fluid formula applies,
+            // before `rowFixedBreakpoint` where they do all fit.
+            tiers.push(
+                { minWidth: rowFixedBreakpoint, expr: `${width}px` },
+                {
+                    minWidth: row.breakpoint,
+                    expr: columnFluidExpr(row.siblings),
+                },
+            )
+        } else {
+            // Degenerate case: the siblings already fit at their full width
+            // as soon as the row starts sharing — there's no squeezed range,
+            // so no fluid tier is needed (adding one anyway would put it
+            // *above* the fixed tier in sort order, since it'd have the
+            // larger minWidth, and wrongly win for every wider viewport too).
+            tiers.push({ minWidth: row.breakpoint, expr: `${width}px` })
+        }
     }
     return {
         width,
