@@ -29,7 +29,7 @@ const {
     caption,
     width,
     class: figureClass,
-    captionClass = 'mt-2 text-sm text-muted',
+    captionClass,
     imgClass,
     ...sizing
 } = Astro.props
@@ -52,5 +52,7 @@ const lightboxImage = await getImage({
         class:list={['rounded-xl border border-border', imgClass]}
         {...sizing}
     />
-    <figcaption class:list={[captionClass]}>{caption}</figcaption>
+    <figcaption class:list={['mt-2 text-sm text-muted', captionClass]}>
+        {caption}
+    </figcaption>
 </figure>

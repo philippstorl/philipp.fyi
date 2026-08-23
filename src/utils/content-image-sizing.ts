@@ -1,5 +1,6 @@
 // Sizing helpers for figures inside the case-study/blog prose column
-// (CaseStudyLayout.astro's `mx-auto max-w-3xl px-6` container: 720px content
+// (CaseStudyLayout.astro's `mx-auto max-w-3xl px-6` container — see the
+// comment on that div, kept in sync with the constants below: 720px content
 // width once the viewport itself reaches 768px — Tailwind's global
 // box-sizing:border-box means max-w-3xl's 768px max-width already includes
 // the px-6 padding, it isn't added on top of it). Below that breakpoint the
@@ -20,6 +21,11 @@ interface FigureSizing {
     width: number
     sizes: string
     widths: number[]
+}
+
+interface SizeTier {
+    minWidth: number
+    expr: string
 }
 
 // 1x/2x/3x of `base`. Deliberately unclamped against any source's native
@@ -48,8 +54,17 @@ function columnFluidExpr(columns: number): string {
         : `calc((100vw - ${gutter}px) / ${columns})`
 }
 
-function fixedSizeCondition(minWidth: number, width: number): string {
-    return `(min-width: ${minWidth}px) ${width}px`
+// Builds a CSS `sizes` attribute from a list of `(min-width: N) expr`
+// conditions plus a final unconditional fallback. Sorts `tiers` by
+// `minWidth` descending itself rather than trusting callers to pass them in
+// order — a `sizes` attribute matches its first satisfied condition, so a
+// wrong order silently changes which value wins at a given viewport.
+function buildSizesAttr(tiers: SizeTier[], fallbackExpr: string): string {
+    const sorted = [...tiers].sort((a, b) => b.minWidth - a.minWidth)
+    return [
+        ...sorted.map((tier) => `(min-width: ${tier.minWidth}px) ${tier.expr}`),
+        fallbackExpr,
+    ].join(', ')
 }
 
 // Combining multiple tiers' own 1x/2x/3x ladders can land two candidates
@@ -76,10 +91,29 @@ export function gridFigureSizing(columns: 1 | 2 | 3): FigureSizing {
     const width = columnWidth(columns)
     return {
         width,
-        sizes: `${fixedSizeCondition(CONTAINER_CAP_BREAKPOINT, width)}, ${columnFluidExpr(columns)}`,
+        sizes: buildSizesAttr(
+            [{ minWidth: CONTAINER_CAP_BREAKPOINT, expr: `${width}px` }],
+            columnFluidExpr(columns),
+        ),
         widths: widthLadder(width),
     }
 }
+
+/**
+ * `tiers` for `responsiveGridFigureSizing`, exported so a call site that
+ * reuses the same tier shape across several figures (e.g. several images in
+ * one MDX file) can name it as a typed constant instead of repeating the
+ * array literal — written as a named export rather than derived inline via
+ * `Parameters<typeof ...>` at the call site, since MDX's body parser reads
+ * `<` as the start of a JSX tag and chokes on TypeScript generic syntax
+ * there (confirmed: `Parameters<typeof fn>` broke the MDX build with
+ * "Expected a closing tag for `<typeof>`").
+ */
+export type ResponsiveGridTiers = [
+    { minWidth: number; columns: number },
+    ...{ minWidth: number; columns: number }[],
+    { columns: number },
+]
 
 /**
  * A figure inside a grid whose column count itself changes across
@@ -88,34 +122,33 @@ export function gridFigureSizing(columns: 1 | 2 | 3): FigureSizing {
  * no `minWidth`.
  */
 export function responsiveGridFigureSizing(
-    tiers: [
-        { minWidth: number; columns: number },
-        ...{ minWidth: number; columns: number }[],
-        { columns: number },
-    ],
+    tiers: ResponsiveGridTiers,
 ): FigureSizing {
-    const sizes = tiers
-        .flatMap((tier) => {
-            if (!('minWidth' in tier)) return [columnFluidExpr(tier.columns)]
-            const width = columnWidth(tier.columns)
-            // A tier's own breakpoint can fire before the container has
-            // actually reached its 768px cap (e.g. `sm:` at 640px) — the
-            // container is still fluid for that stretch, so the fixed pixel
-            // width is only correct from 768px up. Below that, this tier's
-            // column count needs the fluid formula instead.
-            if (tier.minWidth >= CONTAINER_CAP_BREAKPOINT) {
-                return [fixedSizeCondition(tier.minWidth, width)]
-            }
-            return [
-                fixedSizeCondition(CONTAINER_CAP_BREAKPOINT, width),
-                `(min-width: ${tier.minWidth}px) ${columnFluidExpr(tier.columns)}`,
-            ]
-        })
-        .join(', ')
+    const fallback = tiers[tiers.length - 1]
+    const sizeTiers: SizeTier[] = tiers.flatMap((tier) => {
+        if (!('minWidth' in tier)) return []
+        const width = columnWidth(tier.columns)
+        // A tier's own breakpoint can fire before the container has
+        // actually reached its 768px cap (e.g. `sm:` at 640px) — the
+        // container is still fluid for that stretch, so the fixed pixel
+        // width is only correct from 768px up. Below that, this tier's
+        // column count needs the fluid formula instead.
+        if (tier.minWidth >= CONTAINER_CAP_BREAKPOINT) {
+            return [{ minWidth: tier.minWidth, expr: `${width}px` }]
+        }
+        return [
+            { minWidth: CONTAINER_CAP_BREAKPOINT, expr: `${width}px` },
+            { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
+        ]
+    })
     const widths = mergeCloseWidths(
         tiers.flatMap((tier) => widthLadder(columnWidth(tier.columns))),
     )
-    return { width: columnWidth(tiers[0].columns), sizes, widths }
+    return {
+        width: columnWidth(tiers[0].columns),
+        sizes: buildSizesAttr(sizeTiers, columnFluidExpr(fallback.columns)),
+        widths,
+    }
 }
 
 /** A standalone figure spanning the full prose column width. */
@@ -136,7 +169,7 @@ export function fixedWidthFigureSizing(
     width: number,
     row?: { siblings: number; breakpoint: number },
 ): FigureSizing {
-    const tiers: { minWidth: number; expr: string }[] = [
+    const tiers: SizeTier[] = [
         { minWidth: width + CONTAINER_PADDING_PX, expr: `${width}px` },
     ]
     if (row) {
@@ -152,10 +185,9 @@ export function fixedWidthFigureSizing(
             },
         )
     }
-    tiers.sort((a, b) => b.minWidth - a.minWidth)
-    const sizes = [
-        ...tiers.map((tier) => `(min-width: ${tier.minWidth}px) ${tier.expr}`),
-        columnFluidExpr(1),
-    ].join(', ')
-    return { width, sizes, widths: widthLadder(width) }
+    return {
+        width,
+        sizes: buildSizesAttr(tiers, columnFluidExpr(1)),
+        widths: widthLadder(width),
+    }
 }
