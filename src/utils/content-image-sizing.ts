@@ -229,3 +229,29 @@ export function fixedWidthFigureSizing(
         widths: widthLadder(width),
     }
 }
+
+// Named `responsiveGridFigureSizing` tier shapes, reused across several
+// figures within a single case study (voices-conference-website.mdx today).
+// Defined here rather than as `export const`s inside the MDX file itself —
+// MDX file bodies aren't real TypeScript: `astro check` doesn't type-check
+// expressions there at all (confirmed by intentionally breaking a tier
+// object's shape in an MDX-local constant — it passed `npm run typecheck`
+// AND `npm run build` with zero errors, then silently shipped a broken
+// `sizes="...calc((100vw - NaNpx) / undefined)..."` into production HTML).
+// A constant declared here, by contrast, is checked against
+// `ResponsiveGridTiers` like any other TypeScript value — the same class of
+// typo (a missing `columns` field) is a compile error instead of a silent
+// runtime `NaN`.
+export const TWO_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
+    { minWidth: 640, columns: 2 },
+    { columns: 1 },
+]
+export const THREE_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
+    { minWidth: 1024, columns: 3 },
+    { minWidth: 640, columns: 2 },
+    { columns: 1 },
+]
+export const REGIONAL_RESPONSIVE_TIERS: ResponsiveGridTiers = [
+    { minWidth: 640, columns: 3 },
+    { columns: 1 },
+]

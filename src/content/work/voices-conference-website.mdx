@@ -23,6 +23,9 @@ import {
     fixedWidthFigureSizing,
     fullWidthFigureSizing,
     responsiveGridFigureSizing,
+    TWO_COLUMN_RESPONSIVE_TIERS,
+    THREE_COLUMN_RESPONSIVE_TIERS,
+    REGIONAL_RESPONSIVE_TIERS,
 } from "@/utils/content-image-sizing"
 import voices2020 from "./voices-conference-website/voices-2020.png"
 import voices2020PreEleventy from "./voices-conference-website/voices-2020-pre-eleventy.png"
@@ -39,23 +42,6 @@ import voices2026Agenda from "./voices-conference-website/voices-2026-agenda.png
 import voices2026Recordings from "./voices-conference-website/voices-2026-recordings.png"
 import voices2026DeMobile from "./voices-conference-website/voices-2026-de-mobile.png"
 import voices2026DeMobileNav from "./voices-conference-website/voices-2026-de-mobile-nav.png"
-// The three distinct grid-column shapes reused across this case study's
-// figures — named once so every call site referencing the same shape can't
-// silently drift out of sync with its sibling copies the way repeated
-// inline array literals could. Kept contiguous with the imports above (no
-// blank line) — MDX's ESM-block parser stops treating subsequent statements
-// as real JS the moment a blank line separates them from the import block,
-// after which `{ minWidth: 640, ... }` gets misread as a JSX expression
-// container instead of an object literal (confirmed by bisecting a minimal
-// repro against a real `astro build`, not just typecheck, which stayed
-// green throughout since MDX-body parsing is a separate, stricter pipeline).
-export const TWO_COL_TIERS = [{ minWidth: 640, columns: 2 }, { columns: 1 }]
-export const THREE_COL_TIERS = [
-    { minWidth: 1024, columns: 3 },
-    { minWidth: 640, columns: 2 },
-    { columns: 1 },
-]
-export const REGIONAL_TIERS = [{ minWidth: 640, columns: 3 }, { columns: 1 }]
 
 VOICES is Staffbase's flagship annual conference for internal communications and employee experience professionals, running since 2019. The website promoting it, voices.staffbase.com, is a different kind of problem than the main marketing site: it has to serve three distinct lifecycle states, support multiple simultaneous regional editions, and be rebuilt from scratch for each annual event while retaining accumulated improvements. I owned it solo from the ground up for six years.
 
@@ -68,13 +54,13 @@ When I took on the VOICES website in mid-2020, the existing setup was plain HTML
         src={voices2020PreEleventy}
         alt="VOICES website homepage in April 2020, the plain-HTML site maintained by an external agency"
         caption="Before - April 2020, plain HTML, agency-maintained"
-        {...responsiveGridFigureSizing(TWO_COL_TIERS)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2020}
         alt="VOICES website homepage in October 2020, the first Eleventy build"
         caption="After - October 2020, the first Eleventy build"
-        {...responsiveGridFigureSizing(TWO_COL_TIERS)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -87,37 +73,37 @@ The visual design came mostly from the brand team. My job was translating that i
         src={voices2020}
         alt="VOICES website homepage in 2020"
         caption="2020"
-        {...responsiveGridFigureSizing(THREE_COL_TIERS)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2022}
         alt="VOICES website homepage after the 2022 rebrand"
         caption="2022 - first rebrand"
-        {...responsiveGridFigureSizing(THREE_COL_TIERS)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2023}
         alt="VOICES website homepage in 2023"
         caption="2023"
-        {...responsiveGridFigureSizing(THREE_COL_TIERS)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2024}
         alt="VOICES website homepage in 2024"
         caption="2024"
-        {...responsiveGridFigureSizing(THREE_COL_TIERS)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2025}
         alt="VOICES website homepage after the 2025 rebrand"
         caption="2025 - second rebrand"
-        {...responsiveGridFigureSizing(THREE_COL_TIERS)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2026}
         alt="VOICES website homepage in 2026, current state"
         caption="2026 - current state"
-        {...responsiveGridFigureSizing(THREE_COL_TIERS)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -157,19 +143,19 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
         src={voices2026De}
         alt="VOICES Berlin (DE) homepage, 2026"
         caption="Berlin - in-person, German"
-        {...responsiveGridFigureSizing(REGIONAL_TIERS)}
+        {...responsiveGridFigureSizing(REGIONAL_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2026En}
         alt="VOICES Americas (NA) homepage, 2026"
         caption="Americas - virtual"
-        {...responsiveGridFigureSizing(REGIONAL_TIERS)}
+        {...responsiveGridFigureSizing(REGIONAL_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={voices2026Emea}
         alt="VOICES London (EMEA) homepage, 2026"
         caption="London - in-person"
-        {...responsiveGridFigureSizing(REGIONAL_TIERS)}
+        {...responsiveGridFigureSizing(REGIONAL_RESPONSIVE_TIERS)}
     />
 </div>
 <ResponsiveFigure
