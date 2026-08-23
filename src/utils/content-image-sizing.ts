@@ -117,7 +117,16 @@ function responsiveWidths(
     realTiers: { minWidth: number; columns: number }[],
     fallback: { columns: number },
 ): number[] {
-    const narrowestRealTierMinWidth = realTiers[realTiers.length - 1].minWidth
+    // `Math.min` over every real tier's own `minWidth`, not just the last
+    // array element — `ResponsiveGridTiers`' type only enforces shape, not
+    // that tiers are actually ordered widest-first, and `buildSizesAttr`
+    // (below) already treats that ordering as a courtesy rather than a
+    // guarantee by sorting for itself. Trusting element position here would
+    // silently cap the fallback ladder from the wrong breakpoint for any
+    // future tier constant that isn't listed in strict descending order.
+    const narrowestRealTierMinWidth = Math.min(
+        ...realTiers.map((tier) => tier.minWidth),
+    )
     return mergeCloseWidths(
         [...realTiers, fallback].flatMap((tier) => {
             const base =
