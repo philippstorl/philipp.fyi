@@ -1,5 +1,3 @@
-import type { ImageMetadata } from 'astro'
-
 // Sizing helpers for figures inside the case-study/blog prose column
 // (CaseStudyLayout.astro's `mx-auto max-w-3xl px-6` container: 720px content
 // width once the viewport itself reaches 768px — Tailwind's global
@@ -24,16 +22,17 @@ interface FigureSizing {
     widths: number[]
 }
 
-// 1x/2x/3x of `base`, clamped to the source's own native width so a small
-// image is never upscaled. Falls back to the native width itself (Astro's
-// own equivalent `widths` clamp does the same) rather than an empty array
-// when even the 1x candidate exceeds it — an empty `widths` degrades to no
-// srcset at all.
-function widthLadder(base: number, nativeWidth: number): number[] {
-    const candidates = [base, base * 2, base * 3].filter(
-        (w) => w <= nativeWidth,
-    )
-    return candidates.length > 0 ? candidates : [nativeWidth]
+// 1x/2x/3x of `base`. Deliberately unclamped against any source's native
+// width — Astro's own `getSrcSet()` (services/service.js) already filters
+// any `widths` array down to the source's native width and pushes that
+// native width back in as a fallback if every candidate would otherwise
+// exceed it, for any locally-imported image. A from-scratch clamp here would
+// be a second copy of the same logic to keep in sync for no benefit, and
+// these helpers have no per-image input to clamp against in the first place
+// — they're pure functions of layout geometry (column count / fixed width),
+// not of any particular source image.
+function widthLadder(base: number): number[] {
+    return [base, base * 2, base * 3]
 }
 
 function columnWidth(columns: number): number {
@@ -47,6 +46,10 @@ function columnFluidExpr(columns: number): string {
     return columns === 1
         ? `calc(100vw - ${gutter}px)`
         : `calc((100vw - ${gutter}px) / ${columns})`
+}
+
+function fixedSizeCondition(minWidth: number, width: number): string {
+    return `(min-width: ${minWidth}px) ${width}px`
 }
 
 // Combining multiple tiers' own 1x/2x/3x ladders can land two candidates
@@ -69,15 +72,12 @@ function mergeCloseWidths(widths: number[], threshold = 24): number[] {
 }
 
 /** A figure inside a grid whose column count is the same at every breakpoint (including a single-column, full-width figure at `columns: 1`). */
-export function gridFigureSizing(
-    src: ImageMetadata,
-    columns: 1 | 2 | 3,
-): FigureSizing {
+export function gridFigureSizing(columns: 1 | 2 | 3): FigureSizing {
     const width = columnWidth(columns)
     return {
         width,
-        sizes: `(min-width: ${CONTAINER_CAP_BREAKPOINT}px) ${width}px, ${columnFluidExpr(columns)}`,
-        widths: widthLadder(width, src.width),
+        sizes: `${fixedSizeCondition(CONTAINER_CAP_BREAKPOINT, width)}, ${columnFluidExpr(columns)}`,
+        widths: widthLadder(width),
     }
 }
 
@@ -88,7 +88,6 @@ export function gridFigureSizing(
  * no `minWidth`.
  */
 export function responsiveGridFigureSizing(
-    src: ImageMetadata,
     tiers: [
         { minWidth: number; columns: number },
         ...{ minWidth: number; columns: number }[],
@@ -98,41 +97,65 @@ export function responsiveGridFigureSizing(
     const sizes = tiers
         .flatMap((tier) => {
             if (!('minWidth' in tier)) return [columnFluidExpr(tier.columns)]
-            const fixed = `(min-width: ${tier.minWidth}px) ${columnWidth(tier.columns)}px`
+            const width = columnWidth(tier.columns)
             // A tier's own breakpoint can fire before the container has
             // actually reached its 768px cap (e.g. `sm:` at 640px) — the
             // container is still fluid for that stretch, so the fixed pixel
-            // width above is only correct from 768px up. Below that, this
-            // tier's column count needs the fluid formula instead.
-            if (tier.minWidth >= CONTAINER_CAP_BREAKPOINT) return [fixed]
+            // width is only correct from 768px up. Below that, this tier's
+            // column count needs the fluid formula instead.
+            if (tier.minWidth >= CONTAINER_CAP_BREAKPOINT) {
+                return [fixedSizeCondition(tier.minWidth, width)]
+            }
             return [
-                `(min-width: ${CONTAINER_CAP_BREAKPOINT}px) ${columnWidth(tier.columns)}px`,
+                fixedSizeCondition(CONTAINER_CAP_BREAKPOINT, width),
                 `(min-width: ${tier.minWidth}px) ${columnFluidExpr(tier.columns)}`,
             ]
         })
         .join(', ')
     const widths = mergeCloseWidths(
-        tiers.flatMap((tier) =>
-            widthLadder(columnWidth(tier.columns), src.width),
-        ),
+        tiers.flatMap((tier) => widthLadder(columnWidth(tier.columns))),
     )
     return { width: columnWidth(tiers[0].columns), sizes, widths }
 }
 
 /** A standalone figure spanning the full prose column width. */
-export function fullWidthFigureSizing(src: ImageMetadata): FigureSizing {
-    return gridFigureSizing(src, 1)
+export function fullWidthFigureSizing(): FigureSizing {
+    return gridFigureSizing(1)
 }
 
-/** A standalone figure with its own explicit display width, narrower than the full column (e.g. a centered mobile screenshot). */
+/**
+ * A standalone figure with its own explicit display width, narrower than
+ * the full column (e.g. a centered mobile screenshot). Pass `row` when two
+ * or more of these sit side by side above a breakpoint (e.g. inside a
+ * `flex-col sm:flex-row` wrapper) — without it, `sizes` assumes this figure
+ * is the only occupant of its row at every viewport, which understates the
+ * real squeeze once siblings share the row but haven't yet reached their
+ * full width.
+ */
 export function fixedWidthFigureSizing(
-    src: ImageMetadata,
     width: number,
+    row?: { siblings: number; breakpoint: number },
 ): FigureSizing {
-    const breakpoint = width + CONTAINER_PADDING_PX
-    return {
-        width,
-        sizes: `(min-width: ${breakpoint}px) ${width}px, ${columnFluidExpr(1)}`,
-        widths: widthLadder(width, src.width),
+    const tiers: { minWidth: number; expr: string }[] = [
+        { minWidth: width + CONTAINER_PADDING_PX, expr: `${width}px` },
+    ]
+    if (row) {
+        const rowFixedBreakpoint =
+            width * row.siblings +
+            (row.siblings - 1) * GRID_GAP_PX +
+            CONTAINER_PADDING_PX
+        tiers.push(
+            { minWidth: rowFixedBreakpoint, expr: `${width}px` },
+            {
+                minWidth: row.breakpoint,
+                expr: columnFluidExpr(row.siblings),
+            },
+        )
     }
+    tiers.sort((a, b) => b.minWidth - a.minWidth)
+    const sizes = [
+        ...tiers.map((tier) => `(min-width: ${tier.minWidth}px) ${tier.expr}`),
+        columnFluidExpr(1),
+    ].join(', ')
+    return { width, sizes, widths: widthLadder(width) }
 }

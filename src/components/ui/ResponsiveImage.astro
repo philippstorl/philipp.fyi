@@ -42,16 +42,17 @@ const {
     alt,
     width,
     class: className,
-    densities = [1, 2, 3],
-    sizes,
-    widths,
     'data-lightbox-src': lightboxSrc,
+    ...sizing
 } = Astro.props
 
-// Only this option set differs between the two modes (see Props above).
-const responsiveProps = sizes
-    ? ({ layout: 'constrained', sizes, widths } as const)
-    : { densities }
+// `sizing` keeps `densities`/`sizes`/`widths` correlated as the discriminated
+// union Props declares them (see ResponsiveImageSizing above) — only the
+// `layout`/default-densities addition differs by mode, so that's the only
+// branch left here (ResponsiveFigure.astro forwards `sizing` untouched).
+const responsiveProps = sizing.sizes
+    ? ({ ...sizing, layout: 'constrained' } as const)
+    : { densities: sizing.densities ?? [1, 2, 3] }
 ---
 
 <Image

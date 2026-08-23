@@ -28,12 +28,10 @@ const {
     alt,
     caption,
     width,
-    densities,
-    sizes,
-    widths,
     class: figureClass,
     captionClass = 'mt-2 text-sm text-muted',
     imgClass,
+    ...sizing
 } = Astro.props
 
 // The inline image is deliberately downscaled; the lightbox needs a full-
@@ -43,12 +41,6 @@ const lightboxImage = await getImage({
     format: 'webp',
     width: Math.min(src.width, LIGHTBOX_MAX_WIDTH),
 })
-
-// Only this option set differs between the two modes (see ResponsiveImage's
-// Props for what each means) — reconstructed here so it stays a single
-// well-typed object matching ResponsiveImage's own discriminated union,
-// rather than forwarding `densities`/`sizes`/`widths` as always-present props.
-const responsiveProps = sizes ? { sizes, widths } : { densities }
 ---
 
 <figure class:list={[figureClass]}>
@@ -58,7 +50,7 @@ const responsiveProps = sizes ? { sizes, widths } : { densities }
         width={width}
         data-lightbox-src={lightboxImage.src}
         class:list={['rounded-xl border border-border', imgClass]}
-        {...responsiveProps}
+        {...sizing}
     />
     <figcaption class:list={[captionClass]}>{caption}</figcaption>
 </figure>

@@ -51,7 +51,7 @@ When I took on the VOICES website in mid-2020, the existing setup was plain HTML
         src={voices2020PreEleventy}
         alt="VOICES website homepage in April 2020, the plain-HTML site maintained by an external agency"
         caption="Before - April 2020, plain HTML, agency-maintained"
-        {...responsiveGridFigureSizing(voices2020PreEleventy, [
+        {...responsiveGridFigureSizing([
             { minWidth: 640, columns: 2 },
             { columns: 1 },
         ])}
@@ -60,7 +60,7 @@ When I took on the VOICES website in mid-2020, the existing setup was plain HTML
         src={voices2020}
         alt="VOICES website homepage in October 2020, the first Eleventy build"
         caption="After - October 2020, the first Eleventy build"
-        {...responsiveGridFigureSizing(voices2020, [
+        {...responsiveGridFigureSizing([
             { minWidth: 640, columns: 2 },
             { columns: 1 },
         ])}
@@ -76,7 +76,7 @@ The visual design came mostly from the brand team. My job was translating that i
         src={voices2020}
         alt="VOICES website homepage in 2020"
         caption="2020"
-        {...responsiveGridFigureSizing(voices2020, [
+        {...responsiveGridFigureSizing([
             { minWidth: 1024, columns: 3 },
             { minWidth: 640, columns: 2 },
             { columns: 1 },
@@ -86,7 +86,7 @@ The visual design came mostly from the brand team. My job was translating that i
         src={voices2022}
         alt="VOICES website homepage after the 2022 rebrand"
         caption="2022 - first rebrand"
-        {...responsiveGridFigureSizing(voices2022, [
+        {...responsiveGridFigureSizing([
             { minWidth: 1024, columns: 3 },
             { minWidth: 640, columns: 2 },
             { columns: 1 },
@@ -96,7 +96,7 @@ The visual design came mostly from the brand team. My job was translating that i
         src={voices2023}
         alt="VOICES website homepage in 2023"
         caption="2023"
-        {...responsiveGridFigureSizing(voices2023, [
+        {...responsiveGridFigureSizing([
             { minWidth: 1024, columns: 3 },
             { minWidth: 640, columns: 2 },
             { columns: 1 },
@@ -106,7 +106,7 @@ The visual design came mostly from the brand team. My job was translating that i
         src={voices2024}
         alt="VOICES website homepage in 2024"
         caption="2024"
-        {...responsiveGridFigureSizing(voices2024, [
+        {...responsiveGridFigureSizing([
             { minWidth: 1024, columns: 3 },
             { minWidth: 640, columns: 2 },
             { columns: 1 },
@@ -116,7 +116,7 @@ The visual design came mostly from the brand team. My job was translating that i
         src={voices2025}
         alt="VOICES website homepage after the 2025 rebrand"
         caption="2025 - second rebrand"
-        {...responsiveGridFigureSizing(voices2025, [
+        {...responsiveGridFigureSizing([
             { minWidth: 1024, columns: 3 },
             { minWidth: 640, columns: 2 },
             { columns: 1 },
@@ -126,7 +126,7 @@ The visual design came mostly from the brand team. My job was translating that i
         src={voices2026}
         alt="VOICES website homepage in 2026, current state"
         caption="2026 - current state"
-        {...responsiveGridFigureSizing(voices2026, [
+        {...responsiveGridFigureSizing([
             { minWidth: 1024, columns: 3 },
             { minWidth: 640, columns: 2 },
             { columns: 1 },
@@ -145,7 +145,7 @@ Three lifecycle states govern every section: pre-event (promoting registration, 
         src={voices2026DeMobile}
         alt="VOICES Berlin homepage on mobile, 2026"
         caption="Mobile - homepage"
-        {...fixedWidthFigureSizing(voices2026DeMobile, 320)}
+        {...fixedWidthFigureSizing(320, { siblings: 2, breakpoint: 640 })}
         class="max-w-xs"
         captionClass="mt-2 text-center text-sm text-muted"
     />
@@ -153,7 +153,7 @@ Three lifecycle states govern every section: pre-event (promoting registration, 
         src={voices2026DeMobileNav}
         alt="VOICES Berlin mobile navigation menu open, 2026"
         caption="Mobile - navigation"
-        {...fixedWidthFigureSizing(voices2026DeMobileNav, 320)}
+        {...fixedWidthFigureSizing(320, { siblings: 2, breakpoint: 640 })}
         class="max-w-xs"
         captionClass="mt-2 text-center text-sm text-muted"
     />
@@ -170,7 +170,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
         src={voices2026De}
         alt="VOICES Berlin (DE) homepage, 2026"
         caption="Berlin - in-person, German"
-        {...responsiveGridFigureSizing(voices2026De, [
+        {...responsiveGridFigureSizing([
             { minWidth: 640, columns: 3 },
             { columns: 1 },
         ])}
@@ -179,7 +179,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
         src={voices2026En}
         alt="VOICES Americas (NA) homepage, 2026"
         caption="Americas - virtual"
-        {...responsiveGridFigureSizing(voices2026En, [
+        {...responsiveGridFigureSizing([
             { minWidth: 640, columns: 3 },
             { columns: 1 },
         ])}
@@ -188,7 +188,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
         src={voices2026Emea}
         alt="VOICES London (EMEA) homepage, 2026"
         caption="London - in-person"
-        {...responsiveGridFigureSizing(voices2026Emea, [
+        {...responsiveGridFigureSizing([
             { minWidth: 640, columns: 3 },
             { columns: 1 },
         ])}
@@ -198,7 +198,7 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
     src={voices2026Overview}
     alt="VOICES region picker hub page, listing all four editions"
     caption="The hub page that routes to each regional edition"
-    {...fullWidthFigureSizing(voices2026Overview)}
+    {...fullWidthFigureSizing()}
     class="my-6"
 />
 
@@ -208,7 +208,7 @@ The component library is substantial: speaker lineups, multi-track agendas, regi
     src={voices2026Agenda}
     alt="VOICES Americas multi-track agenda page, 2026"
     caption="The multi-track agenda component, populated for VOICES Americas 2026"
-    {...fullWidthFigureSizing(voices2026Agenda)}
+    {...fullWidthFigureSizing()}
     class="my-6"
 />
 
@@ -222,7 +222,7 @@ This is the "right tool for the job" principle applied cleanly: event recordings
     src={voices2026Recordings}
     alt="VOICES Americas recordings page, the after-event lifecycle state, 2026"
     caption="The after-event state - recordings populated automatically from YouTube"
-    {...fullWidthFigureSizing(voices2026Recordings)}
+    {...fullWidthFigureSizing()}
     class="my-6"
 />
 

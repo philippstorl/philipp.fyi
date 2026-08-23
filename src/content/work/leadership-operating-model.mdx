@@ -14,7 +14,6 @@ import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
 import {
     gridFigureSizing,
     fullWidthFigureSizing,
-    fixedWidthFigureSizing,
 } from "@/utils/content-image-sizing"
 import img2021 from "./leadership-operating-model/leadership-2021-office.jpg"
 import img2022 from "./leadership-operating-model/leadership-2022-working.jpg"
@@ -33,7 +32,7 @@ When the Vancouver-based team member came into the team, I flew to Canada to spe
     src={img2021}
     alt="The Bananatag Vancouver office during the first onboarding trip, November 2021"
     caption="November 2021, first trip - the Bananatag Vancouver office, week one of the onboarding."
-    {...fullWidthFigureSizing(img2021)}
+    {...fullWidthFigureSizing()}
     class="my-8"
 />
 
@@ -45,20 +44,20 @@ The trips continued, each with its own official agenda (working sessions, planni
             src={img2022}
             alt="A working session in Vancouver, June 2022"
             caption="June 2022, second trip - a working session in Vancouver."
-            {...gridFigureSizing(img2022, 2)}
+            {...gridFigureSizing(2)}
         />
         <ResponsiveFigure
             src={img2023}
             alt="At the Staffbase Vancouver desk, June 2023"
             caption="June 2023, fourth trip - at the Staffbase Vancouver desk."
-            {...gridFigureSizing(img2023, 2)}
+            {...gridFigureSizing(2)}
         />
     </div>
     <ResponsiveFigure
         src={img2024}
         alt="Working from a coworking space overlooking Vancouver harbor, November 2024"
         caption="November 2024, sixth and final trip - a coworking space overlooking the harbor, German keyboard a long way from home."
-        {...gridFigureSizing(img2024, 2)}
+        {...gridFigureSizing(2)}
     />
 </div>
 
