@@ -2,14 +2,12 @@
 import type { ImageMetadata } from 'astro'
 import { Image } from 'astro:assets'
 
-type Props = {
-    src: ImageMetadata
-    alt: string
-    width: number
-    class?: string
-    /** A full-resolution URL for a consumer (e.g. a lightbox) that needs a source larger than the responsive one rendered here — forwarded as-is, unused by this component. */
-    'data-lightbox-src'?: string
-} & (
+// Exported (type-only — value exports from .astro components are blocked by
+// eslint-plugin-astro's no-exports-from-components rule, but a type export
+// isn't a component export at runtime) so ResponsiveFigure.astro can share
+// this exact union instead of hand-copying it, which drifted out of sync
+// with itself once already when `widths` was added (see CLAUDE.md).
+export type ResponsiveImageSizing =
     | {
           /** For a fixed-width image. Default 1x/2x/3x — narrow it to avoid upscaling past a small source's native resolution (see CLAUDE.md). */
           densities?: (number | `${number}x`)[]
@@ -29,7 +27,15 @@ type Props = {
            */
           widths: number[]
       }
-)
+
+type Props = {
+    src: ImageMetadata
+    alt: string
+    width: number
+    class?: string
+    /** A full-resolution URL for a consumer (e.g. a lightbox) that needs a source larger than the responsive one rendered here — forwarded as-is, unused by this component. */
+    'data-lightbox-src'?: string
+} & ResponsiveImageSizing
 
 const {
     src,
