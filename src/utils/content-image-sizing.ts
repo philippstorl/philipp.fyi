@@ -89,19 +89,6 @@ function mergeCloseWidths(widths: number[], threshold = 24): number[] {
     return merged
 }
 
-/** A figure inside a grid whose column count is the same at every breakpoint (including a single-column, full-width figure at `columns: 1`). */
-export function gridFigureSizing(columns: 1 | 2 | 3): FigureSizing {
-    const width = columnWidth(columns)
-    return {
-        width,
-        sizes: buildSizesAttr(
-            [{ minWidth: CONTAINER_CAP_BREAKPOINT, expr: `${width}px` }],
-            columnFluidExpr(columns),
-        ),
-        widths: widthLadder(width),
-    }
-}
-
 /**
  * `tiers` for `responsiveGridFigureSizing`, exported so a call site that
  * reuses the same tier shape across several figures (e.g. several images in
@@ -118,6 +105,33 @@ export type ResponsiveGridTiers = [
     { columns: number },
 ]
 
+// The fallback tier's own `sizes` condition (no `minWidth`) only ever wins
+// below the narrowest real tier's breakpoint, where the container is fluid
+// and never reaches that tier's full `columnWidth()` — using `columnWidth()`
+// as the fallback's own ladder base would generate 2x/3x candidates no
+// viewport in its actual active range could ever request. Caps the
+// fallback's base at the narrowest real tier's own breakpoint (minus the
+// container padding) instead, the true upper bound of its fluid width; every
+// other tier's ladder is unaffected.
+function responsiveWidths(
+    realTiers: { minWidth: number; columns: number }[],
+    fallback: { columns: number },
+): number[] {
+    const narrowestRealTierMinWidth = realTiers[realTiers.length - 1].minWidth
+    return mergeCloseWidths(
+        [...realTiers, fallback].flatMap((tier) => {
+            const base =
+                tier === fallback
+                    ? Math.min(
+                          columnWidth(tier.columns),
+                          narrowestRealTierMinWidth - CONTAINER_PADDING_PX,
+                      )
+                    : columnWidth(tier.columns)
+            return widthLadder(base)
+        }),
+    )
+}
+
 /**
  * A figure inside a grid whose column count itself changes across
  * breakpoints (`sm:`/`lg:` column-count utilities). `tiers` are ordered
@@ -128,8 +142,11 @@ export function responsiveGridFigureSizing(
     tiers: ResponsiveGridTiers,
 ): FigureSizing {
     const fallback = tiers[tiers.length - 1]
-    const sizeTiers: SizeTier[] = tiers.flatMap((tier) => {
-        if (!('minWidth' in tier)) return []
+    const realTiers = tiers.filter(
+        (tier): tier is { minWidth: number; columns: number } =>
+            'minWidth' in tier,
+    )
+    const sizeTiers: SizeTier[] = realTiers.flatMap((tier) => {
         const width = columnWidth(tier.columns)
         // A tier's own breakpoint can fire before the container has
         // actually reached its 768px cap (e.g. `sm:` at 640px) — the
@@ -144,36 +161,19 @@ export function responsiveGridFigureSizing(
             { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
         ]
     })
-    // The fallback tier's own `sizes` condition (no `minWidth`) only ever
-    // wins below the narrowest real tier's breakpoint, where the container
-    // is fluid and never reaches that tier's full columnWidth() — using
-    // columnWidth() as this one tier's ladder base would generate 2x/3x
-    // candidates no viewport in the fallback's actual active range could
-    // ever request. Cap it at the narrowest real tier's own breakpoint
-    // (minus the container padding) instead, the true upper bound of the
-    // fallback's fluid width.
-    const realTiers = tiers.filter(
-        (tier): tier is { minWidth: number; columns: number } =>
-            'minWidth' in tier,
-    )
-    const narrowestRealTierMinWidth = realTiers[realTiers.length - 1].minWidth
-    const widths = mergeCloseWidths(
-        tiers.flatMap((tier) => {
-            const base =
-                tier === fallback
-                    ? Math.min(
-                          columnWidth(tier.columns),
-                          narrowestRealTierMinWidth - CONTAINER_PADDING_PX,
-                      )
-                    : columnWidth(tier.columns)
-            return widthLadder(base)
-        }),
-    )
     return {
         width: columnWidth(tiers[0].columns),
         sizes: buildSizesAttr(sizeTiers, columnFluidExpr(fallback.columns)),
-        widths,
+        widths: responsiveWidths(realTiers, fallback),
     }
+}
+
+/** A figure inside a grid whose column count is the same at every breakpoint (including a single-column, full-width figure at `columns: 1`). Delegates to `responsiveGridFigureSizing` with a single always-on tier rather than reimplementing the same "cap at 768px, go fluid below it" math a second time. */
+export function gridFigureSizing(columns: 1 | 2 | 3): FigureSizing {
+    return responsiveGridFigureSizing([
+        { minWidth: CONTAINER_CAP_BREAKPOINT, columns },
+        { columns },
+    ])
 }
 
 /** A standalone figure spanning the full prose column width. */
