@@ -49,8 +49,9 @@ export interface CreativeWorkSchemaParams {
 // date at all. Use the range's earlier (fixed) year, not the later one —
 // some case studies use an open-ended range that still ends in the current
 // year, and datePublished shouldn't silently creep forward as that range
-// gets bumped each year.
-function extractSchemaYear(year: string): string {
+// gets bumped each year. Exported so work/[slug].astro can derive the same
+// value for og:article:published_time rather than re-deriving it.
+export function extractSchemaYear(year: string): string {
     const parts = year.split('–')
     return parts[0]
 }

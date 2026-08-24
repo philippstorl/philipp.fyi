@@ -22,12 +22,17 @@ interface Props {
     title?: string
     description?: string
     ogImage?: string
+    ogType?: 'website' | 'article'
+    /** ISO 8601 date/datetime; only rendered when ogType is 'article'. */
+    articlePublishedTime?: string
 }
 
 const {
     title,
     description = DEFAULT_DESCRIPTION,
     ogImage = '/og/home.png',
+    ogType = 'website',
+    articlePublishedTime,
 } = Astro.props
 
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
@@ -52,7 +57,15 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
             href="/rss.xml"
         />
 
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content={ogType} />
+        {
+            ogType === 'article' && articlePublishedTime && (
+                <meta
+                    property="article:published_time"
+                    content={articlePublishedTime}
+                />
+            )
+        }
         <meta property="og:url" content={canonicalURL} />
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
