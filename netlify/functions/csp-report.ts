@@ -16,10 +16,11 @@ interface FunctionContext {
     site?: { name?: string }
 }
 
-// Slack's message text limit is far higher than this, but a CSP report's
-// `sample`/`sourceFile` fields are attacker-influenced input echoed back
-// into a chat message — cap it defensively rather than trust it's always small.
+// Slack's message text limit is far higher than either of these, but a CSP
+// report's fields are attacker-influenced input echoed back into a chat
+// message — cap them defensively rather than trust they're always small.
 const MAX_JSON_BLOCK_LENGTH = 3500
+const MAX_FIELD_LENGTH = 500
 
 function blobsStoreUrl(
     context: FunctionContext | undefined,
@@ -50,12 +51,27 @@ function sanitizeSlackText(text: string): string {
         .replace(/`/g, 'ˋ')
 }
 
+// Truncates by Unicode code point, not raw `.slice()` (which counts UTF-16
+// code units and can split a surrogate pair in two), and runs before
+// sanitizing so the cut can't land mid-entity inside a `&amp;`/`&lt;`/`&gt;`
+// sequence that sanitizing would otherwise introduce.
+function truncateForSlack(
+    text: string,
+    maxLength: number,
+    marker: string,
+): string {
+    const codePoints = Array.from(text)
+    if (codePoints.length <= maxLength) return sanitizeSlackText(text)
+    return sanitizeSlackText(codePoints.slice(0, maxLength).join('')) + marker
+}
+
 function formatJsonBlock(record: unknown): string {
-    const sanitized = sanitizeSlackText(JSON.stringify(record))
-    const body =
-        sanitized.length > MAX_JSON_BLOCK_LENGTH
-            ? `${sanitized.slice(0, MAX_JSON_BLOCK_LENGTH)}\n... (truncated)`
-            : sanitized
+    const json = JSON.stringify(record, null, 2)
+    const body = truncateForSlack(
+        json,
+        MAX_JSON_BLOCK_LENGTH,
+        '\n... (truncated)',
+    )
     return `\`\`\`\n${body}\n\`\`\``
 }
 
@@ -89,16 +105,16 @@ function summarize(
     return [
         ':rotating_light: CSP violation on philipp.fyi',
         violation.violatedDirective
-            ? `*Directive:* ${sanitizeSlackText(violation.violatedDirective)}`
+            ? `*Directive:* ${truncateForSlack(violation.violatedDirective, MAX_FIELD_LENGTH, '… (truncated)')}`
             : null,
         violation.blockedUri
-            ? `*Blocked:* ${sanitizeSlackText(violation.blockedUri)}`
+            ? `*Blocked:* ${truncateForSlack(violation.blockedUri, MAX_FIELD_LENGTH, '… (truncated)')}`
             : null,
         violation.documentUri
-            ? `*Page:* ${sanitizeSlackText(violation.documentUri)}`
+            ? `*Page:* ${truncateForSlack(violation.documentUri, MAX_FIELD_LENGTH, '… (truncated)')}`
             : null,
         violation.disposition
-            ? `*Disposition:* ${sanitizeSlackText(violation.disposition)}`
+            ? `*Disposition:* ${truncateForSlack(violation.disposition, MAX_FIELD_LENGTH, '… (truncated)')}`
             : null,
         blobsUrl ? `*Blobs store:* ${blobsUrl}` : null,
         formatJsonBlock(record),
@@ -152,18 +168,29 @@ export default async (
             }
 
             if (webhookUrl) {
-                await postToSlack(
-                    webhookUrl,
-                    // Only point at the Blobs store if this record actually
-                    // made it there — otherwise the link would send someone
-                    // looking for an entry that was never written.
-                    summarize(
-                        normalize(report),
-                        record,
-                        stored ? blobsUrl : undefined,
-                    ),
-                    'Failed to post CSP violation to Slack',
-                )
+                try {
+                    // normalize()/summarize() have no guard of their own —
+                    // a malformed report (e.g. `null`, or a shape neither
+                    // normalize() branch expects) can throw synchronously.
+                    // Catch it here so one bad report in a batch can't
+                    // reject this whole task and abort its sibling reports'
+                    // processing along with it.
+                    await postToSlack(
+                        webhookUrl,
+                        // Only point at the Blobs store if this record
+                        // actually made it there — otherwise the link would
+                        // send someone looking for an entry that was never
+                        // written.
+                        summarize(
+                            normalize(report),
+                            record,
+                            stored ? blobsUrl : undefined,
+                        ),
+                        'Failed to post CSP violation to Slack',
+                    )
+                } catch (error) {
+                    console.error('Failed to summarize CSP report', error)
+                }
             }
         }),
     )
