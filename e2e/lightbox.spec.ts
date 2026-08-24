@@ -28,6 +28,23 @@ test.describe('Image lightbox', () => {
         )
     })
 
+    test('only the current slide is exposed to the accessibility tree', async ({
+        page,
+    }) => {
+        // Regression check: every slide used to stay in the accessibility
+        // tree regardless of which one was active, so a screen reader user
+        // would hear every image read consecutively ahead of the caption.
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+
+        const slides = page.locator('.lightbox-slide')
+        await expect(slides.nth(0)).not.toHaveAttribute('aria-hidden')
+        await expect(slides.nth(1)).toHaveAttribute('aria-hidden', 'true')
+
+        await page.locator('#lightbox-next').click()
+        await expect(slides.nth(0)).toHaveAttribute('aria-hidden', 'true')
+        await expect(slides.nth(1)).not.toHaveAttribute('aria-hidden')
+    })
+
     test('the enlarged image is a full-resolution source, not the downscaled inline one', async ({
         page,
     }) => {

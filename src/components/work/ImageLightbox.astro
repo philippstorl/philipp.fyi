@@ -136,6 +136,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         // ever reads from this array instead of re-querying the live DOM on
         // every prev/next/swipe step.
         const slides = figures.map(describe)
+        const slideElements: HTMLDivElement[] = []
 
         const updateCaption = () => {
             caption.textContent = slides[currentIndex].caption
@@ -145,6 +146,14 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
                     : ''
             prevBtn.disabled = currentIndex === 0
             nextBtn.disabled = currentIndex === figures.length - 1
+            // Only the active slide should be reachable by a linear
+            // accessibility-tree walk — otherwise every slide's image is
+            // exposed at once, ahead of the caption that announces which
+            // one is current.
+            slideElements.forEach((slide, index) => {
+                if (index === currentIndex) slide.removeAttribute('aria-hidden')
+                else slide.setAttribute('aria-hidden', 'true')
+            })
         }
 
         const syncFromScroll = () => {
@@ -217,6 +226,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             img.className = 'max-h-full max-w-full object-contain'
             slide.appendChild(img)
             track.appendChild(slide)
+            slideElements.push(slide)
         }
 
         const multiple = figures.length > 1
