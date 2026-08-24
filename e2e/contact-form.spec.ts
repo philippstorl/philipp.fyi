@@ -43,6 +43,33 @@ test.describe('Contact form', () => {
         await expect(page.locator('#contact-name')).toBeFocused()
     })
 
+    test('multi-field validation failure fires one summary alert, not three', async ({
+        page,
+    }) => {
+        // Regression check: each per-field error used to carry its own
+        // role="alert", so three assertive live regions fired in the same
+        // commit and competed with each other. Now only one shared summary
+        // region is an alert; the per-field <p>s are plain text.
+        await gotoAndWaitForContactFormHydration(page)
+
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+
+        await expect(page.getByRole('alert')).toHaveText(
+            '3 fields need attention.',
+        )
+        await expect(page.locator('#contact-name-error')).not.toHaveAttribute(
+            'role',
+            'alert',
+        )
+        await expect(page.locator('#contact-email-error')).not.toHaveAttribute(
+            'role',
+            'alert',
+        )
+        await expect(
+            page.locator('#contact-message-error'),
+        ).not.toHaveAttribute('role', 'alert')
+    })
+
     test('an invalid email shows a validation error instead of "required"', async ({
         page,
     }) => {
