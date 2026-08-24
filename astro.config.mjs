@@ -20,8 +20,23 @@ export default defineConfig({
         // script will be silently blocked by CSP in production — verify
         // with `npm run build && npx netlify serve` afterward, since this
         // only surfaces at runtime, never in `npm run lint`/`typecheck`.
+        //
+        // `resources` adds `data:` alongside `'self'` (setting `resources`
+        // replaces Astro's default `'self'`-only source list, so `'self'`
+        // has to be re-added explicitly here or every hashed/same-origin
+        // script would stop matching). This is for View Transitions'
+        // internal `runScripts()` barrier: on a client-side navigation, if
+        // the incoming page has an inline `type="module"` script with no
+        // `src`, Astro injects `<script type="module"
+        // src="data:application/javascript,"/>` as a load-order sentinel.
+        // That's a script *element* matched by its `data:` URL, not by
+        // hash (hashes never apply to elements with a `src`), so nothing
+        // short of allowing `data:` in the source list can permit it —
+        // confirmed via a real CSP violation report from production
+        // (issue #198).
         csp: {
             scriptDirective: {
+                resources: ["'self'", 'data:'],
                 hashes: ['sha256-wVZRUouTil3YKZr+95pA0pv93LmFxrl+ODZY0y8QIQ4='],
             },
         },
