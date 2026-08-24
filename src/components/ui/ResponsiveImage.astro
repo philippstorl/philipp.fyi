@@ -1,0 +1,53 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Image } from 'astro:assets'
+
+// Type-only export (allowed under eslint-plugin-astro's no-exports-from-components
+// rule) so ResponsiveFigure.astro shares this exact union instead of a hand-copy.
+export type ResponsiveImageSizing =
+    | {
+          /** Fixed-width image, default 1x/2x/3x — narrow it for a small source (see CLAUDE.md). */
+          densities?: (number | `${number}x`)[]
+          sizes?: never
+          widths?: never
+      }
+    | {
+          densities?: never
+          /** Image whose width changes across breakpoints — see CLAUDE.md. */
+          sizes: string
+          /** Explicit srcset widths — Astro's `layout="constrained"` default only covers 1x/2x of `width`, under-resolving a custom `sizes` string's larger tiers. */
+          widths: number[]
+      }
+
+type Props = {
+    src: ImageMetadata
+    alt: string
+    width: number
+    class?: string
+    /** Full-resolution URL for a consumer (e.g. a lightbox) — forwarded as-is, unused here. */
+    'data-lightbox-src'?: string
+} & ResponsiveImageSizing
+
+const {
+    src,
+    alt,
+    width,
+    class: className,
+    'data-lightbox-src': lightboxSrc,
+    ...sizing
+} = Astro.props
+
+// `sizing` is either mode of ResponsiveImageSizing; only the layout/default-densities differs.
+const responsiveProps = sizing.sizes
+    ? ({ ...sizing, layout: 'constrained' } as const)
+    : { densities: sizing.densities ?? [1, 2, 3] }
+---
+
+<Image
+    src={src}
+    alt={alt}
+    width={width}
+    class={className}
+    data-lightbox-src={lightboxSrc}
+    {...responsiveProps}
+/>

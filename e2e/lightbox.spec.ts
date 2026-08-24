@@ -28,6 +28,25 @@ test.describe('Image lightbox', () => {
         )
     })
 
+    test('the enlarged image is a full-resolution source, not the downscaled inline one', async ({
+        page,
+    }) => {
+        // Regression check: the lightbox must use the figure's full-resolution
+        // `data-lightbox-src`, not its deliberately downscaled inline `src`.
+        const inlineImage = page.locator('.prose figure img').first()
+        const [inlineSrc, lightboxSrc] = await Promise.all([
+            inlineImage.getAttribute('src'),
+            inlineImage.getAttribute('data-lightbox-src'),
+        ])
+        expect(lightboxSrc).toBeTruthy()
+        expect(lightboxSrc).not.toBe(inlineSrc)
+
+        await openLightboxOn(page, inlineImage)
+        await expect(
+            page.locator('#lightbox-track img').first(),
+        ).toHaveAttribute('src', lightboxSrc!)
+    })
+
     test('opens directly on the clicked image, not an earlier one', async ({
         page,
     }) => {
@@ -152,11 +171,6 @@ test.describe('Image lightbox', () => {
     })
 })
 
-// brand-evolution's figcaptions mix two markup shapes — plain JSX text for
-// short captions, and a `{'...'}` JS string expression for any caption long
-// enough that Prettier would otherwise break it onto its own line (which
-// MDX would then silently wrap in a <p>, see CLAUDE.md). Covering one of
-// each here guards against that regression in either direction.
 const BRAND_EVOLUTION_TOTAL_IMAGES = 25
 const brandEvolutionCounterText = (index: number) =>
     `${index} / ${BRAND_EVOLUTION_TOTAL_IMAGES}`
@@ -166,7 +180,9 @@ test.describe('Image lightbox — brand-evolution', () => {
         await page.goto('/work/brand-evolution/')
     })
 
-    test('renders a plain-text figcaption', async ({ page }) => {
+    test('renders the caption for the first image, located by position', async ({
+        page,
+    }) => {
         await openLightboxOn(page, page.locator('.prose figure img').first())
         await expect(page.locator('#lightbox-caption')).toHaveText('March 2018')
         await expect(page.locator('#lightbox-counter')).toHaveText(
@@ -174,7 +190,7 @@ test.describe('Image lightbox — brand-evolution', () => {
         )
     })
 
-    test('renders a figcaption written as a JS string expression', async ({
+    test('renders the caption for an image located by alt text', async ({
         page,
     }) => {
         const bananatag = page

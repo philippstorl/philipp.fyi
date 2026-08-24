@@ -142,19 +142,19 @@ npx playwright test e2e/home.spec.ts --debug
 
 ### Test coverage
 
-| File                          | What it covers                                                                                                                                              |
-| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `e2e/home.spec.ts`            | Title, headline, 4 work cards, "See all work" CTA to /work, 6 principle cards, 6 recommendation cards, contact teaser section                               |
-| `e2e/navigation.spec.ts`      | Header, nav links (Work, About, Principles, Contact), name mark, theme toggle, skip-to-main-content link                                                    |
-| `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly; Work index page heading/cards, interlinks to About/Principles/Recommendations                  |
-| `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence                                                              |
-| `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles, interlinks to /about, /work, and /recommendations                                            |
-| `e2e/recommendations.spec.ts` | 14 recommendations shown, CTA links to /recommendations, interlinks to /about, /principles, and /work                                                       |
-| `e2e/about.spec.ts`           | About page heading/bio/facts, tech stack section, CTA links to /about, interlinks to /work, /principles, and /recommendations                               |
-| `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                                                                              |
-| `e2e/contact.spec.ts`         | Contact page heading/form, LinkedIn/GitHub links, "Send me a message" CTA on home links to /contact, footer mail icon links to /contact                     |
-| `e2e/contact-form.spec.ts`    | Contact form validation errors + focus, invalid-email message, mocked failed submission (error banner), mocked successful submission (confirmation + focus) |
-| `e2e/blog.spec.ts`            | Title/meta description, the "Writing coming soon." empty state (all posts are currently `draft: true`), header/footer chrome                                |
+| File                          | What it covers                                                                                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `e2e/home.spec.ts`            | Title, headline, 4 work cards, "See all work" CTA to /work, 6 principle cards, 6 recommendation cards, contact teaser section                                                        |
+| `e2e/navigation.spec.ts`      | Header, nav links (Work, About, Principles, Contact), name mark, theme toggle, skip-to-main-content link                                                                             |
+| `e2e/work.spec.ts`            | All 4 case study pages render, card links resolve correctly; Work index page heading/cards, interlinks to About/Principles/Recommendations                                           |
+| `e2e/lightbox.spec.ts`        | Case study image lightbox — open/close, gallery navigation, client-side navigation persistence, enlarged image uses a full-resolution source distinct from the downscaled inline one |
+| `e2e/principles.spec.ts`      | 15 principles shown, numbered 01–15, CTA links to /principles, interlinks to /about, /work, and /recommendations                                                                     |
+| `e2e/recommendations.spec.ts` | 14 recommendations shown, CTA links to /recommendations, interlinks to /about, /principles, and /work                                                                                |
+| `e2e/about.spec.ts`           | About page heading/bio/facts, tech stack section, CTA links to /about, interlinks to /work, /principles, and /recommendations                                                        |
+| `e2e/404.spec.ts`             | 404 status on unknown routes, correct headline, back home link                                                                                                                       |
+| `e2e/contact.spec.ts`         | Contact page heading/form, LinkedIn/GitHub links, "Send me a message" CTA on home links to /contact, footer mail icon links to /contact                                              |
+| `e2e/contact-form.spec.ts`    | Contact form validation errors + focus, invalid-email message, mocked failed submission (error banner), mocked successful submission (confirmation + focus)                          |
+| `e2e/blog.spec.ts`            | Title/meta description, the "Writing coming soon." empty state (all posts are currently `draft: true`), header/footer chrome                                                         |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
@@ -190,7 +190,7 @@ draft: false # true = hidden from the site
 coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
 ```
 
-Any screenshots used in the case study body (via `<Image>` inside a `<figure>`) automatically get a click-to-enlarge lightbox — no markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
+Screenshots in the case study body go through [`ResponsiveFigure`](src/components/ui/ResponsiveFigure.astro) (`<ResponsiveFigure src={img} alt="..." caption="..." {...gridFigureSizing(3)} />` — see [`content-image-sizing.ts`](src/utils/content-image-sizing.ts) for the sizing helpers) rather than a hand-written `<figure><Image/><figcaption/></figure>` block, and automatically get a click-to-enlarge lightbox with a full-resolution source — no extra markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
 
 ### Principles — `src/content/principles/`
 
@@ -245,7 +245,7 @@ src/
     home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader
     layout/        → Header, NavLink, Footer, Main
     seo/           → JsonLd (renders Person/CreativeWork JSON-LD, see src/utils/schema.ts)
-    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard, InterlinkRow, PageHeader, NewTabIndicator
+    ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard, InterlinkRow, PageHeader, NewTabIndicator, ResponsiveImage, ResponsiveFigure
     work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid
   content/
     work/          → Case study MDX files (4 entries)
@@ -287,6 +287,7 @@ src/
     collections.ts     → getPublishedEntries(collection), the shared draft-filter behind work and blog
     url.ts             → toAbsoluteUrl(path, site), the shared canonical/OG/JSON-LD absolute-URL builder
     a11y.ts            → NEW_TAB_SUFFIX, the shared "(opens in a new tab)" wording used by NewTabIndicator.astro and Footer.astro
+    content-image-sizing.ts → sizes/widths helpers for ResponsiveFigure/ResponsiveImage call sites in case-study (and future blog) MDX bodies
 e2e/               → Playwright E2E tests
 public/
   favicon.svg

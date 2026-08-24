@@ -18,7 +18,15 @@ draft: false
 coverImage: "./voices-conference-website/voices-2026.png"
 ---
 
-import { Image } from "astro:assets"
+import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
+import {
+    fixedWidthFigureSizing,
+    fullWidthFigureSizing,
+    responsiveGridFigureSizing,
+    TWO_COLUMN_RESPONSIVE_TIERS,
+    THREE_COLUMN_RESPONSIVE_TIERS,
+    REGIONAL_RESPONSIVE_TIERS,
+} from "@/utils/content-image-sizing"
 import voices2020 from "./voices-conference-website/voices-2020.png"
 import voices2020PreEleventy from "./voices-conference-website/voices-2020-pre-eleventy.png"
 import voices2022 from "./voices-conference-website/voices-2022.png"
@@ -42,26 +50,18 @@ VOICES is Staffbase's flagship annual conference for internal communications and
 When I took on the VOICES website in mid-2020, the existing setup was plain HTML, maintained by an external agency with some review from me along the way. "Deployment" meant uploading a zip file to AWS, where the domain itself was also hosted at the time. It worked, but it wasn't a system: there was no templating, no component reuse, and no real way to scale it as the conference grew into more regions. In July 2020 I ran a Proof of Concept with Eleventy, a lightweight static site generator, to validate whether it could handle the requirements: templating for components, data-driven content, multi-region support, and easy deployment through Netlify.
 
 <div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <figure>
-        <Image
-            src={voices2020PreEleventy}
-            alt="VOICES website homepage in April 2020, the plain-HTML site maintained by an external agency"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"Before - April 2020, plain HTML, agency-maintained"}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2020}
-            alt="VOICES website homepage in October 2020, the first Eleventy build"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"After - October 2020, the first Eleventy build"}
-        </figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={voices2020PreEleventy}
+        alt="VOICES website homepage in April 2020, the plain-HTML site maintained by an external agency"
+        caption="Before - April 2020, plain HTML, agency-maintained"
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
+    />
+    <ResponsiveFigure
+        src={voices2020}
+        alt="VOICES website homepage in October 2020, the first Eleventy build"
+        caption="After - October 2020, the first Eleventy build"
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
+    />
 </div>
 
 The PoC worked. Eleventy was the right tool: simple enough to build quickly, powerful enough to handle the complexity, and producing purely static output that Netlify could serve without any server-side overhead. This was a JAMstack decision before "JAMstack" was a standard part of the marketing vocabulary.
@@ -69,60 +69,42 @@ The PoC worked. Eleventy was the right tool: simple enough to build quickly, pow
 The visual design came mostly from the brand team. My job was translating that into the web: in a lot of cases that meant feasibility conversations and trade-offs with the brand team about what would hold up as a real, data-driven component system rather than a one-off page. I built the first full version of the new site from that design, establishing the component system that would carry forward across every subsequent edition.
 
 <div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-    <figure>
-        <Image
-            src={voices2020}
-            alt="VOICES website homepage in 2020"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">2020</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2022}
-            alt="VOICES website homepage after the 2022 rebrand"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"2022 - first rebrand"}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2023}
-            alt="VOICES website homepage in 2023"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">2023</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2024}
-            alt="VOICES website homepage in 2024"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">2024</figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2025}
-            alt="VOICES website homepage after the 2025 rebrand"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"2025 - second rebrand"}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2026}
-            alt="VOICES website homepage in 2026, current state"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"2026 - current state"}
-        </figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={voices2020}
+        alt="VOICES website homepage in 2020"
+        caption="2020"
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
+    />
+    <ResponsiveFigure
+        src={voices2022}
+        alt="VOICES website homepage after the 2022 rebrand"
+        caption="2022 - first rebrand"
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
+    />
+    <ResponsiveFigure
+        src={voices2023}
+        alt="VOICES website homepage in 2023"
+        caption="2023"
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
+    />
+    <ResponsiveFigure
+        src={voices2024}
+        alt="VOICES website homepage in 2024"
+        caption="2024"
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
+    />
+    <ResponsiveFigure
+        src={voices2025}
+        alt="VOICES website homepage after the 2025 rebrand"
+        caption="2025 - second rebrand"
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
+    />
+    <ResponsiveFigure
+        src={voices2026}
+        alt="VOICES website homepage in 2026, current state"
+        caption="2026 - current state"
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
+    />
 </div>
 
 ## What the site actually is
@@ -132,26 +114,22 @@ The VOICES website isn't just an event page: it's a small product with defined s
 Three lifecycle states govern every section: pre-event (promoting registration, teasing the agenda), during-event (shifting to live-event content and thank-you flows), and after-event (showcasing recordings, promoting next year). Components are designed to handle all three states cleanly, switching between them via configuration rather than code changes.
 
 <div class="my-6 flex flex-col justify-center gap-4 sm:flex-row">
-    <figure class="max-w-xs">
-        <Image
-            src={voices2026DeMobile}
-            alt="VOICES Berlin homepage on mobile, 2026"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-center text-sm text-muted">
-            {"Mobile - homepage"}
-        </figcaption>
-    </figure>
-    <figure class="max-w-xs">
-        <Image
-            src={voices2026DeMobileNav}
-            alt="VOICES Berlin mobile navigation menu open, 2026"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-center text-sm text-muted">
-            {"Mobile - navigation"}
-        </figcaption>
-    </figure>
+    <ResponsiveFigure
+        src={voices2026DeMobile}
+        alt="VOICES Berlin homepage on mobile, 2026"
+        caption="Mobile - homepage"
+        {...fixedWidthFigureSizing(320, { siblings: 2, breakpoint: 640 })}
+        class="max-w-xs"
+        captionClass="text-center"
+    />
+    <ResponsiveFigure
+        src={voices2026DeMobileNav}
+        alt="VOICES Berlin mobile navigation menu open, 2026"
+        caption="Mobile - navigation"
+        {...fixedWidthFigureSizing(320, { siblings: 2, breakpoint: 640 })}
+        class="max-w-xs"
+        captionClass="text-center"
+    />
 </div>
 
 Three regional editions run simultaneously on the same codebase: DACH (German), UK, and US/North America. Each has its own configuration for dates, copy, imagery, CTAs, and tracking, but shares the component library and style system. Adding a new region means configuring data, not rebuilding components.
@@ -161,60 +139,42 @@ Three regional editions run simultaneously on the same codebase: DACH (German), 
     in 2026:
 </p>
 <div class="my-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-    <figure>
-        <Image
-            src={voices2026De}
-            alt="VOICES Berlin (DE) homepage, 2026"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"Berlin - in-person, German"}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2026En}
-            alt="VOICES Americas (NA) homepage, 2026"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"Americas - virtual"}
-        </figcaption>
-    </figure>
-    <figure>
-        <Image
-            src={voices2026Emea}
-            alt="VOICES London (EMEA) homepage, 2026"
-            class="rounded-xl border border-border"
-        />
-        <figcaption class="mt-2 text-sm text-muted">
-            {"London - in-person"}
-        </figcaption>
-    </figure>
-</div>
-<figure class="my-6">
-    <Image
-        src={voices2026Overview}
-        alt="VOICES region picker hub page, listing all four editions"
-        class="rounded-xl border border-border"
+    <ResponsiveFigure
+        src={voices2026De}
+        alt="VOICES Berlin (DE) homepage, 2026"
+        caption="Berlin - in-person, German"
+        {...responsiveGridFigureSizing(REGIONAL_RESPONSIVE_TIERS)}
     />
-    <figcaption class="mt-2 text-sm text-muted">
-        {"The hub page that routes to each regional edition"}
-    </figcaption>
-</figure>
+    <ResponsiveFigure
+        src={voices2026En}
+        alt="VOICES Americas (NA) homepage, 2026"
+        caption="Americas - virtual"
+        {...responsiveGridFigureSizing(REGIONAL_RESPONSIVE_TIERS)}
+    />
+    <ResponsiveFigure
+        src={voices2026Emea}
+        alt="VOICES London (EMEA) homepage, 2026"
+        caption="London - in-person"
+        {...responsiveGridFigureSizing(REGIONAL_RESPONSIVE_TIERS)}
+    />
+</div>
+<ResponsiveFigure
+    src={voices2026Overview}
+    alt="VOICES region picker hub page, listing all four editions"
+    caption="The hub page that routes to each regional edition"
+    {...fullWidthFigureSizing()}
+    class="my-6"
+/>
 
 The component library is substantial: speaker lineups, multi-track agendas, registration flows, post-event recording sections, award sections, and FAQ, each built to handle all three lifecycle states. Every component handles missing-data states gracefully, so the site can go live early while speakers, agenda items, and partners are still being confirmed.
 
-<figure class="my-6">
-    <Image
-        src={voices2026Agenda}
-        alt="VOICES Americas multi-track agenda page, 2026"
-        class="rounded-xl border border-border"
-    />
-    <figcaption class="mt-2 text-sm text-muted">
-        {"The multi-track agenda component, populated for VOICES Americas 2026"}
-    </figcaption>
-</figure>
+<ResponsiveFigure
+    src={voices2026Agenda}
+    alt="VOICES Americas multi-track agenda page, 2026"
+    caption="The multi-track agenda component, populated for VOICES Americas 2026"
+    {...fullWidthFigureSizing()}
+    class="my-6"
+/>
 
 ## The YouTube API integration
 
@@ -222,18 +182,13 @@ One of the most satisfying technical pieces was automating the post-event record
 
 This is the "right tool for the job" principle applied cleanly: event recordings are a content management problem, not a development problem. Separating the concern meant the conference team could manage post-event content through YouTube directly, and the website handled the rest.
 
-<figure class="my-6">
-    <Image
-        src={voices2026Recordings}
-        alt="VOICES Americas recordings page, the after-event lifecycle state, 2026"
-        class="rounded-xl border border-border"
-    />
-    <figcaption class="mt-2 text-sm text-muted">
-        {
-            "The after-event state - recordings populated automatically from YouTube"
-        }
-    </figcaption>
-</figure>
+<ResponsiveFigure
+    src={voices2026Recordings}
+    alt="VOICES Americas recordings page, the after-event lifecycle state, 2026"
+    caption="The after-event state - recordings populated automatically from YouTube"
+    {...fullWidthFigureSizing()}
+    class="my-6"
+/>
 
 ## Consistency through change
 
