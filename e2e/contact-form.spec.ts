@@ -70,6 +70,46 @@ test.describe('Contact form', () => {
         ).not.toHaveAttribute('role', 'alert')
     })
 
+    test('re-announces the summary alert when a second failed attempt has the same error count', async ({
+        page,
+    }) => {
+        // Regression check: a same-text update to a role="alert" node
+        // doesn't trigger a fresh DOM mutation for React to reconcile, so a
+        // second failed attempt with the same error count (but a different
+        // field) previously went un-announced. The summary is now keyed on
+        // the submit-attempt count so it remounts every failed attempt --
+        // verified here by tagging the DOM node and confirming it's gone
+        // after the second attempt, not just that the text still matches.
+        await gotoAndWaitForContactFormHydration(page)
+
+        await page.locator('#contact-name').fill('Test User')
+        await page.locator('#contact-message').fill('Hello there')
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await expect(page.getByRole('alert')).toHaveText(
+            '1 field needs attention.',
+        )
+
+        await page.evaluate(() => {
+            document
+                .querySelector('[role="alert"]')
+                ?.setAttribute('data-marker', 'first-attempt')
+        })
+
+        await page.locator('#contact-email').fill('test@example.com')
+        await page.locator('#contact-name').fill('')
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+
+        await expect(page.getByRole('alert')).toHaveText(
+            '1 field needs attention.',
+        )
+        const marker = await page.evaluate(() =>
+            document
+                .querySelector('[role="alert"]')
+                ?.getAttribute('data-marker'),
+        )
+        expect(marker).toBeNull()
+    })
+
     test('an invalid email shows a validation error instead of "required"', async ({
         page,
     }) => {

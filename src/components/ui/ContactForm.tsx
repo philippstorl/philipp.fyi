@@ -33,7 +33,13 @@ export default function ContactForm() {
     const successRef = useRef<HTMLDivElement>(null)
     const [status, setStatus] = useState<FormStatus>('idle')
     const [errors, setErrors] = useState<FieldErrors>({})
-    const [errorSummary, setErrorSummary] = useState<string | null>(null)
+    // Bumped on every failed submit attempt and used as the summary alert's
+    // React key, so it remounts (and gets re-announced) even when a second
+    // failed attempt happens to produce the same error count/text as the
+    // first — a same-text update alone wouldn't trigger a DOM mutation for
+    // React to re-announce.
+    const [submitAttempt, setSubmitAttempt] = useState(0)
+    const errorCount = Object.keys(errors).length
 
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
@@ -57,19 +63,13 @@ export default function ContactForm() {
         const data = new FormData(form)
 
         const fieldErrors = validate(data)
-        const fieldErrorCount = Object.keys(fieldErrors).length
-        if (fieldErrorCount > 0) {
+        if (Object.keys(fieldErrors).length > 0) {
             setErrors(fieldErrors)
-            setErrorSummary(
-                fieldErrorCount === 1
-                    ? '1 field needs attention.'
-                    : `${fieldErrorCount} fields need attention.`,
-            )
+            setSubmitAttempt((n) => n + 1)
             return
         }
 
         setErrors({})
-        setErrorSummary(null)
         setStatus('submitting')
 
         try {
@@ -144,10 +144,15 @@ export default function ContactForm() {
 
             {/* Single assertive summary instead of a role="alert" per field —
             three simultaneous alerts compete with each other and with the
-            focus-move announcement that follows a tick later. */}
-            {errorSummary && (
-                <p role="alert" className="sr-only">
-                    {errorSummary}
+            focus-move announcement that follows a tick later. Keyed on
+            submitAttempt so a second failed attempt with the same error
+            count still remounts (and gets re-announced) rather than bailing
+            out on an unchanged text node. */}
+            {errorCount > 0 && (
+                <p key={submitAttempt} role="alert" className="sr-only">
+                    {errorCount === 1
+                        ? '1 field needs attention.'
+                        : `${errorCount} fields need attention.`}
                 </p>
             )}
 
