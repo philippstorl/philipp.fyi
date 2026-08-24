@@ -202,19 +202,50 @@ const pathname = Astro.url.pathname
     const iconMenu = document.getElementById('icon-menu')
     const iconClose = document.getElementById('icon-close')
 
+    function openMenu() {
+        nav?.classList.remove('hidden')
+        toggle?.setAttribute('aria-expanded', 'true')
+        iconMenu?.classList.add('hidden')
+        iconClose?.classList.remove('hidden')
+    }
+
+    function closeMenu({ focusToggle = false } = {}) {
+        nav?.classList.add('hidden')
+        toggle?.setAttribute('aria-expanded', 'false')
+        iconMenu?.classList.remove('hidden')
+        iconClose?.classList.add('hidden')
+        if (focusToggle) toggle?.focus()
+    }
+
+    function isMenuOpen() {
+        return !nav?.classList.contains('hidden')
+    }
+
     toggle?.addEventListener('click', () => {
-        const isOpen = nav?.classList.toggle('hidden') === false
-        toggle.setAttribute('aria-expanded', String(isOpen))
-        iconMenu?.classList.toggle('hidden', isOpen)
-        iconClose?.classList.toggle('hidden', !isOpen)
+        if (isMenuOpen()) closeMenu()
+        else openMenu()
     })
 
     nav?.querySelectorAll('a').forEach((link) => {
-        link.addEventListener('click', () => {
-            nav.classList.add('hidden')
-            toggle?.setAttribute('aria-expanded', 'false')
-            iconMenu?.classList.remove('hidden')
-            iconClose?.classList.add('hidden')
-        })
+        link.addEventListener('click', () => closeMenu())
+    })
+
+    // ARIA Authoring Practices Guide's disclosure pattern expects both of
+    // these for an open menu: Escape closes it (and returns focus to the
+    // button that opened it, matching APG guidance), and a click/tap
+    // anywhere outside it closes it too, without stealing focus from
+    // wherever the user just clicked.
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && isMenuOpen()) {
+            closeMenu({ focusToggle: true })
+        }
+    })
+
+    document.addEventListener('click', (event) => {
+        if (!isMenuOpen()) return
+        const target = event.target as Node
+        if (!nav?.contains(target) && !toggle?.contains(target)) {
+            closeMenu()
+        }
     })
 </script>

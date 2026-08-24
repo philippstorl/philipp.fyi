@@ -119,6 +119,43 @@ test.describe('Navigation', () => {
         await expect(page.locator('html')).toHaveClass(/dark/)
     })
 
+    test('mobile nav closes on Escape and returns focus to the toggle', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+
+        await page.keyboard.press('Escape')
+        await expect(page.locator('#mobile-nav')).toBeHidden()
+        await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
+        await expect(mobileToggle).toBeFocused()
+    })
+
+    test('mobile nav closes when clicking outside it', async ({ page }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+
+        // A spot outside both the toggle and the open menu -- not a link, so
+        // it doesn't also trigger a navigation.
+        await page.locator('#main-content').click({ position: { x: 5, y: 5 } })
+        await expect(page.locator('#mobile-nav')).toBeHidden()
+        await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
+    })
+
     test('skip link moves keyboard focus to main content', async ({ page }) => {
         await page.goto('/')
         await page.keyboard.press('Tab')
