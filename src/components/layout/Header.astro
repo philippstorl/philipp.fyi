@@ -217,8 +217,15 @@ const pathname = Astro.url.pathname
         if (focusToggle) toggle?.focus()
     }
 
+    // Checks nav's actual computed display, not just the JS-toggled
+    // `hidden` class -- nav also carries `md:hidden`, so a resize/rotation
+    // past that breakpoint while the menu was open would otherwise leave
+    // isMenuOpen() reporting true (class still removed) even though the
+    // menu is already CSS-hidden, making the document-level listeners
+    // below call closeMenu() on every subsequent click/keypress for the
+    // rest of the page's session.
     function isMenuOpen() {
-        return !nav?.classList.contains('hidden')
+        return !!nav && getComputedStyle(nav).display !== 'none'
     }
 
     toggle?.addEventListener('click', () => {
