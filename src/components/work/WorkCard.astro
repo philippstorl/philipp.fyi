@@ -51,8 +51,7 @@ const href = `/work/${stripContentExtension(entry.id)}/`
                     width={640}
                     height={400}
                     position="top"
-                    loading={priority ? 'eager' : 'lazy'}
-                    fetchpriority={priority ? 'high' : undefined}
+                    priority={priority}
                     class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
             </div>
