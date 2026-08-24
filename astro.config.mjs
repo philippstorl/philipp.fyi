@@ -11,15 +11,16 @@ export default defineConfig({
     security: {
         // Astro auto-hashes its own processed <script> tags for the CSP
         // allowlist, but not `is:inline` scripts (they bypass its pipeline
-        // entirely). Header.astro's pre-hydration theme-correction script
-        // needs to be `is:inline` for synchronous, pre-paint execution, so
-        // its hash is registered here by hand. If that script's content
-        // ever changes, recompute this hash (`openssl dgst -sha256 -binary
-        // <file> | openssl base64`, over the exact text between the
-        // <script>/</script> tags in the built dist/index.html) or the
-        // script will be silently blocked by CSP in production — verify
-        // with `npm run build && npx netlify serve` afterward, since this
-        // only surfaces at runtime, never in `npm run lint`/`typecheck`.
+        // entirely). ThemeToggle.astro's pre-paint theme-button-correction
+        // script needs to be `is:inline` for synchronous, pre-paint
+        // execution, so its hash is registered here by hand. If that
+        // script's content ever changes, recompute this hash (`openssl
+        // dgst -sha256 -binary <file> | openssl base64`, over the exact
+        // text between the <script>/</script> tags in the built
+        // dist/index.html) or the script will be silently blocked by CSP
+        // in production — verify with `npm run build && npx netlify serve`
+        // afterward, since this only surfaces at runtime, never in
+        // `npm run lint`/`typecheck`.
         //
         // `resources` adds `data:` alongside `'self'` (setting `resources`
         // replaces Astro's default `'self'`-only source list, so `'self'`
@@ -37,7 +38,7 @@ export default defineConfig({
         csp: {
             scriptDirective: {
                 resources: ["'self'", 'data:'],
-                hashes: ['sha256-wVZRUouTil3YKZr+95pA0pv93LmFxrl+ODZY0y8QIQ4='],
+                hashes: ['sha256-IRaG082Oqalg5nWJ3yQUo4NGnPeCzDqF/rvDL4QO65M='],
             },
         },
     },

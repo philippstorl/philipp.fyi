@@ -17,14 +17,15 @@ export default tseslint.config(
     },
 
     // Catches rules-of-hooks violations and missing-dependency bugs in the
-    // two React islands (ContactForm.tsx, ThemeToggle.tsx) — nothing else
-    // in this repo lints hook usage. Scoped to .tsx since Astro components
-    // don't use React hooks. Deliberately only these two rules, not the
-    // plugin's full `recommended-latest` config — v7 bundles a much larger,
-    // React-Compiler-oriented rule set (purity, set-state-in-effect, etc.)
-    // that immediately flags real, working code in ThemeToggle.tsx and
+    // sole remaining React island (ContactForm.tsx) — nothing else in this
+    // repo lints hook usage. Scoped to .tsx since Astro components don't
+    // use React hooks. Deliberately only these two rules, not the plugin's
+    // full `recommended-latest` config — v7 bundles a much larger, React-
+    // Compiler-oriented rule set (purity, set-state-in-effect, etc.) that
+    // immediately flagged real, working code in the ThemeToggle island this
+    // config was originally scoped for (since removed, issue #187) and
     // would need broader behavioral changes to satisfy, well beyond what
-    // this issue asked for.
+    // the issue that added this config asked for.
     {
         files: ['**/*.tsx'],
         plugins: { 'react-hooks': reactHooks },
