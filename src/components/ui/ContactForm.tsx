@@ -8,20 +8,39 @@ interface FieldErrors {
     message?: string
 }
 
+// Shared by validate() (all fields, on submit) and handleFieldChange (one
+// field, on correction) so the two can't drift into different rules for the
+// same field — email in particular has two distinct error states (empty vs.
+// non-empty-but-malformed) that a "just check non-empty" shortcut would get
+// wrong for the second case.
+function validateField(
+    field: keyof FieldErrors,
+    rawValue: string,
+): string | undefined {
+    const value = rawValue.trim()
+    switch (field) {
+        case 'name':
+            return value ? undefined : 'Name is required.'
+        case 'email':
+            if (!value) return 'Email is required.'
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                return 'Please enter a valid email address.'
+            }
+            return undefined
+        case 'message':
+            return value ? undefined : 'Message is required.'
+    }
+}
+
 function validate(data: FormData): FieldErrors {
     const errors: FieldErrors = {}
-    const name = (data.get('name') as string | null)?.trim() ?? ''
-    const email = (data.get('email') as string | null)?.trim() ?? ''
-    const message = (data.get('message') as string | null)?.trim() ?? ''
-
-    if (!name) errors.name = 'Name is required.'
-    if (!email) {
-        errors.email = 'Email is required.'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errors.email = 'Please enter a valid email address.'
+    for (const field of ['name', 'email', 'message'] as const) {
+        const error = validateField(
+            field,
+            (data.get(field) as string | null) ?? '',
+        )
+        if (error) errors[field] = error
     }
-    if (!message) errors.message = 'Message is required.'
-
     return errors
 }
 
@@ -40,6 +59,12 @@ export default function ContactForm() {
     // React to re-announce.
     const [submitAttempt, setSubmitAttempt] = useState(0)
     const errorCount = Object.keys(errors).length
+    // Set only by handleSubmit, and only when it sets errors — distinguishes
+    // "errors changed because of a submit" (should move focus) from "errors
+    // changed because handleFieldChange cleared one field's error while the
+    // user is still typing in it" (must not move focus, or correcting one
+    // field would yank focus to another still-erroring field mid-keystroke).
+    const focusOnNextErrorRef = useRef(false)
 
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
@@ -51,6 +76,8 @@ export default function ContactForm() {
     // submit handler would move focus a render early, while the DOM still
     // reflects the previous (valid) state.
     useEffect(() => {
+        if (!focusOnNextErrorRef.current) return
+        focusOnNextErrorRef.current = false
         if (errors.name) nameInputRef.current?.focus()
         else if (errors.email) emailInputRef.current?.focus()
         else if (errors.message) messageInputRef.current?.focus()
@@ -58,13 +85,13 @@ export default function ContactForm() {
 
     // Clears a field's stale error as soon as the user corrects it, rather
     // than leaving it visible until the next full submit-and-revalidate.
-    // Doesn't re-run validate() on every keystroke — just drops the error
-    // once the field is no longer empty, which is enough to stop the form
-    // from reading as "still broken" after the user has fixed it.
+    // Re-validates just that one field (not the whole form) so an email
+    // that's non-empty but still malformed doesn't get its error cleared
+    // by presence alone.
     const handleFieldChange =
         (field: keyof FieldErrors) =>
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-            if (!errors[field] || !e.target.value.trim()) return
+            if (!errors[field] || validateField(field, e.target.value)) return
             setErrors((prev) => {
                 const next = { ...prev }
                 delete next[field]
@@ -80,6 +107,7 @@ export default function ContactForm() {
 
         const fieldErrors = validate(data)
         if (Object.keys(fieldErrors).length > 0) {
+            focusOnNextErrorRef.current = true
             setErrors(fieldErrors)
             setSubmitAttempt((n) => n + 1)
             return

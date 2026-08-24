@@ -147,6 +147,47 @@ test.describe('Contact form', () => {
         )
     })
 
+    test('correcting one field does not steal focus to another still-erroring field', async ({
+        page,
+    }) => {
+        // Regression check: clearing one field's error via handleFieldChange
+        // also changes the `errors` object the submit-time focus effect
+        // depends on, which used to re-run and yank focus to the next
+        // erroring field mid-correction.
+        await gotoAndWaitForContactFormHydration(page)
+
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await expect(page.locator('#contact-name')).toBeFocused()
+
+        await page.locator('#contact-name').fill('Test User')
+        await expect(page.locator('#contact-name')).toBeFocused()
+    })
+
+    test('an email error only clears once the email is actually valid, not just non-empty', async ({
+        page,
+    }) => {
+        // Regression check: handleFieldChange used to clear any field's
+        // error as soon as it was non-empty, which wrongly cleared the
+        // email-format error for a still-malformed, merely non-empty value.
+        await gotoAndWaitForContactFormHydration(page)
+
+        await page.locator('#contact-name').fill('Test User')
+        await page.locator('#contact-email').fill('not-an-email')
+        await page.locator('#contact-message').fill('Hello there')
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await expect(page.locator('#contact-email-error')).toHaveText(
+            'Please enter a valid email address.',
+        )
+
+        await page.locator('#contact-email').fill('still-not-an-email')
+        await expect(page.locator('#contact-email-error')).toHaveText(
+            'Please enter a valid email address.',
+        )
+
+        await page.locator('#contact-email').fill('test@example.com')
+        await expect(page.locator('#contact-email-error')).toBeHidden()
+    })
+
     test('a failed submission shows the error banner', async ({ page }) => {
         await gotoAndWaitForContactFormHydration(page)
         await page.route('/', (route) =>
