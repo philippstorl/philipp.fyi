@@ -97,6 +97,10 @@ function normalize(raw: unknown): NormalizedViolation {
     }
 }
 
+function truncateField(value: string): string {
+    return truncateForSlack(value, MAX_FIELD_LENGTH, '… (truncated)')
+}
+
 function summarize(
     violation: NormalizedViolation,
     record: unknown,
@@ -105,16 +109,16 @@ function summarize(
     return [
         ':rotating_light: CSP violation on philipp.fyi',
         violation.violatedDirective
-            ? `*Directive:* ${truncateForSlack(violation.violatedDirective, MAX_FIELD_LENGTH, '… (truncated)')}`
+            ? `*Directive:* ${truncateField(violation.violatedDirective)}`
             : null,
         violation.blockedUri
-            ? `*Blocked:* ${truncateForSlack(violation.blockedUri, MAX_FIELD_LENGTH, '… (truncated)')}`
+            ? `*Blocked:* ${truncateField(violation.blockedUri)}`
             : null,
         violation.documentUri
-            ? `*Page:* ${truncateForSlack(violation.documentUri, MAX_FIELD_LENGTH, '… (truncated)')}`
+            ? `*Page:* ${truncateField(violation.documentUri)}`
             : null,
         violation.disposition
-            ? `*Disposition:* ${truncateForSlack(violation.disposition, MAX_FIELD_LENGTH, '… (truncated)')}`
+            ? `*Disposition:* ${truncateField(violation.disposition)}`
             : null,
         blobsUrl ? `*Blobs store:* ${blobsUrl}` : null,
         formatJsonBlock(record),
