@@ -56,6 +56,22 @@ export default function ContactForm() {
         else if (errors.message) messageInputRef.current?.focus()
     }, [errors])
 
+    // Clears a field's stale error as soon as the user corrects it, rather
+    // than leaving it visible until the next full submit-and-revalidate.
+    // Doesn't re-run validate() on every keystroke — just drops the error
+    // once the field is no longer empty, which is enough to stop the form
+    // from reading as "still broken" after the user has fixed it.
+    const handleFieldChange =
+        (field: keyof FieldErrors) =>
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            if (!errors[field] || !e.target.value.trim()) return
+            setErrors((prev) => {
+                const next = { ...prev }
+                delete next[field]
+                return next
+            })
+        }
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (status === 'submitting') return
@@ -168,6 +184,7 @@ export default function ContactForm() {
                         name="name"
                         type="text"
                         autoComplete="name"
+                        onChange={handleFieldChange('name')}
                         aria-required="true"
                         aria-describedby={
                             errors.name ? 'contact-name-error' : undefined
@@ -194,6 +211,7 @@ export default function ContactForm() {
                         name="email"
                         type="email"
                         autoComplete="email"
+                        onChange={handleFieldChange('email')}
                         aria-required="true"
                         aria-describedby={
                             errors.email ? 'contact-email-error' : undefined
@@ -219,6 +237,7 @@ export default function ContactForm() {
                         id="contact-message"
                         name="message"
                         rows={5}
+                        onChange={handleFieldChange('message')}
                         aria-required="true"
                         aria-describedby={
                             errors.message ? 'contact-message-error' : undefined

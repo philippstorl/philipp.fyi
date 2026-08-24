@@ -126,6 +126,27 @@ test.describe('Contact form', () => {
         await expect(page.locator('#contact-email')).toBeFocused()
     })
 
+    test('a field error clears as soon as the user corrects it', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await expect(page.locator('#contact-name-error')).toHaveText(
+            'Name is required.',
+        )
+        await expect(page.locator('#contact-email-error')).toHaveText(
+            'Email is required.',
+        )
+
+        await page.locator('#contact-name').fill('Test User')
+        await expect(page.locator('#contact-name-error')).toBeHidden()
+        // Correcting one field doesn't touch the others' still-stale errors.
+        await expect(page.locator('#contact-email-error')).toHaveText(
+            'Email is required.',
+        )
+    })
+
     test('a failed submission shows the error banner', async ({ page }) => {
         await gotoAndWaitForContactFormHydration(page)
         await page.route('/', (route) =>
