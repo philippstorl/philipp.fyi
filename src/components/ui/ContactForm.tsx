@@ -33,6 +33,7 @@ export default function ContactForm() {
     const successRef = useRef<HTMLDivElement>(null)
     const [status, setStatus] = useState<FormStatus>('idle')
     const [errors, setErrors] = useState<FieldErrors>({})
+    const [errorSummary, setErrorSummary] = useState<string | null>(null)
 
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
@@ -56,12 +57,19 @@ export default function ContactForm() {
         const data = new FormData(form)
 
         const fieldErrors = validate(data)
-        if (Object.keys(fieldErrors).length > 0) {
+        const fieldErrorCount = Object.keys(fieldErrors).length
+        if (fieldErrorCount > 0) {
             setErrors(fieldErrors)
+            setErrorSummary(
+                fieldErrorCount === 1
+                    ? '1 field needs attention.'
+                    : `${fieldErrorCount} fields need attention.`,
+            )
             return
         }
 
         setErrors({})
+        setErrorSummary(null)
         setStatus('submitting')
 
         try {
@@ -134,6 +142,15 @@ export default function ContactForm() {
                 <input name="bot-field" tabIndex={-1} autoComplete="off" />
             </div>
 
+            {/* Single assertive summary instead of a role="alert" per field —
+            three simultaneous alerts compete with each other and with the
+            focus-move announcement that follows a tick later. */}
+            {errorSummary && (
+                <p role="alert" className="sr-only">
+                    {errorSummary}
+                </p>
+            )}
+
             <div className="space-y-5">
                 <div>
                     <label htmlFor="contact-name" className={labelBase}>
@@ -155,11 +172,7 @@ export default function ContactForm() {
                         placeholder="Your name"
                     />
                     {errors.name && (
-                        <p
-                            id="contact-name-error"
-                            role="alert"
-                            className={errorBase}
-                        >
+                        <p id="contact-name-error" className={errorBase}>
                             {errors.name}
                         </p>
                     )}
@@ -185,11 +198,7 @@ export default function ContactForm() {
                         placeholder="your@email.com"
                     />
                     {errors.email && (
-                        <p
-                            id="contact-email-error"
-                            role="alert"
-                            className={errorBase}
-                        >
+                        <p id="contact-email-error" className={errorBase}>
                             {errors.email}
                         </p>
                     )}
@@ -214,11 +223,7 @@ export default function ContactForm() {
                         placeholder="What's on your mind?"
                     />
                     {errors.message && (
-                        <p
-                            id="contact-message-error"
-                            role="alert"
-                            className={errorBase}
-                        >
+                        <p id="contact-message-error" className={errorBase}>
                             {errors.message}
                         </p>
                     )}
