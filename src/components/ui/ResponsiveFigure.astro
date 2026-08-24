@@ -5,12 +5,8 @@ import ResponsiveImage, {
     type ResponsiveImageSizing,
 } from './ResponsiveImage.astro'
 
-// A lightbox "enlarge" is a deliberate, on-demand view, not the byte-budget
-// concern the inline responsive image exists to solve — but it still
-// shouldn't force a full, unbounded re-encode of a multi-thousand-pixel
-// source at build time. 2560 matches Astro's own largest built-in
-// responsive-image breakpoint and comfortably exceeds any real viewport the
-// lightbox's own max-h-full/max-w-full display will ever show it at.
+// Caps the lightbox's own re-encode instead of shipping a source at full native
+// resolution — 2560 matches Astro's largest built-in responsive-image breakpoint.
 const LIGHTBOX_MAX_WIDTH = 2560
 
 type Props = {

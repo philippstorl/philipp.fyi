@@ -31,12 +31,7 @@ const creativeWorkSchema = buildCreativeWorkSchema({
 ---
 
 {
-    /*
-    This container's width (max-w-3xl px-6) is hardcoded again as pixel
-    constants in src/utils/content-image-sizing.ts (CONTAINER_CAP_PX/
-    CONTAINER_CAP_BREAKPOINT/CONTAINER_PADDING_PX) for every case-study
-    figure's sizes/widths math — keep both in sync if this class changes.
-*/
+    /* This container's width is re-hardcoded as pixel constants in content-image-sizing.ts — keep both in sync if this class changes. */
 }
 <div class="mx-auto max-w-3xl px-6 py-24">
     <JsonLd data={creativeWorkSchema} />

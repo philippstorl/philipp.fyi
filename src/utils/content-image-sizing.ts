@@ -1,16 +1,7 @@
-// Sizing helpers for figures inside the case-study/blog prose column
-// (CaseStudyLayout.astro's `mx-auto max-w-3xl px-6` container — see the
-// comment on that div, kept in sync with the constants below: 720px content
-// width once the viewport itself reaches 768px — Tailwind's global
-// box-sizing:border-box means max-w-3xl's 768px max-width already includes
-// the px-6 padding, it isn't added on top of it). Below that breakpoint the
-// container is fluid, so every figure here — even one inside a grid whose
-// column count never changes — genuinely shrinks with the viewport. A
-// `sizes` value that only ever states the desktop pixel width (as an
-// earlier version of these case studies did) makes a device with a smaller
-// real box fetch a larger srcset candidate than it needs, purely because
-// pixel-density srcset (`densities`) has no way to know the box shrank.
-// These helpers compute an accurate `sizes`/`widths` pair instead.
+// Sizing helpers for figures in the case-study prose column (CaseStudyLayout.astro's
+// max-w-3xl px-6 container — keep the constants below in sync with that class). Below
+// 768px the container is fluid, so `sizes`/`widths` must reflect the real shrinking
+// box width, not just the capped desktop value.
 
 const CONTAINER_CAP_PX = 720
 const CONTAINER_CAP_BREAKPOINT = 768
@@ -28,15 +19,8 @@ interface SizeTier {
     expr: string
 }
 
-// 1x/2x/3x of `base`. Deliberately unclamped against any source's native
-// width — Astro's own `getSrcSet()` (services/service.js) already filters
-// any `widths` array down to the source's native width and pushes that
-// native width back in as a fallback if every candidate would otherwise
-// exceed it, for any locally-imported image. A from-scratch clamp here would
-// be a second copy of the same logic to keep in sync for no benefit, and
-// these helpers have no per-image input to clamp against in the first place
-// — they're pure functions of layout geometry (column count / fixed width),
-// not of any particular source image.
+// 1x/2x/3x of `base`, unclamped — Astro's own getSrcSet() already clamps `widths`
+// to the source's native width, so there's nothing to clamp against here.
 function widthLadder(base: number): number[] {
     return [base, base * 2, base * 3]
 }
@@ -54,11 +38,8 @@ function columnFluidExpr(columns: number): string {
         : `calc((100vw - ${gutter}px) / ${columns})`
 }
 
-// Builds a CSS `sizes` attribute from a list of `(min-width: N) expr`
-// conditions plus a final unconditional fallback. Sorts `tiers` by
-// `minWidth` descending itself rather than trusting callers to pass them in
-// order — a `sizes` attribute matches its first satisfied condition, so a
-// wrong order silently changes which value wins at a given viewport.
+// Sorts by minWidth descending before joining — `sizes` matches its first
+// satisfied condition, so a wrong order silently picks the wrong value.
 function buildSizesAttr(tiers: SizeTier[], fallbackExpr: string): string {
     const sorted = [...tiers].sort((a, b) => b.minWidth - a.minWidth)
     return [
@@ -67,14 +48,8 @@ function buildSizesAttr(tiers: SizeTier[], fallbackExpr: string): string {
     ].join(', ')
 }
 
-// Combining multiple tiers' own 1x/2x/3x ladders can land two candidates
-// within a few percent of each other (e.g. 704px and 720px) — each still
-// costs a full separate build-time encode for no real browser-selection
-// benefit. Drops a candidate whenever another survives within `threshold` of
-// it — this can drop a tier's own exact value in favor of a close neighbor
-// from a different tier (not "only ever removes true duplicates"), which is
-// fine: `threshold` (24px, a few percent of any real width here) is chosen
-// specifically to be well under any perceptible quality difference.
+// Drops a candidate within `threshold` px of another, to avoid a separate
+// build-time encode for two srcset widths a browser would never tell apart.
 function mergeCloseWidths(widths: number[], threshold = 24): number[] {
     const sorted = [...widths].sort((a, b) => a - b)
     const merged: number[] = []
@@ -89,41 +64,23 @@ function mergeCloseWidths(widths: number[], threshold = 24): number[] {
     return merged
 }
 
-/**
- * `tiers` for `responsiveGridFigureSizing`, exported so a call site that
- * reuses the same tier shape across several figures (e.g. several images in
- * one MDX file) can name it as a typed constant instead of repeating the
- * array literal — written as a named export rather than derived inline via
- * `Parameters<typeof ...>` at the call site, since MDX's body parser reads
- * `<` as the start of a JSX tag and chokes on TypeScript generic syntax
- * there (confirmed: `Parameters<typeof fn>` broke the MDX build with
- * "Expected a closing tag for `<typeof>`").
- */
+// Tiers for responsiveGridFigureSizing. A named export rather than a `Parameters<typeof ...>`
+// derivation at the call site — MDX's body parser reads `<` as a JSX tag and chokes on generics.
 export type ResponsiveGridTiers = [
     { minWidth: number; columns: number },
     ...{ minWidth: number; columns: number }[],
     { columns: number },
 ]
 
-// The fallback tier's own `sizes` condition (no `minWidth`) only ever wins
-// below the narrowest real tier's breakpoint, where the container is fluid
-// and never reaches that tier's full `columnWidth()` — using `columnWidth()`
-// as the fallback's own ladder base would generate 2x/3x candidates no
-// viewport in its actual active range could ever request. Caps the
-// fallback's base at the narrowest real tier's own breakpoint (minus the
-// container padding) instead, the true upper bound of its fluid width; every
-// other tier's ladder is unaffected.
+// Caps the fallback tier's own width ladder at the narrowest real tier's breakpoint,
+// not columnWidth(1) — the fallback only wins below that point, where the container
+// hasn't reached its capped width yet, so a ladder based on the capped width would
+// include candidates no browser in that range could ever request.
 function responsiveWidths(
     realTiers: { minWidth: number; columns: number }[],
     fallback: { columns: number },
 ): number[] {
-    // `Math.min` over every real tier's own `minWidth`, not just the last
-    // array element — `ResponsiveGridTiers`' type only enforces shape, not
-    // that tiers are actually ordered widest-first, and `buildSizesAttr`
-    // (below) already treats that ordering as a courtesy rather than a
-    // guarantee by sorting for itself. Trusting element position here would
-    // silently cap the fallback ladder from the wrong breakpoint for any
-    // future tier constant that isn't listed in strict descending order.
+    // Math.min over every tier, not array position — ordering isn't guaranteed.
     const narrowestRealTierMinWidth = Math.min(
         ...realTiers.map((tier) => tier.minWidth),
     )
@@ -142,10 +99,9 @@ function responsiveWidths(
 }
 
 /**
- * A figure inside a grid whose column count itself changes across
- * breakpoints (`sm:`/`lg:` column-count utilities). `tiers` are ordered
- * widest-condition-first; the last tier is the sub-`sm:` fallback and takes
- * no `minWidth`.
+ * A figure inside a grid whose column count itself changes across breakpoints
+ * (`sm:`/`lg:`). `tiers` are ordered widest-condition-first; the last tier is
+ * the sub-`sm:` fallback and takes no `minWidth`.
  */
 export function responsiveGridFigureSizing(
     tiers: ResponsiveGridTiers,
@@ -157,11 +113,8 @@ export function responsiveGridFigureSizing(
     )
     const sizeTiers: SizeTier[] = realTiers.flatMap((tier) => {
         const width = columnWidth(tier.columns)
-        // A tier's own breakpoint can fire before the container has
-        // actually reached its 768px cap (e.g. `sm:` at 640px) — the
-        // container is still fluid for that stretch, so the fixed pixel
-        // width is only correct from 768px up. Below that, this tier's
-        // column count needs the fluid formula instead.
+        // A tier's own breakpoint can fire before the container reaches its
+        // 768px cap, so the range below that still needs the fluid formula.
         if (tier.minWidth >= CONTAINER_CAP_BREAKPOINT) {
             return [{ minWidth: tier.minWidth, expr: `${width}px` }]
         }
@@ -170,9 +123,7 @@ export function responsiveGridFigureSizing(
             { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
         ]
     })
-    // The displayed `width` should reflect the widest real tier's column
-    // count, not `tiers[0]` — the same ordering assumption `responsiveWidths`
-    // and `buildSizesAttr` already refuse to trust from array position alone.
+    // Widest real tier by minWidth, not tiers[0] — order isn't guaranteed.
     const widestRealTier = realTiers.reduce((widest, tier) =>
         tier.minWidth > widest.minWidth ? tier : widest,
     )
@@ -183,7 +134,7 @@ export function responsiveGridFigureSizing(
     }
 }
 
-/** A figure inside a grid whose column count is the same at every breakpoint (including a single-column, full-width figure at `columns: 1`). Delegates to `responsiveGridFigureSizing` with a single always-on tier rather than reimplementing the same "cap at 768px, go fluid below it" math a second time. */
+/** A figure inside a grid whose column count never changes (`columns: 1` is a standalone full-width figure). Delegates to `responsiveGridFigureSizing` with one always-on tier. */
 export function gridFigureSizing(columns: 1 | 2 | 3): FigureSizing {
     return responsiveGridFigureSizing([
         { minWidth: CONTAINER_CAP_BREAKPOINT, columns },
@@ -197,13 +148,9 @@ export function fullWidthFigureSizing(): FigureSizing {
 }
 
 /**
- * A standalone figure with its own explicit display width, narrower than
- * the full column (e.g. a centered mobile screenshot). Pass `row` when two
- * or more of these sit side by side above a breakpoint (e.g. inside a
- * `flex-col sm:flex-row` wrapper) — without it, `sizes` assumes this figure
- * is the only occupant of its row at every viewport, which understates the
- * real squeeze once siblings share the row but haven't yet reached their
- * full width.
+ * A figure with its own explicit width, narrower than the column. Pass `row`
+ * when siblings share a row above a breakpoint, so `sizes` accounts for the
+ * squeeze before they all reach full width.
  */
 export function fixedWidthFigureSizing(
     width: number,
@@ -218,10 +165,7 @@ export function fixedWidthFigureSizing(
             (row.siblings - 1) * GRID_GAP_PX +
             CONTAINER_PADDING_PX
         if (rowFixedBreakpoint > row.breakpoint) {
-            // The normal case: siblings don't all fit at their full `width`
-            // the moment the row starts sharing (row.breakpoint) — there's a
-            // real squeezed range in between where the fluid formula applies,
-            // before `rowFixedBreakpoint` where they do all fit.
+            // Siblings squeeze fluidly until rowFixedBreakpoint, where they fit at full width.
             tiers.push(
                 { minWidth: rowFixedBreakpoint, expr: `${width}px` },
                 {
@@ -230,11 +174,7 @@ export function fixedWidthFigureSizing(
                 },
             )
         } else {
-            // Degenerate case: the siblings already fit at their full width
-            // as soon as the row starts sharing — there's no squeezed range,
-            // so no fluid tier is needed (adding one anyway would put it
-            // *above* the fixed tier in sort order, since it'd have the
-            // larger minWidth, and wrongly win for every wider viewport too).
+            // Degenerate case: siblings already fit at full width the moment the row shares.
             tiers.push({ minWidth: row.breakpoint, expr: `${width}px` })
         }
     }
@@ -245,18 +185,8 @@ export function fixedWidthFigureSizing(
     }
 }
 
-// Named `responsiveGridFigureSizing` tier shapes, reused across several
-// figures within a single case study (voices-conference-website.mdx today).
-// Defined here rather than as `export const`s inside the MDX file itself —
-// MDX file bodies aren't real TypeScript: `astro check` doesn't type-check
-// expressions there at all (confirmed by intentionally breaking a tier
-// object's shape in an MDX-local constant — it passed `npm run typecheck`
-// AND `npm run build` with zero errors, then silently shipped a broken
-// `sizes="...calc((100vw - NaNpx) / undefined)..."` into production HTML).
-// A constant declared here, by contrast, is checked against
-// `ResponsiveGridTiers` like any other TypeScript value — the same class of
-// typo (a missing `columns` field) is a compile error instead of a silent
-// runtime `NaN`.
+// Reused tier shapes for voices-conference-website.mdx. Defined here, not as MDX-local
+// consts, since `astro check` doesn't type-check expressions inside an MDX body at all.
 export const TWO_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
     { minWidth: 640, columns: 2 },
     { columns: 1 },
