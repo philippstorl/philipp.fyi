@@ -131,6 +131,10 @@ const options: ThemeOption[] = [
     // every navigation without needing to re-run on astro:page-load.
     type Theme = 'light' | 'dark' | 'system'
 
+    function isTheme(value: string | null): value is Theme {
+        return value === 'light' || value === 'dark' || value === 'system'
+    }
+
     function getStoredTheme(): Theme {
         try {
             const stored = localStorage.getItem('theme')
@@ -154,8 +158,10 @@ const options: ThemeOption[] = [
         }
     }
 
+    const buttons = document.querySelectorAll('[data-theme-value]')
+
     function setActiveButtons(theme: Theme) {
-        document.querySelectorAll('[data-theme-value]').forEach((btn) => {
+        buttons.forEach((btn) => {
             const active = btn.getAttribute('data-theme-value') === theme
             btn.setAttribute('aria-pressed', active ? 'true' : 'false')
             btn.classList.toggle('bg-accent/10', active)
@@ -168,9 +174,10 @@ const options: ThemeOption[] = [
 
     let currentTheme = getStoredTheme()
 
-    document.querySelectorAll('[data-theme-value]').forEach((btn) => {
+    buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
-            const next = btn.getAttribute('data-theme-value') as Theme
+            const next = btn.getAttribute('data-theme-value')
+            if (!isTheme(next)) return
             if (next === 'system') {
                 localStorage.removeItem('theme')
             } else {
