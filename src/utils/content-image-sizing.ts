@@ -170,8 +170,14 @@ export function responsiveGridFigureSizing(
             { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
         ]
     })
+    // The displayed `width` should reflect the widest real tier's column
+    // count, not `tiers[0]` — the same ordering assumption `responsiveWidths`
+    // and `buildSizesAttr` already refuse to trust from array position alone.
+    const widestRealTier = realTiers.reduce((widest, tier) =>
+        tier.minWidth > widest.minWidth ? tier : widest,
+    )
     return {
-        width: columnWidth(tiers[0].columns),
+        width: columnWidth(widestRealTier.columns),
         sizes: buildSizesAttr(sizeTiers, columnFluidExpr(fallback.columns)),
         widths: responsiveWidths(realTiers, fallback),
     }
