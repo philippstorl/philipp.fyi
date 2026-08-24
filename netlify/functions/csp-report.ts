@@ -31,34 +31,32 @@ function blobsStoreUrl(
 
 // This endpoint is unauthenticated by design (see the comment on the
 // handler below), so every field reaching this function is attacker-
-// controlled. Slack's mrkdwn parser treats `&`, `<`, `>` as live syntax
-// (link/mention delimiters) wherever they appear, including inside a code
-// block, so they must be escaped per Slack's own API docs before any
-// user-influenced text is sent — otherwise a crafted report can inject a
-// `<!channel>` mention or a spoofed `<url|label>` link into the alert.
-function escapeSlackText(text: string): string {
+// controlled — both the four summary lines below and the JSON block. Slack's
+// mrkdwn parser treats `&`, `<`, `>` as live syntax (link/mention delimiters)
+// wherever they appear, so they must be escaped per Slack's own API docs
+// before any user-influenced text is sent — otherwise a crafted report could
+// inject a `<!channel>` mention or a spoofed `<url|label>` link. A literal
+// run of backticks is neutralized the same way everywhere this function is
+// used, not just inside the JSON code block: three backticks in an inline
+// summary line can pair with the JSON block's own opening fence and scramble
+// every line in between, even though it can't itself deliver a live mention —
+// confirmed by manually posting a crafted report through a local Netlify Dev
+// instance and inspecting the exact payload that reached the webhook.
+function sanitizeSlackText(text: string): string {
     return text
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-}
-
-// A literal run of backticks in attacker-controlled content would otherwise
-// prematurely close the ``` fence below and let the rest of the JSON render
-// as live (escaped, but still formatted) mrkdwn instead of an inert block.
-// Swapping to a visually similar non-ASCII grave accent neutralizes that
-// without touching the JSON's actual character data.
-function neutralizeBackticks(text: string): string {
-    return text.replace(/`/g, 'ˋ')
+        .replace(/`/g, 'ˋ')
 }
 
 function formatJsonBlock(record: unknown): string {
-    const escaped = escapeSlackText(JSON.stringify(record))
+    const sanitized = sanitizeSlackText(JSON.stringify(record))
     const body =
-        escaped.length > MAX_JSON_BLOCK_LENGTH
-            ? `${escaped.slice(0, MAX_JSON_BLOCK_LENGTH)}\n... (truncated)`
-            : escaped
-    return `\`\`\`\n${neutralizeBackticks(body)}\n\`\`\``
+        sanitized.length > MAX_JSON_BLOCK_LENGTH
+            ? `${sanitized.slice(0, MAX_JSON_BLOCK_LENGTH)}\n... (truncated)`
+            : sanitized
+    return `\`\`\`\n${body}\n\`\`\``
 }
 
 // Handles both the legacy report-uri shape ({ "csp-report": {...} }) and
@@ -91,16 +89,16 @@ function summarize(
     return [
         ':rotating_light: CSP violation on philipp.fyi',
         violation.violatedDirective
-            ? `*Directive:* ${escapeSlackText(violation.violatedDirective)}`
+            ? `*Directive:* ${sanitizeSlackText(violation.violatedDirective)}`
             : null,
         violation.blockedUri
-            ? `*Blocked:* ${escapeSlackText(violation.blockedUri)}`
+            ? `*Blocked:* ${sanitizeSlackText(violation.blockedUri)}`
             : null,
         violation.documentUri
-            ? `*Page:* ${escapeSlackText(violation.documentUri)}`
+            ? `*Page:* ${sanitizeSlackText(violation.documentUri)}`
             : null,
         violation.disposition
-            ? `*Disposition:* ${escapeSlackText(violation.disposition)}`
+            ? `*Disposition:* ${sanitizeSlackText(violation.disposition)}`
             : null,
         blobsUrl ? `*Blobs store:* ${blobsUrl}` : null,
         formatJsonBlock(record),
