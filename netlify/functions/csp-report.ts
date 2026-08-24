@@ -8,17 +8,13 @@ interface NormalizedViolation {
     disposition?: string
 }
 
-// Deliberately not imported from `@netlify/functions` (a transitive
-// devDependency of netlify-cli only, not a direct dependency — see
-// verify-netlify-signature.ts's comment on the same risk) — this is the one
-// field this function actually reads off the real Context object.
+// Not imported from @netlify/functions — that's only a transitive
+// devDependency of netlify-cli, same risk verify-netlify-signature.ts avoids.
 interface FunctionContext {
     site?: { name?: string }
 }
 
-// Slack's message text limit is far higher than either of these, but a CSP
-// report's fields are attacker-influenced input echoed back into a chat
-// message — cap them defensively rather than trust they're always small.
+// Defensive caps: every field here is attacker-controlled input echoed into Slack.
 const MAX_JSON_BLOCK_LENGTH = 3500
 const MAX_FIELD_LENGTH = 500
 
@@ -30,19 +26,9 @@ function blobsStoreUrl(
         : undefined
 }
 
-// This endpoint is unauthenticated by design (see the comment on the
-// handler below), so every field reaching this function is attacker-
-// controlled — both the four summary lines below and the JSON block. Slack's
-// mrkdwn parser treats `&`, `<`, `>` as live syntax (link/mention delimiters)
-// wherever they appear, so they must be escaped per Slack's own API docs
-// before any user-influenced text is sent — otherwise a crafted report could
-// inject a `<!channel>` mention or a spoofed `<url|label>` link. A literal
-// run of backticks is neutralized the same way everywhere this function is
-// used, not just inside the JSON code block: three backticks in an inline
-// summary line can pair with the JSON block's own opening fence and scramble
-// every line in between, even though it can't itself deliver a live mention —
-// confirmed by manually posting a crafted report through a local Netlify Dev
-// instance and inspecting the exact payload that reached the webhook.
+// Endpoint is unauthenticated, so every field is attacker-controlled: escape
+// Slack mrkdwn (&, <, >) so a crafted value can't inject a mention or a
+// spoofed link, and neutralize backticks so it can't break a code fence.
 function sanitizeSlackText(text: string): string {
     return text
         .replace(/&/g, '&amp;')
@@ -51,10 +37,8 @@ function sanitizeSlackText(text: string): string {
         .replace(/`/g, 'ˋ')
 }
 
-// Truncates by Unicode code point, not raw `.slice()` (which counts UTF-16
-// code units and can split a surrogate pair in two), and runs before
-// sanitizing so the cut can't land mid-entity inside a `&amp;`/`&lt;`/`&gt;`
-// sequence that sanitizing would otherwise introduce.
+// Truncates by code point, not `.slice()` (can split a surrogate pair), and
+// before sanitizing (can't cut mid-entity, e.g. inside `&amp;`).
 function truncateForSlack(
     text: string,
     maxLength: number,
@@ -127,11 +111,9 @@ function summarize(
         .join('\n')
 }
 
-// No X-Webhook-Signature check here, unlike deploy-notification.ts: this
-// endpoint is hit directly by browsers via the CSP report-to/report-uri
-// directives, not by a Netlify Outgoing Webhook notification, so there's no
-// Netlify-signed JWS to verify — the endpoint is unauthenticated by design,
-// same as any CSP reporting endpoint on the web (see issue #157).
+// No X-Webhook-Signature check, unlike deploy-notification.ts: this is hit
+// directly by browsers, not a signed Netlify webhook — unauthenticated by
+// design, same as any CSP reporting endpoint (see issue #157).
 export default async (
     req: Request,
     context: FunctionContext,
@@ -173,18 +155,12 @@ export default async (
 
             if (webhookUrl) {
                 try {
-                    // normalize()/summarize() have no guard of their own —
-                    // a malformed report (e.g. `null`, or a shape neither
-                    // normalize() branch expects) can throw synchronously.
-                    // Catch it here so one bad report in a batch can't
-                    // reject this whole task and abort its sibling reports'
-                    // processing along with it.
+                    // normalize()/summarize() can throw on a malformed
+                    // report — catch here so one bad report in a batch
+                    // can't abort its siblings.
                     await postToSlack(
                         webhookUrl,
-                        // Only point at the Blobs store if this record
-                        // actually made it there — otherwise the link would
-                        // send someone looking for an entry that was never
-                        // written.
+                        // Only link the Blobs store if this record was actually written.
                         summarize(
                             normalize(report),
                             record,
