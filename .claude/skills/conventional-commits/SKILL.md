@@ -29,15 +29,19 @@ Don't second-guess this for Dependabot PRs — `.github/dependabot.yml` already 
 
 This repo creates branches from GitHub issues (the "create a branch" button, or `gh issue develop`), which auto-prefixes the branch name with the issue number — e.g. branch `22-add-work-screenshots` comes from issue #22. Before opening the PR, check `git branch --show-current` for a leading number:
 
-- If there's a numeric prefix, run `gh issue view <N>` to confirm the issue exists and that this PR actually addresses it (a branch can drift from its originating issue as work evolves). If it fully addresses it, add a `Resolves #<N>` line to the PR body, above `## Summary` — the keyword and reference **must be on the same line**:
+- If there's a numeric prefix, run `gh issue view <N>` to confirm the issue exists and that this PR actually addresses it (a branch can drift from its originating issue as work evolves). If it fully addresses it, add a `Resolves` block to the PR body, above `## Summary`:
 
     ```markdown
     Resolves #<N>
+
+    - #<N>
     ```
+
+    The first line is what actually does the linking — GitHub only recognizes a closing keyword (`Resolves`, `Fixes`, `Closes`, etc.) when it's directly followed by `#<N>` **on the same line**; a `Resolves` header with the reference on a separate bulleted line underneath does not register (confirmed via `gh pr view <N> --json closingIssuesReferences` — several PRs in that older shape came back with an empty list despite matching this repo's prior precedent). The `- #<N>` bullet repeats the reference in this repo's established visual shape and is otherwise inert to GitHub's parser — keep it, but it isn't what creates the link.
 
     GitHub auto-closes the linked issue when the PR merges. If the PR only partially addresses the issue, reference it without the auto-close keyword instead (e.g. `Relates to #<N>`), so merging doesn't close something still open.
 
-    **Don't use a `Resolves` header followed by a separate `- #<N>` bullet on its own line** — this repo's own history has PRs in both shapes, and it's unreliable: confirmed via `gh pr view <N> --json closingIssuesReferences` that some PRs using the header+bullet form never actually linked (empty `closingIssuesReferences`) despite others in the exact same shape working, while every PR using the plain inline `Resolves #<N>` form links reliably. After opening (or editing) the PR, verify the link actually registered — `gh pr view <N> --json closingIssuesReferences -q '.closingIssuesReferences[].number'` should print the issue number. If it's empty, edit the body (`gh pr edit <N> --body ...`) with the inline form and re-check.
+    After opening (or editing) the PR, verify the link actually registered — `gh pr view <N> --json closingIssuesReferences -q '.closingIssuesReferences[].number'` should print the issue number. If it's empty, edit the body (`gh pr edit <N> --body ...`) and re-check.
 
 - If there's no numeric prefix, there's no issue to link — don't search open issues for a plausible match and link it speculatively. A wrong guess auto-closes the wrong issue on merge, which is worse than linking nothing.
 
@@ -46,7 +50,9 @@ This repo creates branches from GitHub issues (the "create a branch" button, or 
 Use this structure (matches existing merged PRs in this repo):
 
 ```markdown
-Resolves #<N> <!-- omit this line entirely if there's no linked issue -->
+Resolves #<N> <!-- omit this block entirely if there's no linked issue -->
+
+- #<N>
 
 ## Summary
 
