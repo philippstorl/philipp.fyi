@@ -2,20 +2,43 @@
 import { getPublishedEntries } from '@/utils/collections'
 import WorkCard from './WorkCard.astro'
 
+interface Props {
+    /**
+     * Eagerly loads the true LCP candidate at high priority instead of the
+     * lazy default every card otherwise gets: the featured card's cover
+     * (mobile, where it's visible below PageHeader) and the first "rest"
+     * card's cover (desktop, where the featured cover is CSS-hidden via
+     * showCover={false} below). Only pass this on a page where an image in
+     * this grid is actually the LCP element -- WorkSection.astro's homepage
+     * usage doesn't, since Hero.astro's <h1> is the real LCP there, and
+     * eagerly loading a work-card image on top of that would just compete
+     * for bandwidth with no LCP benefit.
+     */
+    eagerLoadFirst?: boolean
+}
+
+const { eagerLoadFirst = false } = Astro.props
+
 const entries = (await getPublishedEntries('work')).sort(
     (a, b) => a.data.order - b.data.order,
 )
 
 const [featured, ...rest] = entries
+const [firstRest, ...remainingRest] = rest
 ---
 
 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
     {
         featured && (
             <div class="md:col-span-3">
-                <WorkCard entry={featured} showCover={false} />
+                <WorkCard
+                    entry={featured}
+                    showCover={false}
+                    priority={eagerLoadFirst}
+                />
             </div>
         )
     }
-    {rest.map((entry) => <WorkCard entry={entry} />)}
+    {firstRest && <WorkCard entry={firstRest} priority={eagerLoadFirst} />}
+    {remainingRest.map((entry) => <WorkCard entry={entry} />)}
 </div>

@@ -50,6 +50,19 @@ test('work cards link to correct case study URLs', async ({ page }) => {
     expect(href).toMatch(/^\/work\/storyblok-migration\/$/)
 })
 
+test('homepage work card covers stay lazy, unlike /work/', async ({ page }) => {
+    // The homepage's LCP element is Hero's <h1> text, not a work-card
+    // image, so none of these should be eagerly loaded -- eagerLoadFirst
+    // is only passed from work/index.astro, not WorkSection.astro.
+    await page.goto('/')
+    const coverImages = page.locator('#work article img')
+    await expect(coverImages).toHaveCount(4)
+    for (const image of await coverImages.all()) {
+        await expect(image).toHaveAttribute('loading', 'lazy')
+        await expect(image).not.toHaveAttribute('fetchpriority')
+    }
+})
+
 test.describe('Work page', () => {
     test('shows heading and all 4 case studies', async ({ page }) => {
         await page.goto('/work/')
@@ -58,6 +71,33 @@ test.describe('Work page', () => {
         ).toBeVisible()
         const cards = page.locator('main article')
         await expect(cards).toHaveCount(4)
+    })
+
+    test('eagerly loads the featured and first non-featured cover images, lazily loads the rest', async ({
+        page,
+    }) => {
+        // Regression check: the true LCP candidate differs by viewport (the
+        // featured card's cover on mobile, the first non-featured card's on
+        // desktop, since the featured cover is CSS-hidden on md:+), so both
+        // need eager/high-priority loading -- everything else stays lazy.
+        await page.goto('/work/')
+        const coverImages = page.locator('main article img')
+        await expect(coverImages).toHaveCount(4)
+
+        await expect(coverImages.nth(0)).toHaveAttribute('loading', 'eager')
+        await expect(coverImages.nth(0)).toHaveAttribute(
+            'fetchpriority',
+            'high',
+        )
+        await expect(coverImages.nth(1)).toHaveAttribute('loading', 'eager')
+        await expect(coverImages.nth(1)).toHaveAttribute(
+            'fetchpriority',
+            'high',
+        )
+        await expect(coverImages.nth(2)).toHaveAttribute('loading', 'lazy')
+        await expect(coverImages.nth(2)).not.toHaveAttribute('fetchpriority')
+        await expect(coverImages.nth(3)).toHaveAttribute('loading', 'lazy')
+        await expect(coverImages.nth(3)).not.toHaveAttribute('fetchpriority')
     })
 
     test('links to About, Principles, and Recommendations', async ({
