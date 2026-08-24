@@ -8,6 +8,59 @@ interface NormalizedViolation {
     disposition?: string
 }
 
+// Deliberately not imported from `@netlify/functions` (a transitive
+// devDependency of netlify-cli only, not a direct dependency — see
+// verify-netlify-signature.ts's comment on the same risk) — this is the one
+// field this function actually reads off the real Context object.
+interface FunctionContext {
+    site?: { name?: string }
+}
+
+// Slack's message text limit is far higher than this, but a CSP report's
+// `sample`/`sourceFile` fields are attacker-influenced input echoed back
+// into a chat message — cap it defensively rather than trust it's always small.
+const MAX_JSON_BLOCK_LENGTH = 3500
+
+function blobsStoreUrl(
+    context: FunctionContext | undefined,
+): string | undefined {
+    return context?.site?.name
+        ? `https://app.netlify.com/projects/${context.site.name}/blobs/site:csp-reports`
+        : undefined
+}
+
+// This endpoint is unauthenticated by design (see the comment on the
+// handler below), so every field reaching this function is attacker-
+// controlled. Slack's mrkdwn parser treats `&`, `<`, `>` as live syntax
+// (link/mention delimiters) wherever they appear, including inside a code
+// block, so they must be escaped per Slack's own API docs before any
+// user-influenced text is sent — otherwise a crafted report can inject a
+// `<!channel>` mention or a spoofed `<url|label>` link into the alert.
+function escapeSlackText(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+}
+
+// A literal run of backticks in attacker-controlled content would otherwise
+// prematurely close the ``` fence below and let the rest of the JSON render
+// as live (escaped, but still formatted) mrkdwn instead of an inert block.
+// Swapping to a visually similar non-ASCII grave accent neutralizes that
+// without touching the JSON's actual character data.
+function neutralizeBackticks(text: string): string {
+    return text.replace(/`/g, 'ˋ')
+}
+
+function formatJsonBlock(record: unknown): string {
+    const escaped = escapeSlackText(JSON.stringify(record))
+    const body =
+        escaped.length > MAX_JSON_BLOCK_LENGTH
+            ? `${escaped.slice(0, MAX_JSON_BLOCK_LENGTH)}\n... (truncated)`
+            : escaped
+    return `\`\`\`\n${neutralizeBackticks(body)}\n\`\`\``
+}
+
 // Handles both the legacy report-uri shape ({ "csp-report": {...} }) and
 // the modern report-to/Reporting API shape ({ type, url, body: {...} }).
 function normalize(raw: unknown): NormalizedViolation {
@@ -30,17 +83,27 @@ function normalize(raw: unknown): NormalizedViolation {
     }
 }
 
-function summarize(violation: NormalizedViolation): string {
+function summarize(
+    violation: NormalizedViolation,
+    record: unknown,
+    blobsUrl: string | undefined,
+): string {
     return [
         ':rotating_light: CSP violation on philipp.fyi',
         violation.violatedDirective
-            ? `*Directive:* ${violation.violatedDirective}`
+            ? `*Directive:* ${escapeSlackText(violation.violatedDirective)}`
             : null,
-        violation.blockedUri ? `*Blocked:* ${violation.blockedUri}` : null,
-        violation.documentUri ? `*Page:* ${violation.documentUri}` : null,
+        violation.blockedUri
+            ? `*Blocked:* ${escapeSlackText(violation.blockedUri)}`
+            : null,
+        violation.documentUri
+            ? `*Page:* ${escapeSlackText(violation.documentUri)}`
+            : null,
         violation.disposition
-            ? `*Disposition:* ${violation.disposition}`
+            ? `*Disposition:* ${escapeSlackText(violation.disposition)}`
             : null,
+        blobsUrl ? `*Blobs store:* ${blobsUrl}` : null,
+        formatJsonBlock(record),
     ]
         .filter((line) => line !== null)
         .join('\n')
@@ -51,7 +114,10 @@ function summarize(violation: NormalizedViolation): string {
 // directives, not by a Netlify Outgoing Webhook notification, so there's no
 // Netlify-signed JWS to verify — the endpoint is unauthenticated by design,
 // same as any CSP reporting endpoint on the web (see issue #157).
-export default async (req: Request): Promise<Response> => {
+export default async (
+    req: Request,
+    context: FunctionContext,
+): Promise<Response> => {
     if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 })
     }
@@ -65,35 +131,44 @@ export default async (req: Request): Promise<Response> => {
 
     const reports = Array.isArray(payload) ? payload : [payload]
     const receivedAt = new Date().toISOString()
+    const userAgent = req.headers.get('user-agent')
+    const blobsUrl = blobsStoreUrl(context)
 
     const store = getStore('csp-reports')
+    const webhookUrl = process.env.SLACK_WEBHOOK_URL
+
     await Promise.all(
         reports.map(async (report) => {
+            const record = { receivedAt, userAgent, report }
+            let stored = true
+
             try {
                 // Random suffix avoids key collisions when multiple reports land in the same millisecond.
-                await store.setJSON(`${receivedAt}-${crypto.randomUUID()}`, {
-                    receivedAt,
-                    userAgent: req.headers.get('user-agent'),
-                    report,
-                })
+                await store.setJSON(
+                    `${receivedAt}-${crypto.randomUUID()}`,
+                    record,
+                )
             } catch (error) {
+                stored = false
                 console.error('Failed to write CSP report to Blobs', error)
+            }
+
+            if (webhookUrl) {
+                await postToSlack(
+                    webhookUrl,
+                    // Only point at the Blobs store if this record actually
+                    // made it there — otherwise the link would send someone
+                    // looking for an entry that was never written.
+                    summarize(
+                        normalize(report),
+                        record,
+                        stored ? blobsUrl : undefined,
+                    ),
+                    'Failed to post CSP violation to Slack',
+                )
             }
         }),
     )
-
-    const webhookUrl = process.env.SLACK_WEBHOOK_URL
-    if (webhookUrl) {
-        await Promise.all(
-            reports.map((report) =>
-                postToSlack(
-                    webhookUrl,
-                    summarize(normalize(report)),
-                    'Failed to post CSP violation to Slack',
-                ),
-            ),
-        )
-    }
 
     return new Response(null, { status: 204 })
 }
