@@ -10,10 +10,7 @@ import PrinciplesSection from '@/components/home/PrinciplesSection.astro'
 import RecommendationsSection from '@/components/home/RecommendationsSection.astro'
 import ContactSection from '@/components/home/ContactSection.astro'
 import JsonLd from '@/components/seo/JsonLd.astro'
-import {
-    getStaffbaseTenureYears,
-    getYearsOfExperience,
-} from '@/utils/experience'
+import { getPrimaryDescription } from '@/data/site'
 import { buildPersonSchema } from '@/utils/schema'
 import { toAbsoluteUrl } from '@/utils/url'
 
@@ -22,9 +19,7 @@ const personSchema = buildPersonSchema(
 )
 ---
 
-<BaseLayout
-    description={`Principal Web Developer, full-stack, DevOps, and design in one. ${getYearsOfExperience()} years building for the web, ${getStaffbaseTenureYears()} of them turning staffbase.com into a platform serving millions. Remote-first, Chemnitz / Leipzig area.`}
->
+<BaseLayout description={getPrimaryDescription()}>
     <JsonLd data={personSchema} />
     <Header />
     <Main>
