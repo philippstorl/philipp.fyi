@@ -7,12 +7,12 @@ import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { about } from '@/data/about'
 import { stack } from '@/data/stack'
-import { getPrimaryDescription } from '@/data/site'
+import { getDefaultDescription } from '@/data/site'
 ---
 
 <BaseLayout
     title="About"
-    description={getPrimaryDescription()}
+    description={getDefaultDescription()}
     ogImage="/og/about.png"
 >
     <Header />

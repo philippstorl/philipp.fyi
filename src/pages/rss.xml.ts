@@ -1,6 +1,6 @@
 import rss from '@astrojs/rss'
 import type { APIContext } from 'astro'
-import { SITE_NAME, DEFAULT_DESCRIPTION } from '@/data/site'
+import { SITE_NAME, getDefaultDescription } from '@/data/site'
 import { stripContentExtension } from '@/utils/slug'
 import { getPublishedBlogPosts } from '@/utils/blog-posts'
 
@@ -9,7 +9,7 @@ export async function GET(context: APIContext) {
 
     return rss({
         title: SITE_NAME,
-        description: DEFAULT_DESCRIPTION,
+        description: getDefaultDescription(),
         site: context.site!,
         items: posts.map((post) => ({
             title: post.data.title,

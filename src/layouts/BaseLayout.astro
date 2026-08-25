@@ -14,7 +14,7 @@ import '../styles/global.css'
 import frauncesWoff2Url from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url'
 import dmSansWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2?url'
 import dmSansRegularWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2?url'
-import { SITE_NAME, DEFAULT_DESCRIPTION } from '@/data/site'
+import { SITE_NAME, getDefaultDescription } from '@/data/site'
 import { toAbsoluteUrl } from '@/utils/url'
 
 interface Props {
@@ -29,7 +29,7 @@ interface Props {
 
 const {
     title,
-    description = DEFAULT_DESCRIPTION,
+    description = getDefaultDescription(),
     ogImage = '/og/home.png',
     ogType = 'website',
     articlePublishedTime,
