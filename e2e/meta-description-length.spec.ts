@@ -1,15 +1,10 @@
 import { test, expect } from '@playwright/test'
 
-// Google typically truncates meta descriptions around ~155-160 characters
-// in search results (issue #183) -- this guards the pages that were over
-// that length from silently regressing back past it. 155, not the higher
-// end of that range, to leave margin for the dynamic years-of-experience
-// numbers in the homepage/about descriptions to grow a digit over time.
+// Google truncates meta descriptions around ~155-160 chars; 155 leaves
+// margin for the dynamic years-of-experience numbers to grow a digit.
 const MAX_META_DESCRIPTION_LENGTH = 155
 
-// Every real page with its own meta description, not just the ones over
-// length at the time this test was added -- a future page/copy change
-// elsewhere shouldn't be able to regress past the cap unnoticed either.
+// Every real page, not just the ones over length when this test was added.
 const pages = [
     { reportedPath: '/', gotoPath: '/' },
     { reportedPath: '/about/', gotoPath: '/about/' },
