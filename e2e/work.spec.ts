@@ -71,7 +71,7 @@ test.describe('Work page', () => {
         await expect(cards).toHaveCount(4)
     })
 
-    test('has no skipped heading levels between the h1 and the card h3s', async ({
+    test('has no skipped heading levels between the h1 and the card titles', async ({
         page,
     }) => {
         await page.goto('/work/')
@@ -79,10 +79,7 @@ test.describe('Work page', () => {
         const tagNames = await headings.evaluateAll((elements) =>
             elements.map((el) => el.tagName),
         )
-        expect(tagNames).toEqual(['H1', 'H2', 'H3', 'H3', 'H3', 'H3'])
-        await expect(
-            page.getByRole('heading', { level: 2, name: 'Case studies' }),
-        ).toHaveCount(1)
+        expect(tagNames).toEqual(['H1', 'H2', 'H2', 'H2', 'H2'])
     })
 
     test('eagerly loads the featured and first non-featured cover images, lazily loads the rest', async ({
