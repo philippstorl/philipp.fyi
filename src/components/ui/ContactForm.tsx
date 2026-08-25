@@ -8,20 +8,36 @@ interface FieldErrors {
     message?: string
 }
 
+// Shared by validate() and handleFieldChange so live-correction can't drift
+// from submit-time rules (email has an empty vs. malformed distinction).
+function validateField(
+    field: keyof FieldErrors,
+    rawValue: string,
+): string | undefined {
+    const value = rawValue.trim()
+    switch (field) {
+        case 'name':
+            return value ? undefined : 'Name is required.'
+        case 'email':
+            if (!value) return 'Email is required.'
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                return 'Please enter a valid email address.'
+            }
+            return undefined
+        case 'message':
+            return value ? undefined : 'Message is required.'
+    }
+}
+
 function validate(data: FormData): FieldErrors {
     const errors: FieldErrors = {}
-    const name = (data.get('name') as string | null)?.trim() ?? ''
-    const email = (data.get('email') as string | null)?.trim() ?? ''
-    const message = (data.get('message') as string | null)?.trim() ?? ''
-
-    if (!name) errors.name = 'Name is required.'
-    if (!email) {
-        errors.email = 'Email is required.'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        errors.email = 'Please enter a valid email address.'
+    for (const field of ['name', 'email', 'message'] as const) {
+        const error = validateField(
+            field,
+            (data.get(field) as string | null) ?? '',
+        )
+        if (error) errors[field] = error
     }
-    if (!message) errors.message = 'Message is required.'
-
     return errors
 }
 
@@ -33,28 +49,36 @@ export default function ContactForm() {
     const successRef = useRef<HTMLDivElement>(null)
     const [status, setStatus] = useState<FormStatus>('idle')
     const [errors, setErrors] = useState<FieldErrors>({})
-    // Bumped on every failed submit attempt and used as the summary alert's
-    // React key, so it remounts (and gets re-announced) even when a second
-    // failed attempt happens to produce the same error count/text as the
-    // first — a same-text update alone wouldn't trigger a DOM mutation for
-    // React to re-announce.
+    // Alert's React key, so a same-count retry still remounts and re-announces.
     const [submitAttempt, setSubmitAttempt] = useState(0)
     const errorCount = Object.keys(errors).length
+    // Only handleSubmit sets this, so a live correction never steals focus.
+    const focusOnNextErrorRef = useRef(false)
 
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
     }, [status])
 
-    // Deferred to an effect (rather than called inline in handleSubmit) so
-    // it runs after React commits aria-invalid/aria-describedby for the
-    // newly-erroring field, not before — focusing synchronously during the
-    // submit handler would move focus a render early, while the DOM still
-    // reflects the previous (valid) state.
+    // Deferred to an effect so it runs after aria-invalid/-describedby commit.
     useEffect(() => {
+        if (!focusOnNextErrorRef.current) return
+        focusOnNextErrorRef.current = false
         if (errors.name) nameInputRef.current?.focus()
         else if (errors.email) emailInputRef.current?.focus()
         else if (errors.message) messageInputRef.current?.focus()
     }, [errors])
+
+    // Clears a field's error as soon as it's corrected, not just non-empty.
+    const handleFieldChange =
+        (field: keyof FieldErrors) =>
+        (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            if (!errors[field] || validateField(field, e.target.value)) return
+            setErrors((prev) => {
+                const next = { ...prev }
+                delete next[field]
+                return next
+            })
+        }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -64,6 +88,7 @@ export default function ContactForm() {
 
         const fieldErrors = validate(data)
         if (Object.keys(fieldErrors).length > 0) {
+            focusOnNextErrorRef.current = true
             setErrors(fieldErrors)
             setSubmitAttempt((n) => n + 1)
             return
@@ -142,12 +167,7 @@ export default function ContactForm() {
                 <input name="bot-field" tabIndex={-1} autoComplete="off" />
             </div>
 
-            {/* Single assertive summary instead of a role="alert" per field —
-            three simultaneous alerts compete with each other and with the
-            focus-move announcement that follows a tick later. Keyed on
-            submitAttempt so a second failed attempt with the same error
-            count still remounts (and gets re-announced) rather than bailing
-            out on an unchanged text node. */}
+            {/* One summary alert, not one per field — avoids competing announcements. */}
             {errorCount > 0 && (
                 <p key={submitAttempt} role="alert" className="sr-only">
                     {errorCount === 1
@@ -168,6 +188,7 @@ export default function ContactForm() {
                         name="name"
                         type="text"
                         autoComplete="name"
+                        onChange={handleFieldChange('name')}
                         aria-required="true"
                         aria-describedby={
                             errors.name ? 'contact-name-error' : undefined
@@ -194,6 +215,7 @@ export default function ContactForm() {
                         name="email"
                         type="email"
                         autoComplete="email"
+                        onChange={handleFieldChange('email')}
                         aria-required="true"
                         aria-describedby={
                             errors.email ? 'contact-email-error' : undefined
@@ -219,6 +241,7 @@ export default function ContactForm() {
                         id="contact-message"
                         name="message"
                         rows={5}
+                        onChange={handleFieldChange('message')}
                         aria-required="true"
                         aria-describedby={
                             errors.message ? 'contact-message-error' : undefined
