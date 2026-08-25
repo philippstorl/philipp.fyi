@@ -217,13 +217,9 @@ const pathname = Astro.url.pathname
         if (focusToggle) toggle?.focus()
     }
 
-    // Checks nav's actual computed display, not just the JS-toggled
-    // `hidden` class -- nav also carries `md:hidden`, so a resize/rotation
-    // past that breakpoint while the menu was open would otherwise leave
-    // isMenuOpen() reporting true (class still removed) even though the
-    // menu is already CSS-hidden, making the document-level listeners
-    // below call closeMenu() on every subsequent click/keypress for the
-    // rest of the page's session.
+    // Checks computed display, not the hidden class -- nav also has
+    // md:hidden, so a resize past that breakpoint would otherwise leave
+    // this reporting true.
     function isMenuOpen() {
         return !!nav && getComputedStyle(nav).display !== 'none'
     }
@@ -237,11 +233,8 @@ const pathname = Astro.url.pathname
         link.addEventListener('click', () => closeMenu())
     })
 
-    // ARIA Authoring Practices Guide's disclosure pattern expects both of
-    // these for an open menu: Escape closes it (and returns focus to the
-    // button that opened it, matching APG guidance), and a click/tap
-    // anywhere outside it closes it too, without stealing focus from
-    // wherever the user just clicked.
+    // APG disclosure pattern: Escape closes and refocuses the toggle;
+    // an outside click closes without stealing focus.
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && isMenuOpen()) {
             closeMenu({ focusToggle: true })
