@@ -10,12 +10,20 @@ interface Props {
     showCover?: boolean
     /** Eagerly loads the cover at high priority; every other card stays lazy. */
     priority?: boolean
+    /** h3 under a page's own h2 (homepage); h2 when the grid renders directly under an h1 (/work/). */
+    headingLevel?: 'h2' | 'h3'
 }
 
-const { entry, showCover = true, priority = false } = Astro.props
+const {
+    entry,
+    showCover = true,
+    priority = false,
+    headingLevel = 'h3',
+} = Astro.props
 const { title, description, category, tags, year, featured, coverImage } =
     entry.data
 const href = `/work/${stripContentExtension(entry.id)}/`
+const HeadingTag = headingLevel
 ---
 
 {
@@ -64,7 +72,7 @@ const href = `/work/${stripContentExtension(entry.id)}/`
             <span class="text-xs text-muted">{year}</span>
         </div>
 
-        <h3
+        <HeadingTag
             class:list={[
                 'mb-3 font-display leading-snug font-normal tracking-tight text-foreground',
                 'transition-colors duration-150 group-hover:text-accent',
@@ -78,7 +86,7 @@ const href = `/work/${stripContentExtension(entry.id)}/`
             >
                 {title}
             </a>
-        </h3>
+        </HeadingTag>
 
         <p class="mb-6 grow text-sm leading-relaxed text-muted">
             {description}

@@ -71,6 +71,17 @@ test.describe('Work page', () => {
         await expect(cards).toHaveCount(4)
     })
 
+    test('has no skipped heading levels between the h1 and the card titles', async ({
+        page,
+    }) => {
+        await page.goto('/work/')
+        const headings = page.locator('main :is(h1, h2, h3, h4, h5, h6)')
+        const tagNames = await headings.evaluateAll((elements) =>
+            elements.map((el) => el.tagName),
+        )
+        expect(tagNames).toEqual(['H1', 'H2', 'H2', 'H2', 'H2'])
+    })
+
     test('eagerly loads the featured and first non-featured cover images, lazily loads the rest', async ({
         page,
     }) => {
