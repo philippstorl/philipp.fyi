@@ -14,7 +14,12 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             aria-label="Close"
             class="lightbox-btn absolute z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/15 transition-colors hover:bg-black/80"
         >
-            <X size={20} strokeWidth={1.75} aria-hidden="true" />
+            <X
+                size={20}
+                strokeWidth={1.75}
+                aria-hidden="true"
+                focusable="false"
+            />
         </button>
         <button
             id="lightbox-prev"
@@ -22,7 +27,12 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             aria-label="Previous image"
             class="lightbox-btn absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/15 transition-colors hover:bg-black/80 disabled:opacity-0"
         >
-            <ChevronLeft size={20} strokeWidth={1.75} aria-hidden="true" />
+            <ChevronLeft
+                size={20}
+                strokeWidth={1.75}
+                aria-hidden="true"
+                focusable="false"
+            />
         </button>
         <button
             id="lightbox-next"
@@ -30,7 +40,12 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             aria-label="Next image"
             class="lightbox-btn absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/60 text-white ring-1 ring-white/15 transition-colors hover:bg-black/80 disabled:opacity-0"
         >
-            <ChevronRight size={20} strokeWidth={1.75} aria-hidden="true" />
+            <ChevronRight
+                size={20}
+                strokeWidth={1.75}
+                aria-hidden="true"
+                focusable="false"
+            />
         </button>
 
         <div

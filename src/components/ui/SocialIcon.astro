@@ -41,4 +41,13 @@ const { icon, size = 18 } = Astro.props
     )
 }
 
-{icon === 'mail' && <Mail size={size} strokeWidth={1.75} />}
+{
+    icon === 'mail' && (
+        <Mail
+            size={size}
+            strokeWidth={1.75}
+            aria-hidden="true"
+            focusable="false"
+        />
+    )
+}
