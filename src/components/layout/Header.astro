@@ -117,14 +117,8 @@ const pathname = Astro.url.pathname
         NAV_LINK_UNDERLINE_ACTIVE_CLASS,
     } from '@/utils/nav-active'
 
-    // Header persists across client-side navigations (transition:persist,
-    // so ThemeToggle's own listeners and the ones below don't get torn down
-    // on every page swap) — but that also means the nav's "active link"
-    // classes, computed server-side from the page that was current when
-    // this DOM was first rendered, never get recomputed for the new URL.
-    // Re-running this on astro:page-load (which fires after every
-    // navigation, including ones that don't re-render persisted elements)
-    // keeps the active link in sync without needing a full nav re-render.
+    // Header is transition:persist'ed, so re-run on astro:page-load to
+    // keep the active-link class in sync with the new URL.
     function setLinkActive(link: Element, isActive: boolean) {
         link.classList.toggle(NAV_LINK_ACTIVE_CLASS, isActive)
         NAV_LINK_INACTIVE_CLASSES.forEach((cls) =>

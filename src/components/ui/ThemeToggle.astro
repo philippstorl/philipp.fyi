@@ -87,17 +87,8 @@ const options: ThemeOption[] = [
 </div>
 
 {
-    /*
-    Corrects aria-pressed/class on the theme buttons from localStorage before
-    first paint, so the server-rendered 'system' state (no localStorage at
-    build time) is never visible. Runs synchronously (is:inline, not a
-    module script) — must stay is:inline for that timing, so this needs its
-    own CSP hash registered in astro.config.mjs; recompute it if this
-    script's content ever changes (see the comment there for the method).
-    Mirrors BaseLayout.astro's dark-mode pre-paint script, which handles
-    applying the .dark class itself — this one only owns the buttons' own
-    visual state.
-*/
+    /* Must stay is:inline to patch button state from localStorage before first
+    paint. Its CSP hash is registered in astro.config.mjs — recompute if this changes. */
 }
 <script is:inline>
     ;(function () {
@@ -125,10 +116,8 @@ const options: ThemeOption[] = [
 </script>
 
 <script>
-    // Header persists across client-side navigations (transition:persist),
-    // so this only runs once per browser session -- the buttons it wires up
-    // here persist in the DOM too, so the listeners stay attached across
-    // every navigation without needing to re-run on astro:page-load.
+    // Header is transition:persist'ed, so this runs once per session and
+    // listeners stay attached across navigations.
     type Theme = 'light' | 'dark' | 'system'
 
     function isTheme(value: string | null): value is Theme {
@@ -189,11 +178,7 @@ const options: ThemeOption[] = [
         })
     })
 
-    // Live-updates the applied theme (not the buttons' selected state) when
-    // the OS preference changes while 'system' is selected -- mirrors the
-    // old React component's matchMedia-change effect, but as one long-lived
-    // listener that checks currentTheme at event time instead of an
-    // effect re-subscribed on every selection change.
+    // Live-updates the applied theme while 'system' is selected.
     window
         .matchMedia('(prefers-color-scheme: dark)')
         .addEventListener('change', (event) => {

@@ -102,10 +102,7 @@ test.describe('Navigation', () => {
         page,
     }) => {
         // Regression check: ThemeToggle used to be a client:load React
-        // island, pulling react/react-dom's ~57KB gzipped scheduler chunk
-        // onto every page for a 3-button toggle. It's now a plain Astro
-        // component with a vanilla script; only /contact/'s ContactForm
-        // island should still request that chunk.
+        // island (issue #187); only /contact/'s ContactForm should load JS.
         const jsRequests: string[] = []
         page.on('request', (req) => {
             if (req.url().endsWith('.js')) jsRequests.push(req.url())
@@ -132,8 +129,7 @@ test.describe('Navigation', () => {
         await page.emulateMedia({ colorScheme: 'dark' })
         await expect(page.locator('html')).toHaveClass(/dark/)
 
-        // Only applies live while 'system' stays selected -- once the user
-        // picks an explicit theme, further OS changes shouldn't touch it.
+        // Live OS tracking stops once an explicit theme is picked.
         await page.getByRole('button', { name: 'Light mode' }).click()
         await page.emulateMedia({ colorScheme: 'light' })
         await expect(page.locator('html')).not.toHaveClass(/dark/)
