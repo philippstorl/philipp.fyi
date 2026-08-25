@@ -168,14 +168,11 @@ html:has(dialog[open]) #site-header {
 }
 
 /*
-    Mobile nav is an out-of-flow overlay now (issue #215), not an in-flow
-    panel -- background scroll needs an explicit lock the way it never did
-    before. Same :has() approach as the dialog rule above, keyed off the
-    JS-toggled "hidden" class. Scoped below md (768px) to match #mobile-nav's
-    own md:hidden: without this, leaving the menu "open" (class-wise) while
-    resizing/rotating past md would strand overflow:hidden on <html>
-    indefinitely, since nothing above md ever re-adds the class -- the same
-    reason Header.astro's isMenuOpen() checks computed display, not the class.
+    Mobile nav is now an out-of-flow overlay (issue #215), so background
+    scroll needs an explicit lock. Scoped below md to match #mobile-nav's
+    own md:hidden -- unscoped, resizing past md while "open" would strand
+    overflow:hidden on <html> (same reason isMenuOpen() checks computed
+    display, not the class).
 */
 @media (width < 768px) {
     html:has(#mobile-nav:not(.hidden)) {

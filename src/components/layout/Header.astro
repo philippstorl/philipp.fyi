@@ -7,14 +7,7 @@ const pathname = Astro.url.pathname
 ---
 
 {
-    /*
-    A sibling of #site-header, not a child: it needs to sit below the
-    header's own z-50 bar (z-40) but above page content, which a header
-    descendant can't do -- the header's own stacking context would carry
-    it along atomically. transition:persist (matched by id, like the
-    header) keeps its identity stable across client-side navigations so
-    the toggle script's cached element reference doesn't go stale.
-*/
+    /* Sibling of #site-header, not a child -- nesting it would carry it into the header's own z-50 stacking context. */
 }
 <div
     id="mobile-nav-backdrop"

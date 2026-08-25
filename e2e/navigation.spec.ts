@@ -184,9 +184,7 @@ test.describe('Navigation', () => {
         await mobileToggle.click()
         await expect(page.locator('#mobile-nav')).toBeVisible()
 
-        // The backdrop now covers the whole viewport below the header while
-        // the menu is open (issue #215), so it's what actually receives an
-        // "outside" click -- not page content directly.
+        // The backdrop, not page content, receives the "outside" click now.
         await page.locator('#mobile-nav-backdrop').click()
         await expect(page.locator('#mobile-nav')).toBeHidden()
         await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
