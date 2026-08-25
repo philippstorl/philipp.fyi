@@ -8,9 +8,11 @@ import { stripContentExtension } from '@/utils/slug'
 interface Props {
     entry: CollectionEntry<'work'>
     showCover?: boolean
+    /** Eagerly loads the cover at high priority; every other card stays lazy. */
+    priority?: boolean
 }
 
-const { entry, showCover = true } = Astro.props
+const { entry, showCover = true, priority = false } = Astro.props
 const { title, description, category, tags, year, featured, coverImage } =
     entry.data
 const href = `/work/${stripContentExtension(entry.id)}/`
@@ -49,6 +51,7 @@ const href = `/work/${stripContentExtension(entry.id)}/`
                     width={640}
                     height={400}
                     position="top"
+                    priority={priority}
                     class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                 />
             </div>

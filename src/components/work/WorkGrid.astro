@@ -2,20 +2,33 @@
 import { getPublishedEntries } from '@/utils/collections'
 import WorkCard from './WorkCard.astro'
 
+interface Props {
+    /** Eagerly loads the true LCP candidate. Only pass where a work card is actually the LCP -- not on the homepage, where Hero's <h1> is. */
+    eagerLoadFirst?: boolean
+}
+
+const { eagerLoadFirst = false } = Astro.props
+
 const entries = (await getPublishedEntries('work')).sort(
     (a, b) => a.data.order - b.data.order,
 )
 
 const [featured, ...rest] = entries
+const [firstRest, ...remainingRest] = rest
 ---
 
 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
     {
         featured && (
             <div class="md:col-span-3">
-                <WorkCard entry={featured} showCover={false} />
+                <WorkCard
+                    entry={featured}
+                    showCover={false}
+                    priority={eagerLoadFirst}
+                />
             </div>
         )
     }
-    {rest.map((entry) => <WorkCard entry={entry} />)}
+    {firstRest && <WorkCard entry={firstRest} priority={eagerLoadFirst} />}
+    {remainingRest.map((entry) => <WorkCard entry={entry} />)}
 </div>

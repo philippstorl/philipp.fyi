@@ -50,6 +50,17 @@ test('work cards link to correct case study URLs', async ({ page }) => {
     expect(href).toMatch(/^\/work\/storyblok-migration\/$/)
 })
 
+test('homepage work card covers stay lazy, unlike /work/', async ({ page }) => {
+    // Hero's <h1> is the homepage's LCP element, not a work-card image.
+    await page.goto('/')
+    const coverImages = page.locator('#work article img')
+    await expect(coverImages).toHaveCount(4)
+    for (const image of await coverImages.all()) {
+        await expect(image).toHaveAttribute('loading', 'lazy')
+        await expect(image).not.toHaveAttribute('fetchpriority')
+    }
+})
+
 test.describe('Work page', () => {
     test('shows heading and all 4 case studies', async ({ page }) => {
         await page.goto('/work/')
@@ -58,6 +69,31 @@ test.describe('Work page', () => {
         ).toBeVisible()
         const cards = page.locator('main article')
         await expect(cards).toHaveCount(4)
+    })
+
+    test('eagerly loads the featured and first non-featured cover images, lazily loads the rest', async ({
+        page,
+    }) => {
+        // The true LCP candidate differs by viewport (featured cover on
+        // mobile, first non-featured cover on desktop -- featured is CSS-hidden on md:+).
+        await page.goto('/work/')
+        const coverImages = page.locator('main article img')
+        await expect(coverImages).toHaveCount(4)
+
+        await expect(coverImages.nth(0)).toHaveAttribute('loading', 'eager')
+        await expect(coverImages.nth(0)).toHaveAttribute(
+            'fetchpriority',
+            'high',
+        )
+        await expect(coverImages.nth(1)).toHaveAttribute('loading', 'eager')
+        await expect(coverImages.nth(1)).toHaveAttribute(
+            'fetchpriority',
+            'high',
+        )
+        await expect(coverImages.nth(2)).toHaveAttribute('loading', 'lazy')
+        await expect(coverImages.nth(2)).not.toHaveAttribute('fetchpriority')
+        await expect(coverImages.nth(3)).toHaveAttribute('loading', 'lazy')
+        await expect(coverImages.nth(3)).not.toHaveAttribute('fetchpriority')
     })
 
     test('links to About, Principles, and Recommendations', async ({
