@@ -14,6 +14,14 @@ test.describe('Home page', () => {
         await expect(page.getByText('Open to new opportunities')).toBeVisible()
     })
 
+    test('og:type is website, not article', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator('meta[property="og:type"]')).toHaveAttribute(
+            'content',
+            'website',
+        )
+    })
+
     test('shows all 4 work cards', async ({ page }) => {
         await page.goto('/')
         const cards = page.locator('#work article')

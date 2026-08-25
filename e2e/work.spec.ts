@@ -29,6 +29,19 @@ for (const { slug, title } of caseStudies) {
     })
 }
 
+test('case study pages set og:type to article with a published time', async ({
+    page,
+}) => {
+    await page.goto('/work/brand-evolution/')
+    await expect(page.locator('meta[property="og:type"]')).toHaveAttribute(
+        'content',
+        'article',
+    )
+    await expect(
+        page.locator('meta[property="article:published_time"]'),
+    ).toHaveAttribute('content', '2018')
+})
+
 test('work cards link to correct case study URLs', async ({ page }) => {
     await page.goto('/')
     const firstCard = page.locator('#work article').first()
