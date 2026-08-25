@@ -18,6 +18,14 @@ interface FunctionContext {
 const MAX_JSON_BLOCK_LENGTH = 3500
 const MAX_FIELD_LENGTH = 500
 
+// Defensive caps on the request itself (issue #175): unauthenticated, so a
+// crafted POST could otherwise fan out into unbounded Blobs writes/Slack
+// posts. A real report (even the legacy shape, which embeds the full CSP
+// policy string) runs well under 2KB; 50KB/25 reports leaves headroom for a
+// genuine multi-violation batch while still bounding one request's blast radius.
+const MAX_BODY_BYTES = 50_000
+const MAX_REPORTS_PER_REQUEST = 25
+
 function blobsStoreUrl(
     context: FunctionContext | undefined,
 ): string | undefined {
@@ -122,14 +130,50 @@ export default async (
         return new Response('Method Not Allowed', { status: 405 })
     }
 
+    // Content-Length lets us reject an obviously oversized POST without
+    // reading it into memory at all when honest; when it's absent or lies
+    // small, the body is still fully buffered before the byte-length
+    // re-check below can reject it — Netlify's own platform body-size limit
+    // is the actual backstop for that case, not this check.
+    const contentLength = req.headers.get('content-length')
+    if (contentLength && Number(contentLength) > MAX_BODY_BYTES) {
+        console.warn(
+            `Rejected CSP report POST: Content-Length ${contentLength} exceeds ${MAX_BODY_BYTES}-byte cap`,
+        )
+        return new Response('Payload Too Large', { status: 413 })
+    }
+
+    let bodyBuffer: ArrayBuffer
+    try {
+        bodyBuffer = await req.arrayBuffer()
+    } catch {
+        return new Response('Invalid request body', { status: 400 })
+    }
+
+    // Measured on the raw bytes, not a decoded string: re-encoding a
+    // UTF-8-decoded string can undercount, since invalid byte sequences
+    // collapse to U+FFFD on decode.
+    if (bodyBuffer.byteLength > MAX_BODY_BYTES) {
+        console.warn(
+            `Rejected CSP report POST: body exceeds ${MAX_BODY_BYTES}-byte cap`,
+        )
+        return new Response('Payload Too Large', { status: 413 })
+    }
+
     let payload: unknown
     try {
-        payload = await req.json()
+        payload = JSON.parse(Buffer.from(bodyBuffer).toString('utf8'))
     } catch {
         return new Response('Invalid JSON body', { status: 400 })
     }
 
-    const reports = Array.isArray(payload) ? payload : [payload]
+    const allReports = Array.isArray(payload) ? payload : [payload]
+    if (allReports.length > MAX_REPORTS_PER_REQUEST) {
+        console.warn(
+            `Truncating CSP report batch: received ${allReports.length}, processing first ${MAX_REPORTS_PER_REQUEST}`,
+        )
+    }
+    const reports = allReports.slice(0, MAX_REPORTS_PER_REQUEST)
     const receivedAt = new Date().toISOString()
     const userAgent = req.headers.get('user-agent')
     const blobsUrl = blobsStoreUrl(context)
