@@ -83,6 +83,38 @@
             scroll-behavior: smooth;
         }
     }
+
+    @keyframes mobile-nav-in {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @layer base {
+        .animate-mobile-nav-in {
+            animation: mobile-nav-in 0.15s ease-out both;
+        }
+    }
+
+    @keyframes mobile-nav-backdrop-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @layer base {
+        .animate-mobile-nav-backdrop-in {
+            animation: mobile-nav-backdrop-in 0.15s ease-out both;
+        }
+    }
 }
 
 html {
@@ -133,4 +165,20 @@ html:has(dialog[open]) {
 */
 html:has(dialog[open]) #site-header {
     visibility: hidden;
+}
+
+/*
+    Mobile nav is an out-of-flow overlay now (issue #215), not an in-flow
+    panel -- background scroll needs an explicit lock the way it never did
+    before. Same :has() approach as the dialog rule above, keyed off the
+    JS-toggled "hidden" class. Scoped below md (768px) to match #mobile-nav's
+    own md:hidden: without this, leaving the menu "open" (class-wise) while
+    resizing/rotating past md would strand overflow:hidden on <html>
+    indefinitely, since nothing above md ever re-adds the class -- the same
+    reason Header.astro's isMenuOpen() checks computed display, not the class.
+*/
+@media (width < 768px) {
+    html:has(#mobile-nav:not(.hidden)) {
+        overflow: hidden;
+    }
 }

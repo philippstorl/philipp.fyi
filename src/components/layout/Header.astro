@@ -6,6 +6,24 @@ import NavLink from '@/components/layout/NavLink.astro'
 const pathname = Astro.url.pathname
 ---
 
+{
+    /*
+    A sibling of #site-header, not a child: it needs to sit below the
+    header's own z-50 bar (z-40) but above page content, which a header
+    descendant can't do -- the header's own stacking context would carry
+    it along atomically. transition:persist (matched by id, like the
+    header) keeps its identity stable across client-side navigations so
+    the toggle script's cached element reference doesn't go stale.
+*/
+}
+<div
+    id="mobile-nav-backdrop"
+    class="animate-mobile-nav-backdrop-in fixed inset-0 z-40 hidden bg-background/60 md:hidden"
+    aria-hidden="true"
+    transition:persist
+>
+</div>
+
 <header
     id="site-header"
     class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm"
@@ -90,7 +108,7 @@ const pathname = Astro.url.pathname
     <nav
         id="mobile-nav"
         aria-label="Mobile navigation"
-        class="hidden border-t border-border md:hidden"
+        class="animate-mobile-nav-in absolute inset-x-0 top-full hidden border-t border-b border-border bg-background md:hidden"
     >
         <ul class="mx-auto flex max-w-6xl flex-col px-6 py-4">
             {
@@ -148,11 +166,13 @@ const pathname = Astro.url.pathname
 
     const toggle = document.getElementById('nav-toggle')
     const nav = document.getElementById('mobile-nav')
+    const backdrop = document.getElementById('mobile-nav-backdrop')
     const iconMenu = document.getElementById('icon-menu')
     const iconClose = document.getElementById('icon-close')
 
     function openMenu() {
         nav?.classList.remove('hidden')
+        backdrop?.classList.remove('hidden')
         toggle?.setAttribute('aria-expanded', 'true')
         iconMenu?.classList.add('hidden')
         iconClose?.classList.remove('hidden')
@@ -160,6 +180,7 @@ const pathname = Astro.url.pathname
 
     function closeMenu({ focusToggle = false } = {}) {
         nav?.classList.add('hidden')
+        backdrop?.classList.add('hidden')
         toggle?.setAttribute('aria-expanded', 'false')
         iconMenu?.classList.remove('hidden')
         iconClose?.classList.add('hidden')
