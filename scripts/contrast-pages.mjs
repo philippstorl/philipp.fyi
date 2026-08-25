@@ -14,6 +14,8 @@ export const pages = [
     { reportedPath: '/principles/', gotoPath: '/principles/' },
     { reportedPath: '/recommendations/', gotoPath: '/recommendations/' },
     { reportedPath: '/work/', gotoPath: '/work/' },
+    { reportedPath: '/blog/', gotoPath: '/blog/' },
+    { reportedPath: '/contact/', gotoPath: '/contact/' },
     {
         reportedPath: '/work/brand-evolution/',
         gotoPath: '/work/brand-evolution/',
