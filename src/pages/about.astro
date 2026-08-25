@@ -7,15 +7,12 @@ import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { about } from '@/data/about'
 import { stack } from '@/data/stack'
-import {
-    getStaffbaseTenureYears,
-    getYearsOfExperience,
-} from '@/utils/experience'
+import { getDefaultDescription } from '@/data/site'
 ---
 
 <BaseLayout
     title="About"
-    description={`Principal Web Developer with ${getYearsOfExperience()} years in web development, ${getStaffbaseTenureYears()} of them scaling staffbase.com. Full-stack, DevOps, and design. Chemnitz / Leipzig area, remote-first.`}
+    description={getDefaultDescription()}
     ogImage="/og/about.png"
 >
     <Header />

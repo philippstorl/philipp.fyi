@@ -11,7 +11,7 @@ This site has three content collections, each with different ordering rules and 
 
 1. Create `src/content/work/<slug>.mdx` — the filename **is** the URL slug (`/work/<slug>/`), so pick it deliberately; it can't be changed later without breaking links.
 2. Frontmatter:
-    - `title`, `description` — plain strings.
+    - `title`, `description` — plain strings. `description` is shown on the work card and the case-study page's own intro, and is also what `<meta name="description">`/`og:description`/`twitter:description` use — one field, no separate meta-only variant. Keep it at or under ~155 chars (Google/social previews truncate past that) and write it tight from the start; a punchy, snippet-length sentence has read better everywhere it's been tried than a longer narrative one, so don't reach for extra length assuming the on-page copy needs more room.
     - `year` — a 4-digit year (`"2024"`) or an en-dash year range for multi-year work (`"2022–2024"`, using an actual en dash `–`, not a hyphen `-`) — validated by a zod regex, anything else fails the build.
     - `tags: [...]` — at least one tag; an empty array fails the build.
     - `category` — must be exactly `"Engineering"`, `"Leadership"`, or `"Design"` (zod enum, anything else fails the build).
@@ -23,6 +23,7 @@ This site has three content collections, each with different ordering rules and 
 4. Update tests — the homepage renders **every** work entry (no preview slice), so both of these need to change:
     - `e2e/work.spec.ts` — add `{ slug, title }` to the `caseStudies` array so the new page gets its own render assertion.
     - `e2e/home.spec.ts` — the test named `shows all N work cards` asserts `toHaveCount(N)` where N is the current total. Bump it to match the new total.
+    - `e2e/meta-description-length.spec.ts` — add `{ reportedPath: '/work/<slug>/', gotoPath: '/work/<slug>/' }` to its `pages` array so the new case study's meta description length is guarded too, not just the ones that happened to be over length when that test was written.
 
 ## Principle (`src/content/principles/`)
 
