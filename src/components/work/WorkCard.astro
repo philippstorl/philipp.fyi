@@ -8,7 +8,7 @@ import { stripContentExtension } from '@/utils/slug'
 interface Props {
     entry: CollectionEntry<'work'>
     showCover?: boolean
-    /** Eagerly loads the cover image at high priority for the true LCP candidate; every other card stays lazy. */
+    /** Eagerly loads the cover at high priority; every other card stays lazy. */
     priority?: boolean
 }
 

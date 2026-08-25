@@ -51,9 +51,7 @@ test('work cards link to correct case study URLs', async ({ page }) => {
 })
 
 test('homepage work card covers stay lazy, unlike /work/', async ({ page }) => {
-    // The homepage's LCP element is Hero's <h1> text, not a work-card
-    // image, so none of these should be eagerly loaded -- eagerLoadFirst
-    // is only passed from work/index.astro, not WorkSection.astro.
+    // Hero's <h1> is the homepage's LCP element, not a work-card image.
     await page.goto('/')
     const coverImages = page.locator('#work article img')
     await expect(coverImages).toHaveCount(4)
@@ -76,10 +74,8 @@ test.describe('Work page', () => {
     test('eagerly loads the featured and first non-featured cover images, lazily loads the rest', async ({
         page,
     }) => {
-        // Regression check: the true LCP candidate differs by viewport (the
-        // featured card's cover on mobile, the first non-featured card's on
-        // desktop, since the featured cover is CSS-hidden on md:+), so both
-        // need eager/high-priority loading -- everything else stays lazy.
+        // The true LCP candidate differs by viewport (featured cover on
+        // mobile, first non-featured cover on desktop -- featured is CSS-hidden on md:+).
         await page.goto('/work/')
         const coverImages = page.locator('main article img')
         await expect(coverImages).toHaveCount(4)

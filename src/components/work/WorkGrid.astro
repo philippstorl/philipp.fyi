@@ -3,17 +3,7 @@ import { getPublishedEntries } from '@/utils/collections'
 import WorkCard from './WorkCard.astro'
 
 interface Props {
-    /**
-     * Eagerly loads the true LCP candidate at high priority instead of the
-     * lazy default every card otherwise gets: the featured card's cover
-     * (mobile, where it's visible below PageHeader) and the first "rest"
-     * card's cover (desktop, where the featured cover is CSS-hidden via
-     * showCover={false} below). Only pass this on a page where an image in
-     * this grid is actually the LCP element -- WorkSection.astro's homepage
-     * usage doesn't, since Hero.astro's <h1> is the real LCP there, and
-     * eagerly loading a work-card image on top of that would just compete
-     * for bandwidth with no LCP benefit.
-     */
+    /** Eagerly loads the true LCP candidate. Only pass where a work card is actually the LCP -- not on the homepage, where Hero's <h1> is. */
     eagerLoadFirst?: boolean
 }
 
