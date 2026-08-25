@@ -1,6 +1,6 @@
 ---
 import { navItems } from '@/data/navigation'
-import ThemeToggle from '@/components/ui/ThemeToggle'
+import ThemeToggle from '@/components/ui/ThemeToggle.astro'
 import NavLink from '@/components/layout/NavLink.astro'
 
 const pathname = Astro.url.pathname
@@ -40,52 +40,7 @@ const pathname = Astro.url.pathname
         </nav>
 
         <div class="flex items-center gap-1">
-            <ThemeToggle client:load />
-            {
-                /* Runs synchronously, before ThemeToggle's client:load hydration
-                (a deferred module script), and before the browser paints —
-                correcting the buttons' aria-pressed/class from localStorage so
-                the SSR-baked 'system' state is never visible. Mirrors
-                BaseLayout.astro's dark-mode pre-paint script; ThemeToggle.tsx's
-                getStoredTheme() computes the same value so hydration matches
-                what this script already put in the DOM instead of mismatching it. */
-            }
-            <script is:inline>
-                ;(function () {
-                    try {
-                        const stored = localStorage.getItem('theme')
-                        const theme =
-                            stored === 'light' || stored === 'dark'
-                                ? stored
-                                : 'system'
-                        document
-                            .querySelectorAll('[data-theme-value]')
-                            .forEach(function (btn) {
-                                const active =
-                                    btn.getAttribute('data-theme-value') ===
-                                    theme
-                                btn.setAttribute(
-                                    'aria-pressed',
-                                    active ? 'true' : 'false',
-                                )
-                                btn.classList.toggle('bg-accent/10', active)
-                                btn.classList.toggle('text-accent', active)
-                                btn.classList.toggle('text-muted', !active)
-                                btn.classList.toggle(
-                                    'hover:bg-foreground/5',
-                                    !active,
-                                )
-                                btn.classList.toggle(
-                                    'hover:text-foreground',
-                                    !active,
-                                )
-                            })
-                    } catch {
-                        // no-op: if localStorage is unavailable, leave
-                        // ThemeToggle's SSR-baked 'system' state as-is.
-                    }
-                })()
-            </script>
+            <ThemeToggle />
 
             <button
                 id="nav-toggle"
@@ -162,14 +117,8 @@ const pathname = Astro.url.pathname
         NAV_LINK_UNDERLINE_ACTIVE_CLASS,
     } from '@/utils/nav-active'
 
-    // Header persists across client-side navigations (transition:persist,
-    // so the ThemeToggle island and the listeners below don't get torn down
-    // on every page swap) — but that also means the nav's "active link"
-    // classes, computed server-side from the page that was current when
-    // this DOM was first rendered, never get recomputed for the new URL.
-    // Re-running this on astro:page-load (which fires after every
-    // navigation, including ones that don't re-render persisted elements)
-    // keeps the active link in sync without needing a full nav re-render.
+    // Header is transition:persist'ed, so re-run on astro:page-load to
+    // keep the active-link class in sync with the new URL.
     function setLinkActive(link: Element, isActive: boolean) {
         link.classList.toggle(NAV_LINK_ACTIVE_CLASS, isActive)
         NAV_LINK_INACTIVE_CLASSES.forEach((cls) =>

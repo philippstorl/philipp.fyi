@@ -1,0 +1,189 @@
+---
+interface ThemeOption {
+    value: 'light' | 'system' | 'dark'
+    label: string
+}
+
+const options: ThemeOption[] = [
+    { value: 'light', label: 'Light mode' },
+    { value: 'system', label: 'System preference' },
+    { value: 'dark', label: 'Dark mode' },
+]
+---
+
+<div
+    role="group"
+    aria-label="Color theme"
+    class="flex items-center gap-1 rounded-lg border border-border bg-card p-[3px]"
+>
+    {
+        options.map(({ value, label }) => (
+            <button
+                type="button"
+                data-theme-value={value}
+                aria-label={label}
+                aria-pressed="false"
+                title={label}
+                class="flex size-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-foreground/5 hover:text-foreground"
+            >
+                {value === 'light' && (
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.75"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <circle cx="12" cy="12" r="4" />
+                        <path d="M12 2v2" />
+                        <path d="M12 20v2" />
+                        <path d="m4.93 4.93 1.41 1.41" />
+                        <path d="m17.66 17.66 1.41 1.41" />
+                        <path d="M2 12h2" />
+                        <path d="M20 12h2" />
+                        <path d="m6.34 17.66-1.41 1.41" />
+                        <path d="m19.07 4.93-1.41 1.41" />
+                    </svg>
+                )}
+                {value === 'system' && (
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.75"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <rect width="20" height="14" x="2" y="3" rx="2" />
+                        <line x1="8" x2="16" y1="21" y2="21" />
+                        <line x1="12" x2="12" y1="17" y2="21" />
+                    </svg>
+                )}
+                {value === 'dark' && (
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.75"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        aria-hidden="true"
+                    >
+                        <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401" />
+                    </svg>
+                )}
+            </button>
+        ))
+    }
+</div>
+
+{
+    /* Must stay is:inline to patch button state from localStorage before first
+    paint. Its CSP hash is registered in astro.config.mjs — recompute if this changes. */
+}
+<script is:inline>
+    ;(function () {
+        try {
+            const stored = localStorage.getItem('theme')
+            const theme =
+                stored === 'light' || stored === 'dark' ? stored : 'system'
+            document
+                .querySelectorAll('[data-theme-value]')
+                .forEach(function (btn) {
+                    const active =
+                        btn.getAttribute('data-theme-value') === theme
+                    btn.setAttribute('aria-pressed', active ? 'true' : 'false')
+                    btn.classList.toggle('bg-accent/10', active)
+                    btn.classList.toggle('text-accent', active)
+                    btn.classList.toggle('text-muted', !active)
+                    btn.classList.toggle('hover:bg-foreground/5', !active)
+                    btn.classList.toggle('hover:text-foreground', !active)
+                })
+        } catch {
+            // no-op: if localStorage is unavailable, leave the
+            // server-rendered 'system' state as-is.
+        }
+    })()
+</script>
+
+<script>
+    // Header is transition:persist'ed, so this runs once per session and
+    // listeners stay attached across navigations.
+    type Theme = 'light' | 'dark' | 'system'
+
+    function isTheme(value: string | null): value is Theme {
+        return value === 'light' || value === 'dark' || value === 'system'
+    }
+
+    function getStoredTheme(): Theme {
+        try {
+            const stored = localStorage.getItem('theme')
+            return stored === 'light' || stored === 'dark' ? stored : 'system'
+        } catch {
+            return 'system'
+        }
+    }
+
+    function applyTheme(theme: Theme) {
+        const html = document.documentElement
+        if (theme === 'dark') {
+            html.classList.add('dark')
+        } else if (theme === 'light') {
+            html.classList.remove('dark')
+        } else {
+            html.classList.toggle(
+                'dark',
+                window.matchMedia('(prefers-color-scheme: dark)').matches,
+            )
+        }
+    }
+
+    const buttons = document.querySelectorAll('[data-theme-value]')
+
+    function setActiveButtons(theme: Theme) {
+        buttons.forEach((btn) => {
+            const active = btn.getAttribute('data-theme-value') === theme
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false')
+            btn.classList.toggle('bg-accent/10', active)
+            btn.classList.toggle('text-accent', active)
+            btn.classList.toggle('text-muted', !active)
+            btn.classList.toggle('hover:bg-foreground/5', !active)
+            btn.classList.toggle('hover:text-foreground', !active)
+        })
+    }
+
+    let currentTheme = getStoredTheme()
+
+    buttons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            const next = btn.getAttribute('data-theme-value')
+            if (!isTheme(next)) return
+            if (next === 'system') {
+                localStorage.removeItem('theme')
+            } else {
+                localStorage.setItem('theme', next)
+            }
+            currentTheme = next
+            applyTheme(next)
+            setActiveButtons(next)
+        })
+    })
+
+    // Live-updates the applied theme while 'system' is selected.
+    window
+        .matchMedia('(prefers-color-scheme: dark)')
+        .addEventListener('change', (event) => {
+            if (currentTheme === 'system') {
+                document.documentElement.classList.toggle('dark', event.matches)
+            }
+        })
+</script>

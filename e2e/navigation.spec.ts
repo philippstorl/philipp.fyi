@@ -98,17 +98,52 @@ test.describe('Navigation', () => {
         await expect(page.getByRole('group')).toBeVisible()
     })
 
+    test('theme toggle works without loading React (issue #187)', async ({
+        page,
+    }) => {
+        // Regression check: ThemeToggle used to be a client:load React
+        // island (issue #187); only /contact/'s ContactForm should load JS.
+        const jsRequests: string[] = []
+        page.on('request', (req) => {
+            if (req.url().endsWith('.js')) jsRequests.push(req.url())
+        })
+
+        await page.goto('/')
+        await page.getByRole('button', { name: 'Light mode' }).click()
+        await expect(page.locator('html')).not.toHaveClass(/dark/)
+        await expect(
+            page.getByRole('button', { name: 'Light mode' }),
+        ).toHaveAttribute('aria-pressed', 'true')
+
+        expect(jsRequests.some((url) => /\/client\./.test(url))).toBe(false)
+    })
+
+    test('system preference selection tracks a live OS theme change', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ colorScheme: 'light' })
+        await page.goto('/')
+        await page.getByRole('button', { name: 'System preference' }).click()
+        await expect(page.locator('html')).not.toHaveClass(/dark/)
+
+        await page.emulateMedia({ colorScheme: 'dark' })
+        await expect(page.locator('html')).toHaveClass(/dark/)
+
+        // Live OS tracking stops once an explicit theme is picked.
+        await page.getByRole('button', { name: 'Light mode' }).click()
+        await page.emulateMedia({ colorScheme: 'light' })
+        await expect(page.locator('html')).not.toHaveClass(/dark/)
+        await page.emulateMedia({ colorScheme: 'dark' })
+        await expect(page.locator('html')).not.toHaveClass(/dark/)
+    })
+
     test('dark mode persists across client-side navigation', async ({
         page,
     }) => {
         await page.goto('/')
 
-        // The toggle is a client:load React island; retry the click in case
-        // it lands before hydration attaches the handler.
-        await expect(async () => {
-            await page.getByRole('button', { name: 'Dark mode' }).click()
-            await expect(page.locator('html')).toHaveClass(/dark/)
-        }).toPass()
+        await page.getByRole('button', { name: 'Dark mode' }).click()
+        await expect(page.locator('html')).toHaveClass(/dark/)
 
         const mobileToggle = page.locator('#nav-toggle')
         if (await mobileToggle.isVisible()) {
