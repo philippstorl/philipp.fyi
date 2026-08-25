@@ -80,7 +80,7 @@ export default function ContactForm() {
             })
         }
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (status === 'submitting') return
         const form = e.currentTarget
