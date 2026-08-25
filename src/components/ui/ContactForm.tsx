@@ -8,11 +8,8 @@ interface FieldErrors {
     message?: string
 }
 
-// Shared by validate() (all fields, on submit) and handleFieldChange (one
-// field, on correction) so the two can't drift into different rules for the
-// same field — email in particular has two distinct error states (empty vs.
-// non-empty-but-malformed) that a "just check non-empty" shortcut would get
-// wrong for the second case.
+// Shared by validate() and handleFieldChange so live-correction can't drift
+// from submit-time rules (email has an empty vs. malformed distinction).
 function validateField(
     field: keyof FieldErrors,
     rawValue: string,
@@ -52,29 +49,17 @@ export default function ContactForm() {
     const successRef = useRef<HTMLDivElement>(null)
     const [status, setStatus] = useState<FormStatus>('idle')
     const [errors, setErrors] = useState<FieldErrors>({})
-    // Bumped on every failed submit attempt and used as the summary alert's
-    // React key, so it remounts (and gets re-announced) even when a second
-    // failed attempt happens to produce the same error count/text as the
-    // first — a same-text update alone wouldn't trigger a DOM mutation for
-    // React to re-announce.
+    // Alert's React key, so a same-count retry still remounts and re-announces.
     const [submitAttempt, setSubmitAttempt] = useState(0)
     const errorCount = Object.keys(errors).length
-    // Set only by handleSubmit, and only when it sets errors — distinguishes
-    // "errors changed because of a submit" (should move focus) from "errors
-    // changed because handleFieldChange cleared one field's error while the
-    // user is still typing in it" (must not move focus, or correcting one
-    // field would yank focus to another still-erroring field mid-keystroke).
+    // Only handleSubmit sets this, so a live correction never steals focus.
     const focusOnNextErrorRef = useRef(false)
 
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
     }, [status])
 
-    // Deferred to an effect (rather than called inline in handleSubmit) so
-    // it runs after React commits aria-invalid/aria-describedby for the
-    // newly-erroring field, not before — focusing synchronously during the
-    // submit handler would move focus a render early, while the DOM still
-    // reflects the previous (valid) state.
+    // Deferred to an effect so it runs after aria-invalid/-describedby commit.
     useEffect(() => {
         if (!focusOnNextErrorRef.current) return
         focusOnNextErrorRef.current = false
@@ -83,11 +68,7 @@ export default function ContactForm() {
         else if (errors.message) messageInputRef.current?.focus()
     }, [errors])
 
-    // Clears a field's stale error as soon as the user corrects it, rather
-    // than leaving it visible until the next full submit-and-revalidate.
-    // Re-validates just that one field (not the whole form) so an email
-    // that's non-empty but still malformed doesn't get its error cleared
-    // by presence alone.
+    // Clears a field's error as soon as it's corrected, not just non-empty.
     const handleFieldChange =
         (field: keyof FieldErrors) =>
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -186,12 +167,7 @@ export default function ContactForm() {
                 <input name="bot-field" tabIndex={-1} autoComplete="off" />
             </div>
 
-            {/* Single assertive summary instead of a role="alert" per field —
-            three simultaneous alerts compete with each other and with the
-            focus-move announcement that follows a tick later. Keyed on
-            submitAttempt so a second failed attempt with the same error
-            count still remounts (and gets re-announced) rather than bailing
-            out on an unchanged text node. */}
+            {/* One summary alert, not one per field — avoids competing announcements. */}
             {errorCount > 0 && (
                 <p key={submitAttempt} role="alert" className="sr-only">
                     {errorCount === 1
