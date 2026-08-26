@@ -83,6 +83,38 @@
             scroll-behavior: smooth;
         }
     }
+
+    @keyframes mobile-nav-in {
+        from {
+            opacity: 0;
+            transform: translateY(-8px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @layer base {
+        .animate-mobile-nav-in {
+            animation: mobile-nav-in 0.15s ease-out both;
+        }
+    }
+
+    @keyframes mobile-nav-backdrop-in {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @layer base {
+        .animate-mobile-nav-backdrop-in {
+            animation: mobile-nav-backdrop-in 0.15s ease-out both;
+        }
+    }
 }
 
 html {
@@ -133,4 +165,17 @@ html:has(dialog[open]) {
 */
 html:has(dialog[open]) #site-header {
     visibility: hidden;
+}
+
+/*
+    Mobile nav is now an out-of-flow overlay (issue #215), so background
+    scroll needs an explicit lock. Scoped below md to match #mobile-nav's
+    own md:hidden -- unscoped, resizing past md while "open" would strand
+    overflow:hidden on <html> (same reason isMenuOpen() checks computed
+    display, not the class).
+*/
+@media (width < 768px) {
+    html:has(#mobile-nav:not(.hidden)) {
+        overflow: hidden;
+    }
 }

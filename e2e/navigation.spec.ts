@@ -184,11 +184,30 @@ test.describe('Navigation', () => {
         await mobileToggle.click()
         await expect(page.locator('#mobile-nav')).toBeVisible()
 
-        // A spot outside both the toggle and the open menu -- not a link, so
-        // it doesn't also trigger a navigation.
-        await page.locator('#main-content').click({ position: { x: 5, y: 5 } })
+        // The backdrop, not page content, receives the "outside" click now.
+        await page.locator('#mobile-nav-backdrop').click()
         await expect(page.locator('#mobile-nav')).toBeHidden()
         await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
+    })
+
+    test('mobile nav backdrop appears while the menu is open and disappears once it closes', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+
+        const backdrop = page.locator('#mobile-nav-backdrop')
+        await expect(backdrop).toBeHidden()
+
+        await mobileToggle.click()
+        await expect(backdrop).toBeVisible()
+
+        await mobileToggle.click()
+        await expect(backdrop).toBeHidden()
     })
 
     test('skip link moves keyboard focus to main content', async ({ page }) => {
