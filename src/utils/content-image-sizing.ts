@@ -82,17 +82,30 @@ function responsiveWidths(
     const narrowestRealTierMinWidth = Math.min(
         ...realTiers.map((tier) => tier.minWidth),
     )
+    const fallbackBase = Math.min(
+        columnWidth(fallback.columns),
+        narrowestRealTierMinWidth - CONTAINER_PADDING_PX,
+    )
+    const realBases = realTiers.map((tier) => columnWidth(tier.columns))
+    const realCandidates = realBases.flatMap((base) => widthLadder(base))
+    const fallbackCandidates = widthLadder(fallbackBase)
+
+    // Bridges the gap between the two ladders (issue #225) with their geometric mean,
+    // skipped when fallbackBase already coincides with a real base (no gap to bridge).
+    const nextRealAboveFallback = Math.min(
+        ...realCandidates.filter((width) => width > fallbackBase),
+    )
+    const bridge =
+        Number.isFinite(nextRealAboveFallback) &&
+        fallbackBase > 0 &&
+        !realBases.includes(fallbackBase)
+            ? Math.round(Math.sqrt(fallbackBase * nextRealAboveFallback))
+            : undefined
+
     return mergeCloseWidths(
-        [...realTiers, fallback].flatMap((tier) => {
-            const base =
-                tier === fallback
-                    ? Math.min(
-                          columnWidth(tier.columns),
-                          narrowestRealTierMinWidth - CONTAINER_PADDING_PX,
-                      )
-                    : columnWidth(tier.columns)
-            return widthLadder(base)
-        }),
+        [...realCandidates, ...fallbackCandidates, bridge].filter(
+            (width): width is number => width !== undefined,
+        ),
     )
 }
 
