@@ -90,19 +90,8 @@ function responsiveWidths(
     const realCandidates = realBases.flatMap((base) => widthLadder(base))
     const fallbackCandidates = widthLadder(fallbackBase)
 
-    // No multiple of either ladder's own base lands *between* them — the gap at
-    // fallbackBase's own 1x is a property of the two anchors' relationship, not
-    // of either ladder's internal spacing, so widening either ladder alone can't
-    // close it (issue #225: a real fluid-single-column viewport just below the
-    // grid's breakpoint, at a common non-integer DPR, needed a width in exactly
-    // this gap and got forced up to the real tier's 2x). Bridge it directly with
-    // the geometric mean of fallbackBase and the smallest real-tier candidate
-    // above it — but only when fallbackBase is actually a distinct anchor, not
-    // the same value a real tier already produces (gridFigureSizing/fullWidthFigureSizing
-    // build a fallback tier with the *same* column count as their one real tier,
-    // so fallbackBase there already equals a real base and there's no seam to
-    // bridge — caught by self-review, which found this firing on every such
-    // call site with a spurious extra candidate).
+    // Bridges the gap between the two ladders (issue #225) with their geometric mean,
+    // skipped when fallbackBase already coincides with a real base (no gap to bridge).
     const nextRealAboveFallback = Math.min(
         ...realCandidates.filter((width) => width > fallbackBase),
     )
