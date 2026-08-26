@@ -73,7 +73,7 @@ Eight jobs run in parallel, all on Node 26:
 | `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail                                                                                                                                             |
 | `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md |
 
-Dependabot (`.github/dependabot.yml`) opens npm dependency PRs weekly, capped at 5 open at a time, labeled `dependencies`.
+Dependabot (`.github/dependabot.yml`) opens npm dependency and GitHub Actions PRs weekly, capped at 5 open at a time per ecosystem, labeled `dependencies`. Every Actions step in `ci.yml` is pinned to a commit SHA with a version comment (see CLAUDE.md) — Dependabot bumps both together.
 
 ## Deployment
 
