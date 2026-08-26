@@ -82,17 +82,41 @@ function responsiveWidths(
     const narrowestRealTierMinWidth = Math.min(
         ...realTiers.map((tier) => tier.minWidth),
     )
+    const fallbackBase = Math.min(
+        columnWidth(fallback.columns),
+        narrowestRealTierMinWidth - CONTAINER_PADDING_PX,
+    )
+    const realBases = realTiers.map((tier) => columnWidth(tier.columns))
+    const realCandidates = realBases.flatMap((base) => widthLadder(base))
+    const fallbackCandidates = widthLadder(fallbackBase)
+
+    // No multiple of either ladder's own base lands *between* them — the gap at
+    // fallbackBase's own 1x is a property of the two anchors' relationship, not
+    // of either ladder's internal spacing, so widening either ladder alone can't
+    // close it (issue #225: a real fluid-single-column viewport just below the
+    // grid's breakpoint, at a common non-integer DPR, needed a width in exactly
+    // this gap and got forced up to the real tier's 2x). Bridge it directly with
+    // the geometric mean of fallbackBase and the smallest real-tier candidate
+    // above it — but only when fallbackBase is actually a distinct anchor, not
+    // the same value a real tier already produces (gridFigureSizing/fullWidthFigureSizing
+    // build a fallback tier with the *same* column count as their one real tier,
+    // so fallbackBase there already equals a real base and there's no seam to
+    // bridge — caught by self-review, which found this firing on every such
+    // call site with a spurious extra candidate).
+    const nextRealAboveFallback = Math.min(
+        ...realCandidates.filter((width) => width > fallbackBase),
+    )
+    const bridge =
+        Number.isFinite(nextRealAboveFallback) &&
+        fallbackBase > 0 &&
+        !realBases.includes(fallbackBase)
+            ? Math.round(Math.sqrt(fallbackBase * nextRealAboveFallback))
+            : undefined
+
     return mergeCloseWidths(
-        [...realTiers, fallback].flatMap((tier) => {
-            const base =
-                tier === fallback
-                    ? Math.min(
-                          columnWidth(tier.columns),
-                          narrowestRealTierMinWidth - CONTAINER_PADDING_PX,
-                      )
-                    : columnWidth(tier.columns)
-            return widthLadder(base)
-        }),
+        [...realCandidates, ...fallbackCandidates, bridge].filter(
+            (width): width is number => width !== undefined,
+        ),
     )
 }
 
