@@ -12,16 +12,10 @@ interface DeployNotification {
     name?: string
 }
 
-// The payload is a signed Netlify webhook (verified below), but fields like
-// `branch` still ultimately come from a git branch name a repo contributor
-// chose — same Slack mrkdwn injection risk as csp-report.ts's fields, so the
-// same field-length cap applies here.
+// `branch` etc. ultimately come from user-chosen git input — same injection risk as csp-report.ts's fields.
 const MAX_FIELD_LENGTH = 500
 
-// `payload` is only cast to DeployNotification (deploy-notification.ts's
-// export default), not runtime-validated per field, so a malformed/future
-// payload shape could hand this a non-string — coerce rather than let
-// sanitizeSlackText's string methods throw and fail the whole invocation.
+// `payload` is only cast, not runtime-validated per field — coerce so a non-string field can't throw.
 function sanitizeField(value: unknown): string {
     return truncateForSlack(String(value), MAX_FIELD_LENGTH, '… (truncated)')
 }

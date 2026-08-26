@@ -1,7 +1,5 @@
-// Every field passed into these helpers may be attacker-controlled (a CSP
-// report field, or a git branch name relayed from a real deploy event) —
-// escape Slack mrkdwn (&, <, >) so a crafted value can't inject a mention
-// or a spoofed link, and neutralize backticks so it can't break a code fence.
+// Fields here may be attacker-controlled — escape Slack mrkdwn (&, <, >) against
+// injection and neutralize backticks so a value can't break a code fence.
 export function sanitizeSlackText(text: string): string {
     return text
         .replace(/&/g, '&amp;')
