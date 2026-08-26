@@ -296,7 +296,7 @@ public/
 netlify/
   functions/
     _shared/
-      slack.ts             → Shared postToSlack() helper used by both functions below
+      slack.ts             → Shared postToSlack() + Slack mrkdwn sanitization (sanitizeSlackText/truncateForSlack) used by both functions below
     csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
     deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
 netlify.toml       → Build, Node version, Lighthouse plugin, security headers, 404 redirect, CSP reporting headers
