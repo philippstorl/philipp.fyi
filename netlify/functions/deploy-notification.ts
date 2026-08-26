@@ -1,4 +1,4 @@
-import { postToSlack } from './_shared/slack'
+import { postToSlack, truncateForSlack } from './_shared/slack'
 import { verifyNetlifySignature } from './_shared/verify-netlify-signature'
 
 interface DeployNotification {
@@ -12,6 +12,20 @@ interface DeployNotification {
     name?: string
 }
 
+// The payload is a signed Netlify webhook (verified below), but fields like
+// `branch` still ultimately come from a git branch name a repo contributor
+// chose — same Slack mrkdwn injection risk as csp-report.ts's fields, so the
+// same field-length cap applies here.
+const MAX_FIELD_LENGTH = 500
+
+// `payload` is only cast to DeployNotification (deploy-notification.ts's
+// export default), not runtime-validated per field, so a malformed/future
+// payload shape could hand this a non-string — coerce rather than let
+// sanitizeSlackText's string methods throw and fail the whole invocation.
+function sanitizeField(value: unknown): string {
+    return truncateForSlack(String(value), MAX_FIELD_LENGTH, '… (truncated)')
+}
+
 // admin_url is the site's general admin page (e.g. https://app.netlify.com/projects/<site>),
 // not the specific deploy — appending /deploys/<id> is what links to the actual deploy.
 function deployAdminUrl(deploy: DeployNotification): string | undefined {
@@ -23,18 +37,22 @@ function deployAdminUrl(deploy: DeployNotification): string | undefined {
 
 function summarize(deploy: DeployNotification): string {
     const failed = deploy.state === 'error' || Boolean(deploy.error_message)
-    const site = deploy.name ?? 'philipp.fyi'
+    const site = deploy.name ? sanitizeField(deploy.name) : 'philipp.fyi'
     const adminUrl = deployAdminUrl(deploy)
 
     return [
         failed
             ? `:x: Deploy failed for *${site}*`
             : `:white_check_mark: Deploy succeeded for *${site}*`,
-        deploy.context ? `*Context:* ${deploy.context}` : null,
-        deploy.branch ? `*Branch:* ${deploy.branch}` : null,
-        deploy.error_message ? `*Error:* ${deploy.error_message}` : null,
-        deploy.deploy_ssl_url ? `*Deploy:* ${deploy.deploy_ssl_url}` : null,
-        adminUrl ? `*Admin:* ${adminUrl}` : null,
+        deploy.context ? `*Context:* ${sanitizeField(deploy.context)}` : null,
+        deploy.branch ? `*Branch:* ${sanitizeField(deploy.branch)}` : null,
+        deploy.error_message
+            ? `*Error:* ${sanitizeField(deploy.error_message)}`
+            : null,
+        deploy.deploy_ssl_url
+            ? `*Deploy:* ${sanitizeField(deploy.deploy_ssl_url)}`
+            : null,
+        adminUrl ? `*Admin:* ${sanitizeField(adminUrl)}` : null,
     ]
         .filter((line) => line !== null)
         .join('\n')

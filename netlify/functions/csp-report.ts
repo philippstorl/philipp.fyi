@@ -1,5 +1,5 @@
 import { getStore } from '@netlify/blobs'
-import { postToSlack } from './_shared/slack'
+import { postToSlack, truncateForSlack } from './_shared/slack'
 
 interface NormalizedViolation {
     documentUri?: string
@@ -29,29 +29,6 @@ function blobsStoreUrl(
     return context?.site?.name
         ? `https://app.netlify.com/projects/${context.site.name}/blobs/site:csp-reports`
         : undefined
-}
-
-// Endpoint is unauthenticated, so every field is attacker-controlled: escape
-// Slack mrkdwn (&, <, >) so a crafted value can't inject a mention or a
-// spoofed link, and neutralize backticks so it can't break a code fence.
-function sanitizeSlackText(text: string): string {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/`/g, 'ˋ')
-}
-
-// Truncates by code point, not `.slice()` (can split a surrogate pair), and
-// before sanitizing (can't cut mid-entity, e.g. inside `&amp;`).
-function truncateForSlack(
-    text: string,
-    maxLength: number,
-    marker: string,
-): string {
-    const codePoints = Array.from(text)
-    if (codePoints.length <= maxLength) return sanitizeSlackText(text)
-    return sanitizeSlackText(codePoints.slice(0, maxLength).join('')) + marker
 }
 
 function formatJsonBlock(record: unknown): string {

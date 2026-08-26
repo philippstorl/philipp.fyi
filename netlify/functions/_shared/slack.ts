@@ -1,3 +1,27 @@
+// Every field passed into these helpers may be attacker-controlled (a CSP
+// report field, or a git branch name relayed from a real deploy event) —
+// escape Slack mrkdwn (&, <, >) so a crafted value can't inject a mention
+// or a spoofed link, and neutralize backticks so it can't break a code fence.
+export function sanitizeSlackText(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/`/g, 'ˋ')
+}
+
+// Truncates by code point, not `.slice()` (can split a surrogate pair), and
+// before sanitizing (can't cut mid-entity, e.g. inside `&amp;`).
+export function truncateForSlack(
+    text: string,
+    maxLength: number,
+    marker: string,
+): string {
+    const codePoints = Array.from(text)
+    if (codePoints.length <= maxLength) return sanitizeSlackText(text)
+    return sanitizeSlackText(codePoints.slice(0, maxLength).join('')) + marker
+}
+
 export async function postToSlack(
     webhookUrl: string,
     text: string,
