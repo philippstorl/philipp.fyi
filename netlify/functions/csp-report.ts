@@ -18,6 +18,11 @@ interface FunctionContext {
 const MAX_JSON_BLOCK_LENGTH = 3500
 const MAX_FIELD_LENGTH = 500
 
+// Caps on the request itself: unauthenticated, so bound one POST's blast
+// radius. A real report runs well under 2KB, so 50KB/25 leaves headroom.
+const MAX_BODY_BYTES = 50_000
+const MAX_REPORTS_PER_REQUEST = 25
+
 function blobsStoreUrl(
     context: FunctionContext | undefined,
 ): string | undefined {
@@ -122,14 +127,46 @@ export default async (
         return new Response('Method Not Allowed', { status: 405 })
     }
 
+    // Rejects an honest oversized POST before buffering it; an absent/lied
+    // Content-Length still gets fully read before the byte-length recheck below.
+    const contentLength = req.headers.get('content-length')
+    if (contentLength && Number(contentLength) > MAX_BODY_BYTES) {
+        console.warn(
+            `Rejected CSP report POST: Content-Length ${contentLength} exceeds ${MAX_BODY_BYTES}-byte cap`,
+        )
+        return new Response('Payload Too Large', { status: 413 })
+    }
+
+    let bodyBuffer: ArrayBuffer
+    try {
+        bodyBuffer = await req.arrayBuffer()
+    } catch {
+        return new Response('Invalid request body', { status: 400 })
+    }
+
+    // Raw bytes, not a decoded string: invalid sequences collapse to U+FFFD
+    // on decode, which can make a re-encoded length undercount.
+    if (bodyBuffer.byteLength > MAX_BODY_BYTES) {
+        console.warn(
+            `Rejected CSP report POST: body exceeds ${MAX_BODY_BYTES}-byte cap`,
+        )
+        return new Response('Payload Too Large', { status: 413 })
+    }
+
     let payload: unknown
     try {
-        payload = await req.json()
+        payload = JSON.parse(Buffer.from(bodyBuffer).toString('utf8'))
     } catch {
         return new Response('Invalid JSON body', { status: 400 })
     }
 
-    const reports = Array.isArray(payload) ? payload : [payload]
+    const allReports = Array.isArray(payload) ? payload : [payload]
+    if (allReports.length > MAX_REPORTS_PER_REQUEST) {
+        console.warn(
+            `Truncating CSP report batch: received ${allReports.length}, processing first ${MAX_REPORTS_PER_REQUEST}`,
+        )
+    }
+    const reports = allReports.slice(0, MAX_REPORTS_PER_REQUEST)
     const receivedAt = new Date().toISOString()
     const userAgent = req.headers.get('user-agent')
     const blobsUrl = blobsStoreUrl(context)
