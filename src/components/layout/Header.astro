@@ -163,12 +163,24 @@ const pathname = Astro.url.pathname
     const iconMenu = document.getElementById('icon-menu')
     const iconClose = document.getElementById('icon-close')
 
+    // Looked up fresh each time -- unlike <header>, these aren't
+    // transition:persist'ed, so a soft nav swaps in new nodes.
+    function getMainContent() {
+        return document.getElementById('main-content')
+    }
+    function getSiteFooter() {
+        return document.getElementById('site-footer')
+    }
+
     function openMenu() {
         nav?.classList.remove('hidden')
         backdrop?.classList.remove('hidden')
         toggle?.setAttribute('aria-expanded', 'true')
         iconMenu?.classList.add('hidden')
         iconClose?.classList.remove('hidden')
+        // Keep Tab from reaching background content while the overlay is open.
+        getMainContent()?.setAttribute('inert', '')
+        getSiteFooter()?.setAttribute('inert', '')
     }
 
     function closeMenu({ focusToggle = false } = {}) {
@@ -177,6 +189,8 @@ const pathname = Astro.url.pathname
         toggle?.setAttribute('aria-expanded', 'false')
         iconMenu?.classList.remove('hidden')
         iconClose?.classList.add('hidden')
+        getMainContent()?.removeAttribute('inert')
+        getSiteFooter()?.removeAttribute('inert')
         if (focusToggle) toggle?.focus()
     }
 
@@ -211,4 +225,12 @@ const pathname = Astro.url.pathname
             closeMenu()
         }
     })
+
+    // inert has no media-query fallback -- close the menu once the
+    // viewport crosses md so main/footer can't stay stranded inert.
+    window
+        .matchMedia('(min-width: 768px)')
+        .addEventListener('change', (event) => {
+            if (event.matches) closeMenu()
+        })
 </script>
