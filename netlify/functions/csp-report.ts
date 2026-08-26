@@ -18,11 +18,8 @@ interface FunctionContext {
 const MAX_JSON_BLOCK_LENGTH = 3500
 const MAX_FIELD_LENGTH = 500
 
-// Defensive caps on the request itself (issue #175): unauthenticated, so a
-// crafted POST could otherwise fan out into unbounded Blobs writes/Slack
-// posts. A real report (even the legacy shape, which embeds the full CSP
-// policy string) runs well under 2KB; 50KB/25 reports leaves headroom for a
-// genuine multi-violation batch while still bounding one request's blast radius.
+// Caps on the request itself: unauthenticated, so bound one POST's blast
+// radius. A real report runs well under 2KB, so 50KB/25 leaves headroom.
 const MAX_BODY_BYTES = 50_000
 const MAX_REPORTS_PER_REQUEST = 25
 
@@ -130,11 +127,8 @@ export default async (
         return new Response('Method Not Allowed', { status: 405 })
     }
 
-    // Content-Length lets us reject an obviously oversized POST without
-    // reading it into memory at all when honest; when it's absent or lies
-    // small, the body is still fully buffered before the byte-length
-    // re-check below can reject it — Netlify's own platform body-size limit
-    // is the actual backstop for that case, not this check.
+    // Rejects an honest oversized POST before buffering it; an absent/lied
+    // Content-Length still gets fully read before the byte-length recheck below.
     const contentLength = req.headers.get('content-length')
     if (contentLength && Number(contentLength) > MAX_BODY_BYTES) {
         console.warn(
@@ -150,9 +144,8 @@ export default async (
         return new Response('Invalid request body', { status: 400 })
     }
 
-    // Measured on the raw bytes, not a decoded string: re-encoding a
-    // UTF-8-decoded string can undercount, since invalid byte sequences
-    // collapse to U+FFFD on decode.
+    // Raw bytes, not a decoded string: invalid sequences collapse to U+FFFD
+    // on decode, which can make a re-encoded length undercount.
     if (bodyBuffer.byteLength > MAX_BODY_BYTES) {
         console.warn(
             `Rejected CSP report POST: body exceeds ${MAX_BODY_BYTES}-byte cap`,
