@@ -210,6 +210,73 @@ test.describe('Navigation', () => {
         await expect(backdrop).toBeHidden()
     })
 
+    test('mobile nav keeps keyboard focus out of background content while open (issue #231)', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+        await expect(page.locator('#main-content')).toHaveAttribute('inert', '')
+        await expect(page.locator('#site-footer')).toHaveAttribute('inert', '')
+
+        // Tab well past the toggle + 5 nav links (issue #231 reproduced
+        // this landing on Hero.astro's LinkedIn button by the 6th Tab).
+        // Once nav links run out, focus legitimately cycles back to the
+        // skip link at the very top of the document -- that's not the
+        // bug. What must never happen is focus landing inside the two
+        // regions just made inert.
+        for (let i = 0; i < 8; i++) {
+            await page.keyboard.press('Tab')
+            const escapedToBackground = await page.evaluate(() => {
+                const el = document.activeElement
+                if (!el) return false
+                return (
+                    !!el.closest('#main-content') ||
+                    !!el.closest('#site-footer')
+                )
+            })
+            expect(escapedToBackground).toBe(false)
+        }
+
+        await page.keyboard.press('Escape')
+        await expect(page.locator('#main-content')).not.toHaveAttribute('inert')
+        await expect(page.locator('#site-footer')).not.toHaveAttribute('inert')
+    })
+
+    test('mobile nav inert scoping still targets the live main/footer after a client-side navigation (issue #231)', async ({
+        page,
+    }) => {
+        // #main-content/#site-footer aren't transition:persist'ed like
+        // <header> is, so a soft nav swaps in fresh nodes -- a naive
+        // implementation that caches the original elements would keep
+        // toggling inert on the detached, pre-navigation ones.
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+
+        await mobileToggle.click()
+        await page.locator('nav a[href="/about/"]:visible').click()
+        await expect(page).toHaveURL('/about/')
+
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+        await expect(page.locator('#main-content')).toHaveAttribute('inert', '')
+        await expect(page.locator('#site-footer')).toHaveAttribute('inert', '')
+
+        await page.keyboard.press('Escape')
+        await expect(page.locator('#main-content')).not.toHaveAttribute('inert')
+        await expect(page.locator('#site-footer')).not.toHaveAttribute('inert')
+    })
+
     test('skip link moves keyboard focus to main content', async ({ page }) => {
         await page.goto('/')
         await page.keyboard.press('Tab')
