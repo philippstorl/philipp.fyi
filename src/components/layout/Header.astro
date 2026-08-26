@@ -163,11 +163,8 @@ const pathname = Astro.url.pathname
     const iconMenu = document.getElementById('icon-menu')
     const iconClose = document.getElementById('icon-close')
 
-    // #main-content/#site-footer aren't transition:persist'ed like <header>
-    // is, so <ClientRouter /> swaps in fresh nodes on every client-side
-    // navigation -- look these up at call time rather than caching them,
-    // or a soft nav would leave inert toggling operating on stale, detached
-    // elements while the real visible ones stay untouched.
+    // Looked up fresh each time -- unlike <header>, these aren't
+    // transition:persist'ed, so a soft nav swaps in new nodes.
     function getMainContent() {
         return document.getElementById('main-content')
     }
@@ -181,9 +178,7 @@ const pathname = Astro.url.pathname
         toggle?.setAttribute('aria-expanded', 'true')
         iconMenu?.classList.add('hidden')
         iconClose?.classList.remove('hidden')
-        // Overlay implies modality: keep Tab from walking into background
-        // content while it's open, matching what the backdrop already does
-        // for mouse/touch (issue #231).
+        // Keep Tab from reaching background content while the overlay is open.
         getMainContent()?.setAttribute('inert', '')
         getSiteFooter()?.setAttribute('inert', '')
     }
@@ -231,9 +226,8 @@ const pathname = Astro.url.pathname
         }
     })
 
-    // Unlike the CSS-only scroll lock, `inert` is JS-managed state with no
-    // media-query fallback -- resizing/rotating past md while the menu is
-    // marked open would otherwise strand main/footer permanently inert.
+    // inert has no media-query fallback -- close the menu once the
+    // viewport crosses md so main/footer can't stay stranded inert.
     window
         .matchMedia('(min-width: 768px)')
         .addEventListener('change', (event) => {
