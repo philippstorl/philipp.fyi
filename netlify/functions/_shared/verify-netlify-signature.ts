@@ -17,6 +17,7 @@ export function verifyNetlifySignature(
     const parts = signatureHeader.split('.')
     if (parts.length !== 3) return false
     const [headerB64, payloadB64, signatureB64] = parts
+    if (!headerB64 || !payloadB64 || !signatureB64) return false
 
     let header: unknown
     let payload: unknown

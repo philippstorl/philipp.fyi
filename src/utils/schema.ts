@@ -18,7 +18,9 @@ export function buildPersonSchema(url: string): PersonSchema {
         name: SITE_NAME,
         // The clause before the first comma is the actual job title; the
         // rest of hero.subheading is descriptive copy, not a jobTitle.
-        jobTitle: hero.subheading.split(',')[0].trim(),
+        // String.split() always returns at least one element, even with no
+        // separator match, so index 0 is guaranteed present.
+        jobTitle: hero.subheading.split(',')[0]!.trim(),
         url,
         sameAs: hero.links.map((link) => link.href),
     }
@@ -52,8 +54,9 @@ export interface CreativeWorkSchemaParams {
 // gets bumped each year. Exported so work/[slug].astro can derive the same
 // value for og:article:published_time rather than re-deriving it.
 export function extractSchemaYear(year: string): string {
-    const parts = year.split('–')
-    return parts[0]
+    // String.split() always returns at least one element, even with no
+    // separator match, so index 0 is guaranteed present.
+    return year.split('–')[0]!
 }
 
 /** CreativeWork schema for a case study page — used over Article since these are portfolio project write-ups, not news/blog content. */
