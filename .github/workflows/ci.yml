@@ -15,7 +15,7 @@ jobs:
         name: Repository hygiene
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
             - run: |
                   # .npmrc is deliberately not in this list: the repo commits one with
                   # engine-strict=true (see CLAUDE.md's Node 26 bullet) to enforce the
@@ -33,8 +33,8 @@ jobs:
         name: Lint
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
@@ -45,8 +45,8 @@ jobs:
         name: Format
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
@@ -57,8 +57,8 @@ jobs:
         name: Type Check
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
@@ -69,8 +69,8 @@ jobs:
         name: Dependency Audit
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
@@ -88,8 +88,8 @@ jobs:
         name: Build
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
@@ -104,8 +104,8 @@ jobs:
         name: Test
         runs-on: ubuntu-latest
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
@@ -113,7 +113,7 @@ jobs:
             - run: npm run check:trailing-slashes
             - run: npx playwright install chromium
             - run: npm test
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
               if: always()
               with:
                   name: playwright-report
@@ -129,8 +129,8 @@ jobs:
         permissions:
             pull-requests: write
         steps:
-            - uses: actions/checkout@v4
-            - uses: actions/setup-node@v4
+            - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+            - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
               with:
                   node-version-file: ".nvmrc"
                   cache: "npm"
@@ -146,7 +146,7 @@ jobs:
             # from "the site is clean" — see its own comment for why.
             - run: npm run check:contrast
             - name: Comment on PR
-              uses: actions/github-script@v7
+              uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
               with:
                   script: |
                       const fs = require('fs')
@@ -191,7 +191,7 @@ jobs:
                         // either.
                         core.warning(`Could not post/update the contrast report comment (likely a fork PR with a read-only token): ${error.message}`)
                       }
-            - uses: actions/upload-artifact@v4
+            - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
               if: always()
               with:
                   name: contrast-results
