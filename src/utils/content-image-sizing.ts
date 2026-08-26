@@ -54,10 +54,8 @@ function mergeCloseWidths(widths: number[], threshold = 24): number[] {
     const sorted = [...widths].sort((a, b) => a - b)
     const merged: number[] = []
     for (const width of sorted) {
-        if (
-            merged.length === 0 ||
-            width - merged[merged.length - 1] > threshold
-        ) {
+        const last = merged[merged.length - 1]
+        if (last === undefined || width - last > threshold) {
             merged.push(width)
         }
     }
@@ -106,7 +104,12 @@ function responsiveWidths(
 export function responsiveGridFigureSizing(
     tiers: ResponsiveGridTiers,
 ): FigureSizing {
+    // ResponsiveGridTiers' own shape ([A, ...A[], B]) guarantees a last
+    // element, but the type checker can't see that through a computed index.
     const fallback = tiers[tiers.length - 1]
+    if (!fallback) {
+        throw new Error('ResponsiveGridTiers must include a fallback tier')
+    }
     const realTiers = tiers.filter(
         (tier): tier is { minWidth: number; columns: number } =>
             'minWidth' in tier,

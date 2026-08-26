@@ -154,7 +154,9 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         const slideElements: HTMLDivElement[] = []
 
         const updateCaption = () => {
-            caption.textContent = slides[currentIndex].caption
+            const slide = slides[currentIndex]
+            if (!slide) return
+            caption.textContent = slide.caption
             counter.textContent =
                 figures.length > 1
                     ? `${currentIndex + 1} / ${figures.length}`

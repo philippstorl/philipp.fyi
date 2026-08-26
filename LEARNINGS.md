@@ -13,6 +13,10 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-08-26
+
+- Issue #227 (`noUncheckedIndexedAccess`): the issue's own 10-site/6-file audit was still exactly accurate at implementation time — no drift. Fixed each with real handling rather than a blanket `!`: most got an early-return/throw guard (`verify-netlify-signature.ts`'s JWT-part destructure, `ImageLightbox.astro`'s `slides[currentIndex]`, `og/[...slug].png.ts`'s frontmatter regex match, `content-image-sizing.ts`'s `merged[merged.length - 1]` restructured into a `last === undefined` check and its `ResponsiveGridTiers` fallback tuple access given a throw with a comment on why the tuple shape `[A, ...A[], B]` structurally guarantees a last element the type checker can't see through a computed index). Only `schema.ts`'s two `String.split(...)[0]!` sites got a bare (commented) assertion, since `split()` is spec-guaranteed to return a non-empty array — the one case judged genuinely, not just conveniently, safe. An independent `self-review` pass, specifically asked to check for unjustified `!` usage, found none. See [CLAUDE.md](CLAUDE.md)'s "TypeScript strict mode" bullet for the summary.
+
 ### 2026-08-25
 
 - Issue #177 (decorative `lucide-react` icons missing `aria-hidden`): the issue's own reference example, `ImageLightbox.astro`'s `X`/`ChevronLeft`/`ChevronRight`, already had `aria-hidden="true"` but was missing `focusable="false"` — the fuller two-attribute pattern `SocialIcon.astro`'s hand-inlined GitHub/LinkedIn SVGs actually use, which the issue's suggested fix didn't flag in its own reference file. Extended the fix to add `focusable="false"` there too rather than leave a new inconsistency next to the newly-fixed sites. Also confirmed `ThemeToggle.tsx` (in the issue's original file list) no longer exists — rewritten to `ThemeToggle.astro` in issue #187, its hand-inlined SVGs already `aria-hidden` and not `lucide-react`, nothing to change. Promoted the consistent convention into [CLAUDE.md](CLAUDE.md)'s new decorative-icon bullet.

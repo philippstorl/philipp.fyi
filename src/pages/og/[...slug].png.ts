@@ -30,11 +30,12 @@ const FRONTMATTER_PATTERN = /^---\r?\n([\s\S]*?)\r?\n---/
 function resolveCoverImagePath(filePath: string): string | undefined {
     const raw = readFileSync(filePath, 'utf-8')
     const frontmatterMatch = raw.match(FRONTMATTER_PATTERN)
-    if (!frontmatterMatch) return undefined
+    const frontmatterBlock = frontmatterMatch?.[1]
+    if (frontmatterBlock === undefined) return undefined
 
     let frontmatter: unknown
     try {
-        frontmatter = parseYaml(frontmatterMatch[1])
+        frontmatter = parseYaml(frontmatterBlock)
     } catch {
         return undefined
     }
