@@ -4,7 +4,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
-import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
+import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
 import { getPublishedBlogPosts } from '@/utils/blog-posts'
 import { stripContentExtension } from '@/utils/slug'
 import { formatBlogDate } from '@/utils/date'
@@ -64,9 +64,7 @@ const ogImage = `/og/blog/${stripContentExtension(post.id)}.png`
 
         <hr class="mb-12 border-border" />
 
-        <div
-            class={`prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-normal prose-headings:tracking-tight prose-a:text-accent prose-a:no-underline hover:prose-a:underline ${PROSE_BLOCKQUOTE_CLASSES} prose-code:font-mono prose-code:text-sm`}
-        >
+        <div class={PROSE_CONTENT_CLASSES}>
             <Content />
         </div>
 
