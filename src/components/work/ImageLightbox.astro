@@ -81,12 +81,8 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 </style>
 
 <script>
-    // Astro's view-transitions router swaps page content client-side rather
-    // than doing a full reload, but a <script> module's top-level code only
-    // ever runs once per browser session (standard ES module behavior) — so
-    // navigating away and back to a case study would leave its new figures
-    // without listeners. Re-running setup on astro:page-load (which fires
-    // after the initial load too) keeps it working across every navigation.
+    // Module top-level code runs once per session -- re-run on astro:page-load
+    // so a soft nav's new figures don't end up without listeners.
     function initLightbox() {
         const dialog = document.getElementById(
             'lightbox',
@@ -118,9 +114,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             return
         }
 
-        // Every screenshot in the case study is one gallery, in document
-        // order — prev/next steps through the whole article, not just the
-        // section the clicked image happened to be grouped in.
+        // Whole article is one gallery, in document order.
         const figures = Array.from(proseRoot.querySelectorAll('figure')).filter(
             (figure) => figure.querySelector('img'),
         )
@@ -129,9 +123,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         let lastTrigger: HTMLElement | null = null
         let scrollTimeout: ReturnType<typeof setTimeout>
 
-        // Checked at call time (not cached) so a mid-session OS-level
-        // preference change takes effect on the very next scroll, same as
-        // the rest of the site's reduced-motion gating.
+        // Checked at call time so a live preference change applies immediately.
         const prefersReducedMotion = () =>
             window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -139,17 +131,14 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             const img = figure.querySelector('img')
             const figcaption = figure.querySelector('figcaption')
             return {
-                // Prefer the full-resolution source over the inline
-                // image's own deliberately-downscaled one (ResponsiveFigure.astro).
+                // Full-resolution src, not the downscaled inline one.
                 src: img?.dataset.lightboxSrc || img?.src || '',
                 alt: img?.alt || '',
                 caption: figcaption?.textContent?.trim() || '',
             }
         }
 
-        // Read each figure's image/caption once, up front — navigation only
-        // ever reads from this array instead of re-querying the live DOM on
-        // every prev/next/swipe step.
+        // Read once, up front -- nav reads this array, not the live DOM.
         const slides = figures.map(describe)
         const slideElements: HTMLDivElement[] = []
 
@@ -163,10 +152,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
                     : ''
             prevBtn.disabled = currentIndex === 0
             nextBtn.disabled = currentIndex === figures.length - 1
-            // Only the active slide should be reachable by a linear
-            // accessibility-tree walk — otherwise every slide's image is
-            // exposed at once, ahead of the caption that announces which
-            // one is current.
+            // Only active slide in the a11y tree, not every image at once.
             slideElements.forEach((slide, index) => {
                 if (index === currentIndex) slide.removeAttribute('aria-hidden')
                 else slide.setAttribute('aria-hidden', 'true')
@@ -177,11 +163,8 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             if (!track.clientWidth) return
             const rawIndex = track.scrollLeft / track.clientWidth
             const index = Math.round(rawIndex)
-            // scroll-snap guarantees a genuinely settled position sits almost
-            // exactly on a slide boundary. A reading that doesn't — e.g. a
-            // stale scrollend firing mid-flight because goTo() retargeted the
-            // scroll before the previous one settled — isn't trustworthy;
-            // skip it rather than let it stomp an index goTo() already set.
+            // A settled scroll sits near a slide boundary; a stale mid-flight
+            // reading shouldn't stomp an index goTo() already set.
             const isSettled = Math.abs(rawIndex - index) < 0.02
             if (!isSettled) return
             if (
@@ -196,10 +179,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
         const goTo = (index: number) => {
             const clamped = Math.max(0, Math.min(index, figures.length - 1))
-            // Button/keyboard navigation knows its destination immediately —
-            // update the caption right away instead of waiting for the
-            // (debounced, post-animation) scroll-driven sync to catch up,
-            // which made the caption visibly lag behind the image.
+            // Update immediately -- don't wait on the debounced scroll sync.
             if (clamped !== currentIndex) {
                 currentIndex = clamped
                 updateCaption()
@@ -215,10 +195,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             lastTrigger = trigger
 
             dialog.showModal()
-            // Always instant regardless of motion preference — this is the
-            // initial jump to the clicked slide, not a navigation animation,
-            // and sliding through every image in between on open would look
-            // broken either way.
+            // Always instant -- initial jump, not a navigation animation.
             track.scrollTo({
                 left: index * track.clientWidth,
                 behavior: 'instant',
@@ -226,11 +203,8 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             updateCaption()
         }
 
-        // Slides are built once, up front, rather than per-open — it's the
-        // same gallery every time, just starting at a different index. Most
-        // sit off-screen in the horizontal track, so `loading="lazy"` lets
-        // the browser defer fetching/decoding them until they're actually
-        // scrolled near, instead of loading all of them on page load.
+        // Built once, up front -- same gallery every time. Most sit
+        // off-screen, so loading="lazy" defers fetch until scrolled near.
         for (const { src, alt } of slides) {
             const slide = document.createElement('div')
             slide.className =
@@ -270,10 +244,8 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             clearTimeout(scrollTimeout)
             scrollTimeout = setTimeout(syncFromScroll, 80)
         })
-        // Swipe gestures don't have a known destination ahead of time like
-        // goTo() does — sync as soon as the browser reports scrolling has
-        // truly stopped, rather than waiting on the debounce above (kept as
-        // a fallback for browsers without scrollend support).
+        // Swipe has no known destination -- sync on scrollend; debounce
+        // above is a fallback for browsers without it.
         track.addEventListener('scrollend', syncFromScroll)
 
         prevBtn.addEventListener('click', () => goTo(currentIndex - 1))
@@ -281,9 +253,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         closeBtn.addEventListener('click', () => dialog.close())
 
         dialog.addEventListener('click', (event) => {
-            // The dialog's content fills the viewport, so there's no exposed
-            // ::backdrop to click — treat any click outside the image/buttons
-            // as a "tap to dismiss" instead.
+            // No exposed ::backdrop -- any click outside image/buttons dismisses.
             const target = event.target as HTMLElement
             if (!target.closest('button, img')) dialog.close()
         })

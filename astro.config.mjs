@@ -9,14 +9,9 @@ export default defineConfig({
     trailingSlash: 'always',
     prefetch: true,
     security: {
-        // Astro doesn't auto-hash `is:inline` scripts, so ThemeToggle.astro's
-        // pre-paint script needs its hash registered here by hand. Recompute
-        // with `openssl dgst -sha256 -binary <file> | openssl base64` over the
-        // exact <script> content in the built dist/index.html if it changes.
-        //
-        // `resources` replaces Astro's default `'self'`-only list, so `'self'`
-        // is re-added explicitly; `data:` permits View Transitions' internal
-        // `data:application/javascript,` load-order sentinel script (issue #198).
+        // is:inline scripts aren't auto-hashed -- if ThemeToggle's script changes,
+        // recompute over its dist/index.html (not source) output (openssl dgst -sha256 | base64).
+        // `data:` = View Transitions sentinel.
         csp: {
             scriptDirective: {
                 resources: ["'self'", 'data:'],

@@ -1,9 +1,6 @@
 import { getStore } from '@netlify/blobs'
 
-// V2 scheduled function: a `config` export with a cron `schedule`, not a
-// netlify.toml [functions."name"] block — confirmed as the supported shape
-// for the installed @netlify/functions (5.3.0) by reading its Config type.
-// Runs daily at 03:00 UTC, off-hours for this site's traffic.
+// V2 scheduled function: `config.schedule` cron, not netlify.toml. Daily at 03:00 UTC.
 export const config = {
     schedule: '0 3 * * *',
 }
@@ -11,21 +8,16 @@ export const config = {
 const RETENTION_DAYS = 30
 const RETENTION_MS = RETENTION_DAYS * 24 * 60 * 60 * 1000
 
-// The store has no write cap of its own (csp-report.ts only bounds one
-// POST's fan-out) — deleting in bounded batches, not one unbounded
-// Promise.all, keeps a backlog run from spiking concurrent Blobs requests.
+// Bounded batches, not one Promise.all, avoid spiking concurrent Blobs requests.
 const DELETE_BATCH_SIZE = 25
 
-// csp-report.ts writes each entry as `${receivedAt}-${uuid}`, where
-// receivedAt is Date#toISOString() (always exactly 24 chars) — reusing that
-// documented key format lets age be read from the key itself, with no
-// per-entry store.get()/getMetadata() call needed.
+// receivedAt (ISO, 24 chars) prefixes each key -- age is readable from the
+// key itself, no per-entry get()/getMetadata() call needed.
 const ISO_TIMESTAMP_LENGTH = 24
 
 function parseEntryTimestamp(key: string): number | undefined {
     const timestamp = new Date(key.slice(0, ISO_TIMESTAMP_LENGTH)).getTime()
-    // An unparseable prefix means the key isn't this store's usual shape —
-    // never guess-delete an entry whose age can't be confirmed.
+    // Unparseable prefix -- never guess-delete an unconfirmed entry.
     return Number.isNaN(timestamp) ? undefined : timestamp
 }
 

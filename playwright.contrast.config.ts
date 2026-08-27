@@ -1,12 +1,7 @@
 import { defineConfig, devices } from '@playwright/test'
 
-// Separate config for the color-contrast check (see e2e/contrast.spec.ts).
-// It reuses the same dev server/baseURL setup as playwright.config.ts, but
-// runs only that one spec, on a single project — contrast doesn't vary by
-// viewport/device, so there's no value in doubling the run across chromium
-// and mobile. Kept as its own config (rather than a project in the main
-// one) so `npm test` never picks it up: this check is intentionally
-// report-only and shouldn't affect the pass/fail test suite. See CLAUDE.md.
+// Separate from playwright.config.ts so `npm test` never picks up this
+// report-only check (CLAUDE.md). Single project — contrast doesn't vary by viewport.
 export default defineConfig({
     testDir: './e2e',
     testMatch: '**/contrast.spec.ts',
@@ -20,16 +15,8 @@ export default defineConfig({
 
     use: {
         baseURL: 'http://localhost:4321',
-        // Several homepage elements (Hero.astro's animate-fade-up) run a
-        // one-shot entrance fade gated behind `prefers-reduced-motion:
-        // no-preference` (see global.css / CLAUDE.md). Without forcing
-        // reduced motion, axe sometimes samples mid-fade opacity and
-        // reports a false low-contrast violation depending on exactly when
-        // the scan lands relative to the animation. This config option
-        // alone doesn't reliably reach the page's matchMedia, though — the
-        // actual fix is the explicit page.emulateMedia() call in
-        // e2e/contrast.spec.ts. Kept here too as a harmless defensive
-        // default in case that ever changes.
+        // Avoids axe sampling Hero.astro's fade mid-animation. Doesn't reliably
+        // reach matchMedia alone -- real fix is contrast.spec.ts's emulateMedia().
         reducedMotion: 'reduce',
     },
 

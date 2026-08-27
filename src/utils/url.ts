@@ -1,6 +1,4 @@
-/** Builds an absolute URL from a path and the site's configured `site` URL.
- * Takes both directly rather than the Astro global, so it works anywhere
- * an absolute URL is needed without a request context. */
+/** Absolute URL from a path + site URL -- takes both directly, no request context needed. */
 export function toAbsoluteUrl(path: string, site: URL | undefined): string {
     return new URL(path, site).toString()
 }

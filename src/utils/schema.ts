@@ -16,10 +16,7 @@ export function buildPersonSchema(url: string): PersonSchema {
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: SITE_NAME,
-        // The clause before the first comma is the actual job title; the
-        // rest of hero.subheading is descriptive copy, not a jobTitle.
-        // String.split() always returns at least one element, even with no
-        // separator match, so index 0 is guaranteed present.
+        // First comma-clause of subheading is the job title; rest is copy.
         jobTitle: hero.subheading.split(',')[0]!.trim(),
         url,
         sameAs: hero.links.map((link) => link.href),
@@ -47,16 +44,10 @@ export interface CreativeWorkSchemaParams {
     image?: string
 }
 
-// A bare year is valid reduced-precision ISO 8601; an en-dash range isn't a
-// date at all. Use the range's earlier (fixed) year, not the later one —
-// some case studies use an open-ended range that still ends in the current
-// year, and datePublished shouldn't silently creep forward as that range
-// gets bumped each year. Exported so work/[slug].astro can derive the same
-// value for og:article:published_time rather than re-deriving it.
+// Earlier year of an en-dash range, not the later one -- an open-ended
+// range shouldn't make datePublished creep forward as it gets bumped yearly.
 export function extractSchemaYear(year: string): string {
-    // String.split() always returns at least one element, even with no
-    // separator match, so index 0 is guaranteed present.
-    return year.split('–')[0]!
+    return year.split('–')[0]! // split() always returns at least one element
 }
 
 /** CreativeWork schema for a case study page — used over Article since these are portfolio project write-ups, not news/blog content. */

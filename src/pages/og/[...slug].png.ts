@@ -19,14 +19,8 @@ interface OgImageProps {
 
 const FRONTMATTER_PATTERN = /^---\r?\n([\s\S]*?)\r?\n---/
 
-// entry.data.coverImage only exposes the Astro-optimized public URL (e.g.
-// /_astro/hash.png), which isn't guaranteed to exist on disk yet during this
-// same build pass. Reading the original source file via entry.filePath and
-// re-parsing the frontmatter sidesteps that timing dependency entirely.
-// Uses js-yaml (the same parser Astro's own content loader uses under
-// @astrojs/internal-helpers/frontmatter) rather than a hand-rolled regex, so
-// this tolerates whatever quoting/formatting Prettier or a future edit
-// produces instead of only matching one exact double-quoted shape.
+// coverImage's built URL may not exist on disk yet mid-build -- re-read the
+// source frontmatter instead, via js-yaml so quoting/formatting can't break a regex.
 function resolveCoverImagePath(filePath: string): string | undefined {
     const raw = readFileSync(filePath, 'utf-8')
     const frontmatterMatch = raw.match(FRONTMATTER_PATTERN)

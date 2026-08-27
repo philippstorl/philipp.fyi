@@ -31,9 +31,7 @@ test.describe('Image lightbox', () => {
     test('only the current slide is exposed to the accessibility tree', async ({
         page,
     }) => {
-        // Regression check: every slide used to stay in the accessibility
-        // tree regardless of which one was active, so a screen reader user
-        // would hear every image read consecutively ahead of the caption.
+        // Regression: every slide used to stay in the a11y tree at once.
         await openLightboxOn(page, page.locator('.prose figure img').first())
 
         const slides = page.locator('.lightbox-slide')
@@ -48,8 +46,7 @@ test.describe('Image lightbox', () => {
     test('the enlarged image is a full-resolution source, not the downscaled inline one', async ({
         page,
     }) => {
-        // Regression check: the lightbox must use the figure's full-resolution
-        // `data-lightbox-src`, not its deliberately downscaled inline `src`.
+        // Regression: must use full-res data-lightbox-src, not the downscaled inline src.
         const inlineImage = page.locator('.prose figure img').first()
         const [inlineSrc, lightboxSrc] = await Promise.all([
             inlineImage.getAttribute('src'),
@@ -67,10 +64,8 @@ test.describe('Image lightbox', () => {
     test('opens directly on the clicked image, not an earlier one', async ({
         page,
     }) => {
-        // Regression check: the lightbox used to flash slide 0 before
-        // snapping to the slide that was actually clicked. Anchored to a
-        // named image (rather than a position index) so it keeps testing
-        // the same thing even if images are added earlier in the article.
+        // Regression: used to flash slide 0 first. Anchored to a named
+        // image, not position, so future images don't break this.
         const year2025 = page
             .locator('.prose')
             .getByAltText('VOICES website homepage after the 2025 rebrand')
@@ -168,10 +163,7 @@ test.describe('Image lightbox', () => {
     test('stays clickable after navigating away and back via client-side routing', async ({
         page,
     }) => {
-        // Regression check: a <script> module's top-level code only runs once
-        // per browser session, so re-arriving at this page via Astro's view
-        // transitions (not a full reload) used to leave images without
-        // click handlers the second time.
+        // Regression: soft nav via view transitions left images without click handlers.
         await page.getByText('← All work').first().click()
         await page.waitForURL('**/work/')
 

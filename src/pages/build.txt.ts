@@ -1,14 +1,7 @@
 import type { APIRoute } from 'astro'
 
-// This endpoint runs at build time and outputs a static /build.txt file.
-// Useful for quickly verifying which build is deployed.
-//
-// Netlify sets the following environment variables during build:
-//   CONTEXT    — "production" | "deploy-preview" | "branch-deploy"
-//   HEAD       — branch name (e.g. "main")
-//   COMMIT_REF — full git commit SHA
-//
-// In local dev these will be undefined; the fallback values make that clear.
+// Static /build.txt for verifying the live deploy. Netlify env vars: CONTEXT,
+// HEAD (branch), COMMIT_REF (SHA) -- undefined locally, hence the fallbacks.
 export const GET: APIRoute = () => {
     const lines = [
         `LAST BUILD: ${new Date().toISOString()}`,

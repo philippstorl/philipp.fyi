@@ -17,10 +17,8 @@ const ignoreDirs = new Set([
     '.idea',
 ])
 
-// 'index' isn't a real route segment (it maps to '/'). '404' is excluded
-// because Astro always builds it flat as dist/404.html rather than
-// dist/404/index.html, regardless of trailingSlash — see the matching
-// comment above the /404 redirect in netlify.toml.
+// 'index' maps to '/', not a real segment. '404' is excluded -- Astro
+// always builds it flat (dist/404.html); see netlify.toml's /404 redirect.
 const excludedStaticPageNames = new Set(['index', '404'])
 
 function escapeRegex(str) {

@@ -1,16 +1,8 @@
 ---
 import { ClientRouter } from 'astro:transitions'
 import '../styles/global.css'
-// Preloaded below since Fraunces renders the hero <h1> (the page's likely
-// LCP element) but is otherwise only discovered via global.css's @import
-// chain, costing an extra round trip. The `-latin-` subset covers this
-// site's English copy; the `?url` suffix resolves Vite's hashed build
-// output path rather than the raw node_modules path. Both DM Sans weights
-// actually painted above the fold are preloaded: 500 for the header nav
-// links (NavLink.astro) and hero availability badge, and 400 for the hero
-// subheading paragraph (Hero.astro's <p class="text-lg ...">) right below
-// the <h1> — self-review caught that an earlier version of this only
-// preloaded 500, missing the subheading despite it being above the fold too.
+// Fraunces renders the hero LCP <h1>, only @import-discovered otherwise.
+// Both above-fold DM Sans weights preloaded too: 500 (nav/badge), 400 (subheading).
 import frauncesWoff2Url from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url'
 import dmSansWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2?url'
 import dmSansRegularWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2?url'
@@ -27,11 +19,7 @@ interface Props {
     articlePublishedTime?: string
     /** Set to 'noindex' to render <meta name="robots">; omit for the default indexable behavior. */
     robots?: 'noindex'
-    /**
-     * Set to false to skip the canonical <link> entirely — for a page with
-     * no single resolvable URL of its own (e.g. /404, which is served flat
-     * without a trailing slash and shouldn't claim a canonical /404/).
-     */
+    /** False skips the canonical <link> -- for a page with no single resolvable URL (e.g. /404). */
     canonical?: boolean
 }
 
@@ -128,13 +116,8 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
         <ClientRouter />
 
         {
-            /*
-            Dark mode: runs synchronously before first paint to prevent flash.
-            Reads localStorage, falls back to OS preference. Also reapplied on
-            astro:after-swap, since the view-transitions router replaces the
-            <html> element's attributes (including class) with the incoming
-            page's static markup, which doesn't have the class baked in.
-        */
+            /* Runs before paint to prevent a flash. Reapplied on astro:after-swap
+            since ClientRouter replaces <html>'s class with static markup. */
         }
         <script is:inline>
             ;(function () {

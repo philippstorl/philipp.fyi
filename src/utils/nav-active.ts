@@ -1,6 +1,4 @@
-// Shared by NavLink.astro's server-rendered markup and Header.astro's
-// client-side updateActiveNav() script, so active-link matching and
-// class vocabulary can't drift out of sync between the two.
+// Shared by NavLink.astro and Header.astro's updateActiveNav() so they can't drift.
 export function isNavLinkActive(pathname: string, href: string): boolean {
     if (href.includes('#')) return false
     const normalizedPathname = pathname.endsWith('/')

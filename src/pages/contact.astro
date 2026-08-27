@@ -9,9 +9,7 @@ import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
 import ContactForm from '@/components/ui/ContactForm'
 import { hero, type HeroLink } from '@/data/hero'
 
-// Keyed by icon (not label) so TypeScript forces an update here if
-// hero.links ever gains a third entry, rather than this page silently
-// keeping only its original two.
+// Keyed by icon so TS forces an update if hero.links gains a third entry.
 const contactLinkLabels: Record<HeroLink['icon'], string> = {
     linkedin: 'Connect on LinkedIn',
     github: 'Browse my code on GitHub',
@@ -32,11 +30,8 @@ const contactLinkLabels: Record<HeroLink['icon'], string> = {
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
             {
-                /*
-                The hidden <form> below is required for Netlify's deploy-time
-                spider to detect and register the form. The actual submission
-                is handled by the React ContactForm component via fetch().
-            */
+                /* Hidden form registers with Netlify's deploy-time spider;
+                ContactForm handles the real submission via fetch(). */
             }
             <form
                 name="contact"

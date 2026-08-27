@@ -51,9 +51,7 @@ test.describe('Navigation', () => {
     test('active nav link updates after client-side navigation', async ({
         page,
     }) => {
-        // Header persists across client-side navigations (transition:persist),
-        // so the active-link state has to be recomputed on navigate rather
-        // than relying on the server-rendered class from the first page load.
+        // Header is transition:persist'ed -- active state must be recomputed on navigate.
         await page.goto('/recommendations/')
         const desktopNav = page.locator('nav[aria-label="Main navigation"]')
         const mobileNav = page.locator('#mobile-nav')
@@ -102,7 +100,7 @@ test.describe('Navigation', () => {
         page,
     }) => {
         // Regression check: ThemeToggle used to be a client:load React
-        // island (issue #187); only /contact/'s ContactForm should load JS.
+        // island; only /contact/'s ContactForm should load JS.
         const jsRequests: string[] = []
         page.on('request', (req) => {
             if (req.url().endsWith('.js')) jsRequests.push(req.url())
@@ -225,12 +223,7 @@ test.describe('Navigation', () => {
         await expect(page.locator('#main-content')).toHaveAttribute('inert', '')
         await expect(page.locator('#site-footer')).toHaveAttribute('inert', '')
 
-        // Tab well past the toggle + 5 nav links (issue #231 reproduced
-        // this landing on Hero.astro's LinkedIn button by the 6th Tab).
-        // Once nav links run out, focus legitimately cycles back to the
-        // skip link at the very top of the document -- that's not the
-        // bug. What must never happen is focus landing inside the two
-        // regions just made inert.
+        // Cycling back to the skip link is fine; landing in the inert regions isn't.
         for (let i = 0; i < 8; i++) {
             await page.keyboard.press('Tab')
             const escapedToBackground = await page.evaluate(() => {
@@ -252,10 +245,8 @@ test.describe('Navigation', () => {
     test('mobile nav inert scoping still targets the live main/footer after a client-side navigation (issue #231)', async ({
         page,
     }) => {
-        // #main-content/#site-footer aren't transition:persist'ed like
-        // <header> is, so a soft nav swaps in fresh nodes -- a naive
-        // implementation that caches the original elements would keep
-        // toggling inert on the detached, pre-navigation ones.
+        // Not transition:persist'ed -- a soft nav swaps in fresh nodes;
+        // caching the originals would toggle inert on stale ones.
         await page.goto('/')
         const mobileToggle = page.locator('#nav-toggle')
         test.skip(

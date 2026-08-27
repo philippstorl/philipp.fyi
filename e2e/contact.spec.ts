@@ -33,10 +33,7 @@ test.describe('Contact page', () => {
     })
 
     test('footer mail icon links to /contact/', async ({ page }) => {
-        // Asserts the href directly rather than clicking through: the
-        // footer sits at the bottom of the viewport, where Astro's dev
-        // toolbar overlay (dev-server only, absent from a real build)
-        // intercepts pointer events on mobile viewports.
+        // Dev toolbar overlay intercepts footer clicks on mobile -- assert href instead.
         await page.goto('/')
         await expect(
             page.locator('footer a[aria-label="Contact"]'),
