@@ -25,6 +25,14 @@ interface Props {
     ogType?: 'website' | 'article'
     /** ISO 8601 date/datetime; only rendered when ogType is 'article'. */
     articlePublishedTime?: string
+    /** Set to 'noindex' to render <meta name="robots">; omit for the default indexable behavior. */
+    robots?: 'noindex'
+    /**
+     * Set to false to skip the canonical <link> entirely — for a page with
+     * no single resolvable URL of its own (e.g. /404, which is served flat
+     * without a trailing slash and shouldn't claim a canonical /404/).
+     */
+    canonical?: boolean
 }
 
 const {
@@ -33,6 +41,8 @@ const {
     ogImage = '/og/home.png',
     ogType = 'website',
     articlePublishedTime,
+    robots,
+    canonical = true,
 } = Astro.props
 
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
@@ -49,7 +59,8 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
 
         <title>{fullTitle}</title>
         <meta name="description" content={description} />
-        <link rel="canonical" href={canonicalURL} />
+        {robots && <meta name="robots" content={robots} />}
+        {canonical && <link rel="canonical" href={canonicalURL} />}
         <link
             rel="alternate"
             type="application/rss+xml"
@@ -66,7 +77,7 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
                 />
             )
         }
-        <meta property="og:url" content={canonicalURL} />
+        {canonical && <meta property="og:url" content={canonicalURL} />}
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
         <meta property="og:image" content={ogImageURL} />
