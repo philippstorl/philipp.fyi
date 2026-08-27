@@ -12,7 +12,7 @@ interface SatoriTemplateNode {
     props: Record<string, unknown>
 }
 
-type FontCache = { fraunces: ArrayBuffer; dmSans: ArrayBuffer } | null
+type FontCache = { regular: ArrayBuffer; bold: ArrayBuffer } | null
 let fontCache: FontCache = null
 
 function nodeBufferToArrayBuffer(buf: Buffer): ArrayBuffer {
@@ -35,29 +35,29 @@ function findFontFile(dir: string, matcher: (name: string) => boolean): string {
 function loadFonts(): NonNullable<FontCache> {
     if (fontCache) return fontCache
 
-    // Satori can't read WOFF2; the variable font packages only ship WOFF2.
-    const frauncesDir = resolve('./node_modules/@fontsource/fraunces/files')
-    const dmSansDir = resolve('./node_modules/@fontsource/dm-sans/files')
+    // Satori can't read WOFF2; the variable font package only ships WOFF2,
+    // so the two static weights come from the non-variable @fontsource/geist.
+    const geistDir = resolve('./node_modules/@fontsource/geist/files')
 
-    // Match WOFF files — both packages ship latin-400-normal.woff alongside .woff2
-    const frauncesPath = findFontFile(
-        frauncesDir,
+    // Match WOFF files — the package ships latin-{weight}-normal.woff alongside .woff2
+    const regularPath = findFontFile(
+        geistDir,
         (f) =>
             f.includes('latin-400-normal') &&
             f.endsWith('.woff') &&
             !f.endsWith('.woff2'),
     )
-    const dmSansPath = findFontFile(
-        dmSansDir,
+    const boldPath = findFontFile(
+        geistDir,
         (f) =>
-            f.includes('latin-400-normal') &&
+            f.includes('latin-700-normal') &&
             f.endsWith('.woff') &&
             !f.endsWith('.woff2'),
     )
 
     fontCache = {
-        fraunces: nodeBufferToArrayBuffer(readFileSync(frauncesPath)),
-        dmSans: nodeBufferToArrayBuffer(readFileSync(dmSansPath)),
+        regular: nodeBufferToArrayBuffer(readFileSync(regularPath)),
+        bold: nodeBufferToArrayBuffer(readFileSync(boldPath)),
     }
     return fontCache
 }
@@ -92,7 +92,7 @@ async function buildCoverImageDataUri(coverImagePath: string): Promise<string> {
 
 const labelBaseStyle = {
     fontSize: 20,
-    fontFamily: 'DM Sans',
+    fontFamily: 'Geist',
     marginBottom: '20px',
     letterSpacing: '-0.01em',
 }
@@ -207,8 +207,8 @@ function buildTemplate(
                                         display: 'flex',
                                         alignItems: 'flex-start',
                                         fontSize: titleSize,
-                                        fontFamily: 'Fraunces',
-                                        fontWeight: 400,
+                                        fontFamily: 'Geist',
+                                        fontWeight: 700,
                                         color: colors.foreground,
                                         lineHeight: 1.05,
                                         letterSpacing: '-0.02em',
@@ -227,7 +227,7 @@ function buildTemplate(
                                         paddingTop: '28px',
                                         marginTop: '28px',
                                         fontSize: 18,
-                                        fontFamily: 'DM Sans',
+                                        fontFamily: 'Geist',
                                         color: colors.muted,
                                     },
                                     children: 'Philipp Storl  ·  philipp.fyi',
@@ -291,15 +291,15 @@ export async function generateOgImage(
             height: OG_HEIGHT,
             fonts: [
                 {
-                    name: 'Fraunces',
-                    data: fonts.fraunces,
+                    name: 'Geist',
+                    data: fonts.regular,
                     weight: 400,
                     style: 'normal',
                 },
                 {
-                    name: 'DM Sans',
-                    data: fonts.dmSans,
-                    weight: 400,
+                    name: 'Geist',
+                    data: fonts.bold,
+                    weight: 700,
                     style: 'normal',
                 },
             ],

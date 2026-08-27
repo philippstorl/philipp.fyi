@@ -1,11 +1,10 @@
 ---
 import { ClientRouter } from 'astro:transitions'
 import '../styles/global.css'
-// Fraunces renders the hero LCP <h1>, only @import-discovered otherwise.
-// Both above-fold DM Sans weights preloaded too: 500 (nav/badge), 400 (subheading).
-import frauncesWoff2Url from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url'
-import dmSansWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-500-normal.woff2?url'
-import dmSansRegularWoff2Url from '@fontsource/dm-sans/files/dm-sans-latin-400-normal.woff2?url'
+// Geist renders both the hero LCP <h1> and its subheading/nav/badge --
+// one variable-weight file covers every above-the-fold weight, only
+// @import-discovered otherwise.
+import geistWoff2Url from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url'
 import { SITE_NAME, getDefaultDescription } from '@/data/site'
 import { toAbsoluteUrl } from '@/utils/url'
 
@@ -95,21 +94,7 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
             rel="preload"
             as="font"
             type="font/woff2"
-            href={frauncesWoff2Url}
-            crossorigin
-        />
-        <link
-            rel="preload"
-            as="font"
-            type="font/woff2"
-            href={dmSansWoff2Url}
-            crossorigin
-        />
-        <link
-            rel="preload"
-            as="font"
-            type="font/woff2"
-            href={dmSansRegularWoff2Url}
+            href={geistWoff2Url}
             crossorigin
         />
 

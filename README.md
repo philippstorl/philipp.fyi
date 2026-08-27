@@ -224,9 +224,9 @@ Published posts (`draft: false`) also appear automatically in the RSS feed at `/
 
 ## OG images
 
-OG images are generated at build time using Satori + Sharp. Satori accepts TTF, OTF, and WOFF — but not WOFF2. Because `@fontsource-variable/fraunces` only ships WOFF2, the project uses `@fontsource/fraunces` (non-variable, 400 weight) specifically for OG image generation. The website itself still uses the variable font via `@fontsource-variable/fraunces`.
+OG images are generated at build time using Satori + Sharp. Satori accepts TTF, OTF, and WOFF — but not WOFF2. Because `@fontsource-variable/geist` only ships WOFF2, the project uses `@fontsource/geist` (non-variable) specifically for OG image generation, loaded at both 400 (regular) and 700 (bold) weight to match the site's own regular body text and bold headings. The website itself still uses the variable font via `@fontsource-variable/geist`.
 
-Both fonts are loaded from their respective `node_modules/*/files/*.woff` paths at build time. If OG image generation fails, the error message includes a directory listing to help verify the exact filename against the matcher in `src/utils/og-image.ts`.
+Both weights are loaded from `node_modules/@fontsource/geist/files/*.woff` at build time. If OG image generation fails, the error message includes a directory listing to help verify the exact filename against the matcher in `src/utils/og-image.ts`.
 
 Every static page, case study, and published blog post gets its own `/og/<slug>.png` — see `src/pages/og/[...slug].png.ts`'s `getStaticPaths`. This includes the `/blog/` listing page itself (`/og/blog.png`), which exists regardless of whether any posts are published. Since every blog post currently ships as `draft: true`, no per-post `/og/blog/<slug>.png` images exist yet; that wiring is in place and generates automatically the moment a post is published.
 
