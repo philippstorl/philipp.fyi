@@ -195,7 +195,7 @@ draft: false # true = hidden from the site
 coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
 ```
 
-Screenshots in the case study body go through [`ResponsiveFigure`](src/components/ui/ResponsiveFigure.astro) (`<ResponsiveFigure src={img} alt="..." caption="..." {...gridFigureSizing(3)} />` — see [`content-image-sizing.ts`](src/utils/content-image-sizing.ts) for the sizing helpers) rather than a hand-written `<figure><Image/><figcaption/></figure>` block, and automatically get a click-to-enlarge lightbox with a full-resolution source — no extra markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
+Screenshots in the case study body go through [`ResponsiveFigure`](src/components/ui/ResponsiveFigure.astro) (`<ResponsiveFigure src={img} alt="..." caption="..." {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)} />` for a grid whose column count changes at breakpoints, `{...fullWidthFigureSizing()}` for a standalone full-width figure — see [`content-image-sizing.ts`](src/utils/content-image-sizing.ts) for the full set of sizing helpers) rather than a hand-written `<figure><Image/><figcaption/></figure>` block, and automatically get a click-to-enlarge lightbox with a full-resolution source — no extra markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
 
 ### Principles — `src/content/principles/`
 

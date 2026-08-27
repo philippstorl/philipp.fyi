@@ -14,8 +14,9 @@ coverImage: "./storyblok-migration/staffbase-com-jp.png"
 import { getStaffbaseTenureYears } from "@/utils/experience"
 import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
 import {
-    gridFigureSizing,
+    responsiveGridFigureSizing,
     fixedWidthFigureSizing,
+    TWO_COLUMN_RESPONSIVE_TIERS,
 } from "@/utils/content-image-sizing"
 import imgJp from "./storyblok-migration/staffbase-com-jp.png"
 import imgDe from "./storyblok-migration/staffbase-com-de.png"
@@ -45,18 +46,18 @@ What I brought to that partnership wasn't Symfony expertise, at least not at fir
 
 The scope was substantial. The migration covered the full staffbase.com estate: all product pages, and a lot of other content types. We launched with English (default), German, and Japanese. French and Spanish were added later, well after go-live. That was a good proof point that the new architecture made expanding to additional languages straightforward rather than a fresh engineering effort.
 
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={imgJp}
         alt="staffbase.com Japanese locale - one of three markets live at launch"
         caption="Japanese locale at launch: the most immediately legible proof of a working multilingual architecture."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={imgDe}
         alt="staffbase.com German locale - Staffbase's home market, live on the new stack at go-live"
         caption="German locale: Staffbase's home market, live on the new stack on the same day."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -89,18 +90,18 @@ The highest-stakes moment was go-live: switching primary domains on a live comme
 
 I led the migration from initial scoping in late 2024 through go-live in July 2025 and stabilization through the rest of the year, delivering a faster, more stable site with a far better editor experience than WordPress, a better developer experience for the team, and an architecture built to scale. Marketing self-publishes in Storyblok, and the number of web support tickets driven by content management, which had been significant, dropped materially. By go-live, the web team was running the Symfony application independently, calling on SensioLabs only for the rare edge case: proof that the knowledge transfer had actually worked, not just the migration itself. And the new setup proved its value quickly: adding French and Spanish after launch was straightforward, exactly as the architecture intended. It was also the first step in unifying Staffbase's fragmented web properties onto one technical system.
 
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={imgFr}
         alt="staffbase.com French locale - added post-launch"
         caption="French locale: added post-launch as a configuration change, not a rebuild."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={imgEs}
         alt="staffbase.com Spanish locale - added post-launch alongside French"
         caption="Spanish, added the same way. Two new markets without a single architectural change."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 

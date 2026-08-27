@@ -10,6 +10,8 @@ interface FigureSizing {
     width: number
     sizes: string
     widths: number[]
+    /** Astro `<Image>` layout mode — see the `full-width` vs `constrained` bullet in CLAUDE.md. */
+    layout: 'full-width' | 'constrained'
 }
 
 interface SizeTier {
@@ -140,6 +142,7 @@ export function responsiveGridFigureSizing(
         width: columnWidth(widestRealTier.columns),
         sizes: buildSizesAttr(sizeTiers, columnFluidExpr(fallback.columns)),
         widths: responsiveWidths(realTiers, fallback),
+        layout: 'full-width',
     }
 }
 
@@ -188,6 +191,9 @@ export function fixedWidthFigureSizing(
         width,
         sizes: buildSizesAttr(tiers, columnFluidExpr(1)),
         widths: widthLadder(width),
+        // Deliberately narrower than the column at every viewport, mobile
+        // included — must never stretch to fill it, unlike the grid helpers above.
+        layout: 'constrained',
     }
 }
 
