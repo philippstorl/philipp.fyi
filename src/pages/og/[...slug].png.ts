@@ -98,6 +98,13 @@ export const getStaticPaths: GetStaticPaths = async () => {
                 label: 'Get in touch',
             } satisfies OgImageProps,
         },
+        {
+            params: { slug: 'blog' },
+            props: {
+                title: 'Blog',
+                label: 'Writing on web development and tooling',
+            } satisfies OgImageProps,
+        },
         ...workEntries.map((entry) => {
             const coverImagePath =
                 entry.data.coverImage && entry.filePath
