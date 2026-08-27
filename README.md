@@ -101,6 +101,10 @@ npx netlify blobs:list csp-reports
 npx netlify blobs:get csp-reports <key>
 ```
 
+## CSP report retention
+
+`netlify/functions/csp-report-cleanup.ts` runs daily on a Netlify scheduled function (a `config` export with a cron `schedule`, not a dashboard/`netlify.toml` setting) and deletes any `csp-reports` Blobs entry older than 30 days — the Blobs SDK has no TTL/expiration option, so nothing else prunes the store. No setup needed; it runs automatically once deployed. See CLAUDE.md's `csp-report-cleanup.ts` bullet for how it works and what it's verified against.
+
 ## Deploy notifications
 
 Netlify's native Slack notification type is gated behind Pro/Enterprise, and its generic Outgoing Webhook posts a raw deploy-object JSON that Slack's Incoming Webhook endpoint rejects (`400 no_text`) since it isn't shaped for Slack. `netlify/functions/deploy-notification.ts` receives that raw Outgoing Webhook POST, reformats it into a Slack-compatible message (✅ succeeded / ❌ failed, with the branch, context, and a link to the deploy or the error message), and forwards it to a Slack Incoming Webhook. It's a separate function and a separate Slack channel from CSP violation reporting above, on purpose.
@@ -298,6 +302,7 @@ netlify/
     _shared/
       slack.ts             → Shared postToSlack() + Slack mrkdwn sanitization (sanitizeSlackText/truncateForSlack) used by both functions below
     csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
+    csp-report-cleanup.ts  → Scheduled function; deletes csp-reports Blobs entries older than 30 days
     deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
 netlify.toml       → Build, Node version, Lighthouse plugin, security headers, 404 redirect, CSP reporting headers
 playwright.config.ts
