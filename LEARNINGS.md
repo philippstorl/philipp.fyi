@@ -8,10 +8,13 @@ Updated automatically at the end of each session; read automatically at the star
 
 - Whether `preflight/SKILL.md` should stop restating CLAUDE.md's command list verbatim (flagged by `self-review` on 2026-06-25) — redundant but arguably more robust against either file being edited in isolation; undecided.
 - Trailing slashes are only ever generated (`astro.config.mjs`'s `trailingSlash: 'always'`), never enforced server-side — noted as a possible future addition when trailing-slash generation was first added (PR #9, 2026-06-17) but never revisited. Both `/route` and `/route/` currently resolve; no `netlify.toml` redirect exists for this.
-- `astro` is pinned to exact `7.0.2` in `package.json` (commit f2a93f51) pending an upstream fix for the 7.0.4 build regression logged 2026-07-02 below — retry the bump once a release past 7.0.5 ships, and run `npm run build` before unpinning since dependabot won't retry a manually-pinned exact version on its own.
 - The `featured` boolean in the `work` content collection schema (`src/content.config.ts`) is dead: `WorkSection.astro` picks the wide/featured card purely by lowest `order` after sorting (`const [featured, ...rest] = entries`), never by reading the `featured` field. `WorkCard.astro` does destructure `entry.data.featured`, but only to pick a font-size class, not for slot selection. Today `storyblok-migration.mdx` has both `order: 1` and `featured: true`, so they coincide by convention, but nothing enforces it — a future reorder could silently promote a different card without `featured` following it. Surfaced by `self-review` during the issue #64 HTML-comment cleanup (the deleted `WorkSection.astro` comment naming "Storyblok migration" as the featured card was the only place partially documenting this coupling). Out of scope there; still undecided whether the fix is wiring `WorkSection.astro` to select by `featured: true` instead of order-position, or removing the field.
 
 ## Log
+
+### 2026-08-27
+
+- Issue #253: the "Open questions" bullet pinning `astro` to exact `7.0.2` pending an upstream fix for the 7.0.4 build regression was stale — `package.json` now has `astro` at `7.2.4` via a clean chain of exact-version Dependabot bumps (7.0.2 → 7.0.9 → 7.1.3 → 7.1.6 → 7.2.0 → 7.2.2 → 7.2.4), well past the "past 7.0.5" retry threshold the question named. A real `npm run build` succeeds cleanly, including the `/og/[...slug].png.ts` route the original regression broke. The pin was lifted by routine dependency bumps, never explicitly revisited — removed the stale bullet rather than leaving an answered question open.
 
 ### 2026-08-26
 
