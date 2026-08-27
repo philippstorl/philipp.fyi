@@ -224,7 +224,7 @@ OG images are generated at build time using Satori + Sharp. Satori accepts TTF, 
 
 Both fonts are loaded from their respective `node_modules/*/files/*.woff` paths at build time. If OG image generation fails, the error message includes a directory listing to help verify the exact filename against the matcher in `src/utils/og-image.ts`.
 
-Every static page, case study, and published blog post gets its own `/og/<slug>.png` — see `src/pages/og/[...slug].png.ts`'s `getStaticPaths`. Since every blog post currently ships as `draft: true`, no `/og/blog/*` images exist yet; the wiring is in place and generates automatically the moment a post is published.
+Every static page, case study, and published blog post gets its own `/og/<slug>.png` — see `src/pages/og/[...slug].png.ts`'s `getStaticPaths`. This includes the `/blog/` listing page itself (`/og/blog.png`), which exists regardless of whether any posts are published. Since every blog post currently ships as `draft: true`, no per-post `/og/blog/<slug>.png` images exist yet; that wiring is in place and generates automatically the moment a post is published.
 
 ## Structured data (JSON-LD)
 
