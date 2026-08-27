@@ -10,6 +10,7 @@ export async function GET(context: APIContext) {
     return rss({
         title: SITE_NAME,
         description: getDefaultDescription(),
+        // astro.config.mjs always sets `site`, so this is never undefined at runtime.
         site: context.site!,
         items: posts.map((post) => ({
             title: post.data.title,
