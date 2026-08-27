@@ -90,7 +90,7 @@ function responsiveWidths(
     const realCandidates = realBases.flatMap((base) => widthLadder(base))
     const fallbackCandidates = widthLadder(fallbackBase)
 
-    // Bridges the gap between the two ladders (issue #225) with their geometric mean,
+    // Bridges the gap between the two ladders with their geometric mean,
     // skipped when fallbackBase already coincides with a real base (no gap to bridge).
     const nextRealAboveFallback = Math.min(
         ...realCandidates.filter((width) => width > fallbackBase),
@@ -201,11 +201,10 @@ export function fixedWidthFigureSizing(
     }
 }
 
-// WorkCard.astro's cover, inside WorkGrid.astro's `grid-cols-1 md:grid-cols-3` grid
-// (issue #259). Both call sites (work/index.astro, home/WorkSection.astro) wrap
-// WorkGrid in an identical `mx-auto max-w-6xl px-6` container -- confirmed by
-// reading both files, not assumed -- so one set of constants covers both. Kept
-// independent of the CONTAINER_CAP_* constants above, which are specific to
+// Sizing for WorkCard.astro's cover inside WorkGrid.astro's `grid-cols-1 md:grid-cols-3`
+// grid. work/index.astro and home/WorkSection.astro both wrap WorkGrid in the same
+// `mx-auto max-w-6xl px-6` container, so one set of constants covers both call sites.
+// Kept independent of the CONTAINER_CAP_* constants above, which are specific to
 // CaseStudyLayout.astro's narrower max-w-3xl prose column.
 const WORK_GRID_CAP_PX = 1104 // max-w-6xl (1152px) minus 2x px-6 (48px)
 const WORK_GRID_CAP_BREAKPOINT = 1152
@@ -249,8 +248,8 @@ export function workCardCoverSizing(): Pick<FigureSizing, 'sizes' | 'widths'> {
     return { sizes, widths }
 }
 
-// Reused tier shapes for voices-conference-website.mdx. Defined here, not as MDX-local
-// consts, since `astro check` doesn't type-check expressions inside an MDX body at all.
+// Reused grid-tier shapes for MDX case studies, defined here rather than as MDX-local
+// consts since `astro check` doesn't type-check expressions inside an MDX body at all.
 export const TWO_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
     { minWidth: 640, columns: 2 },
     { columns: 1 },

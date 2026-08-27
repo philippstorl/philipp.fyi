@@ -5,8 +5,6 @@ import { resolve } from 'node:path'
 import type { ReactNode } from 'react'
 import { CATEGORY_HEX_COLORS, type WorkCategory } from '@/utils/category-colors'
 
-// readdirSync lets us find the correct filename without hardcoding it.
-
 // Local type for the plain-object tree the builder functions below return
 // (Satori's JSX-equivalent input; this file has no JSX). Not named
 // `SatoriNode` — Satori already exports that name for its rendered
@@ -101,10 +99,6 @@ async function buildCoverImageDataUri(coverImagePath: string): Promise<string> {
     return `data:image/png;base64,${cropped.toString('base64')}`
 }
 
-// Satori does not accept JSX in a .ts file — the template is
-// written using plain nested objects (equivalent to h() calls).
-
-// Shared by both label node variants below.
 const labelBaseStyle = {
     fontSize: 20,
     fontFamily: 'DM Sans',
@@ -140,7 +134,7 @@ function buildCategoryBadgeNode(category: WorkCategory): SatoriTemplateNode {
     }
 }
 
-// Plain-text top label used by non-category OG images (home/principles).
+// Plain-text top label used when there's no category badge.
 function buildPlainLabelNode(label: string): SatoriTemplateNode {
     return {
         type: 'div',

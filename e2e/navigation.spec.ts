@@ -102,7 +102,7 @@ test.describe('Navigation', () => {
         page,
     }) => {
         // Regression check: ThemeToggle used to be a client:load React
-        // island (issue #187); only /contact/'s ContactForm should load JS.
+        // island; only /contact/'s ContactForm should load JS.
         const jsRequests: string[] = []
         page.on('request', (req) => {
             if (req.url().endsWith('.js')) jsRequests.push(req.url())
@@ -225,12 +225,10 @@ test.describe('Navigation', () => {
         await expect(page.locator('#main-content')).toHaveAttribute('inert', '')
         await expect(page.locator('#site-footer')).toHaveAttribute('inert', '')
 
-        // Tab well past the toggle + 5 nav links (issue #231 reproduced
-        // this landing on Hero.astro's LinkedIn button by the 6th Tab).
-        // Once nav links run out, focus legitimately cycles back to the
-        // skip link at the very top of the document -- that's not the
-        // bug. What must never happen is focus landing inside the two
-        // regions just made inert.
+        // Tab well past the toggle + 5 nav links. Once nav links run out,
+        // focus legitimately cycles back to the skip link at the very top
+        // of the document -- that's not the bug. What must never happen is
+        // focus landing inside the two regions just made inert.
         for (let i = 0; i < 8; i++) {
             await page.keyboard.press('Tab')
             const escapedToBackground = await page.evaluate(() => {

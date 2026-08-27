@@ -8,12 +8,12 @@ import { expectedResultFileNames } from './contrast-pages.mjs'
 // color-contrast violations, filters out anything already accepted in
 // contrast-allowlist.json, and writes a Markdown report plus a machine-
 // readable status for CI to turn into a PR comment. This check itself is
-// intentionally report-only about the *site's* contrast (see CLAUDE.md/
-// issue #149) — it never fails merely because a page has a violation — but
-// it does exit non-zero if the scan is missing results for any page/theme
-// it's supposed to cover (checked against contrast-pages.mjs's own list,
-// so a crashed or timed-out individual test can't hide as "nothing to
-// report"), since a partial scan is a pipeline failure, not a clean result.
+// intentionally report-only about the *site's* contrast (see CLAUDE.md) —
+// it never fails merely because a page has a violation — but it does exit
+// non-zero if the scan is missing results for any page/theme it's supposed
+// to cover (checked against contrast-pages.mjs's own list, so a crashed or
+// timed-out individual test can't hide as "nothing to report"), since a
+// partial scan is a pipeline failure, not a clean result.
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)

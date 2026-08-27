@@ -4,12 +4,12 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { pages, themes, resultFileName } from '../scripts/contrast-pages.mjs'
 
-// Report-only color-contrast scan (issue #149). Never asserts/fails — it
-// writes each page/theme's axe-core `color-contrast` violations to
-// contrast-results/ for scripts/check-contrast.mjs to aggregate, filter
-// against contrast-allowlist.json, and turn into a PR comment. Runs via its
-// own `npm run test:contrast` / playwright.contrast.config.ts, not the
-// regular `npm test`, so it can never gate the build. See CLAUDE.md.
+// Report-only color-contrast scan. Never asserts/fails — it writes each
+// page/theme's axe-core `color-contrast` violations to contrast-results/
+// for scripts/check-contrast.mjs to aggregate, filter against
+// contrast-allowlist.json, and turn into a PR comment. Runs via its own
+// `npm run test:contrast` / playwright.contrast.config.ts, not the regular
+// `npm test`, so it can never gate the build. See CLAUDE.md.
 //
 // contrast-results/ is cleared once, up front, by
 // e2e/contrast.global-setup.ts — not here — since that needs to happen

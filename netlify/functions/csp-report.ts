@@ -95,7 +95,7 @@ function summarize(
 
 // No X-Webhook-Signature check, unlike deploy-notification.ts: this is hit
 // directly by browsers, not a signed Netlify webhook — unauthenticated by
-// design, same as any CSP reporting endpoint (see issue #157).
+// design, same as any CSP reporting endpoint.
 export default async (
     req: Request,
     context: FunctionContext,

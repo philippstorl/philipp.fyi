@@ -20,7 +20,7 @@ export default defineConfig(
     // Hook-correctness rules for the sole React island (ContactForm.tsx).
     // Deliberately not the plugin's full `recommended-latest` — its wider
     // React-Compiler rule set flagged real working code in the since-removed
-    // ThemeToggle island (issue #187).
+    // ThemeToggle island.
     {
         files: ['**/*.tsx'],
         plugins: { 'react-hooks': reactHooks },
@@ -32,11 +32,11 @@ export default defineConfig(
 
     // Astro compiles <!-- --> HTML comments straight into the production
     // build (they ship to every visitor's "View Source"), but {/* */}
-    // JS-style comments are compiled away entirely (issue #64). Combined
-    // with the style-attribute restriction below in one config object:
-    // ESLint flat config replaces (doesn't merge) a rule key when two
-    // objects match the same file, so keeping these as separate .astro-
-    // matching blocks silently dropped this one (issue #179).
+    // JS-style comments are compiled away entirely. Combined with the
+    // style-attribute restriction below in one config object: ESLint flat
+    // config replaces (doesn't merge) a rule key when two objects match the
+    // same file, so keeping these as separate .astro-matching blocks would
+    // silently drop one of them.
     {
         files: ['**/*.astro'],
         rules: {
@@ -83,9 +83,8 @@ export default defineConfig(
         // bundles each function's full dependency tree into
         // .netlify/functions-serve/, which lint has no business scanning
         // (it's not source, and its bundled deps fail this repo's own
-        // rules). Not an issue until this repo had its first Netlify
-        // Function (issue #146); anyone who's run `netlify dev` locally
-        // hits a lint failure without this.
+        // rules). Anyone who runs `netlify dev` locally hits a lint failure
+        // without this ignore.
         ignores: ['dist/**', '.astro/**', 'node_modules/**', '.netlify/**'],
     },
 )

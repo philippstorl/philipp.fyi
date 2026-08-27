@@ -16,7 +16,7 @@ export default defineConfig({
         //
         // `resources` replaces Astro's default `'self'`-only list, so `'self'`
         // is re-added explicitly; `data:` permits View Transitions' internal
-        // `data:application/javascript,` load-order sentinel script (issue #198).
+        // `data:application/javascript,` load-order sentinel script.
         csp: {
             scriptDirective: {
                 resources: ["'self'", 'data:'],
