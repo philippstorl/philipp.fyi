@@ -3,6 +3,7 @@ import type { CollectionEntry } from 'astro:content'
 import { Image } from 'astro:assets'
 import { ArrowRight } from 'lucide-react'
 import CategoryBadge from '@/components/ui/CategoryBadge.astro'
+import { workCardCoverSizing } from '@/utils/content-image-sizing'
 import { stripContentExtension } from '@/utils/slug'
 
 interface Props {
@@ -24,6 +25,7 @@ const { title, description, category, tags, year, featured, coverImage } =
     entry.data
 const href = `/work/${stripContentExtension(entry.id)}/`
 const HeadingTag = headingLevel
+const { sizes, widths } = workCardCoverSizing()
 ---
 
 {
@@ -58,6 +60,9 @@ const HeadingTag = headingLevel
                     alt=""
                     width={640}
                     height={400}
+                    layout="constrained"
+                    sizes={sizes}
+                    widths={widths}
                     position="top"
                     priority={priority}
                     class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
