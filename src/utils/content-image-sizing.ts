@@ -201,6 +201,54 @@ export function fixedWidthFigureSizing(
     }
 }
 
+// WorkCard.astro's cover, inside WorkGrid.astro's `grid-cols-1 md:grid-cols-3` grid
+// (issue #259). Both call sites (work/index.astro, home/WorkSection.astro) wrap
+// WorkGrid in an identical `mx-auto max-w-6xl px-6` container -- confirmed by
+// reading both files, not assumed -- so one set of constants covers both. Kept
+// independent of the CONTAINER_CAP_* constants above, which are specific to
+// CaseStudyLayout.astro's narrower max-w-3xl prose column.
+const WORK_GRID_CAP_PX = 1104 // max-w-6xl (1152px) minus 2x px-6 (48px)
+const WORK_GRID_CAP_BREAKPOINT = 1152
+const WORK_GRID_PADDING_PX = 48
+const WORK_GRID_COLUMN_BREAKPOINT = 768 // Tailwind `md`: grid-cols-1 -> md:grid-cols-3
+const WORK_GRID_GAP_PX = 16 // gap-4
+
+/**
+ * WorkCard.astro's cover: single column below `md` (768px), 3 columns from
+ * `md` up, capped once the max-w-6xl container itself caps at 1152px.
+ */
+export function workCardCoverSizing(): Pick<FigureSizing, 'sizes' | 'widths'> {
+    const threeColCappedWidth = Math.round(
+        (WORK_GRID_CAP_PX - 2 * WORK_GRID_GAP_PX) / 3,
+    )
+    const threeColFluidExpr = `calc((100vw - ${WORK_GRID_PADDING_PX + 2 * WORK_GRID_GAP_PX}px) / 3)`
+    const oneColFluidExpr = `calc(100vw - ${WORK_GRID_PADDING_PX}px)`
+
+    const sizes = buildSizesAttr(
+        [
+            {
+                minWidth: WORK_GRID_CAP_BREAKPOINT,
+                expr: `${threeColCappedWidth}px`,
+            },
+            { minWidth: WORK_GRID_COLUMN_BREAKPOINT, expr: threeColFluidExpr },
+        ],
+        oneColFluidExpr,
+    )
+
+    // The one-column tier only ever wins below WORK_GRID_COLUMN_BREAKPOINT (768px),
+    // where the container is always fluid -- cap its ladder there, not at the
+    // container's own much wider 1152px cap, which a single-column viewport never
+    // reaches. Same reasoning as responsiveWidths()'s fallback-tier cap above.
+    const oneColCappedWidth = WORK_GRID_COLUMN_BREAKPOINT - WORK_GRID_PADDING_PX
+
+    const widths = mergeCloseWidths([
+        ...widthLadder(threeColCappedWidth),
+        ...widthLadder(oneColCappedWidth),
+    ])
+
+    return { sizes, widths }
+}
+
 // Reused tier shapes for voices-conference-website.mdx. Defined here, not as MDX-local
 // consts, since `astro check` doesn't type-check expressions inside an MDX body at all.
 export const TWO_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
