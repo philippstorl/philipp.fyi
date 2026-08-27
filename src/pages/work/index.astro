@@ -6,10 +6,13 @@ import Footer from '@/components/layout/Footer.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import WorkGrid from '@/components/work/WorkGrid.astro'
+import { getPublishedEntries } from '@/utils/collections'
 import {
     getStaffbaseTenureYears,
     getYearsOfExperience,
 } from '@/utils/experience'
+
+const caseStudyCount = (await getPublishedEntries('work')).length
 ---
 
 <BaseLayout
@@ -20,11 +23,8 @@ import {
     <Header />
     <Main>
         <PageHeader eyebrow="Selected work" title="Work">
-            Case studies from {getYearsOfExperience()} years building for the web,{
-                ' '
-            }
-            {getStaffbaseTenureYears()} of them turning staffbase.com into a platform
-            serving millions.
+            {caseStudyCount} projects across engineering, design, and leadership,
+            each with the decisions and trade-offs behind it.
         </PageHeader>
 
         <div class="mx-auto max-w-6xl px-6 pb-24">
