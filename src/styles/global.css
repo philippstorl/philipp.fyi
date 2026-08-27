@@ -148,6 +148,17 @@ html {
 }
 
 /*
+    Makes <Image layout="full-width"> fill its container -- not the
+    image.responsiveStyles flag on purpose, see CLAUDE.md (layer-order
+    conflict with WorkCard's h-full utility).
+*/
+@layer base {
+    :where([data-astro-image="full-width"]) {
+        width: 100%;
+    }
+}
+
+/*
     Applies to any open native <dialog> (e.g. ImageLightbox), not just one
     feature — kept here rather than in a component so it stays correct if
     more dialogs are added later.

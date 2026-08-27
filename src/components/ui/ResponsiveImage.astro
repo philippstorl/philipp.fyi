@@ -17,6 +17,8 @@ export type ResponsiveImageSizing =
           sizes: string
           /** Explicit srcset widths — Astro's `layout="constrained"` default only covers 1x/2x of `width`, under-resolving a custom `sizes` string's larger tiers. */
           widths: number[]
+          /** `full-width` fills its current container at every breakpoint; `constrained` never grows past `width` — see CLAUDE.md's `layout="full-width"` bullet. */
+          layout: 'full-width' | 'constrained'
       }
 
 type Props = {
@@ -37,9 +39,10 @@ const {
     ...sizing
 } = Astro.props
 
-// `sizing` is either mode of ResponsiveImageSizing; only the layout/default-densities differs.
+// `sizing` is either mode of ResponsiveImageSizing -- the sizes-branch (including
+// its caller-chosen `layout`) passes straight through; only densities gets a default.
 const responsiveProps = sizing.sizes
-    ? ({ ...sizing, layout: 'constrained' } as const)
+    ? sizing
     : { densities: sizing.densities ?? [1, 2, 3] }
 ---
 

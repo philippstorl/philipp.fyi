@@ -12,8 +12,9 @@ coverImage: "./leadership-operating-model/leadership-vancouver-cover.jpg"
 
 import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
 import {
-    gridFigureSizing,
+    responsiveGridFigureSizing,
     fullWidthFigureSizing,
+    TWO_COLUMN_RESPONSIVE_TIERS,
 } from "@/utils/content-image-sizing"
 import img2021 from "./leadership-operating-model/leadership-2021-office.jpg"
 import img2022 from "./leadership-operating-model/leadership-2022-working.jpg"
@@ -38,26 +39,26 @@ When the Vancouver-based team member came into the team, I flew to Canada to spe
 
 The trips continued, each with its own official agenda (working sessions, planning cycles, design reviews) and an unofficial one running underneath: the trust a distributed team runs on doesn't build over video calls. It builds over the meals, the downtime, the hours that have nothing on the agenda. Same underlying logic every time: some things work better in person.
 
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <div class="flex flex-col gap-4">
         <ResponsiveFigure
             src={img2022}
             alt="A working session in Vancouver, June 2022"
             caption="June 2022, second trip - a working session in Vancouver."
-            {...gridFigureSizing(2)}
+            {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
         />
         <ResponsiveFigure
             src={img2023}
             alt="At the Staffbase Vancouver desk, June 2023"
             caption="June 2023, fourth trip - at the Staffbase Vancouver desk."
-            {...gridFigureSizing(2)}
+            {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
         />
     </div>
     <ResponsiveFigure
         src={img2024}
         alt="Working from a coworking space overlooking Vancouver harbor, November 2024"
         caption="November 2024, sixth and final trip - a coworking space overlooking the harbor, German keyboard a long way from home."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 

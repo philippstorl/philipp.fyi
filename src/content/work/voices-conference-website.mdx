@@ -20,7 +20,6 @@ coverImage: "./voices-conference-website/voices-2026.png"
 
 import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
 import {
-    fixedWidthFigureSizing,
     fullWidthFigureSizing,
     responsiveGridFigureSizing,
     TWO_COLUMN_RESPONSIVE_TIERS,
@@ -113,21 +112,19 @@ The VOICES website isn't just an event page: it's a small product with defined s
 
 Three lifecycle states govern every section: pre-event (promoting registration, teasing the agenda), during-event (shifting to live-event content and thank-you flows), and after-event (showcasing recordings, promoting next year). Components are designed to handle all three states cleanly, switching between them via configuration rather than code changes.
 
-<div class="my-6 flex flex-col justify-center gap-4 sm:flex-row">
+<div class="my-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={voices2026DeMobile}
         alt="VOICES Berlin homepage on mobile, 2026"
         caption="Mobile - homepage"
-        {...fixedWidthFigureSizing(320, { siblings: 2, breakpoint: 640 })}
-        class="max-w-xs"
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
         captionClass="text-center"
     />
     <ResponsiveFigure
         src={voices2026DeMobileNav}
         alt="VOICES Berlin mobile navigation menu open, 2026"
         caption="Mobile - navigation"
-        {...fixedWidthFigureSizing(320, { siblings: 2, breakpoint: 640 })}
-        class="max-w-xs"
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
         captionClass="text-center"
     />
 </div>
