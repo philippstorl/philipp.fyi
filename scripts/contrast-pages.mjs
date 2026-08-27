@@ -1,13 +1,5 @@
-// Shared between e2e/contrast.spec.ts (the scan) and check-contrast.mjs
-// (the aggregator), so the two can't drift apart on which pages/themes are
-// supposed to be covered, or on how a result's filename is derived.
-
-// Mirrors the page set the rest of e2e/ already exercises (see the goto()
-// calls across e2e/*.spec.ts) rather than inventing a separate route list.
-// Each entry's `reportedPath` is what shows up in contrast-allowlist.json
-// and the PR comment; `gotoPath` is the URL actually navigated to — they
-// differ only for the 404 case, which has to hit a nonexistent route to
-// render the 404 page at all.
+// Shared by contrast.spec.ts and check-contrast.mjs so coverage/filenames
+// can't drift. gotoPath differs from reportedPath only for /404.
 export const pages = [
     { reportedPath: '/', gotoPath: '/' },
     { reportedPath: '/about/', gotoPath: '/about/' },

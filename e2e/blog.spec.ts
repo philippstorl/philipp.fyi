@@ -13,10 +13,8 @@ test.describe('Blog page', () => {
     test('shows heading and the "coming soon" empty state', async ({
         page,
     }) => {
-        // All src/content/blog/ posts are draft: true today, so the page
-        // renders its empty state rather than a post list — see CLAUDE.md's
-        // blog collection note. This should start failing once a post is
-        // published, which is the signal to add slug-page coverage.
+        // All posts are draft: true (CLAUDE.md) -- fails once one publishes,
+        // the signal to add slug-page coverage.
         await page.goto('/blog/')
         await expect(
             page.getByRole('heading', { level: 1, name: 'Blog' }),

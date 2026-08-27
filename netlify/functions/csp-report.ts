@@ -93,9 +93,7 @@ function summarize(
         .join('\n')
 }
 
-// No X-Webhook-Signature check, unlike deploy-notification.ts: this is hit
-// directly by browsers, not a signed Netlify webhook — unauthenticated by
-// design, same as any CSP reporting endpoint.
+// Unauthenticated by design -- hit directly by browsers, not a signed webhook.
 export default async (
     req: Request,
     context: FunctionContext,
@@ -169,9 +167,7 @@ export default async (
 
             if (webhookUrl) {
                 try {
-                    // normalize()/summarize() can throw on a malformed
-                    // report — catch here so one bad report in a batch
-                    // can't abort its siblings.
+                    // Catch here so one malformed report can't abort its siblings.
                     await postToSlack(
                         webhookUrl,
                         // Only link the Blobs store if this record was actually written.

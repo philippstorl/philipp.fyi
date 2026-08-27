@@ -87,8 +87,8 @@ const options: ThemeOption[] = [
 </div>
 
 {
-    /* Must stay is:inline to patch button state from localStorage before first
-    paint. Its CSP hash is registered in astro.config.mjs — recompute if this changes. */
+    /* Must stay is:inline -- patches state from localStorage before paint.
+    CSP hash registered in astro.config.mjs; recompute if this changes. */
 }
 <script is:inline>
     ;(function () {

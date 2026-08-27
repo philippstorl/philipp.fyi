@@ -1,12 +1,7 @@
 import { createHash, createHmac, timingSafeEqual } from 'node:crypto'
 
-// Netlify signs Outgoing Webhook POSTs with a JWS (HS256) in the
-// X-Webhook-Signature header when a secret is configured on the dashboard
-// notification: https://docs.netlify.com/deploy/deploy-notifications/
-// The JWT payload carries `iss: "netlify"` and `sha256`, the hex digest of
-// the raw request body — there's no published client library for this, so
-// the three JWT parts are checked by hand rather than pulling in a JWT
-// dependency for one narrow use.
+// Netlify signs webhook POSTs with an HS256 JWS (X-Webhook-Signature): iss
+// "netlify" + a sha256 body digest. No published client lib, so checked by hand.
 export function verifyNetlifySignature(
     rawBody: string,
     signatureHeader: string | null,

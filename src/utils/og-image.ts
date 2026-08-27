@@ -5,11 +5,8 @@ import { resolve } from 'node:path'
 import type { ReactNode } from 'react'
 import { CATEGORY_HEX_COLORS, type WorkCategory } from '@/utils/category-colors'
 
-// Local type for the plain-object tree the builder functions below return
-// (Satori's JSX-equivalent input; this file has no JSX). Not named
-// `SatoriNode` — Satori already exports that name for its rendered
-// *output* shape, which is different. `props` stays loose since div/img
-// nodes use different prop sets.
+// Satori's JSX-equivalent input tree (no JSX in this file). Not `SatoriNode`
+// -- Satori already uses that name for its rendered *output* shape.
 interface SatoriTemplateNode {
     type: string
     props: Record<string, unknown>
@@ -38,9 +35,7 @@ function findFontFile(dir: string, matcher: (name: string) => boolean): string {
 function loadFonts(): NonNullable<FontCache> {
     if (fontCache) return fontCache
 
-    // Satori supports TTF, OTF, and WOFF — but NOT WOFF2.
-    // @fontsource-variable/fraunces only ships WOFF2 (fine for browsers),
-    // so we use @fontsource/fraunces (non-variable, 400 weight) for OG images.
+    // Satori can't read WOFF2; the variable font packages only ship WOFF2.
     const frauncesDir = resolve('./node_modules/@fontsource/fraunces/files')
     const dmSansDir = resolve('./node_modules/@fontsource/dm-sans/files')
 
@@ -79,16 +74,12 @@ const colors = {
 const OG_WIDTH = 1200
 const OG_HEIGHT = 630
 
-// Size of the inset screenshot panel when a case study has a coverImage.
-// Same 16:10 aspect ratio as the home page's WorkCard cover — a 1:1 crop
-// of a full-page screenshot looked broken rather than like a real preview.
+// Same 16:10 ratio as WorkCard's cover -- a 1:1 crop looked broken.
 const COVER_PANEL_WIDTH = 480
 const COVER_PANEL_HEIGHT = 300
 
 async function buildCoverImageDataUri(coverImagePath: string): Promise<string> {
-    // Crop from the top, same reasoning as WorkCard.astro's cover image: a
-    // full-page screenshot's nav/hero is the most recognizable part, and the
-    // panel is taller than it is wide, so a center crop would lose it.
+    // Top crop -- nav/hero is the recognizable part of a full-page screenshot.
     const cropped = await sharp(coverImagePath)
         .resize(COVER_PANEL_WIDTH, COVER_PANEL_HEIGHT, {
             fit: 'cover',
@@ -106,11 +97,8 @@ const labelBaseStyle = {
     letterSpacing: '-0.01em',
 }
 
-// A case study's category renders as the same pill badge used by
-// WorkCard.astro/CategoryBadge.astro (see category-colors.ts) — borderRadius
-// 9999 and the 6px/16px padding are Satori's equivalent of that component's
-// `rounded-full` and `px-2.5 py-0.5` Tailwind classes, scaled up for
-// OG-image poster legibility.
+// Mirrors WorkCard/CategoryBadge's pill -- borderRadius 9999 + 6px/16px
+// padding are rounded-full/px-2.5 py-0.5, scaled up for OG size.
 function buildCategoryBadgeNode(category: WorkCategory): SatoriTemplateNode {
     const { text, border } = CATEGORY_HEX_COLORS[category]
     return {
@@ -151,8 +139,7 @@ function buildTemplate(
     coverImageDataUri?: string,
     category?: WorkCategory,
 ): SatoriTemplateNode {
-    // A cover image narrows the text column, so longer titles need a smaller
-    // size sooner than the text-only layout does.
+    // Cover image narrows the column -- shrink titles sooner than text-only.
     const titleSize = coverImageDataUri
         ? title.length < 45
             ? 56
@@ -249,10 +236,7 @@ function buildTemplate(
                         ],
                     },
                 },
-                // Cover image panel — only for case studies that have one.
-                // Top-aligned with the same 64px offset as the text column's
-                // padding, so the panel's top edge lines up with the
-                // category label instead of floating at vertical center.
+                // Top-aligned at the text column's own 64px offset, level with the label.
                 coverImageDataUri && {
                     type: 'div',
                     props: {
@@ -294,10 +278,8 @@ export async function generateOgImage(
         : undefined
 
     const svg = await satori(
-        // satori() expects a real ReactNode, but this file has no JSX and
-        // returns plain { type, props } objects instead — Satori accepts
-        // that shape at runtime regardless of its types. Unavoidable cast
-        // at this one library boundary.
+        // satori() wants a real ReactNode; this file's plain {type,props}
+        // objects work anyway -- Satori accepts the shape at runtime.
         buildTemplate(
             title,
             label,

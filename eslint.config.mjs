@@ -17,10 +17,8 @@ export default defineConfig(
         rules: { ...jsxA11y.configs.recommended.rules },
     },
 
-    // Hook-correctness rules for the sole React island (ContactForm.tsx).
-    // Deliberately not the plugin's full `recommended-latest` — its wider
-    // React-Compiler rule set flagged real working code in the since-removed
-    // ThemeToggle island.
+    // Hook rules for the sole React island. Not the plugin's full
+    // recommended-latest -- its React-Compiler rules flagged real code before.
     {
         files: ['**/*.tsx'],
         plugins: { 'react-hooks': reactHooks },
@@ -30,13 +28,8 @@ export default defineConfig(
         },
     },
 
-    // Astro compiles <!-- --> HTML comments straight into the production
-    // build (they ship to every visitor's "View Source"), but {/* */}
-    // JS-style comments are compiled away entirely. Combined with the
-    // style-attribute restriction below in one config object: ESLint flat
-    // config replaces (doesn't merge) a rule key when two objects match the
-    // same file, so keeping these as separate .astro-matching blocks would
-    // silently drop one of them.
+    // <!-- --> ships to prod HTML; {/* */} compiles away. Combined with the
+    // style rule below -- flat config replaces, not merges, a rule per file match.
     {
         files: ['**/*.astro'],
         rules: {
@@ -56,14 +49,8 @@ export default defineConfig(
         },
     },
 
-    // security.csp (astro.config.mjs) generates a hash-only style-src with
-    // no 'unsafe-inline' carve-out, which only covers <style> elements, not
-    // inline style="..."/style={{...}} attributes (see CLAUDE.md's CSP
-    // section) — this rule stops a new one from silently creeping back in.
-    // .tsx-only here since the .astro case is covered above — the
-    // selector/message pair is duplicated between the two blocks (flat
-    // config can't share a rule entry across files arrays), keep them in
-    // sync if either changes.
+    // Blocks inline style attrs, uncovered by the hash-only style-src CSP
+    // (CLAUDE.md). .tsx-only -- .astro case covered above; keep both in sync.
     {
         files: ['**/*.tsx'],
         rules: {
@@ -79,12 +66,8 @@ export default defineConfig(
     },
 
     {
-        // .netlify is `netlify dev`/`netlify build`'s local output — esbuild
-        // bundles each function's full dependency tree into
-        // .netlify/functions-serve/, which lint has no business scanning
-        // (it's not source, and its bundled deps fail this repo's own
-        // rules). Anyone who runs `netlify dev` locally hits a lint failure
-        // without this ignore.
+        // netlify dev/build's local output -- bundled deps here aren't
+        // source and fail this repo's own lint rules.
         ignores: ['dist/**', '.astro/**', 'node_modules/**', '.netlify/**'],
     },
 )

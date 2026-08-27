@@ -1,7 +1,5 @@
-// Sizing helpers for figures in the case-study prose column (CaseStudyLayout.astro's
-// max-w-3xl px-6 container — keep the constants below in sync with that class). Below
-// 768px the container is fluid, so `sizes`/`widths` must reflect the real shrinking
-// box width, not just the capped desktop value.
+// Sizing for case-study prose figures (CaseStudyLayout.astro's max-w-3xl
+// px-6 container). Below 768px the container is fluid, not capped-width.
 
 const CONTAINER_CAP_PX = 720
 const CONTAINER_CAP_BREAKPOINT = 768
@@ -70,10 +68,8 @@ export type ResponsiveGridTiers = [
     { columns: number },
 ]
 
-// Caps the fallback tier's own width ladder at the narrowest real tier's breakpoint,
-// not columnWidth(1) — the fallback only wins below that point, where the container
-// hasn't reached its capped width yet, so a ladder based on the capped width would
-// include candidates no browser in that range could ever request.
+// Caps the fallback ladder at the narrowest real tier's breakpoint, not
+// columnWidth(1) -- below that point the container isn't at its cap yet.
 function responsiveWidths(
     realTiers: { minWidth: number; columns: number }[],
     fallback: { columns: number },
@@ -109,11 +105,8 @@ function responsiveWidths(
     )
 }
 
-/**
- * A figure inside a grid whose column count itself changes across breakpoints
- * (`sm:`/`lg:`). `tiers` are ordered widest-condition-first; the last tier is
- * the sub-`sm:` fallback and takes no `minWidth`.
- */
+/** Figure in a grid whose column count changes at breakpoints. `tiers`
+ * widest-first; last tier is the sub-`sm:` fallback with no `minWidth`. */
 export function responsiveGridFigureSizing(
     tiers: ResponsiveGridTiers,
 ): FigureSizing {
@@ -163,11 +156,8 @@ export function fullWidthFigureSizing(): FigureSizing {
     return gridFigureSizing(1)
 }
 
-/**
- * A figure with its own explicit width, narrower than the column. Pass `row`
- * when siblings share a row above a breakpoint, so `sizes` accounts for the
- * squeeze before they all reach full width.
- */
+/** Figure with an explicit width narrower than the column. Pass `row` when
+ * siblings share a row above a breakpoint, to size the squeeze before then. */
 export function fixedWidthFigureSizing(
     width: number,
     row?: { siblings: number; breakpoint: number },
@@ -201,21 +191,15 @@ export function fixedWidthFigureSizing(
     }
 }
 
-// Sizing for WorkCard.astro's cover inside WorkGrid.astro's `grid-cols-1 md:grid-cols-3`
-// grid. work/index.astro and home/WorkSection.astro both wrap WorkGrid in the same
-// `mx-auto max-w-6xl px-6` container, so one set of constants covers both call sites.
-// Kept independent of the CONTAINER_CAP_* constants above, which are specific to
-// CaseStudyLayout.astro's narrower max-w-3xl prose column.
+// Sizing for WorkCard.astro's cover (WorkGrid.astro's own max-w-6xl container).
+// Independent of CONTAINER_CAP_* above, which is for the narrower max-w-3xl prose column.
 const WORK_GRID_CAP_PX = 1104 // max-w-6xl (1152px) minus 2x px-6 (48px)
 const WORK_GRID_CAP_BREAKPOINT = 1152
 const WORK_GRID_PADDING_PX = 48
 const WORK_GRID_COLUMN_BREAKPOINT = 768 // Tailwind `md`: grid-cols-1 -> md:grid-cols-3
 const WORK_GRID_GAP_PX = 16 // gap-4
 
-/**
- * WorkCard.astro's cover: single column below `md` (768px), 3 columns from
- * `md` up, capped once the max-w-6xl container itself caps at 1152px.
- */
+/** 1 column below `md` (768px), 3 columns above, capped at the container's 1152px. */
 export function workCardCoverSizing(): Pick<FigureSizing, 'sizes' | 'widths'> {
     const threeColCappedWidth = Math.round(
         (WORK_GRID_CAP_PX - 2 * WORK_GRID_GAP_PX) / 3,
@@ -234,10 +218,8 @@ export function workCardCoverSizing(): Pick<FigureSizing, 'sizes' | 'widths'> {
         oneColFluidExpr,
     )
 
-    // The one-column tier only ever wins below WORK_GRID_COLUMN_BREAKPOINT (768px),
-    // where the container is always fluid -- cap its ladder there, not at the
-    // container's own much wider 1152px cap, which a single-column viewport never
-    // reaches. Same reasoning as responsiveWidths()'s fallback-tier cap above.
+    // One-column tier only wins below 768px (always fluid there) -- cap its
+    // ladder there, not at the 1152px cap it never reaches.
     const oneColCappedWidth = WORK_GRID_COLUMN_BREAKPOINT - WORK_GRID_PADDING_PX
 
     const widths = mergeCloseWidths([

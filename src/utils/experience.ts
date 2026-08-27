@@ -1,14 +1,10 @@
 const CAREER_START_DATE = new Date('2010-02-01')
 
-// Staffbase tenure has already concluded (see brand-evolution.mdx), so this
-// is computed between two fixed dates rather than against `now` — it must
-// not keep growing in builds made after the last day.
+// Tenure has concluded -- fixed dates, not `now`, so it can't keep growing.
 const STAFFBASE_START_DATE = new Date('2018-03-01')
 const STAFFBASE_END_DATE = new Date('2026-06-30')
 
-// Both dates are compared via UTC getters — start/end are parsed from
-// date-only ISO strings (UTC midnight), so local-time getters would shift
-// the effective date by up to a day in negative-UTC-offset timezones.
+// UTC getters -- local-time would shift the date in negative-UTC-offset zones.
 function yearsBetween(start: Date, end: Date): number {
     let years = end.getUTCFullYear() - start.getUTCFullYear()
     const anniversaryPassed =

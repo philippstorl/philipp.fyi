@@ -29,15 +29,8 @@ const { sizes, widths } = workCardCoverSizing()
 ---
 
 {
-    /*
-    Card uses the stretched-link pattern:
-    - Outer element is <article>, not <a>
-    - The <a> wraps only the title text
-    - after:absolute after:inset-0 on the <a> extends the click target
-      to cover the entire card via a CSS pseudo-element
-    - Any future interactive elements inside the card remain accessible
-      (they sit above the pseudo-element in stacking order)
-*/
+    /* Stretched-link: <a> wraps the title; after:inset-0 extends the click
+    target over the card without blocking other interactive elements. */
 }
 <article
     class:list={[

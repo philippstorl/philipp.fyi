@@ -3,17 +3,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { expectedResultFileNames } from './contrast-pages.mjs'
 
-// Aggregates the per-page/theme axe-core results written by
-// e2e/contrast.spec.ts (via `npm run test:contrast`) into a single list of
-// color-contrast violations, filters out anything already accepted in
-// contrast-allowlist.json, and writes a Markdown report plus a machine-
-// readable status for CI to turn into a PR comment. This check itself is
-// intentionally report-only about the *site's* contrast (see CLAUDE.md) —
-// it never fails merely because a page has a violation — but it does exit
-// non-zero if the scan is missing results for any page/theme it's supposed
-// to cover (checked against contrast-pages.mjs's own list, so a crashed or
-// timed-out individual test can't hide as "nothing to report"), since a
-// partial scan is a pipeline failure, not a clean result.
+// Aggregates axe-core contrast results into a report (see CLAUDE.md).
+// Report-only on violations, but exits 1 if the scan itself is incomplete.
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)

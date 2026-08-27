@@ -194,9 +194,7 @@ const pathname = Astro.url.pathname
         if (focusToggle) toggle?.focus()
     }
 
-    // Checks computed display, not the hidden class -- nav also has
-    // md:hidden, so a resize past that breakpoint would otherwise leave
-    // this reporting true.
+    // Computed display, not the hidden class -- nav also has md:hidden.
     function isMenuOpen() {
         return !!nav && getComputedStyle(nav).display !== 'none'
     }

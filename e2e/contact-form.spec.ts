@@ -1,15 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 
-// ContactForm is a client:load React island on the dedicated /contact/
-// page -- hydration still isn't synchronous with paint, so a click that
-// lands before React actually attaches the onSubmit handler falls through
-// to a real native form submission (method="POST", no action -> posts to
-// and reloads the current page), which would otherwise navigate the page
-// away and wipe out the fields/state the test just set up. So every test
-// here waits for a positive, verifiable signal that hydration has
-// completed -- the submit button carrying a React fiber property -- before
-// ever interacting with the form, rather than reacting to failures after
-// the fact.
+// A pre-hydration click falls through to a real form POST/reload, wiping
+// test state -- wait for the submit button's React fiber prop first.
 async function gotoAndWaitForContactFormHydration(page: Page) {
     await page.goto('/contact/')
     await page.waitForFunction(() => {
@@ -46,10 +38,7 @@ test.describe('Contact form', () => {
     test('multi-field validation failure fires one summary alert, not three', async ({
         page,
     }) => {
-        // Regression check: each per-field error used to carry its own
-        // role="alert", so three assertive live regions fired in the same
-        // commit and competed with each other. Now only one shared summary
-        // region is an alert; the per-field <p>s are plain text.
+        // Regression: 3 competing role="alert" regions used to fire at once.
         await gotoAndWaitForContactFormHydration(page)
 
         await page.locator('form[name="contact"] button[type="submit"]').click()
@@ -73,13 +62,8 @@ test.describe('Contact form', () => {
     test('re-announces the summary alert when a second failed attempt has the same error count', async ({
         page,
     }) => {
-        // Regression check: a same-text update to a role="alert" node
-        // doesn't trigger a fresh DOM mutation for React to reconcile, so a
-        // second failed attempt with the same error count (but a different
-        // field) previously went un-announced. The summary is now keyed on
-        // the submit-attempt count so it remounts every failed attempt --
-        // verified here by tagging the DOM node and confirming it's gone
-        // after the second attempt, not just that the text still matches.
+        // Regression: same-count retry didn't remount role="alert" (no DOM
+        // change to reconcile) -- marker below proves a remount now happens.
         await gotoAndWaitForContactFormHydration(page)
 
         await page.locator('#contact-name').fill('Test User')
@@ -150,10 +134,8 @@ test.describe('Contact form', () => {
     test('correcting one field does not steal focus to another still-erroring field', async ({
         page,
     }) => {
-        // Regression check: clearing one field's error via handleFieldChange
-        // also changes the `errors` object the submit-time focus effect
-        // depends on, which used to re-run and yank focus to the next
-        // erroring field mid-correction.
+        // Regression: clearing one error re-ran the submit-focus effect,
+        // yanking focus to the next erroring field mid-correction.
         await gotoAndWaitForContactFormHydration(page)
 
         await page.locator('form[name="contact"] button[type="submit"]').click()
@@ -166,9 +148,7 @@ test.describe('Contact form', () => {
     test('an email error only clears once the email is actually valid, not just non-empty', async ({
         page,
     }) => {
-        // Regression check: handleFieldChange used to clear any field's
-        // error as soon as it was non-empty, which wrongly cleared the
-        // email-format error for a still-malformed, merely non-empty value.
+        // Regression: error used to clear on any non-empty value, not a valid one.
         await gotoAndWaitForContactFormHydration(page)
 
         await page.locator('#contact-name').fill('Test User')
