@@ -23,8 +23,10 @@ coverImage: "./brand-evolution/staffbase-2026-05.png"
 import { getStaffbaseTenureYears } from "@/utils/experience"
 import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
 import {
-    gridFigureSizing,
     fullWidthFigureSizing,
+    responsiveGridFigureSizing,
+    TWO_COLUMN_RESPONSIVE_TIERS,
+    THREE_COLUMN_RESPONSIVE_TIERS,
 } from "@/utils/content-image-sizing"
 
 import img2018_03 from "./brand-evolution/staffbase-2018-03.png"
@@ -59,38 +61,38 @@ From the moment I joined Staffbase in March 2018 as the company's first dedicate
 
 ## 2018 - The blank page
 
-<div class="my-8 grid grid-cols-3 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <ResponsiveFigure
         src={img2018_03}
         alt="staffbase.com homepage in March 2018, the site Philipp inherited on joining"
         caption="March 2018"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2018_07}
         alt="staffbase.com homepage in July 2018 with a new people-led hero"
         caption="July 2018"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2018_09}
         alt="staffbase.com homepage in September 2018 with the Make the Difference hero"
         caption="September 2018"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={img2018_12en}
         alt="staffbase.com English homepage in December 2018"
         caption="December 2018"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2018_12de}
         alt="staffbase.com German-language homepage in December 2018 promoting the VOICES conference"
         caption="December 2018: Staffbase also ran a German-language version of the homepage alongside English, this one promoting the 2019 VOICES conference."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -100,18 +102,18 @@ I started from that. Within the first year, our art director and I rebuilt the d
 
 ## 2019 - First voice
 
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={img2019_04}
         alt="staffbase.com homepage in April 2019"
         caption="April 2019"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2019_10}
         alt="staffbase.com homepage in October 2019"
         caption="October 2019"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -121,18 +123,18 @@ The year was about depth: not just building pages, but building a system that co
 
 ## 2020 - The team grows
 
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={img2020_04}
         alt="staffbase.com homepage in April 2020"
         caption="April 2020"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2020_08}
         alt="staffbase.com homepage in August 2020"
         caption="August 2020"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -142,24 +144,24 @@ The website began to reflect what a small, focused team could do when not stretc
 
 ## 2021 - Acquisition complexity
 
-<div class="my-8 grid grid-cols-3 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <ResponsiveFigure
         src={img2021_03bananatag}
         alt="staffbase.com homepage in March 2021 announcing the Bananatag merger"
         caption="March 2021 - Bananatag merger announcement"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2021_04seriesd}
         alt="staffbase.com homepage in April 2021 with a Series D funding announcement banner"
         caption="April 2021 - Series D funding round"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2021_09}
         alt="staffbase.com homepage in September 2021"
         caption="September 2021"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -169,18 +171,18 @@ Suddenly the web team wasn't managing one brand but several: staffbase.com, bana
 
 ## 2022 - Beneath the surface
 
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={img2022_03}
         alt="staffbase.com homepage in March 2022, mid-acquisition integration period"
         caption="March 2022"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2022_11}
         alt="staffbase.com homepage in November 2022, visually almost unchanged from March while integration work continued underneath"
         caption="November 2022: eight months apart, nearly identical: the work that year wasn't visual."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -192,18 +194,18 @@ The payoff of that integration work showed up over the next two years, not in a 
 
 ## 2023 - Iteration at scale
 
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={img2023_06}
         alt="staffbase.com homepage in June 2023"
         caption="June 2023"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2023_12}
         alt="staffbase.com homepage in December 2023"
         caption="December 2023"
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -227,24 +229,24 @@ This was also the year the Web UI Guidelines formalized what had been building f
 
 ## 2025 - The platform shifts
 
-<div class="my-8 grid grid-cols-3 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <ResponsiveFigure
         src={img2025_01}
         alt="staffbase.com homepage in January 2025, the pre-migration WordPress site"
         caption="January 2025"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2025_09}
         alt="staffbase.com homepage in September 2025, after the Storyblok migration but before the Employee AI pivot"
         caption="September 2025"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2025_11}
         alt="staffbase.com homepage in November 2025 after the Employee AI pivot, with the Your Intranet Reborn headline"
         caption="November 2025"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
@@ -254,38 +256,38 @@ Earlier that year, at the end of July, the WordPress-to-Storyblok migration laun
 
 ## 2026 - The last iteration
 
-<div class="my-8 grid grid-cols-3 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
     <ResponsiveFigure
         src={img2026_01}
         alt="staffbase.com homepage in January 2026"
         caption="January 2026"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2026_03}
         alt="staffbase.com homepage in March 2026 with the Built For Everyone headline, after the navigation rebuild"
         caption="March 2026"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2026_05}
         alt="staffbase.com homepage in May 2026, the current platform and brand"
         caption="May 2026"
-        {...gridFigureSizing(3)}
+        {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
-<div class="my-8 grid grid-cols-2 gap-4">
+<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
         src={img2026_05nav}
         alt="The rebuilt staffbase.com navigation, expanded to show the Platform menu"
         caption="May 2026 - The navigation, rebuilt from scratch by SensioLabs."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
         src={img2026_05mobile}
         alt="staffbase.com homepage on mobile in May 2026"
         caption="May 2026 - The same homepage on mobile."
-        {...gridFigureSizing(2)}
+        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
 
