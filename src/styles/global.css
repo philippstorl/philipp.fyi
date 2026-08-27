@@ -148,23 +148,9 @@ html {
 }
 
 /*
-    Astro's <Image layout="full-width"> images should always fill their
-    current container, and Astro's own image.responsiveStyles config flag
-    provides this exact rule -- deliberately not enabled here instead. That
-    flag's stylesheet ships in its own new `astro.images` layer, declared
-    after Tailwind's own layer order (theme, base, components, utilities) in
-    document order; per the CSS cascade-layers spec, a layer's priority is
-    set by when it's *first declared*, so `astro.images` would outrank even
-    `utilities` regardless of any rule's specificity. Its *unconditional*
-    `:where([data-astro-image]) { height: auto }` rule (matching every
-    layout, not just full-width) would then beat WorkCard.astro's `h-full`
-    utility on its own layout="constrained" cover image -- confirmed via a
-    real computed-style measurement showing a sub-pixel height mismatch,
-    invisible today only by coincidence (overflow-hidden masking, and a
-    Sharp crop ratio that happens to match the card's own aspect ratio).
-    This rule only targets `full-width` (the one value WorkCard never has)
-    and stays inside `@layer base`, Tailwind's own hierarchy, so it can
-    never outrank a utility class the way the whole flag's stylesheet would.
+    Makes <Image layout="full-width"> fill its container -- not the
+    image.responsiveStyles flag on purpose, see CLAUDE.md (layer-order
+    conflict with WorkCard's h-full utility).
 */
 @layer base {
     :where([data-astro-image="full-width"]) {

@@ -159,40 +159,16 @@ export function fullWidthFigureSizing(): FigureSizing {
     return gridFigureSizing(1)
 }
 
-/** Figure with an explicit width narrower than the column. Pass `row` when
- * siblings share a row above a breakpoint, to size the squeeze before then. */
-export function fixedWidthFigureSizing(
-    width: number,
-    row?: { siblings: number; breakpoint: number },
-): FigureSizing {
+/** Figure with an explicit width narrower than the column at every viewport. */
+export function fixedWidthFigureSizing(width: number): FigureSizing {
     const tiers: SizeTier[] = [
         { minWidth: width + CONTAINER_PADDING_PX, expr: `${width}px` },
     ]
-    if (row) {
-        const rowFixedBreakpoint =
-            width * row.siblings +
-            (row.siblings - 1) * GRID_GAP_PX +
-            CONTAINER_PADDING_PX
-        if (rowFixedBreakpoint > row.breakpoint) {
-            // Siblings squeeze fluidly until rowFixedBreakpoint, where they fit at full width.
-            tiers.push(
-                { minWidth: rowFixedBreakpoint, expr: `${width}px` },
-                {
-                    minWidth: row.breakpoint,
-                    expr: columnFluidExpr(row.siblings),
-                },
-            )
-        } else {
-            // Degenerate case: siblings already fit at full width the moment the row shares.
-            tiers.push({ minWidth: row.breakpoint, expr: `${width}px` })
-        }
-    }
     return {
         width,
         sizes: buildSizesAttr(tiers, columnFluidExpr(1)),
         widths: widthLadder(width),
-        // Deliberately narrower than the column at every viewport, mobile
-        // included — must never stretch to fill it, unlike the grid helpers above.
+        // Must never stretch to fill the column, unlike the grid helpers above.
         layout: 'constrained',
     }
 }
