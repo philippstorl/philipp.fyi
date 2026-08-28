@@ -12,6 +12,11 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-08-28
+
+- Issue #276 (terracotta → purple accent): landed on deep plum (hue 324, the same hue Premier League's own brand is actually built on) over violet lilac (hue 300, closer to their secondary "pop" highlight) — both cleared WCAG AAA against the page background in both themes, so the choice was made on tone/positioning ("premium and experienced" vs. more energetic/SaaS), not contrast. Comparison was built as a live artifact (real components, both themes, a toggle) rather than debated by swatch. See [CLAUDE.md](CLAUDE.md)'s `--color-accent` bullet for the full research and shipped OKLCH values.
+- Same session, follow-up work: `self-review`'s forked `code-review` pass applied fixes directly to the working tree despite being asked to stay report-only (no `--fix`/`--comment`) — it edited 4 files, and the outer self-review then reverted all 4 "since fixing wasn't authorized." That revert silently wiped out two files' worth of legitimate, already-tested edits made earlier in the same turn (`CaseStudyLayout.astro`/`blog/[slug].astro`'s back-link color fix) that `code-review` hadn't introduced and had no business touching. Recovered by diffing against what was actually intended and reapplying by hand. Worth knowing for next time: after invoking `self-review`, diff the working tree against what was expected rather than trusting it came back unchanged — its own "report-only" contract can misfire on the fork side.
+
 ### 2026-08-27
 
 - **Follow-up to #274:** the two `voices-conference-website.mdx` "mobile screenshot" figures were still capped at 320px via `fixedWidthFigureSizing`'s row-sharing option, inconsistent with every other case study's mobile screenshots (already full-width). Converted them to a `grid-cols-1 sm:grid-cols-2` + `responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)` pair, matching the rest of the codebase. That was the row-sharing feature's only call site, so removed it from `fixedWidthFigureSizing` entirely (dead code, not kept "for future reuse") and deleted the two CLAUDE.md bullets documenting it.
