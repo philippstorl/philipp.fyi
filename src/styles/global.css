@@ -11,7 +11,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
-    OKLCH color system — all neutrals share hue 80 (warm), accent at hue 35 (terracotta),
+    OKLCH color system — all neutrals share hue 80 (warm), accent at hue 324 (deep plum),
     availability badge at hue 145 (sage green).
     Format: oklch(L% C H)
 */
@@ -25,7 +25,7 @@
     --color-card: oklch(93% 0.006 80);
     --color-foreground: oklch(12% 0.005 80);
     --color-muted: oklch(44% 0.007 80);
-    --color-accent: oklch(49% 0.17 35);
+    --color-accent: oklch(45% 0.16 324);
     --color-available: oklch(44% 0.13 145);
     --color-border: oklch(89% 0.006 80);
     --color-border-strong: oklch(60% 0.006 80);
@@ -36,7 +36,7 @@
     --color-card: oklch(15% 0.006 80);
     --color-foreground: oklch(96% 0.005 80);
     --color-muted: oklch(68% 0.007 80);
-    --color-accent: oklch(70% 0.15 35);
+    --color-accent: oklch(72% 0.16 324);
     --color-available: oklch(68% 0.13 145);
     --color-border: oklch(21% 0.006 80);
     --color-border-strong: oklch(49% 0.006 80);
