@@ -18,7 +18,9 @@ const posts = await getPublishedBlogPosts()
     <Header />
     <Main class="mx-auto max-w-3xl px-6 py-24 md:py-32">
         <div class="mb-12 flex items-end justify-between gap-4">
-            <h1 class="font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">
+            <h1
+                class="font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl"
+            >
                 Blog
             </h1>
             <a
@@ -35,24 +37,24 @@ const posts = await getPublishedBlogPosts()
             <ol class="flex flex-col divide-y divide-border">
                 {posts.map((post) => {
                     const href = `/blog/${stripContentExtension(post.id)}/`
-                    return (
-                        <li class="py-8">
-                            <time
-                                datetime={post.data.date.toISOString()}
-                                class="mb-2 block font-mono text-xs text-muted"
+                    return <li class="py-8">
+                        <time
+                            datetime={post.data.date.toISOString()}
+                            class="mb-2 block font-mono text-xs text-muted"
+                        >
+                            {formatBlogDate(post.data.date)}
+                        </time>
+                        <a href={href} class="group relative block">
+                            <h2
+                                class="mb-2 font-display text-xl font-bold tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent after:absolute after:inset-0"
                             >
-                                {formatBlogDate(post.data.date)}
-                            </time>
-                            <a href={href} class="group relative block">
-                                <h2 class="mb-2 font-display text-xl font-bold tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent after:absolute after:inset-0">
-                                    {post.data.title}
-                                </h2>
-                                <p class="text-sm leading-relaxed text-muted">
-                                    {post.data.description}
-                                </p>
-                            </a>
-                        </li>
-                    )
+                                {post.data.title}
+                            </h2>
+                            <p class="text-sm leading-relaxed text-muted">
+                                {post.data.description}
+                            </p>
+                        </a>
+                    </li>
                 })}
             </ol>
         )}

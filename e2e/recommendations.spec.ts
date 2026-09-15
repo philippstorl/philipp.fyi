@@ -7,6 +7,17 @@ test.describe('Recommendations page', () => {
         await expect(items).toHaveCount(14)
     })
 
+    test('intro paragraph has correct spacing around the LinkedIn link', async ({
+        page,
+    }) => {
+        // Guards the whitespace-collapse spot regressed by issue #297.
+        await page.goto('/recommendations/')
+        const intro = page.locator('p', { hasText: 'collected from' })
+        await expect(intro).toHaveText(
+            "Recommendations from colleagues, managers, direct reports, and external partners I've worked with over the years, collected from LinkedIn (opens in a new tab), unedited except for formatting.",
+        )
+    })
+
     test('"What others say" CTA on home links to /recommendations/', async ({
         page,
     }) => {

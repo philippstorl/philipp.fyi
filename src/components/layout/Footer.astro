@@ -8,7 +8,9 @@ const year = new Date().getFullYear()
 ---
 
 <footer id="site-footer" class="border-t border-border">
-    <div class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 py-10 sm:flex-row">
+    <div
+        class="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 py-10 sm:flex-row"
+    >
         <p class="text-sm text-muted">
             {`© ${year} ${SITE_NAME}`} &middot;{' '}
             <span class="font-mono text-xs">philipp.fyi</span>
@@ -17,23 +19,21 @@ const year = new Date().getFullYear()
         <ul class="flex items-center gap-2">
             {socialLinks.map((link) => {
                 const isExternal = link.href.startsWith('http')
-                return (
-                    <li>
-                        <a
-                            href={link.href}
-                            aria-label={
-                                isExternal
-                                    ? `${link.label}${NEW_TAB_SUFFIX}`
-                                    : link.label
-                            }
-                            target={isExternal ? '_blank' : undefined}
-                            rel={isExternal ? 'noopener noreferrer' : undefined}
-                            class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground"
-                        >
-                            <SocialIcon icon={link.icon} size={18} />
-                        </a>
-                    </li>
-                )
+                return <li>
+                    <a
+                        href={link.href}
+                        aria-label={
+                            isExternal
+                                ? `${link.label}${NEW_TAB_SUFFIX}`
+                                : link.label
+                        }
+                        target={isExternal ? '_blank' : undefined}
+                        rel={isExternal ? 'noopener noreferrer' : undefined}
+                        class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground"
+                    >
+                        <SocialIcon icon={link.icon} size={18} />
+                    </a>
+                </li>
             })}
         </ul>
     </div>

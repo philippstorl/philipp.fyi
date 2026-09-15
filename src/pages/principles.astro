@@ -35,22 +35,24 @@ const years = getYearsOfExperience()
                     const { Content } = await render(entry)
                     const number = entry.id.split('-')[0]
                     const slug = stripContentExtension(entry.id)
-                    return (
-                        <li
-                            id={slug}
-                            class="scroll-mt-24 rounded-xl border border-border bg-card p-8 md:p-10"
+                    return <li
+                        id={slug}
+                        class="scroll-mt-24 rounded-xl border border-border bg-card p-8 md:p-10"
+                    >
+                        <span class="mb-4 block font-mono text-xs text-muted">
+                            {number}
+                        </span>
+                        <h2
+                            class="mb-4 font-display text-2xl leading-snug font-bold tracking-tight text-foreground md:text-3xl"
                         >
-                            <span class="mb-4 block font-mono text-xs text-muted">
-                                {number}
-                            </span>
-                            <h2 class="mb-4 font-display text-2xl leading-snug font-bold tracking-tight text-foreground md:text-3xl">
-                                {entry.data.title}
-                            </h2>
-                            <div class="prose max-w-none text-muted prose-neutral dark:prose-invert">
-                                <Content />
-                            </div>
-                        </li>
-                    )
+                            {entry.data.title}
+                        </h2>
+                        <div
+                            class="prose max-w-none text-muted prose-neutral dark:prose-invert"
+                        >
+                            <Content />
+                        </div>
+                    </li>
                 })}
             </ol>
         </div>

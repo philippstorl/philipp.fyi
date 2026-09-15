@@ -20,16 +20,14 @@ const [firstRest, ...remainingRest] = rest
 ---
 
 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    {featured && (
-        <div class="md:col-span-3">
-            <WorkCard
-                entry={featured}
-                showCover={false}
-                priority={eagerLoadFirst}
-                headingLevel={headingLevel}
-            />
-        </div>
-    )}
+    {featured && <div class="md:col-span-3">
+        <WorkCard
+            entry={featured}
+            showCover={false}
+            priority={eagerLoadFirst}
+            headingLevel={headingLevel}
+        />
+    </div>}
     {firstRest && (
         <WorkCard
             entry={firstRest}
