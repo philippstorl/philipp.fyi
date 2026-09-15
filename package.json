@@ -57,7 +57,7 @@
         "eslint-plugin-react-hooks": "^7.1.1",
         "netlify-cli": "^27.4.3",
         "prettier": "^3.9.6",
-        "prettier-plugin-astro": "^0.14.0",
+        "prettier-plugin-astro": "^1.0.0",
         "prettier-plugin-tailwindcss": "^0.8.1",
         "prettier-plugin-toml": "^2.0.6",
         "tailwindcss": "^4.3.0",
