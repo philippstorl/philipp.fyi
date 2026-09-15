@@ -10,9 +10,7 @@ test.describe('Recommendations page', () => {
     test('intro paragraph has correct spacing around the LinkedIn link', async ({
         page,
     }) => {
-        // Guards the exact whitespace-collapse spot compressHTML's mode
-        // change (issue #297) is fragile around: a `{' '}` before the link
-        // and zero-space text/tag boundaries around it and the comma after.
+        // Guards the whitespace-collapse spot regressed by issue #297.
         await page.goto('/recommendations/')
         const intro = page.locator('p', { hasText: 'collected from' })
         await expect(intro).toHaveText(
