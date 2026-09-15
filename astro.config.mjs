@@ -25,8 +25,14 @@ export default defineConfig({
         mdx(),
         react(),
         sitemap({
-            // Exclude the 404 page — it's not a real destination
-            filter: (page) => !page.includes('/404'),
+            // Exclude the 404 page (not a real destination) and /privacy/
+            // (noindex). Exact pathname match, not a substring check, so a
+            // future route that merely contains "404"/"privacy" isn't
+            // silently dropped too.
+            filter: (page) => {
+                const { pathname } = new URL(page)
+                return pathname !== '/404' && pathname !== '/privacy/'
+            },
         }),
     ],
     vite: {

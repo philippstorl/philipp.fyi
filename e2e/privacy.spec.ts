@@ -49,4 +49,16 @@ test.describe('Privacy policy page', () => {
             page.locator('footer a', { hasText: 'Privacy' }),
         ).toHaveAttribute('href', '/privacy/')
     })
+
+    test('is noindexed but keeps a real canonical link', async ({ page }) => {
+        await page.goto('/privacy/')
+        await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+            'content',
+            'noindex',
+        )
+        await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+            'href',
+            'https://philipp.fyi/privacy/',
+        )
+    })
 })
