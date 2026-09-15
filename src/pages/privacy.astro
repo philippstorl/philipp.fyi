@@ -1,0 +1,189 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import Header from '@/components/layout/Header.astro'
+import Main from '@/components/layout/Main.astro'
+import Footer from '@/components/layout/Footer.astro'
+import PageHeader from '@/components/ui/PageHeader.astro'
+import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
+import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
+---
+
+<BaseLayout
+    title="Privacy Policy"
+    description="What personal data philipp.fyi collects, why it's processed, and what rights you have under the GDPR."
+    ogImage="/og/privacy.png"
+    robots="noindex"
+>
+    <Header />
+    <Main>
+        <PageHeader eyebrow="Your data, explained" title="Privacy Policy">
+            philipp.fyi collects a small amount of personal data through its
+            contact form and hosting infrastructure. This page explains what's
+            collected, who processes it, and how to exercise your rights.
+        </PageHeader>
+
+        <div class="mx-auto max-w-3xl px-6 pb-32">
+            <article class={PROSE_CONTENT_CLASSES}>
+                <h2>Controller</h2>
+                <p>
+                    Philipp Storl, based in the Chemnitz / Leipzig area,
+                    Germany, is the controller responsible for the personal data
+                    processed on this site (philipp.fyi). You can reach me
+                    through the <a href="/contact/">contact form</a>.
+                </p>
+
+                <h2>What this site collects</h2>
+
+                <h3>Contact form</h3>
+                <p>
+                    When you submit the contact form, I collect your name, email
+                    address, and the message you write. This data is used solely
+                    to respond to your inquiry.
+                </p>
+                <ul>
+                    <li>
+                        Legal basis: Art. 6(1)(a) GDPR, your consent, given by
+                        submitting the form.
+                    </li>
+                    <li>
+                        Recipient:
+                        <a
+                            href="https://www.netlify.com/privacy/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Netlify, Inc.<NewTabIndicator
+                        /></a
+                        >, which stores form submissions on my behalf as a
+                        processor (Netlify Forms).
+                    </li>
+                    <li>
+                        Retention: kept for as long as needed to respond to and
+                        follow up on your inquiry, then deleted. You can ask me
+                        to delete it sooner at any time.
+                    </li>
+                </ul>
+
+                <h3>Hosting and server logs</h3>
+                <p>
+                    This site is hosted on Netlify. Like most hosting providers,
+                    Netlify's infrastructure automatically logs technical
+                    request data (for example IP address, requested URL,
+                    timestamp, and user agent) for a limited time, to operate,
+                    secure, and troubleshoot the site.
+                </p>
+                <ul>
+                    <li>
+                        Legal basis: Art. 6(1)(f) GDPR, my legitimate interest
+                        in operating a secure, reliable website.
+                    </li>
+                    <li>Recipient: Netlify, Inc.</li>
+                </ul>
+
+                <h3>Performance monitoring</h3>
+                <p>
+                    Netlify's hosting platform includes a built-in Real User
+                    Monitoring beacon, served from this domain, that reports
+                    aggregate performance metrics (for example page load times)
+                    to Netlify. It doesn't use cookies or any persistent
+                    identifier, and isn't used for advertising or to track you
+                    across other sites.
+                </p>
+                <ul>
+                    <li>
+                        Legal basis: Art. 6(1)(f) GDPR, my legitimate interest
+                        in monitoring and improving site performance.
+                    </li>
+                    <li>Recipient: Netlify, Inc.</li>
+                </ul>
+
+                <h3>CSP violation reports</h3>
+                <p>
+                    This site's browser security policy asks your browser to
+                    report any blocked or unexpected script/style activity. If
+                    your browser sends one, it's stored (via Netlify Blobs) for
+                    up to 30 days so it can be investigated, then automatically
+                    deleted.
+                </p>
+                <ul>
+                    <li>
+                        Legal basis: Art. 6(1)(f) GDPR, my legitimate interest
+                        in detecting and fixing security issues.
+                    </li>
+                    <li>
+                        Recipient: Netlify, Inc. If a Slack alert channel is
+                        configured, a summary of the report (including the
+                        blocked/document URL and your browser's user agent) is
+                        also forwarded there so I can investigate promptly.
+                    </li>
+                </ul>
+
+                <h2>International data transfers</h2>
+                <p>
+                    Netlify, Inc. is based in the United States. Where data is
+                    transferred outside the European Economic Area, Netlify
+                    relies on the Standard Contractual Clauses and/or the
+                    EU-U.S. Data Privacy Framework as a safeguard. See
+                    <a
+                        href="https://www.netlify.com/privacy/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Netlify's privacy policy<NewTabIndicator
+                    /></a>
+                    for details.
+                </p>
+
+                <h2>Cookies and local storage</h2>
+                <p>
+                    This site doesn't use cookies and doesn't run any
+                    third-party advertising or tracking scripts. The
+                    performance-monitoring beacon described above uses neither.
+                    Separately, this site stores exactly one preference, your
+                    light/dark theme choice, in your browser's local storage.
+                    That value never leaves your browser and isn't linked to you
+                    personally.
+                </p>
+
+                <h2>Your rights</h2>
+                <p>Under the GDPR, you have the right to:</p>
+                <ul>
+                    <li>access the personal data I hold about you (Art. 15)</li>
+                    <li>have inaccurate data corrected (Art. 16)</li>
+                    <li>have your data deleted (Art. 17)</li>
+                    <li>restrict how your data is processed (Art. 18)</li>
+                    <li>receive your data in a portable format (Art. 20)</li>
+                    <li>
+                        object to processing based on legitimate interest (Art.
+                        21)
+                    </li>
+                    <li>
+                        withdraw consent at any time, without affecting
+                        processing that already happened (Art. 7(3))
+                    </li>
+                </ul>
+                <p>
+                    To exercise any of these, use the
+                    <a href="/contact/">contact form</a>. You also have the
+                    right to lodge a complaint with a supervisory authority, in
+                    particular the
+                    <a
+                        href="https://www.datenschutz.sachsen.de/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Sächsische Datenschutz- und
+                        Transparenzbeauftragte<NewTabIndicator
+                    /></a>
+                    (the data protection authority for Saxony, Germany, where
+                    I'm based), or the authority in your own country of
+                    residence.
+                </p>
+
+                <h2>Changes to this policy</h2>
+                <p>
+                    I'll update this page if what this site collects or how it's
+                    processed changes. Last updated: September 15, 2026.
+                </p>
+            </article>
+        </div>
+    </Main>
+    <Footer />
+</BaseLayout>
