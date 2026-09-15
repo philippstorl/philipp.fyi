@@ -13,6 +13,7 @@ const pages = [
     { reportedPath: '/work/', gotoPath: '/work/' },
     { reportedPath: '/blog/', gotoPath: '/blog/' },
     { reportedPath: '/contact/', gotoPath: '/contact/' },
+    { reportedPath: '/privacy/', gotoPath: '/privacy/' },
     {
         reportedPath: '/work/brand-evolution/',
         gotoPath: '/work/brand-evolution/',
