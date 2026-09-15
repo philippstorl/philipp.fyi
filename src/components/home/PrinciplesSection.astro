@@ -27,11 +27,11 @@ const headingId = 'principles-heading'
         label={`Read all ${totalCount} principles`}
     />
 
-    {preview.length > 0 && (
-        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {preview.map((entry) => (
-                <PrincipleCard entry={entry} />
-            ))}
-        </div>
-    )}
+    {preview.length > 0 && <div
+        class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+    >
+        {preview.map((entry) => (
+            <PrincipleCard entry={entry} />
+        ))}
+    </div>}
 </section>

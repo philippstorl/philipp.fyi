@@ -24,24 +24,24 @@ import { getDefaultDescription } from '@/data/site'
 
         <div class="mx-auto max-w-3xl px-6 pb-24">
             <div class="space-y-5">
-                {about.paragraphs.map((para) => (
-                    <p class="text-base leading-relaxed text-muted md:text-lg">
-                        {para}
-                    </p>
-                ))}
+                {about.paragraphs.map((para) => <p
+                    class="text-base leading-relaxed text-muted md:text-lg"
+                >
+                    {para}
+                </p>)}
             </div>
 
             <dl class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
-                {about.facts.map((fact) => (
-                    <div class="rounded-xl border border-border bg-card px-4 py-3.5">
-                        <dt class="text-xs font-medium text-muted">
-                            {fact.label}
-                        </dt>
-                        <dd class="mt-1 text-sm text-foreground">
-                            {fact.value}
-                        </dd>
-                    </div>
-                ))}
+                {about.facts.map((fact) => <div
+                    class="rounded-xl border border-border bg-card px-4 py-3.5"
+                >
+                    <dt class="text-xs font-medium text-muted">
+                        {fact.label}
+                    </dt>
+                    <dd class="mt-1 text-sm text-foreground">
+                        {fact.value}
+                    </dd>
+                </div>)}
             </dl>
 
             <InterlinkRow
@@ -67,7 +67,9 @@ import { getDefaultDescription } from '@/data/site'
         </div>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
-            <h2 class="mb-4 font-display text-2xl leading-snug font-bold tracking-tight text-foreground md:text-3xl">
+            <h2
+                class="mb-4 font-display text-2xl leading-snug font-bold tracking-tight text-foreground md:text-3xl"
+            >
                 How this site is built
             </h2>
             <p class="mb-6 text-base leading-relaxed text-muted">
@@ -77,11 +79,11 @@ import { getDefaultDescription } from '@/data/site'
                 push.
             </p>
             <ul class="flex flex-wrap gap-2">
-                {stack.map((name) => (
-                    <li class="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted">
-                        {name}
-                    </li>
-                ))}
+                {stack.map((name) => <li
+                    class="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted"
+                >
+                    {name}
+                </li>)}
             </ul>
         </div>
     </Main>

@@ -7,6 +7,19 @@ test.describe('Recommendations page', () => {
         await expect(items).toHaveCount(14)
     })
 
+    test('intro paragraph has correct spacing around the LinkedIn link', async ({
+        page,
+    }) => {
+        // Guards the exact whitespace-collapse spot compressHTML's mode
+        // change (issue #297) is fragile around: a `{' '}` before the link
+        // and zero-space text/tag boundaries around it and the comma after.
+        await page.goto('/recommendations/')
+        const intro = page.locator('p', { hasText: 'collected from' })
+        await expect(intro).toHaveText(
+            "Recommendations from colleagues, managers, direct reports, and external partners I've worked with over the years, collected from LinkedIn (opens in a new tab), unedited except for formatting.",
+        )
+    })
+
     test('"What others say" CTA on home links to /recommendations/', async ({
         page,
     }) => {

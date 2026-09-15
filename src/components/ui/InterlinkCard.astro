@@ -16,7 +16,9 @@ const { href, eyebrow, label } = Astro.props
     class="group flex h-full flex-col gap-4 rounded-xl border border-accent/40 bg-accent/10 p-5 transition-colors duration-150 hover:border-accent/70 hover:bg-accent/15"
 >
     <p class="text-sm text-muted">{eyebrow}</p>
-    <p class="mt-auto inline-flex items-center gap-1.5 font-display text-lg font-bold text-[color-mix(in_oklch,var(--color-accent)_75%,black)] transition-colors duration-150 group-hover:text-accent dark:text-accent">
+    <p
+        class="mt-auto inline-flex items-center gap-1.5 font-display text-lg font-bold text-[color-mix(in_oklch,var(--color-accent)_75%,black)] transition-colors duration-150 group-hover:text-accent dark:text-accent"
+    >
         {label}
         <ArrowRight
             size={16}

@@ -8,6 +8,10 @@ export default defineConfig({
     site: 'https://philipp.fyi',
     trailingSlash: 'always',
     prefetch: true,
+    // Keep in sync with .prettierrc.json's astroCompressHTML -- it mirrors
+    // this so Prettier's JSX whitespace formatting matches what the
+    // compiler actually collapses (issue #297).
+    compressHTML: true,
     security: {
         // is:inline scripts aren't auto-hashed -- if ThemeToggle's script changes,
         // recompute over its dist/index.html (not source) output (openssl dgst -sha256 | base64).
