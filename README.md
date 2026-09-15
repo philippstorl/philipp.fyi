@@ -83,7 +83,7 @@ Check what's deployed at any time: `https://philipp.fyi/build.txt`
 
 ## CSP violation reporting
 
-`netlify/functions/csp-report.ts` receives the browser's CSP violation reports (wired up via `netlify.toml`'s `report-to`/`report-uri` directives — see CLAUDE.md's CSP section for the full mechanism), logs each one to a `csp-reports` Netlify Blobs store, and posts a summary to Slack.
+`netlify/functions/csp-report.ts` receives the browser's CSP violation reports (wired up via `netlify.toml`'s `report-to`/`report-uri` directives — see [`netlify/functions/CLAUDE.md`](netlify/functions/CLAUDE.md) for the full mechanism), logs each one to a `csp-reports` Netlify Blobs store, and posts a summary to Slack.
 
 Setup (one-time):
 
@@ -103,7 +103,7 @@ npx netlify blobs:get csp-reports <key>
 
 ## CSP report retention
 
-`netlify/functions/csp-report-cleanup.ts` runs daily on a Netlify scheduled function (a `config` export with a cron `schedule`, not a dashboard/`netlify.toml` setting) and deletes any `csp-reports` Blobs entry older than 30 days — the Blobs SDK has no TTL/expiration option, so nothing else prunes the store. No setup needed; it runs automatically once deployed. See CLAUDE.md's `csp-report-cleanup.ts` bullet for how it works and what it's verified against.
+`netlify/functions/csp-report-cleanup.ts` runs daily on a Netlify scheduled function (a `config` export with a cron `schedule`, not a dashboard/`netlify.toml` setting) and deletes any `csp-reports` Blobs entry older than 30 days — the Blobs SDK has no TTL/expiration option, so nothing else prunes the store. No setup needed; it runs automatically once deployed. See [`netlify/functions/CLAUDE.md`](netlify/functions/CLAUDE.md)'s `csp-report-cleanup.ts` bullet for how it works and what it's verified against.
 
 ## Deploy notifications
 
@@ -301,6 +301,7 @@ netlify/
   functions/
     _shared/
       slack.ts             → Shared postToSlack() + Slack mrkdwn sanitization (sanitizeSlackText/truncateForSlack) used by both functions below
+    CLAUDE.md              → Directory-scoped Claude Code guidance, loaded only when working under netlify/functions/
     csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
     csp-report-cleanup.ts  → Scheduled function; deletes csp-reports Blobs entries older than 30 days
     deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
