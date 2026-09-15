@@ -11,9 +11,7 @@ const { slug, name, title, quote } = recommendation
 const href = `/recommendations/#${slug}`
 ---
 
-{
-    /* Card uses the stretched-link pattern — see WorkCard.astro for the rationale. */
-}
+{/* Card uses the stretched-link pattern — see WorkCard.astro for the rationale. */}
 <article
     class:list={[
         'group relative flex cursor-pointer flex-col rounded-xl border border-border bg-card p-6',
@@ -24,9 +22,7 @@ const href = `/recommendations/#${slug}`
     <div class="mb-4 flex items-center gap-3">
         <InitialsAvatar name={name} class="h-10 w-10 text-sm" />
         <div class="min-w-0">
-            <h3
-                class="truncate font-display text-base leading-snug font-bold tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent"
-            >
+            <h3 class="truncate font-display text-base leading-snug font-bold tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent">
                 <a
                     href={href}
                     data-astro-prefetch
@@ -39,7 +35,5 @@ const href = `/recommendations/#${slug}`
         </div>
     </div>
 
-    <p class="line-clamp-4 text-sm leading-relaxed text-muted">
-        {quote[0]}
-    </p>
+    <p class="line-clamp-4 text-sm leading-relaxed text-muted">{quote[0]}</p>
 </article>

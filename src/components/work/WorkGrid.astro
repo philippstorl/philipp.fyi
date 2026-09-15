@@ -20,30 +20,24 @@ const [firstRest, ...remainingRest] = rest
 ---
 
 <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    {
-        featured && (
-            <div class="md:col-span-3">
-                <WorkCard
-                    entry={featured}
-                    showCover={false}
-                    priority={eagerLoadFirst}
-                    headingLevel={headingLevel}
-                />
-            </div>
-        )
-    }
-    {
-        firstRest && (
+    {featured && (
+        <div class="md:col-span-3">
             <WorkCard
-                entry={firstRest}
+                entry={featured}
+                showCover={false}
                 priority={eagerLoadFirst}
                 headingLevel={headingLevel}
             />
-        )
-    }
-    {
-        remainingRest.map((entry) => (
-            <WorkCard entry={entry} headingLevel={headingLevel} />
-        ))
-    }
+        </div>
+    )}
+    {firstRest && (
+        <WorkCard
+            entry={firstRest}
+            priority={eagerLoadFirst}
+            headingLevel={headingLevel}
+        />
+    )}
+    {remainingRest.map((entry) => (
+        <WorkCard entry={entry} headingLevel={headingLevel} />
+    ))}
 </div>

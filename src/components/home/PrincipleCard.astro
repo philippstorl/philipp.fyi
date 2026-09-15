@@ -13,9 +13,7 @@ const number = slug.split('-')[0]
 const href = `/principles/#${slug}`
 ---
 
-{
-    /* Card uses the stretched-link pattern — see WorkCard.astro for the rationale. */
-}
+{/* Card uses the stretched-link pattern — see WorkCard.astro for the rationale. */}
 <article
     class:list={[
         'group relative flex cursor-pointer flex-col rounded-xl border border-border bg-card p-6',
@@ -25,9 +23,7 @@ const href = `/principles/#${slug}`
 >
     <span class="mb-4 font-mono text-xs text-muted">{number}</span>
 
-    <h3
-        class="mb-3 font-display text-lg leading-snug font-bold tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent"
-    >
+    <h3 class="mb-3 font-display text-lg leading-snug font-bold tracking-tight text-foreground transition-colors duration-150 group-hover:text-accent">
         <a
             href={href}
             data-astro-prefetch
@@ -37,7 +33,5 @@ const href = `/principles/#${slug}`
         </a>
     </h3>
 
-    <p class="text-sm leading-relaxed text-muted">
-        {description}
-    </p>
+    <p class="text-sm leading-relaxed text-muted">{description}</p>
 </article>

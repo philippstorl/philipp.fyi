@@ -30,9 +30,7 @@ const creativeWorkSchema = buildCreativeWorkSchema({
 })
 ---
 
-{
-    /* This container's width is re-hardcoded as pixel constants in content-image-sizing.ts — keep both in sync if this class changes. */
-}
+{/* This container's width is re-hardcoded as pixel constants in content-image-sizing.ts — keep both in sync if this class changes. */}
 <div class="mx-auto max-w-3xl px-6 py-24">
     <JsonLd data={creativeWorkSchema} />
     <a
@@ -47,23 +45,17 @@ const creativeWorkSchema = buildCreativeWorkSchema({
             <CategoryBadge category={category} />
             <span class="text-sm text-muted">{year}</span>
         </div>
-        <h1
-            class="mb-6 font-display text-4xl leading-tight font-bold tracking-tight break-words text-foreground md:text-5xl"
-        >
+        <h1 class="mb-6 font-display text-4xl leading-tight font-bold tracking-tight break-words text-foreground md:text-5xl">
             {title}
         </h1>
-        <p class="mb-8 text-lg leading-relaxed text-muted">
-            {description}
-        </p>
+        <p class="mb-8 text-lg leading-relaxed text-muted">{description}</p>
 
         <ul class="flex flex-wrap gap-2" aria-label="Technologies and topics">
-            {
-                tags.map((tag) => (
-                    <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
-                        {tag}
-                    </li>
-                ))
-            }
+            {tags.map((tag) => (
+                <li class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted">
+                    {tag}
+                </li>
+            ))}
         </ul>
     </header>
 

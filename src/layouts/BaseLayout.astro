@@ -56,14 +56,12 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
         />
 
         <meta property="og:type" content={ogType} />
-        {
-            ogType === 'article' && articlePublishedTime && (
-                <meta
-                    property="article:published_time"
-                    content={articlePublishedTime}
-                />
-            )
-        }
+        {ogType === 'article' && articlePublishedTime && (
+            <meta
+                property="article:published_time"
+                content={articlePublishedTime}
+            />
+        )}
         {canonical && <meta property="og:url" content={canonicalURL} />}
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
@@ -100,10 +98,8 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
 
         <ClientRouter />
 
-        {
-            /* Runs before paint to prevent a flash. Reapplied on astro:after-swap
-            since ClientRouter replaces <html>'s class with static markup. */
-        }
+        {/* Runs before paint to prevent a flash. Reapplied on astro:after-swap
+            since ClientRouter replaces <html>'s class with static markup. */}
         <script is:inline>
             ;(function () {
                 function applyStoredTheme() {

@@ -10,5 +10,7 @@ const { items, class: className } = Astro.props
 ---
 
 <div class:list={['grid grid-cols-1 gap-4 sm:grid-cols-3', className]}>
-    {items.map((item) => <InterlinkCard {...item} />)}
+    {items.map((item) => (
+        <InterlinkCard {...item} />
+    ))}
 </div>
