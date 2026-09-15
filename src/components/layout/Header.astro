@@ -6,25 +6,20 @@ import NavLink from '@/components/layout/NavLink.astro'
 const pathname = Astro.url.pathname
 ---
 
-{
-    /* Sibling of #site-header, not a child -- nesting it would carry it into the header's own z-50 stacking context. */
-}
+{/* Sibling of #site-header, not a child -- nesting it would carry it into the header's own z-50 stacking context. */}
 <div
     id="mobile-nav-backdrop"
     class="animate-mobile-nav-backdrop-in fixed inset-0 z-40 hidden bg-background/60 md:hidden"
     aria-hidden="true"
     transition:persist
->
-</div>
+></div>
 
 <header
     id="site-header"
     class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm"
     transition:persist
 >
-    <div
-        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6"
-    >
+    <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6">
         <a
             href="/"
             class="font-display text-base font-bold tracking-tight text-foreground transition-colors duration-150 hover:text-accent"
@@ -35,18 +30,16 @@ const pathname = Astro.url.pathname
 
         <nav aria-label="Main navigation" class="hidden md:block">
             <ul class="flex items-center gap-8">
-                {
-                    navItems.map((item) => (
-                        <li>
-                            <NavLink
-                                href={item.href}
-                                label={item.label}
-                                pathname={pathname}
-                                variant="desktop"
-                            />
-                        </li>
-                    ))
-                }
+                {navItems.map((item) => (
+                    <li>
+                        <NavLink
+                            href={item.href}
+                            label={item.label}
+                            pathname={pathname}
+                            variant="desktop"
+                        />
+                    </li>
+                ))}
             </ul>
         </nav>
 
@@ -104,18 +97,16 @@ const pathname = Astro.url.pathname
         class="animate-mobile-nav-in absolute inset-x-0 top-full hidden border-t border-b border-border bg-background md:hidden"
     >
         <ul class="mx-auto flex max-w-6xl flex-col px-6 py-4">
-            {
-                navItems.map((item) => (
-                    <li>
-                        <NavLink
-                            href={item.href}
-                            label={item.label}
-                            pathname={pathname}
-                            variant="mobile"
-                        />
-                    </li>
-                ))
-            }
+            {navItems.map((item) => (
+                <li>
+                    <NavLink
+                        href={item.href}
+                        label={item.label}
+                        pathname={pathname}
+                        variant="mobile"
+                    />
+                </li>
+            ))}
         </ul>
     </nav>
 </header>
