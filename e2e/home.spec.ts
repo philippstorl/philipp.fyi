@@ -58,6 +58,28 @@ test.describe('Home page', () => {
         await expect(cards).toHaveCount(6)
     })
 
+    test('card grids are exposed as ordered lists', async ({ page }) => {
+        await page.goto('/')
+        await expect(page.locator('#work ol > li > article')).toHaveCount(4)
+        await expect(page.locator('#principles ol > li > article')).toHaveCount(
+            6,
+        )
+        await expect(
+            page.locator('#recommendations ol > li > article'),
+        ).toHaveCount(6)
+    })
+
+    test('has no horizontal overflow', async ({ page }) => {
+        // A list item wrapper without grid-cols-1 lets truncated card text
+        // widen the page past the mobile viewport. Compare against the
+        // configured viewport: mobile emulation grows innerWidth to fit.
+        await page.goto('/')
+        const scrollWidth = await page.evaluate(
+            () => document.documentElement.scrollWidth,
+        )
+        expect(scrollWidth).toBeLessThanOrEqual(page.viewportSize()!.width)
+    })
+
     test('contact section is present', async ({ page }) => {
         await page.goto('/')
         await expect(page.locator('#contact')).toBeVisible()

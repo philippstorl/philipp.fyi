@@ -33,7 +33,7 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
         </PageHeader>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
-            <ol class="flex flex-col gap-4">
+            <ol role="list" class="flex flex-col gap-4">
                 {recommendations.map((r) => <li
                     id={r.slug}
                     class="scroll-mt-24 rounded-xl border border-border bg-card p-8 md:p-10"

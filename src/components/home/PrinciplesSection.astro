@@ -27,11 +27,13 @@ const headingId = 'principles-heading'
         label={`Browse all ${totalCount} principles`}
     />
 
-    {preview.length > 0 && <div
+    {/* role="list" and grid-cols-1 li: see WorkGrid.astro. */}
+    {preview.length > 0 && <ol
+        role="list"
         class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
     >
-        {preview.map((entry) => (
+        {preview.map((entry) => <li class="grid grid-cols-1">
             <PrincipleCard entry={entry} />
-        ))}
-    </div>}
+        </li>)}
+    </ol>}
 </section>

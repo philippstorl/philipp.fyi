@@ -22,29 +22,21 @@ if (new Set(orders).size !== orders.length) {
         `Duplicate \`order\` values in the work collection: ${orders.join(', ')}`,
     )
 }
-
-const [featured, ...rest] = entries
-const [firstRest, ...remainingRest] = rest
 ---
 
-<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-    {featured && <div class="md:col-span-3">
+{/* role="list": Safari drops list semantics once list-style is none.
+    Each li is grid grid-cols-1 so the card stretches to the row height
+    without its min-content width (e.g. truncated text) widening the page. */}
+<ol role="list" class="grid grid-cols-1 gap-4 md:grid-cols-3">
+    {entries.map((entry, i) => <li
+        class:list={['grid grid-cols-1', i === 0 && 'md:col-span-3']}
+    >
         <WorkCard
-            entry={featured}
-            featured
-            showCover={false}
-            priority={eagerLoadFirst}
+            entry={entry}
+            featured={i === 0}
+            showCover={i !== 0}
+            priority={eagerLoadFirst && i < 2}
             headingLevel={headingLevel}
         />
-    </div>}
-    {firstRest && (
-        <WorkCard
-            entry={firstRest}
-            priority={eagerLoadFirst}
-            headingLevel={headingLevel}
-        />
-    )}
-    {remainingRest.map((entry) => (
-        <WorkCard entry={entry} headingLevel={headingLevel} />
-    ))}
-</div>
+    </li>)}
+</ol>
