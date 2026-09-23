@@ -1,5 +1,5 @@
 ---
-title: "For conflicts and complexity - get on a call"
+title: "A call beats a thread"
 description: "Written text strips tone, creates ambiguity, and invites misinterpretation. A five-minute call resolves what text threads drag out for days. When in doubt, switch medium."
 ---
 

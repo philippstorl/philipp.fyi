@@ -1,5 +1,5 @@
 ---
-title: "Leave it better than you found it - transitions are part of the work"
+title: "How you leave is part of the work"
 description: "How you transition a responsibility is part of how well you did the work. A thorough handover, a clean transition, and a system that runs without you are part of the job - not extras."
 ---
 

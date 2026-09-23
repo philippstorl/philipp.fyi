@@ -1,5 +1,5 @@
 ---
-title: "Do it right, not just fast"
+title: "Quality compounds"
 description: "The right way and the fast way are rarely the same. Quality up front (clean architecture, clear conventions, documented decisions) saves far more time than the hours saved by cutting corners."
 ---
 

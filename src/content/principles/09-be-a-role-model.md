@@ -1,5 +1,5 @@
 ---
-title: "Be a role model - act as you want others to act"
+title: "What does leading by example actually look like?"
 description: "Show people what good looks like. Hold yourself to the standards you set for others - first. Leadership shows up in the small things as much as the big ones."
 ---
 

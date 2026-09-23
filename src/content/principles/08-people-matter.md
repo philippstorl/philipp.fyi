@@ -1,5 +1,5 @@
 ---
-title: "People matter - name them, celebrate them"
+title: "Say their name"
 description: "Specific, named recognition of what someone did and why it mattered is one of the most undervalued tools in any team. There is no meaningful cost to praising everyone - only a cost to leaving people out."
 ---
 
