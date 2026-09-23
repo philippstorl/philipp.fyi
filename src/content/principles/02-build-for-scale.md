@@ -7,4 +7,4 @@ The question I ask before almost any technical or process decision is: will this
 
 This shows up everywhere in how I work: from modular systems designed to be extended by anyone, to documentation that lets a stakeholder update the website without involving a developer, to infrastructure-as-code so the platform isn't tied to one person's knowledge, to processes that outlast their creator. When I joined a company as its only web developer, I wrote knowledge bases for work I was doing by myself, because I always planned for a team. When that team eventually came, the foundations were already there. When I introduced a sprint framework, it wasn't just for today's team but structured to work as the team scaled.
 
-Scaling isn't only a technical concept. It applies to processes, documentation, and the way you hand things over.
+That same logic reaches past code, into processes, documentation, and handovers. Scale for all of it, not just the platform.

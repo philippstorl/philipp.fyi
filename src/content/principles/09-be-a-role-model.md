@@ -13,4 +13,4 @@ A direct report put it more plainly: _"He doesn't just talk the talk, but charge
 
 It's also why an internal recognition award once specifically cited me for showing up consistently in ways that had nothing to do with my job title.
 
-That's the whole principle in one sentence. Hold yourself to the standards you set for others, first.
+Hold yourself to the standards you set for others, before you ever ask anyone else to meet them.
