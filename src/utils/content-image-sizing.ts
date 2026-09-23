@@ -146,17 +146,12 @@ export function responsiveGridFigureSizing(
     }
 }
 
-/** A figure inside a grid whose column count never changes (`columns: 1` is a standalone full-width figure). Delegates to `responsiveGridFigureSizing` with one always-on tier. */
-export function gridFigureSizing(columns: 1 | 2 | 3): FigureSizing {
-    return responsiveGridFigureSizing([
-        { minWidth: CONTAINER_CAP_BREAKPOINT, columns },
-        { columns },
-    ])
-}
-
-/** A standalone figure spanning the full prose column width. */
+/** A standalone figure spanning the full prose column width. Multi-column grids use `responsiveGridFigureSizing`'s tier constants (#274). */
 export function fullWidthFigureSizing(): FigureSizing {
-    return gridFigureSizing(1)
+    return responsiveGridFigureSizing([
+        { minWidth: CONTAINER_CAP_BREAKPOINT, columns: 1 },
+        { columns: 1 },
+    ])
 }
 
 /** Figure with an explicit width narrower than the column at every viewport. */
