@@ -48,10 +48,16 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             />
         </button>
 
+        {/* Focusable for axe scrollable-region-focusable (Safari); arrows are handled at dialog level. */}
+        {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
         <div
             id="lightbox-track"
+            tabindex="0"
+            role="region"
+            aria-label="Screenshot gallery"
             class="flex flex-1 snap-x snap-mandatory overflow-x-auto"
         ></div>
+        {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
 
         <div class="shrink-0 pt-3 text-center" aria-live="polite">
             <p id="lightbox-caption" class="text-sm text-white/90 italic"></p>
@@ -76,6 +82,12 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
     .lightbox-slide {
         scroll-snap-stop: always;
+    }
+
+    /* The accent outline fails 3:1 against the near-black backdrop. */
+    #lightbox-track:focus-visible {
+        outline-color: white;
+        outline-offset: -2px;
     }
 </style>
 
@@ -258,8 +270,12 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         })
 
         dialog.addEventListener('keydown', (event) => {
-            if (event.key === 'ArrowLeft') goTo(currentIndex - 1)
-            if (event.key === 'ArrowRight') goTo(currentIndex + 1)
+            if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+            // Leave Alt/Cmd+Arrow history navigation alone.
+            if (event.altKey || event.metaKey || event.ctrlKey) return
+            // Stop a focused track's native scroll from racing goTo()'s own.
+            event.preventDefault()
+            goTo(currentIndex + (event.key === 'ArrowLeft' ? -1 : 1))
         })
 
         dialog.addEventListener('close', () => {

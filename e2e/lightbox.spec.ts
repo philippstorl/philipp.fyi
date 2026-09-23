@@ -1,3 +1,4 @@
+import AxeBuilder from '@axe-core/playwright'
 import { test, expect, type Locator, type Page } from '@playwright/test'
 
 // Single source of truth for the gallery size, so a future screenshot
@@ -128,6 +129,50 @@ test.describe('Image lightbox', () => {
             counterText(5),
         )
         await expect(page.locator('#lightbox-caption')).toHaveText('2023')
+    })
+
+    test('the open lightbox has no axe violations', async ({ page }) => {
+        // Regression (#299): the scroll track failed scrollable-region-focusable.
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+
+        const results = await new AxeBuilder({ page })
+            .include('#lightbox')
+            .analyze()
+        expect(results.violations).toEqual([])
+    })
+
+    test('arrow keys move exactly one slide when the track itself has focus', async ({
+        page,
+    }) => {
+        // preventDefault must stop native track scroll from racing goTo().
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+        const track = page.locator('#lightbox-track')
+        await track.focus()
+        await expect(track).toBeFocused()
+
+        // Scroll-snap masks the race visually, so assert the native scroll was cancelled.
+        await page.evaluate(() => {
+            document.addEventListener(
+                'keydown',
+                (event) => {
+                    document.body.dataset.arrowPrevented = String(
+                        event.defaultPrevented,
+                    )
+                },
+                { once: true },
+            )
+        })
+        await page.keyboard.press('ArrowRight')
+        await expect(page.locator('body')).toHaveAttribute(
+            'data-arrow-prevented',
+            'true',
+        )
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            counterText(2),
+        )
+        await expect(page.locator('#lightbox-caption')).toHaveText(
+            'After - October 2020, the first Eleventy build',
+        )
     })
 
     test('closes on Escape and returns focus to the trigger image', async ({
