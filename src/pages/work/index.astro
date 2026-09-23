@@ -19,6 +19,7 @@ const caseStudyCount = (await getPublishedEntries('work')).length
     title="Work"
     description={`Case studies from ${getYearsOfExperience()} years building for the web, including ${getStaffbaseTenureYears()} years scaling staffbase.com.`}
     ogImage="/og/work.png"
+    preloadMonoFont
 >
     <Header />
     <Main>

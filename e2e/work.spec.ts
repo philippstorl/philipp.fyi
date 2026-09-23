@@ -42,6 +42,18 @@ test('case study pages set og:type to article with a published time', async ({
     ).toHaveAttribute('content', '2018')
 })
 
+test('case study pages preload JetBrains Mono, the homepage does not', async ({
+    page,
+}) => {
+    const monoPreload = page.locator(
+        'link[rel="preload"][as="font"][href*="jetbrains-mono-latin-400-normal"]',
+    )
+    await page.goto('/work/brand-evolution/')
+    await expect(monoPreload).toHaveCount(1)
+    await page.goto('/')
+    await expect(monoPreload).toHaveCount(0)
+})
+
 test('work cards link to correct case study URLs', async ({ page }) => {
     await page.goto('/')
     const firstCard = page.locator('#work article').first()
