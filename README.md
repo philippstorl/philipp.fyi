@@ -306,7 +306,7 @@ netlify/
     csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
     csp-report-cleanup.ts  → Scheduled function; deletes csp-reports Blobs entries older than 30 days
     deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
-netlify.toml       → Build, Node version, Lighthouse plugin, security headers, 404 redirect, CSP reporting headers
+netlify.toml       → Build, Node version, Lighthouse plugin, security headers, cache headers, 404 redirect, CSP reporting headers
 playwright.config.ts
 ```
 
