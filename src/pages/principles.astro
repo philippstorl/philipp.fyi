@@ -32,7 +32,7 @@ const description = `${principles.length} things I hold close: how I think about
         </PageHeader>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
-            <ol class="flex flex-col gap-4">
+            <ol role="list" class="flex flex-col gap-4">
                 {principles.map(async (entry) => {
                     const { Content } = await render(entry)
                     const number = entry.id.split('-')[0]

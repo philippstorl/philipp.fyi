@@ -9,8 +9,12 @@ interface Props {
 const { items, class: className } = Astro.props
 ---
 
-<div class:list={['grid grid-cols-1 gap-4 sm:grid-cols-3', className]}>
-    {items.map((item) => (
+{/* role="list" and grid-cols-1 li: see WorkGrid.astro. */}
+<ul
+    role="list"
+    class:list={['grid grid-cols-1 gap-4 sm:grid-cols-3', className]}
+>
+    {items.map((item) => <li class="grid grid-cols-1">
         <InterlinkCard {...item} />
-    ))}
-</div>
+    </li>)}
+</ul>

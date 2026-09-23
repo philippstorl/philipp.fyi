@@ -134,6 +134,16 @@ test.describe('Work page', () => {
         await expect(coverImages.nth(3)).not.toHaveAttribute('fetchpriority')
     })
 
+    test('case study cards and interlinks are exposed as lists', async ({
+        page,
+    }) => {
+        await page.goto('/work/')
+        await expect(page.locator('main ol > li > article')).toHaveCount(4)
+        await expect(
+            page.locator('main ul > li > a[href="/about/"]'),
+        ).toHaveCount(1)
+    })
+
     test('links to About, Principles, and Recommendations', async ({
         page,
     }) => {

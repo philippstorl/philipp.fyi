@@ -35,7 +35,7 @@ const posts = await getPublishedBlogPosts()
         {posts.length === 0 ? (
             <p class="text-base text-muted">Writing coming soon.</p>
         ) : (
-            <ol class="flex flex-col divide-y divide-border">
+            <ol role="list" class="flex flex-col divide-y divide-border">
                 {posts.map((post) => {
                     const href = `/blog/${stripContentExtension(post.id)}/`
                     return <li class="py-8">

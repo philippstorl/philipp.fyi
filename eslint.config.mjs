@@ -14,7 +14,15 @@ export default defineConfig(
     // mismatches, and other issues that directly affect Lighthouse scores.
     {
         plugins: { 'jsx-a11y': jsxA11y },
-        rules: { ...jsxA11y.configs.recommended.rules },
+        rules: {
+            ...jsxA11y.configs.recommended.rules,
+            // Safari drops list semantics from list-style: none lists unless
+            // role="list" is explicit. nav is the rule's own default exception.
+            'jsx-a11y/no-redundant-roles': [
+                'error',
+                { nav: ['navigation'], ol: ['list'], ul: ['list'] },
+            ],
+        },
     },
 
     // Hook rules for the sole React island. Not the plugin's full
