@@ -12,6 +12,10 @@ Updated automatically at the end of each session; read automatically at the star
 
 ## Log
 
+### 2026-09-23
+
+- Astro's attribute shorthand (`<BaseLayout {description} />`) crashes `npm run lint` outright rather than reporting an error: `eslint-plugin-jsx-a11y`'s `aria-activedescendant-has-tabindex` rule throws "The prop must be a JSXAttribute collected by the AST parser", since `jsx-ast-utils` doesn't understand `astro-eslint-parser`'s shorthand-attribute node. Write the explicit `description={description}` form instead (found fixing #285).
+
 ### 2026-09-15
 
 - Fixing PR #296 (dependabot bump of `prettier-plugin-astro` 0.14.1 → 1.0.0, a rewrite targeting Astro 7's Rust compiler) surfaced that Astro 7 quietly changed `compressHTML`'s type from a plain boolean to `'jsx' | 'html' | 'none'` and its _default_ from `true` to `'jsx'` (confirmed in `node_modules/astro/dist/core/config/schemas/base.js`) — `'jsx'` only collapses whitespace runs containing a newline, less aggressive than the old `true`/browser-HTML behavior. `astro.config.mjs` never set `compressHTML` explicitly, so this repo silently picked up `'jsx'` mode on some earlier Astro 7 bump, with no PR calling it out. The plugin's new `astroCompressHTML` option (added specifically to mirror `compressHTML`) also defaults to `'jsx'`, so the two happened to already agree — no config change was needed to fix the PR itself. Verified the reformat was purely mechanical by computing `ThemeToggle.astro`'s CSP-hashed inline script's SHA-256 from a real build (unchanged, still matches `astro.config.mjs`'s registered hash and appears in the generated `<meta>` CSP allowlist) and checking the compiled HTML around `recommendations.astro`'s whitespace-sensitive LinkedIn link (still renders with correct spacing). User's actual goal is minified production HTML (`'html'` mode) but chose to defer that as a separate, deliberately-reviewed change rather than bundle it into a dependency-bump fix — filed as [#297](https://github.com/philippstorl/philipp.fyi/issues/297).
