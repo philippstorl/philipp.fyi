@@ -12,6 +12,8 @@ Report them privately through GitHub's private vulnerability reporting instead:
 
 If that option is unavailable for any reason, use the [contact form](https://philipp.fyi/contact/) to ask for a private channel, without including vulnerability details in the message.
 
+The same contact details are published at [`/.well-known/security.txt`](https://philipp.fyi/.well-known/security.txt) ([RFC 9116](https://www.rfc-editor.org/rfc/rfc9116)).
+
 ## What to include
 
 - The affected URL, file, or component (for example a Netlify Function under `netlify/functions/`, the Content Security Policy in `netlify.toml`, or the contact form)

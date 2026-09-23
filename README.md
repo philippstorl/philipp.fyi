@@ -280,6 +280,7 @@ src/
     404.astro
     build.txt.ts
     rss.xml.ts
+    .well-known/security.txt.ts
     og/[...slug].png.ts
   styles/
     global.css     → Tailwind v4 config, design tokens, dark mode
@@ -312,7 +313,7 @@ playwright.config.ts
 
 ## Security
 
-To report a vulnerability, use GitHub's private vulnerability reporting rather than a public issue; see [SECURITY.md](SECURITY.md).
+To report a vulnerability, use GitHub's private vulnerability reporting rather than a public issue; see [SECURITY.md](SECURITY.md). The live site also serves an RFC 9116 [`/.well-known/security.txt`](https://philipp.fyi/.well-known/security.txt) pointing to the same channel.
 
 ## License
 
