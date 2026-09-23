@@ -50,4 +50,33 @@ test.describe('Recommendations page', () => {
         await workLink.click()
         await expect(page).toHaveURL('/work/')
     })
+
+    test('interlink cards have a separated accessible name, not a run-on', async ({
+        page,
+    }) => {
+        // Guards issue #301: eyebrow and label used to concatenate with no separator.
+        await page.goto('/recommendations/')
+        for (const name of [
+            'Meet the person they describe: About',
+            'The principles behind the work: Principles',
+            'The projects these people are describing: Work',
+        ]) {
+            await expect(
+                page.getByRole('link', { name, exact: true }),
+            ).toBeVisible()
+        }
+
+        // Same component on the other three pages of the interlink square.
+        for (const path of ['/about/', '/principles/', '/work/']) {
+            await page.goto(path)
+            const cards = page.locator('main a.group.rounded-xl')
+            await expect(cards).toHaveCount(3)
+            for (const card of await cards.all()) {
+                const [eyebrow, label] = await card.locator('p').allInnerTexts()
+                await expect(card).toHaveAccessibleName(
+                    `${eyebrow?.trim()}: ${label?.trim()}`,
+                )
+            }
+        }
+    })
 })
