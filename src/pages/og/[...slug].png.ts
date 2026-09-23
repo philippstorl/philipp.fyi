@@ -22,7 +22,15 @@ const FRONTMATTER_PATTERN = /^---\r?\n([\s\S]*?)\r?\n---/
 // coverImage's built URL may not exist on disk yet mid-build -- re-read the
 // source frontmatter instead, via js-yaml so quoting/formatting can't break a regex.
 function resolveCoverImagePath(filePath: string): string | undefined {
-    const raw = readFileSync(filePath, 'utf-8')
+    // Runs inside getStaticPaths' map: an unreadable file must degrade, not
+    // abort path generation for every work entry.
+    let raw: string
+    try {
+        raw = readFileSync(filePath, 'utf-8')
+    } catch (error) {
+        console.warn(`[og-image] Couldn't read "${filePath}": ${String(error)}`)
+        return undefined
+    }
     const frontmatterMatch = raw.match(FRONTMATTER_PATTERN)
     const frontmatterBlock = frontmatterMatch?.[1]
     if (frontmatterBlock === undefined) return undefined
