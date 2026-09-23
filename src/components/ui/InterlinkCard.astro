@@ -10,8 +10,10 @@ interface Props {
 const { href, eyebrow, label } = Astro.props
 ---
 
+{/* Without this, the name is "eyebrow label" run together (issue #301). */}
 <a
     href={href}
+    aria-label={`${eyebrow}: ${label}`}
     data-astro-prefetch
     class="group flex h-full flex-col gap-4 rounded-xl border border-accent/40 bg-accent/10 p-5 transition-colors duration-150 hover:border-accent/70 hover:bg-accent/15"
 >
