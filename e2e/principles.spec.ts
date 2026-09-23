@@ -27,7 +27,9 @@ test.describe('Principles page', () => {
         await expect(lastNumber).toContainText('15')
     })
 
-    test('"How I work" CTA on home links to /principles/', async ({ page }) => {
+    test('"Principles I actually use" section CTA on home links to /principles/', async ({
+        page,
+    }) => {
         await page.goto('/')
         const link = page.locator('#principles a[href="/principles/"]')
         await expect(link).toBeVisible()

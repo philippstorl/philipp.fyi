@@ -18,7 +18,7 @@ test.describe('Recommendations page', () => {
         )
     })
 
-    test('"What others say" CTA on home links to /recommendations/', async ({
+    test('"What people I\'ve worked with say" section CTA on home links to /recommendations/', async ({
         page,
     }) => {
         await page.goto('/')
