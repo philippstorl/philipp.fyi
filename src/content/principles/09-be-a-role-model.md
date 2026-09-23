@@ -5,7 +5,7 @@ description: "Show people what good looks like. Hold yourself to the standards y
 
 The principle isn't "tell people what to do." It's "show people what good looks like." The most effective thing a leader or senior team member can do is behave in the way they want the team to behave, not as performance, but as a genuine expression of their standards.
 
-When I introduced engineering conventions, I followed them myself before asking anyone else to. When I preached async-first collaboration, I structured my own standups and updates to model it. When I wanted a culture of transparency and openness, I demonstrated it in my own communication, including the uncomfortable messages I sent when something was wrong.
+I followed engineering conventions myself before ever asking anyone else to adopt them. Async-first collaboration wasn't something I just preached: my own standups and updates were structured to model it. And a culture of transparency and openness had to start in my own communication, including the uncomfortable messages I sent when something was wrong.
 
 The CMO at the time described it directly: _"You've realized that you can be a leader to everyone just by how you show up: helping people and doing the little cultural things like your nice messages in Slack that make a difference."_
 
