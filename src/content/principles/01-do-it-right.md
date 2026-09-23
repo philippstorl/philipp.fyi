@@ -3,7 +3,7 @@ title: "Do it right, not just fast"
 description: "The right way and the fast way are rarely the same. Quality up front (clean architecture, clear conventions, documented decisions) saves far more time than the hours saved by cutting corners."
 ---
 
-I've always believed that the "right way" is rarely the same as the "fast way," and that the accumulated cost of choosing speed over quality eventually always catches up. This shows up in practice, not just in principle: proper engineering, clear naming conventions, documented decisions, and clean architecture save far more time in the long run than the hours "saved" by cutting corners.
+I've always believed that the "right way" is rarely the same as the "fast way," and that the accumulated cost of choosing speed over quality eventually always catches up. This is grounded in practice: proper engineering, clear naming conventions, documented decisions, and clean architecture save far more time in the long run than the hours "saved" by cutting corners.
 
 When a colleague once pushed to go live with a page that was missing key visual assets, I pushed back directly: _"We should not go live with half-baked work, where at the end the quality of the whole page suffers."_ When we took longer than expected to implement a change across the website, I explained why to leadership: _"We got rid of technical debt and we are future-proof now. The work we do is also creative work which needs some room and time. It's not just pushing a button."_
 
