@@ -310,6 +310,10 @@ netlify.toml       → Build, Node version, Lighthouse plugin, security headers,
 playwright.config.ts
 ```
 
+## Security
+
+To report a vulnerability, use GitHub's private vulnerability reporting rather than a public issue; see [SECURITY.md](SECURITY.md).
+
 ## License
 
 All rights reserved. This is a personal portfolio repository, not open source; see [LICENSE](LICENSE).
