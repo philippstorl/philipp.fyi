@@ -8,13 +8,13 @@ Updated automatically at the end of each session; read automatically at the star
 
 - Whether `preflight/SKILL.md` should stop restating CLAUDE.md's command list verbatim (flagged by `self-review` on 2026-06-25) — redundant but arguably more robust against either file being edited in isolation; undecided.
 - Trailing slashes are only ever generated (`astro.config.mjs`'s `trailingSlash: 'always'`), never enforced server-side — noted as a possible future addition when trailing-slash generation was first added (PR #9, 2026-06-17) but never revisited. Both `/route` and `/route/` currently resolve; no `netlify.toml` redirect exists for this.
-- The `featured` boolean in the `work` content collection schema (`src/content.config.ts`) is dead: `WorkSection.astro` picks the wide/featured card purely by lowest `order` after sorting (`const [featured, ...rest] = entries`), never by reading the `featured` field. `WorkCard.astro` does destructure `entry.data.featured`, but only to pick a font-size class, not for slot selection. Today `storyblok-migration.mdx` has both `order: 1` and `featured: true`, so they coincide by convention, but nothing enforces it — a future reorder could silently promote a different card without `featured` following it. Surfaced by `self-review` during the issue #64 HTML-comment cleanup (the deleted `WorkSection.astro` comment naming "Storyblok migration" as the featured card was the only place partially documenting this coupling). Out of scope there; still undecided whether the fix is wiring `WorkSection.astro` to select by `featured: true` instead of order-position, or removing the field.
 
 ## Log
 
 ### 2026-09-23
 
 - Astro's attribute shorthand (`<BaseLayout {description} />`) crashes `npm run lint` outright rather than reporting an error: `eslint-plugin-jsx-a11y`'s `aria-activedescendant-has-tabindex` rule throws "The prop must be a JSXAttribute collected by the AST parser", since `jsx-ast-utils` doesn't understand `astro-eslint-parser`'s shorthand-attribute node. Write the explicit `description={description}` form instead (found fixing #285).
+- Resolved the open question about the `work` collection's dead `featured` field (issue #300) by removing it rather than wiring `WorkGrid.astro` to select by it: across all 4 real case studies it was `true` only on the `order: 1` entry, so it duplicated `order` without controlling anything, and trusting it would have needed an "exactly one featured" validation. `WorkGrid.astro` now passes `featured` as an explicit `WorkCard` prop and throws on duplicate `order` values (see the `showCover` bullet in [CLAUDE.md](CLAUDE.md)); Zod strips unknown keys, so a stray `featured:` left in future frontmatter is silently ignored, not an error.
 
 ### 2026-09-15
 

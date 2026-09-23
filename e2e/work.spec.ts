@@ -50,6 +50,21 @@ test('work cards link to correct case study URLs', async ({ page }) => {
     expect(href).toMatch(/^\/work\/storyblok-migration\/$/)
 })
 
+test('lowest-order case study gets the full-row card on desktop', async ({
+    page,
+}, testInfo) => {
+    test.skip(testInfo.project.name === 'mobile', 'Every card is full-width')
+    await page.goto('/work/')
+    const cards = page.locator('main article')
+    const featuredBox = await cards.first().boundingBox()
+    const regularBox = await cards.nth(1).boundingBox()
+    expect(featuredBox!.width).toBeGreaterThan(regularBox!.width * 2)
+    await expect(cards.first().locator('a').first()).toHaveAttribute(
+        'href',
+        '/work/storyblok-migration/',
+    )
+})
+
 test('homepage work card covers stay lazy, unlike /work/', async ({ page }) => {
     // Hero's <h1> is the homepage's LCP element, not a work-card image.
     await page.goto('/')

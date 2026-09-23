@@ -18,9 +18,7 @@ const work = defineCollection({
                     /^\d{4}(–\d{4})?$/,
                     'year must be a 4-digit year (e.g. "2022") or an en-dash year range (e.g. "2022–2024")',
                 ),
-            /** First case study gets the featured (wide) card treatment */
-            featured: z.boolean().default(false),
-            /** Controls display order — kept because filenames become URLs */
+            /** Controls display order (lowest gets the wide card) — kept because filenames become URLs */
             order: z.number().int().nonnegative(),
             draft: z.boolean().default(false),
             /** Optional teaser screenshot shown on the homepage card */

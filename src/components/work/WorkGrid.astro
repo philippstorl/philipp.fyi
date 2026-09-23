@@ -15,6 +15,14 @@ const entries = (await getPublishedEntries('work')).sort(
     (a, b) => a.data.order - b.data.order,
 )
 
+// Lowest `order` gets the wide card, so a tie would pick it arbitrarily.
+const orders = entries.map((entry) => entry.data.order)
+if (new Set(orders).size !== orders.length) {
+    throw new Error(
+        `Duplicate \`order\` values in the work collection: ${orders.join(', ')}`,
+    )
+}
+
 const [featured, ...rest] = entries
 const [firstRest, ...remainingRest] = rest
 ---
@@ -23,6 +31,7 @@ const [firstRest, ...remainingRest] = rest
     {featured && <div class="md:col-span-3">
         <WorkCard
             entry={featured}
+            featured
             showCover={false}
             priority={eagerLoadFirst}
             headingLevel={headingLevel}
