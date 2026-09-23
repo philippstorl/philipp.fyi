@@ -115,6 +115,35 @@
     [headers.values]
         Cache-Control = "public, max-age=31536000, immutable"
 
+# Unhashed build output (issue #288). Netlify's edge purges on every deploy,
+# so max-age only bounds browser/proxy staleness. Never target *.png/*.svg
+# here: those also match /_astro/*, and overlapping Cache-Control rules conflict.
+[[headers]]
+    for = "/og/*"
+    [headers.values]
+        Cache-Control = "public, max-age=86400"
+
+[[headers]]
+    for = "/favicon.svg"
+    [headers.values]
+        Cache-Control = "public, max-age=86400"
+
+# Shorter: these list new/changed pages, so staleness matters more.
+[[headers]]
+    for = "/robots.txt"
+    [headers.values]
+        Cache-Control = "public, max-age=3600"
+
+[[headers]]
+    for = "/sitemap-*.xml"
+    [headers.values]
+        Cache-Control = "public, max-age=3600"
+
+[[headers]]
+    for = "/rss.xml"
+    [headers.values]
+        Cache-Control = "public, max-age=3600"
+
 # Keeps search results on the authored pages, not raw files.
 # Visitors should land on /work/storyblok-migration, not screenshot.png.
 [[headers]]
