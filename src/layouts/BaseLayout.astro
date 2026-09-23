@@ -5,6 +5,7 @@ import '../styles/global.css'
 // one variable-weight file covers every above-the-fold weight, only
 // @import-discovered otherwise.
 import geistWoff2Url from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url'
+import jetbrainsMonoWoff2Url from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url'
 import { SITE_NAME, getDefaultDescription } from '@/data/site'
 import { toAbsoluteUrl } from '@/utils/url'
 
@@ -20,6 +21,8 @@ interface Props {
     robots?: 'noindex'
     /** False skips the canonical <link> -- for a page with no single resolvable URL (e.g. /404). */
     canonical?: boolean
+    /** Preload JetBrains Mono -- only for pages with `font-mono` text above the fold. */
+    preloadMonoFont?: boolean
 }
 
 const {
@@ -30,6 +33,7 @@ const {
     articlePublishedTime,
     robots,
     canonical = true,
+    preloadMonoFont = false,
 } = Astro.props
 
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
@@ -95,6 +99,15 @@ const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
             href={geistWoff2Url}
             crossorigin
         />
+        {preloadMonoFont && (
+            <link
+                rel="preload"
+                as="font"
+                type="font/woff2"
+                href={jetbrainsMonoWoff2Url}
+                crossorigin
+            />
+        )}
 
         <ClientRouter />
 
