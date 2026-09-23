@@ -239,14 +239,6 @@ The homepage renders a `Person` schema (name, job title, and `sameAs` links to L
 
 Site analytics come from **Netlify Analytics** (Netlify dashboard → Logs & metrics → Analytics, issue #60). It's server-side, built from Netlify's request logs, so there's no script, no cookie, and nothing to change in this repo's CSP. It's disclosed on `/privacy/`.
 
-Adding a client-side analytics or other third-party script would need three changes:
-
-1. Add the script tag to `src/layouts/BaseLayout.astro` inside `<head>`
-2. Add its origin to `script-src` (and `connect-src`, if it sends data) in `netlify.toml`'s `Content-Security-Policy`
-3. **Also** add it to `astro.config.mjs`'s `security.csp.scriptDirective.resources`: a browser enforces the intersection of the header CSP and Astro's `<meta>` CSP, so missing this step leaves the script blocked even after step 2
-
-It would also need a new entry on `/privacy/`, and possibly a consent banner if it sets cookies or reads from the visitor's device.
-
 ## Key paths
 
 ```text
