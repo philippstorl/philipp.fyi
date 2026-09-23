@@ -18,6 +18,18 @@ test.describe('Principles page', () => {
         )
     })
 
+    test('German quotes in principle 13 are marked lang="de"', async ({
+        page,
+    }) => {
+        await page.goto('/principles/')
+        const germanQuotes = page.locator(
+            '[id="13-for-conflicts-get-on-a-call"] [lang="de"]',
+        )
+        await expect(germanQuotes).toHaveCount(2)
+        await expect(germanQuotes.first()).toContainText('Können wir')
+        await expect(germanQuotes.last()).toContainText('Hättest du')
+    })
+
     test('first principle is numbered 01', async ({ page }) => {
         await page.goto('/principles/')
         const firstNumber = page
