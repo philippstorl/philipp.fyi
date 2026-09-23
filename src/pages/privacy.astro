@@ -18,8 +18,9 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
     <Main>
         <PageHeader eyebrow="Your data, explained" title="Privacy Policy">
             philipp.fyi collects a small amount of personal data through its
-            contact form and hosting infrastructure. This page explains what's
-            collected, who processes it, and how to exercise your rights.
+            contact form, hosting infrastructure, and server-side analytics.
+            This page explains what's collected, who processes it, and how to
+            exercise your rights.
         </PageHeader>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
@@ -96,6 +97,32 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                     <li>Recipient: Netlify, Inc.</li>
                 </ul>
 
+                <h3>Site analytics</h3>
+                <p>
+                    To understand which pages are read and where visitors come
+                    from, this site uses Netlify Analytics. It works entirely on
+                    Netlify's side, from the same request logs described above:
+                    no script runs in your browser and no cookies are set. It
+                    processes request data such as your IP address (used to
+                    count unique visitors), the page you requested, and the site
+                    that referred you. I only see aggregate figures such as
+                    pageviews, top pages, and referring sites, never individual
+                    visitors.
+                </p>
+                <ul>
+                    <li>
+                        Legal basis: Art. 6(1)(f) GDPR, my legitimate interest
+                        in understanding how the site is used.
+                    </li>
+                    <li>Recipient: Netlify, Inc.</li>
+                    <li>
+                        Retention: the figures I can see cover the last 30 days.
+                        Netlify doesn't publish a separate retention period for
+                        the underlying request data; its privacy policy (linked
+                        below) applies.
+                    </li>
+                </ul>
+
                 <h3>CSP violation reports</h3>
                 <p>
                     This site's browser security policy asks your browser to
@@ -136,11 +163,11 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                 <p>
                     This site doesn't use cookies and doesn't run any
                     third-party advertising or tracking scripts. The
-                    performance-monitoring beacon described above uses neither.
-                    Separately, this site stores exactly one preference, your
-                    light/dark theme choice, in your browser's local storage.
-                    That value never leaves your browser and isn't linked to you
-                    personally.
+                    performance-monitoring beacon and site analytics described
+                    above use neither. Separately, this site stores exactly one
+                    preference, your light/dark theme choice, in your browser's
+                    local storage. That value never leaves your browser and
+                    isn't linked to you personally.
                 </p>
 
                 <h2>Your rights</h2>
@@ -180,7 +207,7 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                 <h2>Changes to this policy</h2>
                 <p>
                     I'll update this page if what this site collects or how it's
-                    processed changes. Last updated: September 15, 2026.
+                    processed changes. Last updated: September 23, 2026.
                 </p>
             </article>
         </div>

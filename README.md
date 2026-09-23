@@ -235,13 +235,17 @@ Every static page, case study, and published blog post gets its own `/og/<slug>.
 
 The homepage renders a `Person` schema (name, job title, and `sameAs` links to LinkedIn/GitHub) and each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), both as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
 
-## Adding analytics
+## Analytics
 
-When ready to add Plausible (or another provider):
+Site analytics come from **Netlify Analytics** (Netlify dashboard → Logs & metrics → Analytics, issue #60). It's server-side, built from Netlify's request logs, so there's no script, no cookie, and nothing to change in this repo's CSP. It's disclosed on `/privacy/`.
+
+Adding a client-side analytics or other third-party script would need three changes:
 
 1. Add the script tag to `src/layouts/BaseLayout.astro` inside `<head>`
-2. Update the `Content-Security-Policy` in `netlify.toml` — find the `TODO` comment and add `https://plausible.io` to `script-src` and `connect-src`
-3. **Also** add `https://plausible.io` to `astro.config.mjs`'s `security.csp.scriptDirective.resources` — a remote script URL needs to satisfy Astro's auto-generated `<meta>` CSP too, not just the `netlify.toml` header; a browser enforces the intersection of both, so missing this step leaves the script blocked even after step 2
+2. Add its origin to `script-src` (and `connect-src`, if it sends data) in `netlify.toml`'s `Content-Security-Policy`
+3. **Also** add it to `astro.config.mjs`'s `security.csp.scriptDirective.resources`: a browser enforces the intersection of the header CSP and Astro's `<meta>` CSP, so missing this step leaves the script blocked even after step 2
+
+It would also need a new entry on `/privacy/`, and possibly a consent banner if it sets cookies or reads from the visitor's device.
 
 ## Key paths
 

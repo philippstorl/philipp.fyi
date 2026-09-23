@@ -12,6 +12,9 @@ test.describe('Privacy policy page', () => {
         await expect(
             page.getByRole('heading', { name: 'Your rights' }),
         ).toBeVisible()
+        await expect(
+            page.getByRole('heading', { name: 'Site analytics' }),
+        ).toBeVisible()
     })
 
     test('links to the contact form', async ({ page }) => {
