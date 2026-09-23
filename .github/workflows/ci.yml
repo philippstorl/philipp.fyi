@@ -10,6 +10,10 @@ concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
+# Explicit so least privilege doesn't depend on the repo's default token setting.
+permissions:
+    contents: read
+
 jobs:
     repository-hygiene:
         name: Repository hygiene
@@ -126,7 +130,10 @@ jobs:
         # PR-only: the result is posted as a PR comment, which has nothing
         # to attach to on a push-to-main run.
         if: github.event_name == 'pull_request'
+        # Job-level permissions replace (not merge with) the top-level
+        # block, so contents: read has to be restated for checkout.
         permissions:
+            contents: read
             pull-requests: write
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
