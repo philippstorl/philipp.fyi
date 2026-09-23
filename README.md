@@ -190,8 +190,7 @@ description: "One sentence shown on the work card." # also the meta description;
 category: "Engineering" # or "Design" or "Leadership"
 tags: ["Tag One", "Tag Two"] # at least 1 required
 year: "2024–2025" # a single 4-digit year ("2024") or an en-dash range like this one
-featured: true # true = wide card in the grid (only one should be featured)
-order: 1 # controls display order — non-negative integers, 1 = first
+order: 1 # controls display order — non-negative integers, 1 = first (the lowest gets the wide card)
 draft: false # true = hidden from the site
 coverImage: "./your-screenshot.png" # optional — teaser shown on the home page card
 ```

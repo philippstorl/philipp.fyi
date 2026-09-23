@@ -13,6 +13,8 @@ interface Props {
     priority?: boolean
     /** h3 under a page's own h2 (homepage); h2 when the grid renders directly under an h1 (/work/). */
     headingLevel?: 'h2' | 'h3'
+    /** Set by WorkGrid on the wide, full-row card; only bumps the title size. */
+    featured?: boolean
 }
 
 const {
@@ -20,9 +22,9 @@ const {
     showCover = true,
     priority = false,
     headingLevel = 'h3',
+    featured = false,
 } = Astro.props
-const { title, description, category, tags, year, featured, coverImage } =
-    entry.data
+const { title, description, category, tags, year, coverImage } = entry.data
 const href = `/work/${stripContentExtension(entry.id)}/`
 const HeadingTag = headingLevel
 const { sizes, widths } = workCardCoverSizing()
