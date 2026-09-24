@@ -3,8 +3,8 @@ import {
     getYearsOfExperience,
 } from '@/utils/experience'
 
-/** Site-wide name, shared by BaseLayout.astro (meta tags) and rss.xml.ts
- * (feed title) so they can't drift apart. */
+/** Site-wide name, shared by meta tags, the footer, the RSS feed, JSON-LD
+ * and OG images so they can't drift apart. */
 export const SITE_NAME = 'Philipp Storl'
 
 /** The one description for BaseLayout's fallback, the RSS feed, and
