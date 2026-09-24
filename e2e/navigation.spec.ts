@@ -116,6 +116,34 @@ test.describe('Navigation', () => {
         expect(jsRequests.some((url) => /\/client\./.test(url))).toBe(false)
     })
 
+    test('theme toggle buttons do not repeat their name as a description (issue #336)', async ({
+        page,
+    }) => {
+        // Reads Chromium's real AX tree: Playwright's own
+        // toHaveAccessibleDescription always reports `title`, even when it
+        // already supplied the name.
+        await page.goto('/')
+        const names = ['Light mode', 'System preference', 'Dark mode']
+        const cdp = await page.context().newCDPSession(page)
+        const { nodes } = await cdp.send('Accessibility.getFullAXTree')
+        const buttons = nodes.filter(
+            (node) =>
+                node.role?.value === 'button' &&
+                names.includes(String(node.name?.value)),
+        )
+        expect(buttons.map((node) => node.name?.value).sort()).toEqual(
+            [...names].sort(),
+        )
+        for (const node of buttons) {
+            expect(node.description?.value ?? '').toBe('')
+        }
+        for (const name of names) {
+            await expect(
+                page.getByRole('button', { name, exact: true }),
+            ).toHaveAttribute('title', name)
+        }
+    })
+
     test('system preference selection tracks a live OS theme change', async ({
         page,
     }) => {
