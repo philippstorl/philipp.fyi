@@ -16,6 +16,7 @@ const options: ThemeOption[] = [
     aria-label="Color theme"
     class="flex items-center gap-1 rounded-lg border border-border bg-card p-[3px]"
 >
+    {/* `title` alone is the name on purpose: adding a matching aria-label makes browsers expose `title` as a duplicate description (#336). */}
     {options.map(({ value, label }) => <button
         type="button"
         data-theme-value={value}

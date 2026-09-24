@@ -118,7 +118,9 @@ test.describe('Navigation', () => {
 
     test('theme toggle buttons do not repeat their name as a description (issue #336)', async ({
         page,
+        browserName,
     }) => {
+        test.skip(browserName !== 'chromium', 'Reads the AX tree over CDP')
         // Reads Chromium's real AX tree: Playwright's own
         // toHaveAccessibleDescription always reports `title`, even when it
         // already supplied the name.
@@ -126,6 +128,7 @@ test.describe('Navigation', () => {
         const names = ['Light mode', 'System preference', 'Dark mode']
         const cdp = await page.context().newCDPSession(page)
         const { nodes } = await cdp.send('Accessibility.getFullAXTree')
+        await cdp.detach()
         const buttons = nodes.filter(
             (node) =>
                 node.role?.value === 'button' &&
