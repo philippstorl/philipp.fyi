@@ -106,6 +106,7 @@ jobs:
             - run: npm run build:app
             - run: npm run check:font-preloads
             - run: npm run check:inline-module-scripts
+            - run: npm run check:page-coverage
 
     test:
         name: Test

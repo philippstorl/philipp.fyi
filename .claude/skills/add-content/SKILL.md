@@ -22,7 +22,7 @@ This site has three content collections, each with different ordering rules and 
 4. Update tests — the homepage renders **every** work entry (no preview slice), so both of these need to change:
     - `e2e/work.spec.ts` — add `{ slug, title }` to the `caseStudies` array so the new page gets its own render assertion.
     - `e2e/home.spec.ts` — the test named `shows all N work cards` asserts `toHaveCount(N)` where N is the current total. Bump it to match the new total.
-    - `scripts/contrast-pages.mjs` — add `{ reportedPath: '/work/<slug>/', gotoPath: '/work/<slug>/' }` to its `pages` array. That one list drives both `e2e/meta-description-length.spec.ts` (meta description length) and the contrast scan (`e2e/contrast.spec.ts`), so a single entry covers both.
+    - `scripts/contrast-pages.mjs` — add `{ reportedPath: '/work/<slug>/', gotoPath: '/work/<slug>/' }` to its `pages` array. That one list drives both `e2e/meta-description-length.spec.ts` (meta description length) and the contrast scan (`e2e/contrast.spec.ts`), so a single entry covers both. `npm run check:page-coverage` (run after a build, and in CI's `build` job) fails if you forget it.
 
 ## Responsive image sizing (case-study and future blog screenshots)
 
@@ -68,7 +68,7 @@ This is the full reference for the sizing helpers referenced in step 3 above —
 1. Copy `src/content/blog/_template.md` to `src/content/blog/<slug>.md` and fill it in — it already has the right frontmatter shape and a reminder note at the bottom.
 2. Frontmatter: `title`, `description`, `date`, `tags: [...]` — at least one tag required, there's no default so it can't be omitted. `draft` defaults to `true` in the schema.
 3. **Never set `draft: false` on your own initiative** — leave new posts as drafts unless the user explicitly asks you to publish this one. This is a standing project rule, not a one-off judgment call.
-4. No e2e test currently asserts anything about blog post count or content — nothing else to update.
+4. No e2e test currently asserts anything about blog post count or content. A draft needs nothing else; a post published with `draft: false` needs `{ reportedPath: '/blog/<slug>/', gotoPath: '/blog/<slug>/' }` added to `scripts/contrast-pages.mjs`, same as a case study (`npm run check:page-coverage` fails until it is).
 
 ## After any of the above
 
