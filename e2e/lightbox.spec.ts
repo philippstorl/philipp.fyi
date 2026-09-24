@@ -131,6 +131,60 @@ test.describe('Image lightbox', () => {
         await expect(page.locator('#lightbox-caption')).toHaveText('2023')
     })
 
+    test('a quick next right after opening never jumps back a slide', async ({
+        page,
+    }) => {
+        // Regression (#397): a scroll-sync reading queued by the opening
+        // scroll reset the index goTo() had just set.
+        const runs = await page
+            .locator('.prose')
+            .getByAltText('VOICES website homepage after the 2022 rebrand')
+            .evaluate(async (img: HTMLElement) => {
+                const dialog = document.getElementById(
+                    'lightbox',
+                ) as HTMLDialogElement
+                const track = document.getElementById('lightbox-track')!
+                const next = document.getElementById('lightbox-next')!
+                const counter = document.getElementById('lightbox-counter')!
+                const wait = (ms: number) =>
+                    new Promise((resolve) => setTimeout(resolve, ms))
+                const results: { seen: string[]; slide: number }[] = []
+                // 0ms hits a pending scrollend, ~76ms the debounce timer.
+                for (const delay of [0, 40, 76]) {
+                    const seen: string[] = []
+                    const observer = new MutationObserver(() =>
+                        seen.push(counter.textContent ?? ''),
+                    )
+                    observer.observe(counter, { childList: true })
+                    img.click()
+                    await wait(delay)
+                    next.click()
+                    await wait(150)
+                    next.click()
+                    await wait(900)
+                    observer.disconnect()
+                    results.push({
+                        seen,
+                        slide:
+                            Math.round(track.scrollLeft / track.clientWidth) +
+                            1,
+                    })
+                    dialog.close()
+                    // Let the close event's focus restore run before reopening.
+                    await wait(50)
+                }
+                return results
+            })
+        for (const { seen, slide } of runs) {
+            expect(seen).toEqual([
+                counterText(4),
+                counterText(5),
+                counterText(6),
+            ])
+            expect(slide).toBe(6)
+        }
+    })
+
     test('the open lightbox has no axe violations', async ({ page }) => {
         // Regression (#299): the scroll track failed scrollable-region-focusable.
         await openLightboxOn(page, page.locator('.prose figure img').first())
