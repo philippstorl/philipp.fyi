@@ -137,13 +137,14 @@ html {
     browser cursor (`default`), not `pointer` — set it globally here so
     every button reads as clickable on hover. Scoped to `@layer base` so a
     future per-button `cursor-*` utility still wins via normal layer order.
+    `aria-disabled` counts as disabled: it keeps a busy button focusable.
 */
 @layer base {
-    button:not(:disabled) {
+    button:not(:disabled, [aria-disabled="true"]) {
         cursor: pointer;
     }
 
-    button:disabled {
+    button:is(:disabled, [aria-disabled="true"]) {
         cursor: not-allowed;
     }
 }

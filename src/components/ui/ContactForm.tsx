@@ -54,6 +54,9 @@ export default function ContactForm() {
     const errorCount = Object.keys(errors).length
     // Only handleSubmit sets this, so a live correction never steals focus.
     const focusOnNextErrorRef = useRef(false)
+    // Sync guard: the button stays enabled while sending, so a second submit
+    // can land before the `submitting` render commits.
+    const submittingRef = useRef(false)
 
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
@@ -82,7 +85,7 @@ export default function ContactForm() {
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault()
-        if (status === 'submitting') return
+        if (submittingRef.current) return
         const form = e.currentTarget
         const data = new FormData(form)
 
@@ -95,6 +98,7 @@ export default function ContactForm() {
         }
 
         setErrors({})
+        submittingRef.current = true
         setStatus('submitting')
 
         try {
@@ -118,6 +122,8 @@ export default function ContactForm() {
             }
         } catch {
             setStatus('error')
+        } finally {
+            submittingRef.current = false
         }
     }
 
@@ -269,8 +275,10 @@ export default function ContactForm() {
 
                 <button
                     type="submit"
-                    disabled={status === 'submitting'}
-                    className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity duration-150 hover:opacity-80 disabled:opacity-50"
+                    // Not `disabled`: that drops a focused button's focus to <body>.
+                    // submittingRef blocks the resubmit instead.
+                    aria-disabled={status === 'submitting'}
+                    className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity duration-150 hover:opacity-80 aria-disabled:opacity-50"
                 >
                     {status === 'submitting' ? 'Sending…' : 'Send message'}
                 </button>
