@@ -13,6 +13,8 @@ Updated automatically at the end of each session; read automatically at the star
 ### 2026-09-24
 
 - Issue #353: the "Open questions" bullet claiming trailing slashes are never enforced server-side (both `/route` and `/route/` resolve) was stale. Production 301s the slashless form: `curl -sI` on `/about`, `/work`, `/principles` and `/work/brand-evolution` each returned `HTTP/2 301` with `location:` the same path plus `/`. This is Netlify-side (likely its Pretty URLs setting, which lives outside version control), not repo config (`netlify.toml`'s only `[[redirects]]` rule is the `/404` catch-all). Removed the bullet. The 2026-07-21 entry below cites that question to justify `Header.astro`'s slashless-pathname fallback (now in `nav-active.ts`'s `isNavLinkActive()`); production doesn't reach that case, but the normalization is harmless and was left alone.
+- Correction to the entry above (issue #409): `isNavLinkActive()` no longer exists. Issue #341 (PR #366) replaced it with `nav-active.ts`'s `getNavLinkAriaCurrent()`, which keeps the same slashless-pathname normalization.
+- Issue #409: retired CLAUDE.md's "unverified risk" that Dependabot's own sandbox Node might fail `engine-strict` with `EBADENGINE`. 14 Dependabot npm PRs merged between `.npmrc` landing (2026-08-20) and 2026-09-24, and none of the 15 failed "Dependabot Updates" Actions runs logged `EBADENGINE` (all failed with `security_update_not_possible`/`downgrades_dependencies`). Those runs also disprove the caveat's claim that Dependabot failures never surface as an Actions run.
 
 ### 2026-09-23
 
