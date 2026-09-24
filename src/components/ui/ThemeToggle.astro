@@ -82,26 +82,23 @@ const options: ThemeOption[] = [
     CSP hash registered in astro.config.mjs; recompute if this changes. */}
 <script is:inline>
     ;(function () {
+        let stored = null
         try {
-            const stored = localStorage.getItem('theme')
-            const theme =
-                stored === 'light' || stored === 'dark' ? stored : 'system'
-            document
-                .querySelectorAll('[data-theme-value]')
-                .forEach(function (btn) {
-                    const active =
-                        btn.getAttribute('data-theme-value') === theme
-                    btn.setAttribute('aria-pressed', active ? 'true' : 'false')
-                    btn.classList.toggle('bg-accent/10', active)
-                    btn.classList.toggle('text-accent', active)
-                    btn.classList.toggle('text-muted', !active)
-                    btn.classList.toggle('hover:bg-foreground/5', !active)
-                    btn.classList.toggle('hover:text-foreground', !active)
-                })
+            stored = localStorage.getItem('theme')
         } catch {
-            // no-op: if localStorage is unavailable, leave the
-            // server-rendered 'system' state as-is.
+            // Storage blocked: mark 'system', which BaseLayout then applies.
         }
+        const theme =
+            stored === 'light' || stored === 'dark' ? stored : 'system'
+        document.querySelectorAll('[data-theme-value]').forEach(function (btn) {
+            const active = btn.getAttribute('data-theme-value') === theme
+            btn.setAttribute('aria-pressed', active ? 'true' : 'false')
+            btn.classList.toggle('bg-accent/10', active)
+            btn.classList.toggle('text-accent', active)
+            btn.classList.toggle('text-muted', !active)
+            btn.classList.toggle('hover:bg-foreground/5', !active)
+            btn.classList.toggle('hover:text-foreground', !active)
+        })
     })()
 </script>
 
@@ -152,20 +149,33 @@ const options: ThemeOption[] = [
     }
 
     let currentTheme = getStoredTheme()
+    let themeUnsaved = false
 
     buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
             const next = btn.getAttribute('data-theme-value')
             if (!isTheme(next)) return
-            if (next === 'system') {
-                localStorage.removeItem('theme')
-            } else {
-                localStorage.setItem('theme', next)
+            try {
+                if (next === 'system') {
+                    localStorage.removeItem('theme')
+                } else {
+                    localStorage.setItem('theme', next)
+                }
+                themeUnsaved = false
+            } catch {
+                // Storage blocked: still apply the choice for this session.
+                themeUnsaved = true
             }
             currentTheme = next
             applyTheme(next)
             setActiveButtons(next)
         })
+    })
+
+    // Runs after BaseLayout's after-swap listener (registered earlier), which
+    // can only reapply the stored theme, not an unsaved one.
+    document.addEventListener('astro:after-swap', () => {
+        if (themeUnsaved) applyTheme(currentTheme)
     })
 
     // Live-updates the applied theme while 'system' is selected.

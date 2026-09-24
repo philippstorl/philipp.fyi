@@ -230,6 +230,73 @@ test.describe('Navigation', () => {
         await expect(page.locator('html')).toHaveClass(/dark/)
     })
 
+    test('theme still applies and toggles when localStorage is blocked (issue #398)', async ({
+        page,
+    }) => {
+        // Mimics a "block all site data" browser setting.
+        await page.addInitScript(() => {
+            Object.defineProperty(window, 'localStorage', {
+                configurable: true,
+                get() {
+                    throw new DOMException('Storage blocked', 'SecurityError')
+                },
+            })
+        })
+
+        await page.emulateMedia({ colorScheme: 'dark' })
+        await page.goto('/')
+        const html = page.locator('html')
+        await expect(html).toHaveClass(/dark/)
+        await expect(
+            page.getByRole('button', { name: 'System preference' }),
+        ).toHaveAttribute('aria-pressed', 'true')
+
+        await page.getByRole('button', { name: 'Light mode' }).click()
+        await expect(html).not.toHaveClass(/dark/)
+        await expect(
+            page.getByRole('button', { name: 'Light mode' }),
+        ).toHaveAttribute('aria-pressed', 'true')
+
+        // The unsaved choice must survive a client-side navigation too.
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/principles/"]:visible').click()
+        await expect(page).toHaveURL('/principles/')
+        await expect(html).not.toHaveClass(/dark/)
+    })
+
+    test('an unsaved theme choice outlives a stale stored one when only writes fail (issue #398)', async ({
+        page,
+    }) => {
+        // Reads still work, so BaseLayout's after-swap reapplies the stale 'dark'.
+        await page.addInitScript(() => {
+            localStorage.setItem('theme', 'dark')
+            const fail = () => {
+                throw new DOMException('Quota exceeded', 'QuotaExceededError')
+            }
+            Storage.prototype.setItem = fail
+            Storage.prototype.removeItem = fail
+        })
+
+        await page.emulateMedia({ colorScheme: 'light' })
+        await page.goto('/')
+        const html = page.locator('html')
+        await expect(html).toHaveClass(/dark/)
+
+        await page.getByRole('button', { name: 'Light mode' }).click()
+        await expect(html).not.toHaveClass(/dark/)
+
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/principles/"]:visible').click()
+        await expect(page).toHaveURL('/principles/')
+        await expect(html).not.toHaveClass(/dark/)
+    })
+
     test('mobile nav closes on Escape and returns focus to the toggle', async ({
         page,
     }) => {
