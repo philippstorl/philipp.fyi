@@ -126,12 +126,6 @@ If `SLACK_DEPLOY_WEBHOOK_URL` isn't set (e.g. local dev without a `.env` entry f
 
 `DEPLOY_NOTIFICATION_WEBHOOK_SECRET` is required, not optional: the function verifies Netlify's `X-Webhook-Signature` JWS against it and fails closed with `401` (logging an error) if the secret isn't configured or the signature doesn't check out — without it, the endpoint's URL being public (documented right here) would let anyone POST a crafted deploy payload and get an attacker-controlled message relayed into Slack. If steps 3 and 4 haven't both been done yet on a fresh setup, deploy notifications will 401 rather than post — configure the secret in both places together.
 
-## Lighthouse CI
-
-Lighthouse runs automatically on every Netlify deploy via the `@netlify/plugin-lighthouse` plugin declared in `netlify.toml`. No setup required — scores appear in the Netlify deploy summary after each build.
-
-The plugin checks Performance, Accessibility, Best Practices, and SEO. For a developer portfolio, the Accessibility and SEO scores are the most visible signal to anyone reviewing the site.
-
 ## Testing (Playwright)
 
 E2E tests live in `e2e/` and run against the Astro dev server, which Playwright starts automatically.
@@ -315,7 +309,7 @@ netlify/
     csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
     csp-report-cleanup.ts  → Scheduled function; deletes csp-reports Blobs entries older than 30 days
     deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
-netlify.toml       → Build, Node version, Lighthouse plugin, security headers, cache headers, 404 redirect, CSP reporting headers
+netlify.toml       → Build, Node version, security headers, cache headers, 404 redirect, CSP reporting headers
 playwright.config.ts
 ```
 

@@ -5,11 +5,6 @@
     [build.environment]
         NODE_VERSION = "26"
 
-# Runs Lighthouse automatically after every deploy and reports
-# scores in the Netlify UI. No further configuration needed.
-[[plugins]]
-    package = "@netlify/plugin-lighthouse"
-
 # `netlify dev` starts Astro via the command below and proxies
 # it through Netlify's runtime (forms, redirects, headers, etc.)
 [dev]
