@@ -1,7 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import sharp from 'sharp'
+import { computeStamp, root, stampPath } from './favicon-stamp.mjs'
 
 // Rasterizes public/favicon.svg into the PNG/ICO fallbacks; rerun after editing it.
 // librsvg uses this machine's fonts, and only macOS has the SVG's Helvetica Neue.
@@ -9,7 +9,6 @@ if (process.platform !== 'darwin') {
     throw new Error('Run on macOS: other platforms lack Helvetica Neue')
 }
 
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = path.join(root, 'public')
 const svg = await fs.readFile(path.join(publicDir, 'favicon.svg'))
 const source = svg.toString()
@@ -69,4 +68,8 @@ await fs.writeFile(
     Buffer.concat([header, ...entries, ...images.map(({ png }) => png)]),
 )
 
-console.log('Wrote public/apple-touch-icon.png and public/favicon.ico')
+await fs.writeFile(stampPath, await computeStamp({ 'public/favicon.svg': svg }))
+
+console.log(
+    'Wrote public/apple-touch-icon.png, public/favicon.ico and scripts/favicons.sha256',
+)
