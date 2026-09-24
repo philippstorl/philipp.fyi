@@ -204,6 +204,8 @@ coverImage: "./your-screenshot.png" # optional — teaser shown on the home page
 
 Screenshots in the case study body go through [`ResponsiveFigure`](src/components/ui/ResponsiveFigure.astro) (`<ResponsiveFigure src={img} alt="..." caption="..." {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)} />` for a grid whose column count changes at breakpoints, `{...fullWidthFigureSizing()}` for a standalone full-width figure — see [`content-image-sizing.ts`](src/utils/content-image-sizing.ts) for the full set of sizing helpers) rather than a hand-written `<figure><Image/><figcaption/></figure>` block, and automatically get a click-to-enlarge lightbox with a full-resolution source — no extra markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
 
+A new published case study also needs an entry in [`scripts/contrast-pages.mjs`](scripts/contrast-pages.mjs), the page list behind the contrast scan and the meta-description length test. `npm run check:page-coverage` fails the CI `build` job until it has one.
+
 ### Principles — `src/content/principles/`
 
 Fifteen `.md` files named `01-title.md` through `15-title.md`. The filename prefix controls sort order — rename a file to reorder it. No `order` field in frontmatter.
@@ -227,7 +229,7 @@ tags: ["tag"] # at least 1 required
 
 Create the file as `src/content/blog/your-post-slug.md`. Publishing (flipping `draft` to `false`) also gets the post a per-slug OG image automatically — see [OG images](#og-images) below.
 
-Published posts (`draft: false`) also appear automatically in the RSS feed at `/rss.xml` (`src/pages/rss.xml.ts`) — no separate step needed. The feed is empty while every post is still a draft.
+Published posts (`draft: false`) also appear automatically in the RSS feed at `/rss.xml` (`src/pages/rss.xml.ts`) — no separate step needed. The feed is empty while every post is still a draft. Unlike the feed, `scripts/contrast-pages.mjs` does need a `/blog/<slug>/` entry for each published post, same as a case study.
 
 ## OG images
 
