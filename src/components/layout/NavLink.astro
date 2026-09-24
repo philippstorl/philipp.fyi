@@ -1,5 +1,6 @@
 ---
 import {
+    getNavLinkAriaCurrent,
     isNavLinkActive,
     NAV_LINK_ACTIVE_CLASS,
     NAV_LINK_INACTIVE_CLASSES,
@@ -29,7 +30,7 @@ const isDesktop = variant === 'desktop'
         isActive && NAV_LINK_UNDERLINE_ACTIVE_CLASS,
         isActive ? NAV_LINK_ACTIVE_CLASS : NAV_LINK_INACTIVE_CLASSES,
     ]}
-    aria-current={isActive ? 'page' : undefined}
+    aria-current={getNavLinkAriaCurrent(pathname, href)}
 >
     {label}
 </a>

@@ -111,6 +111,7 @@ const pathname = Astro.url.pathname
 
 <script>
     import {
+        getNavLinkAriaCurrent,
         isNavLinkActive,
         NAV_LINK_ACTIVE_CLASS,
         NAV_LINK_INACTIVE_CLASSES,
@@ -119,14 +120,19 @@ const pathname = Astro.url.pathname
 
     // Header is transition:persist'ed, so re-run on astro:page-load to
     // keep the active-link class in sync with the new URL.
-    function setLinkActive(link: Element, isActive: boolean) {
+    function setLinkActive(link: Element, pathname: string) {
+        const href = link.getAttribute('href')
+        const isActive = !!href && isNavLinkActive(pathname, href)
         link.classList.toggle(NAV_LINK_ACTIVE_CLASS, isActive)
         NAV_LINK_INACTIVE_CLASSES.forEach((cls) =>
             link.classList.toggle(cls, !isActive),
         )
         link.classList.toggle(NAV_LINK_UNDERLINE_ACTIVE_CLASS, isActive)
-        if (isActive) {
-            link.setAttribute('aria-current', 'page')
+        const ariaCurrent = href
+            ? getNavLinkAriaCurrent(pathname, href)
+            : undefined
+        if (ariaCurrent) {
+            link.setAttribute('aria-current', ariaCurrent)
         } else {
             link.removeAttribute('aria-current')
         }
@@ -137,10 +143,7 @@ const pathname = Astro.url.pathname
 
         document
             .querySelectorAll('#site-header a[data-nav-link]')
-            .forEach((link) => {
-                const href = link.getAttribute('href')
-                setLinkActive(link, !!href && isNavLinkActive(pathname, href))
-            })
+            .forEach((link) => setLinkActive(link, pathname))
     }
 
     updateActiveNav()

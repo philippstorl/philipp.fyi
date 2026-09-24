@@ -85,6 +85,43 @@ test.describe('Navigation', () => {
         ).not.toHaveAttribute('aria-current', 'page')
     })
 
+    test('Work nav link is aria-current="true" inside the section, "page" on /work/ (issue #341)', async ({
+        page,
+    }) => {
+        const desktopWork = page.locator(
+            'nav[aria-label="Main navigation"] a[href="/work/"]',
+        )
+        const mobileWork = page.locator('#mobile-nav a[href="/work/"]')
+
+        // Server render on a hard load of a case study.
+        await page.goto('/work/brand-evolution/')
+        await expect(desktopWork).toHaveAttribute('aria-current', 'true')
+        await expect(mobileWork).toHaveAttribute('aria-current', 'true')
+
+        // Client-side updates across soft navigations (header is persisted).
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/work/"]:visible').click()
+        await expect(page).toHaveURL('/work/')
+        await expect(desktopWork).toHaveAttribute('aria-current', 'page')
+        await expect(mobileWork).toHaveAttribute('aria-current', 'page')
+
+        await page.locator('a[href="/work/storyblok-migration/"]').click()
+        await expect(page).toHaveURL('/work/storyblok-migration/')
+        await expect(desktopWork).toHaveAttribute('aria-current', 'true')
+        await expect(mobileWork).toHaveAttribute('aria-current', 'true')
+
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/about/"]:visible').click()
+        await expect(page).toHaveURL('/about/')
+        await expect(desktopWork).not.toHaveAttribute('aria-current')
+        await expect(mobileWork).not.toHaveAttribute('aria-current')
+    })
+
     test('logo/name mark navigates home', async ({ page }) => {
         await page.goto('/principles/')
         await page.click('#site-header a[href="/"]')
