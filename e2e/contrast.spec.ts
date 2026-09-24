@@ -14,6 +14,8 @@ const outDir = path.join(process.cwd(), 'contrast-results')
 // interpolation `none` means 0 (CSS Color 4), so pinning it is render-identical.
 async function normalizeNoneColorChannels(page: Page) {
     await page.evaluate(() => {
+        // Read everything before writing, so each write doesn't force a restyle.
+        const pins: [HTMLElement | SVGElement, string, string][] = []
         for (const el of document.querySelectorAll('*')) {
             if (!(el instanceof HTMLElement || el instanceof SVGElement))
                 continue
@@ -21,13 +23,12 @@ async function normalizeNoneColorChannels(page: Page) {
             for (const prop of ['color', 'background-color']) {
                 const value = style.getPropertyValue(prop)
                 if (/\bnone\b/.test(value)) {
-                    el.style.setProperty(
-                        prop,
-                        value.replace(/\bnone\b/g, '0'),
-                        'important',
-                    )
+                    pins.push([el, prop, value.replace(/\bnone\b/g, '0')])
                 }
             }
+        }
+        for (const [el, prop, value] of pins) {
+            el.style.setProperty(prop, value, 'important')
         }
     })
 }
