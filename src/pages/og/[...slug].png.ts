@@ -2,7 +2,7 @@ import type { APIRoute, GetStaticPaths } from 'astro'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { load as parseYaml } from 'js-yaml'
-import { STATIC_OG_CARDS } from '@/data/og-pages'
+import { STATIC_PAGES } from '@/data/static-pages'
 import { generateOgImage } from '@/utils/og-image'
 import { getPublishedEntries } from '@/utils/collections'
 import { getPublishedBlogPosts } from '@/utils/blog-posts'
@@ -61,9 +61,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
     ])
 
     return [
-        ...Object.entries(STATIC_OG_CARDS).map(([slug, { title, label }]) => ({
+        ...Object.entries(STATIC_PAGES).map(([slug, { title, ogLabel }]) => ({
             params: { slug },
-            props: { title, label } satisfies OgImageProps,
+            props: { title, label: ogLabel } satisfies OgImageProps,
         })),
         ...workEntries.map((entry) => {
             const coverImagePath =
