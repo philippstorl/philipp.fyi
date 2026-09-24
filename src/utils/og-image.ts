@@ -63,7 +63,8 @@ function loadFonts(): NonNullable<FontCache> {
     return fontCache
 }
 
-// Kept in sync with global.css OKLCH values (approximated as hex for Satori)
+// Hex copies of global.css's light tokens (Satori can't read CSS variables);
+// `npm run check:color-copies` fails if they drift.
 const colors = {
     background: '#FAF8F5',
     foreground: '#070604',
@@ -71,6 +72,9 @@ const colors = {
     accent: '#7E2C86',
     border: '#DDDAD6',
 }
+
+// Footer domain, from astro.config.mjs's `site`.
+const SITE_HOST = new URL(import.meta.env.SITE).host
 
 const OG_WIDTH = 1200
 const OG_HEIGHT = 630
@@ -231,7 +235,7 @@ function buildTemplate(
                                         fontFamily: 'Geist',
                                         color: colors.muted,
                                     },
-                                    children: `${SITE_NAME}  ·  philipp.fyi`,
+                                    children: `${SITE_NAME}  ·  ${SITE_HOST}`,
                                 },
                             },
                         ],

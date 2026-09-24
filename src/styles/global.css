@@ -15,6 +15,7 @@
     OKLCH color system — all neutrals share hue 80 (warm), accent at hue 324 (deep plum),
     availability badge at hue 145 (sage green).
     Format: oklch(L% C H)
+    Hex copies elsewhere are checked by `npm run check:color-copies`.
 */
 @theme {
     --font-display: "Geist Variable", sans-serif;

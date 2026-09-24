@@ -16,6 +16,7 @@
         "typecheck": "astro check",
         "lint": "eslint .",
         "check:trailing-slashes": "node scripts/check-trailing-slashes.js",
+        "check:color-copies": "node scripts/check-color-copies.mjs",
         "check:font-preloads": "node scripts/check-font-preloads.mjs",
         "check:inline-module-scripts": "node scripts/check-inline-module-scripts.mjs",
         "check:favicons": "node scripts/check-favicons.mjs",
