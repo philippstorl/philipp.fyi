@@ -1,37 +1,52 @@
 import { test, expect } from '@playwright/test'
+import robotsParser from 'robots-parser'
 
-// X's Twitterbot and LinkedInBot honor robots.txt, so a disallowed share-card
-// image never renders in their link previews (issue #330).
-test.describe('robots.txt', () => {
-    for (const path of ['/', '/work/brand-evolution/']) {
-        test(`doesn't disallow the share-card image for ${path}`, async ({
-            page,
-            request,
-        }) => {
-            const response = await request.get('/robots.txt')
-            expect(response.ok()).toBe(true)
-            const disallowed = [
-                ...(await response.text()).matchAll(/^Disallow:\s*(\S+)/gim),
-            ].map((match) => match[1] ?? '')
+const PAGES = [
+    '/',
+    '/about/',
+    '/work/',
+    '/work/brand-evolution/',
+    '/principles/',
+    '/recommendations/',
+    '/contact/',
+    '/blog/',
+]
 
-            await page.goto(path)
-            for (const selector of [
-                'meta[property="og:image"]',
-                'meta[name="twitter:image"]',
-            ]) {
-                const content = await page
-                    .locator(selector)
-                    .getAttribute('content')
-                if (!content) throw new Error(`${path} has no ${selector}`)
-                const imagePath = new URL(content).pathname
-                expect(imagePath).toMatch(/^\/og\//)
-                for (const rule of disallowed) {
-                    expect(
-                        imagePath.startsWith(rule),
-                        `${imagePath} blocked by "Disallow: ${rule}"`,
-                    ).toBe(false)
-                }
+// X and LinkedIn skip link-preview images that robots.txt disallows (issue #330).
+const SOCIAL_CRAWLERS = ['Twitterbot', 'LinkedInBot']
+
+test("robots.txt doesn't block social crawlers from share-card images", async ({
+    page,
+    request,
+}, testInfo) => {
+    test.skip(testInfo.project.name === 'mobile', 'Not viewport-dependent')
+
+    const response = await request.get('/robots.txt')
+    expect(response.ok()).toBe(true)
+    const robotsTxt = await response.text()
+
+    for (const path of PAGES) {
+        await page.goto(path)
+        for (const selector of [
+            'meta[property="og:image"]',
+            'meta[name="twitter:image"]',
+        ]) {
+            const imageUrl = await page
+                .locator(selector)
+                .getAttribute('content')
+            if (!imageUrl) throw new Error(`${path} has no ${selector}`)
+            // Parsed against the image's own origin: isAllowed() returns
+            // undefined for a cross-origin URL.
+            const robots = robotsParser(
+                new URL('/robots.txt', imageUrl).href,
+                robotsTxt,
+            )
+            for (const crawler of SOCIAL_CRAWLERS) {
+                expect(
+                    robots.isAllowed(imageUrl, crawler),
+                    `${crawler} blocked from ${imageUrl} (${path})`,
+                ).toBe(true)
             }
-        })
+        }
     }
 })
