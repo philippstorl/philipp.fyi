@@ -3,6 +3,7 @@ import sharp from 'sharp'
 import { readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
 import type { ReactNode } from 'react'
+import { SITE_NAME } from '@/data/site'
 import { CATEGORY_HEX_COLORS, type WorkCategory } from '@/utils/category-colors'
 
 // Satori's JSX-equivalent input tree (no JSX in this file). Not `SatoriNode`
@@ -64,9 +65,9 @@ function loadFonts(): NonNullable<FontCache> {
 
 // Kept in sync with global.css OKLCH values (approximated as hex for Satori)
 const colors = {
-    background: '#FAF9F6',
-    foreground: '#0D0D0C',
-    muted: '#6B6865',
+    background: '#FAF8F5',
+    foreground: '#070604',
+    muted: '#55524E',
     accent: '#7E2C86',
     border: '#DDDAD6',
 }
@@ -230,7 +231,7 @@ function buildTemplate(
                                         fontFamily: 'Geist',
                                         color: colors.muted,
                                     },
-                                    children: 'Philipp Storl  ·  philipp.fyi',
+                                    children: `${SITE_NAME}  ·  philipp.fyi`,
                                 },
                             },
                         ],
