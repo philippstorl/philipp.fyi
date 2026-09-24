@@ -100,6 +100,7 @@ jobs:
             - run: npm ci
             - run: npm run check:trailing-slashes
             - run: npm run check:favicons
+            - run: npm run check:color-copies
             # astro build only, not `npm run build` — the astro check prefix
             # is skipped here since the typecheck job already runs it on the
             # same commit; see issue #126.
