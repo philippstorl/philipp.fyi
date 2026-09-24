@@ -2,6 +2,7 @@ import type { APIRoute, GetStaticPaths } from 'astro'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { load as parseYaml } from 'js-yaml'
+import { hero } from '@/data/hero'
 import { generateOgImage } from '@/utils/og-image'
 import { getYearsOfExperience } from '@/utils/experience'
 import { getPublishedEntries } from '@/utils/collections'
@@ -64,7 +65,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
         {
             params: { slug: 'home' },
             props: {
-                title: 'I build things that last.',
+                title: hero.headline,
                 label: `${getYearsOfExperience()} years building for the web`,
             } satisfies OgImageProps,
         },

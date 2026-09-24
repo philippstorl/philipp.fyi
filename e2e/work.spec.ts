@@ -42,6 +42,22 @@ test('case study pages set og:type to article with a published time', async ({
     ).toHaveAttribute('content', '2018')
 })
 
+test('case study share image alt text is the case study title', async ({
+    page,
+}) => {
+    const { slug, title } = caseStudies.find(
+        (c) => c.slug === 'brand-evolution',
+    )!
+    await page.goto(`/work/${slug}/`)
+    await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute(
+        'content',
+        title,
+    )
+    await expect(
+        page.locator('meta[name="twitter:image:alt"]'),
+    ).toHaveAttribute('content', title)
+})
+
 test('case study pages preload JetBrains Mono, the homepage does not', async ({
     page,
 }) => {

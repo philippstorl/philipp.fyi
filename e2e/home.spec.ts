@@ -22,6 +22,19 @@ test.describe('Home page', () => {
         )
     })
 
+    test('share image alt text describes the homepage card', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const alt = 'Philipp Storl: I build things that last.'
+        await expect(
+            page.locator('meta[property="og:image:alt"]'),
+        ).toHaveAttribute('content', alt)
+        await expect(
+            page.locator('meta[name="twitter:image:alt"]'),
+        ).toHaveAttribute('content', alt)
+    })
+
     test('shows all 4 work cards', async ({ page }) => {
         await page.goto('/')
         const cards = page.locator('#work article')
