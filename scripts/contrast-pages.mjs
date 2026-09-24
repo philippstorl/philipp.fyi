@@ -1,5 +1,6 @@
-// Shared by contrast.spec.ts and check-contrast.mjs so coverage/filenames
-// can't drift. gotoPath differs from reportedPath only for /404.
+// Every real page. Shared by contrast.spec.ts, check-contrast.mjs and
+// meta-description-length.spec.ts so coverage/filenames can't drift.
+// gotoPath differs from reportedPath only for /404.
 export const pages = [
     { reportedPath: '/', gotoPath: '/' },
     { reportedPath: '/about/', gotoPath: '/about/' },
