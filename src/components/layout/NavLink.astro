@@ -1,6 +1,6 @@
 ---
 import {
-    isNavLinkActive,
+    getNavLinkAriaCurrent,
     NAV_LINK_ACTIVE_CLASS,
     NAV_LINK_INACTIVE_CLASSES,
     NAV_LINK_UNDERLINE_ACTIVE_CLASS,
@@ -14,7 +14,8 @@ interface Props {
 }
 
 const { href, label, pathname, variant } = Astro.props
-const isActive = isNavLinkActive(pathname, href)
+const ariaCurrent = getNavLinkAriaCurrent(pathname, href)
+const isActive = ariaCurrent !== undefined
 const isDesktop = variant === 'desktop'
 ---
 
@@ -29,7 +30,7 @@ const isDesktop = variant === 'desktop'
         isActive && NAV_LINK_UNDERLINE_ACTIVE_CLASS,
         isActive ? NAV_LINK_ACTIVE_CLASS : NAV_LINK_INACTIVE_CLASSES,
     ]}
-    aria-current={isActive ? 'page' : undefined}
+    aria-current={ariaCurrent}
 >
     {label}
 </a>
