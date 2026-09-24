@@ -36,27 +36,28 @@ npm run dev:astro  # http://localhost:4321
 
 ## Scripts
 
-| Command                               | What it does                                                         |
-| ------------------------------------- | -------------------------------------------------------------------- |
-| `npm run dev`                         | Start dev server via Netlify CLI (recommended)                       |
-| `npm run dev:astro`                   | Start Astro dev server directly                                      |
-| `npm run build`                       | Type-check + build to `dist/`                                        |
-| `npm run build:app`                   | Build to `dist/` without the type-check prefix (used by CI)          |
-| `npm run typecheck`                   | Run `astro check` (TypeScript only)                                  |
-| `npm run lint`                        | Run ESLint (TypeScript, Astro, accessibility)                        |
-| `npm run check:trailing-slashes`      | Validate every internal link/route ends in `/`                       |
-| `npm run check:favicons`              | Fail if the favicons changed since `generate:favicons` last ran      |
-| `npm run check:font-preloads`         | Check every font preload in `dist/` matches a built `@font-face` URL |
-| `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`         |
-| `npm run check:audit`                 | Audit production dependencies for high-severity vulnerabilities      |
-| `npm run format`                      | Format all files with Prettier                                       |
-| `npm run format:check`                | Check formatting without writing (used in CI)                        |
-| `npm run preview`                     | Preview the production build locally                                 |
-| `npm test`                            | Run Playwright E2E tests                                             |
-| `npm run test:ui`                     | Run Playwright tests in interactive UI mode                          |
-| `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)     |
-| `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist             |
-| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`   |
+| Command                               | What it does                                                               |
+| ------------------------------------- | -------------------------------------------------------------------------- |
+| `npm run dev`                         | Start dev server via Netlify CLI (recommended)                             |
+| `npm run dev:astro`                   | Start Astro dev server directly                                            |
+| `npm run build`                       | Type-check + build to `dist/`                                              |
+| `npm run build:app`                   | Build to `dist/` without the type-check prefix (used by CI)                |
+| `npm run typecheck`                   | Run `astro check` (TypeScript only)                                        |
+| `npm run lint`                        | Run ESLint (TypeScript, Astro, accessibility)                              |
+| `npm run check:trailing-slashes`      | Validate every internal link/route ends in `/`                             |
+| `npm run check:favicons`              | Fail if the favicons changed since `generate:favicons` last ran            |
+| `npm run check:font-preloads`         | Check every font preload in `dist/` matches a built `@font-face` URL       |
+| `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`               |
+| `npm run check:page-coverage`         | Fail if `scripts/contrast-pages.mjs` and the pages built in `dist/` differ |
+| `npm run check:audit`                 | Audit production dependencies for high-severity vulnerabilities            |
+| `npm run format`                      | Format all files with Prettier                                             |
+| `npm run format:check`                | Check formatting without writing (used in CI)                              |
+| `npm run preview`                     | Preview the production build locally                                       |
+| `npm test`                            | Run Playwright E2E tests                                                   |
+| `npm run test:ui`                     | Run Playwright tests in interactive UI mode                                |
+| `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)           |
+| `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist                   |
+| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`         |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
@@ -73,7 +74,7 @@ Eight jobs run in parallel, all on Node 26:
 | `format`             | `npm run format:check`                                                                                                                                                                                                                                                                                                                        |
 | `typecheck`          | `npm run typecheck`                                                                                                                                                                                                                                                                                                                           |
 | `audit`              | `npm run check:audit` — production dependencies only, see CLAUDE.md for why                                                                                                                                                                                                                                                                   |
-| `build`              | `npm run check:trailing-slashes` and `npm run check:favicons`, then `npm run build:app`, then `npm run check:font-preloads` and `npm run check:inline-module-scripts` (skips the `astro check` prefix — the `typecheck` job already covers that on the same commit)                                                                           |
+| `build`              | `npm run check:trailing-slashes` and `npm run check:favicons`, then `npm run build:app`, then `npm run check:font-preloads`, `npm run check:inline-module-scripts` and `npm run check:page-coverage` (skips the `astro check` prefix — the `typecheck` job already covers that on the same commit)                                            |
 | `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail                                                                                                                                                                            |
 | `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations, or nodes axe could not check, not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md |
 
@@ -203,6 +204,8 @@ coverImage: "./your-screenshot.png" # optional — teaser shown on the home page
 
 Screenshots in the case study body go through [`ResponsiveFigure`](src/components/ui/ResponsiveFigure.astro) (`<ResponsiveFigure src={img} alt="..." caption="..." {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)} />` for a grid whose column count changes at breakpoints, `{...fullWidthFigureSizing()}` for a standalone full-width figure — see [`content-image-sizing.ts`](src/utils/content-image-sizing.ts) for the full set of sizing helpers) rather than a hand-written `<figure><Image/><figcaption/></figure>` block, and automatically get a click-to-enlarge lightbox with a full-resolution source — no extra markup or setup needed, see [`ImageLightbox.astro`](src/components/work/ImageLightbox.astro).
 
+A new published case study also needs an entry in [`scripts/contrast-pages.mjs`](scripts/contrast-pages.mjs), the page list behind the contrast scan and the meta-description length test. `npm run check:page-coverage` fails the CI `build` job until it has one.
+
 ### Principles — `src/content/principles/`
 
 Fifteen `.md` files named `01-title.md` through `15-title.md`. The filename prefix controls sort order — rename a file to reorder it. No `order` field in frontmatter.
@@ -226,7 +229,7 @@ tags: ["tag"] # at least 1 required
 
 Create the file as `src/content/blog/your-post-slug.md`. Publishing (flipping `draft` to `false`) also gets the post a per-slug OG image automatically — see [OG images](#og-images) below.
 
-Published posts (`draft: false`) also appear automatically in the RSS feed at `/rss.xml` (`src/pages/rss.xml.ts`) — no separate step needed. The feed is empty while every post is still a draft.
+Published posts (`draft: false`) also appear automatically in the RSS feed at `/rss.xml` (`src/pages/rss.xml.ts`) — no separate step needed. The feed is empty while every post is still a draft. Unlike the feed, `scripts/contrast-pages.mjs` does need a `/blog/<slug>/` entry for each published post, same as a case study.
 
 ## OG images
 
