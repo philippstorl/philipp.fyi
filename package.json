@@ -17,6 +17,7 @@
         "lint": "eslint .",
         "check:trailing-slashes": "node scripts/check-trailing-slashes.js",
         "check:font-preloads": "node scripts/check-font-preloads.mjs",
+        "check:inline-module-scripts": "node scripts/check-inline-module-scripts.mjs",
         "check:audit": "npm audit --omit=dev --audit-level=high",
         "format": "prettier --write .",
         "format:check": "prettier --check .",

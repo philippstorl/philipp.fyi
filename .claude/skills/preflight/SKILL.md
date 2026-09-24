@@ -1,6 +1,6 @@
 ---
 name: preflight
-description: Run philipp.fyi's pre-commit/pre-PR verification sequence (format, lint, typecheck, trailing-slashes, build, font preloads, test) in the right order, applying the conditional logic for which steps actually apply to what changed. Use before committing, before opening a PR, or whenever asked to verify, check, or make sure the repo is clean after a change.
+description: Run philipp.fyi's pre-commit/pre-PR verification sequence (format, lint, typecheck, trailing-slashes, build, dist checks, test) in the right order, applying the conditional logic for which steps actually apply to what changed. Use before committing, before opening a PR, or whenever asked to verify, check, or make sure the repo is clean after a change.
 ---
 
 # Preflight check
@@ -23,7 +23,7 @@ Fix failures before moving on — there's no value running later, slower steps a
 
 4. `npm run check:trailing-slashes` — run if any changed file is a route, link, or test that could contain one: anything under `src/pages/`, `e2e/`, any `.astro`/`.md`/`.mdx` file, or `astro.config.mjs`. It's cheap; if you're unsure whether a change touches a link, run it anyway.
 5. `npm run build` — run unless the change is content-only prose with zero risk of a type error (e.g. fixing a typo in an existing paragraph). `build` runs `astro check` before `astro build`, so it's also your typecheck-with-full-context step. When in doubt, run it.
-6. `npm run check:font-preloads` — run whenever step 5 ran; it checks the fresh `dist/`. CI runs it on every build, so skipping it locally can let a CI failure through.
+6. `npm run check:font-preloads` and `npm run check:inline-module-scripts` — run whenever step 5 ran; they check the fresh `dist/`. CI runs both on every build, so skipping them locally can let a CI failure through.
 7. `npm test` (Playwright) — run if any changed file is under `src/components/`, `src/pages/`, `src/content/`, `src/layouts/`, or `e2e/` itself. Skip it for changes confined to docs, config comments, or CI YAML with no behavioral effect.
 
 ## 4. Report

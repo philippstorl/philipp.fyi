@@ -13,10 +13,10 @@ export default defineConfig({
     security: {
         // is:inline scripts aren't auto-hashed -- if ThemeToggle's script changes,
         // recompute over its dist/index.html (not source) output (openssl dgst -sha256 | base64).
-        // `data:` = View Transitions sentinel.
+        // No `data:`: it would let an injected <script src="data:..."> through.
         csp: {
             scriptDirective: {
-                resources: ["'self'", 'data:'],
+                resources: ["'self'"],
                 hashes: ['sha256-IRaG082Oqalg5nWJ3yQUo4NGnPeCzDqF/rvDL4QO65M='],
             },
         },
@@ -37,5 +37,12 @@ export default defineConfig({
     ],
     vite: {
         plugins: [tailwindcss()],
+        build: {
+            // Never inline any JS (Astro <script> chunks included): an inline module
+            // script makes ClientRouter inject a data: barrier that script-src blocks.
+            // Guarded by `npm run check:inline-module-scripts`.
+            assetsInlineLimit: (file) =>
+                file.endsWith('.js') ? false : undefined,
+        },
     },
 })
