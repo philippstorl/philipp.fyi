@@ -1,11 +1,11 @@
 ---
 name: preflight
-description: Run philipp.fyi's pre-commit/pre-PR verification sequence (format, lint, typecheck, trailing-slashes, build, dist checks, test) in the right order, applying the conditional logic for which steps actually apply to what changed. Use before committing, before opening a PR, or whenever asked to verify, check, or make sure the repo is clean after a change.
+description: Run philipp.fyi's pre-commit/pre-PR verification sequence (format, lint, typecheck, trailing-slashes, favicons, color copies, build, dist checks, test, function tests, audit) in the right order, applying the conditional logic for which steps actually apply to what changed. Use before committing, before opening a PR, or whenever asked to verify, check, or make sure the repo is clean after a change.
 ---
 
 # Preflight check
 
-CLAUDE.md already specifies this sequence and that two of its steps are conditional on what changed. This skill exists so that conditional logic gets applied consistently instead of re-derived (or skipped) each time. These checks mirror the CI jobs in `.github/workflows/ci.yml` job-for-job — if they pass locally, CI should pass.
+CLAUDE.md already specifies this sequence and that several of its steps are conditional on what changed. This skill exists so that conditional logic gets applied consistently instead of re-derived (or skipped) each time. These checks mirror the CI jobs in `.github/workflows/ci.yml` job-for-job — if they pass locally, CI should pass.
 
 ## 1. Figure out what changed
 
@@ -28,6 +28,7 @@ Fix failures before moving on — there's no value running later, slower steps a
 8. `npm run check:font-preloads`, `npm run check:inline-module-scripts` and `npm run check:page-coverage` — run whenever step 7 ran; they check the fresh `dist/`. CI runs all three on every build, so skipping them locally can let a CI failure through.
 9. `npm test` (Playwright) — run if any changed file is under `src/components/`, `src/pages/`, `src/content/`, `src/layouts/`, or `e2e/` itself. Skip it for changes confined to docs, config comments, or CI YAML with no behavioral effect.
 10. `npm run test:functions` — run if any changed file is under `netlify/functions/` or `tests/functions/`, or is `playwright.functions.config.ts`. Plain Node, about a second, no dev server or port.
+11. `npm run check:audit` — run if `package.json` or `package-lock.json` changed. It's CI's `audit` job (`npm audit --omit=dev --audit-level=high`), independent of the build, so its position in this list doesn't matter. Use the script, not bare `npm audit`, which drops that scoping.
 
 ## 4. Report
 
