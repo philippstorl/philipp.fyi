@@ -55,6 +55,7 @@ npm run dev:astro  # http://localhost:4321
 | `npm run test:ui`                     | Run Playwright tests in interactive UI mode                          |
 | `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)     |
 | `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist             |
+| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`   |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
@@ -296,6 +297,8 @@ src/
 e2e/               → Playwright E2E tests
 public/
   favicon.svg
+  favicon.ico          → generated from favicon.svg (npm run generate:favicons)
+  apple-touch-icon.png → generated from favicon.svg (npm run generate:favicons)
   robots.txt
 netlify/
   functions/
