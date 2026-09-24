@@ -6,6 +6,7 @@ import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
+import { staticPageMeta } from '@/data/static-pages'
 import { getYearsOfExperience } from '@/utils/experience'
 import { stripContentExtension } from '@/utils/slug'
 
@@ -17,9 +18,8 @@ const description = `${principles.length} things I hold close: how I think about
 ---
 
 <BaseLayout
-    title="Principles"
+    {...staticPageMeta('principles')}
     description={description}
-    ogImage="/og/principles.png"
     preloadMonoFont
 >
     <Header />

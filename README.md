@@ -233,7 +233,7 @@ OG images are generated at build time using Satori + Sharp. Satori accepts TTF, 
 
 Both weights are loaded from `node_modules/@fontsource/geist/files/*.woff` at build time. If OG image generation fails, the error message includes a directory listing to help verify the exact filename against the matcher in `src/utils/og-image.ts`.
 
-Every static page, case study, and published blog post gets its own `/og/<slug>.png` — see `src/pages/og/[...slug].png.ts`'s `getStaticPaths`. This includes the `/blog/` listing page itself (`/og/blog.png`), which exists regardless of whether any posts are published. Since every blog post currently ships as `draft: true`, no per-post `/og/blog/<slug>.png` images exist yet; that wiring is in place and generates automatically the moment a post is published.
+Every static page, case study, and published blog post gets its own `/og/<slug>.png` — see `src/pages/og/[...slug].png.ts`'s `getStaticPaths`. Static pages' titles and card labels live in `src/data/static-pages.ts`, which also supplies each page's `<title>` and `ogImage` via `staticPageMeta()`. This includes the `/blog/` listing page itself (`/og/blog.png`), which exists regardless of whether any posts are published. Since every blog post currently ships as `draft: true`, no per-post `/og/blog/<slug>.png` images exist yet; that wiring is in place and generates automatically the moment a post is published.
 
 ## Structured data (JSON-LD)
 
@@ -265,6 +265,7 @@ src/
     recommendations.ts  → LinkedIn recommendations (14 entries, 6 featured on the home page)
     stack.ts            → This site's own tech stack, shown on the About page
     site.ts             → Site name/default description, shared by BaseLayout.astro and rss.xml.ts
+    static-pages.ts     → Static pages' title + OG card label, feeding <title>, ogImage (staticPageMeta) and OG cards
   layouts/
     BaseLayout.astro
   pages/

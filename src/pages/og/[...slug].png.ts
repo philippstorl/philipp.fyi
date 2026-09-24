@@ -2,9 +2,8 @@ import type { APIRoute, GetStaticPaths } from 'astro'
 import { readFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { load as parseYaml } from 'js-yaml'
-import { hero } from '@/data/hero'
+import { STATIC_PAGES } from '@/data/static-pages'
 import { generateOgImage } from '@/utils/og-image'
-import { getYearsOfExperience } from '@/utils/experience'
 import { getPublishedEntries } from '@/utils/collections'
 import { getPublishedBlogPosts } from '@/utils/blog-posts'
 import { stripContentExtension } from '@/utils/slug'
@@ -62,59 +61,10 @@ export const getStaticPaths: GetStaticPaths = async () => {
     ])
 
     return [
-        {
-            params: { slug: 'home' },
-            props: {
-                title: hero.headline,
-                label: `${getYearsOfExperience()} years building for the web`,
-            } satisfies OgImageProps,
-        },
-        {
-            params: { slug: 'principles' },
-            props: {
-                title: 'Principles',
-                label: 'How I work',
-            } satisfies OgImageProps,
-        },
-        {
-            params: { slug: 'about' },
-            props: { title: 'About', label: 'Who I am' } satisfies OgImageProps,
-        },
-        {
-            params: { slug: 'recommendations' },
-            props: {
-                title: 'Recommendations',
-                label: 'What others say',
-            } satisfies OgImageProps,
-        },
-        {
-            params: { slug: 'work' },
-            props: {
-                title: 'Work',
-                label: 'Selected work',
-            } satisfies OgImageProps,
-        },
-        {
-            params: { slug: 'contact' },
-            props: {
-                title: 'Contact',
-                label: 'Get in touch',
-            } satisfies OgImageProps,
-        },
-        {
-            params: { slug: 'blog' },
-            props: {
-                title: 'Blog',
-                label: 'Writing on web development and tooling',
-            } satisfies OgImageProps,
-        },
-        {
-            params: { slug: 'privacy' },
-            props: {
-                title: 'Privacy Policy',
-                label: 'Your data, explained',
-            } satisfies OgImageProps,
-        },
+        ...Object.entries(STATIC_PAGES).map(([slug, { title, ogLabel }]) => ({
+            params: { slug },
+            props: { title, label: ogLabel } satisfies OgImageProps,
+        })),
         ...workEntries.map((entry) => {
             const coverImagePath =
                 entry.data.coverImage && entry.filePath

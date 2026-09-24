@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import WorkGrid from '@/components/work/WorkGrid.astro'
+import { staticPageMeta } from '@/data/static-pages'
 import { getPublishedEntries } from '@/utils/collections'
 import {
     getStaffbaseTenureYears,
@@ -16,9 +17,8 @@ const caseStudyCount = (await getPublishedEntries('work')).length
 ---
 
 <BaseLayout
-    title="Work"
+    {...staticPageMeta('work')}
     description={`Case studies from ${getYearsOfExperience()} years building for the web, including ${getStaffbaseTenureYears()} years scaling staffbase.com.`}
-    ogImage="/og/work.png"
     preloadMonoFont
 >
     <Header />

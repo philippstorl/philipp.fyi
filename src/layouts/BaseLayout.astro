@@ -6,7 +6,7 @@ import '../styles/global.css'
 // @import-discovered otherwise.
 import geistWoff2Url from '@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url'
 import jetbrainsMonoWoff2Url from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url'
-import { hero } from '@/data/hero'
+import { STATIC_PAGES, ogImagePath } from '@/data/static-pages'
 import { SITE_NAME, getDefaultDescription } from '@/data/site'
 import { toAbsoluteUrl } from '@/utils/url'
 
@@ -26,7 +26,7 @@ interface Props {
     preloadMonoFont?: boolean
 }
 
-const HOME_OG_IMAGE = '/og/home.png'
+const HOME_OG_IMAGE = ogImagePath('home')
 
 const {
     title,
@@ -42,10 +42,10 @@ const {
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
 const canonicalURL = toAbsoluteUrl(Astro.url.pathname, Astro.site)
 const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
-// Each OG card's headline is its page title; the homepage card's is the hero headline.
+// Each OG card's headline is its page title (see static-pages.ts); home's isn't.
 const ogImageAlt =
     ogImage === HOME_OG_IMAGE
-        ? `${SITE_NAME}: ${hero.headline}`
+        ? `${SITE_NAME}: ${STATIC_PAGES.home.title}`
         : (title ?? SITE_NAME)
 ---
 
