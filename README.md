@@ -55,6 +55,7 @@ npm run dev:astro  # http://localhost:4321
 | `npm run test:ui`                     | Run Playwright tests in interactive UI mode                          |
 | `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)     |
 | `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist             |
+| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`   |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
@@ -164,6 +165,7 @@ npx playwright test e2e/home.spec.ts --debug
 | `e2e/privacy.spec.ts`                 | Privacy Policy page heading/GDPR sections, links to /contact, footer "Privacy" link leads to /privacy, external links (Netlify, the Saxon DPA) carry the correct href plus a new-tab accessible-name suffix, prose links stay underlined at rest (WCAG 1.4.1), stays noindexed with a real canonical link                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `e2e/meta-description-length.spec.ts` | Every page's `<meta name="description">` stays within Google's ~155-char SERP snippet length                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `e2e/robots-txt.spec.ts`              | `robots.txt` lets Twitterbot and LinkedInBot fetch every page's `og:image`/`twitter:image` (Desktop Chrome only)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `e2e/favicons.spec.ts`                | `rel="apple-touch-icon"` link, `/apple-touch-icon.png` served as a 180×180 full-bleed PNG (uniform border, no baked-in rounded corners), `/favicon.ico` served as a real ICO (not the 404 page)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
@@ -296,6 +298,8 @@ src/
 e2e/               → Playwright E2E tests
 public/
   favicon.svg
+  favicon.ico          → generated from favicon.svg (npm run generate:favicons)
+  apple-touch-icon.png → generated from favicon.svg (npm run generate:favicons)
   robots.txt
 netlify/
   functions/
