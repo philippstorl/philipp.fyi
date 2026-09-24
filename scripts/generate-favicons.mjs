@@ -21,16 +21,23 @@ if (!viewBoxWidth || !tileFill) {
 }
 
 // Density sized so librsvg renders natively at the target size, not resampled.
-function render(size) {
-    return sharp(svg, { density: (72 * size) / viewBoxWidth }).resize(
+function render(input, size) {
+    return sharp(input, { density: (72 * size) / viewBoxWidth }).resize(
         size,
         size,
     )
 }
 
-// iOS masks its own rounded corners and turns transparency black, so the
-// touch icon fills the SVG's transparent corners with the tile color.
-await render(180)
+// iOS applies its own corner mask, so the touch icon is a full-bleed square:
+// flattening the rounded tile instead leaves a faint arc of anti-aliased pixels.
+const squareSource = source.replace(/<rect[^>]*>/, (rect) =>
+    rect.replace(/\s+r[xy]=(["'])[^"']*\1/g, ''),
+)
+if (squareSource === source) {
+    throw new Error('favicon.svg rect no longer has an rx/ry to strip')
+}
+await render(Buffer.from(squareSource), 180)
+    // Drops the alpha channel; iOS renders any transparency as black.
     .flatten({ background: tileFill })
     .png()
     .toFile(path.join(publicDir, 'apple-touch-icon.png'))
@@ -39,7 +46,7 @@ await render(180)
 const images = await Promise.all(
     [16, 32, 48].map(async (size) => ({
         size,
-        png: await render(size).png().toBuffer(),
+        png: await render(svg, size).png().toBuffer(),
     })),
 )
 const header = Buffer.alloc(6)
