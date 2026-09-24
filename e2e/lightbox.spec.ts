@@ -175,6 +175,55 @@ test.describe('Image lightbox', () => {
         )
     })
 
+    test('keeps focus in the dialog when Next disables itself on the last slide', async ({
+        page,
+    }) => {
+        // Regression (#332): a focused button that got disabled dropped focus
+        // to <body>, outside the dialog, so arrow keys stopped navigating.
+        await openLightboxOn(
+            page,
+            page.locator('.prose figure img').nth(TOTAL_IMAGES - 2),
+        )
+        const next = page.locator('#lightbox-next')
+        await next.focus()
+        await page.keyboard.press('Enter')
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            counterText(TOTAL_IMAGES),
+        )
+        await expect(next).toBeDisabled()
+        await expect(page.locator('#lightbox-track')).toBeFocused()
+
+        // A repeated Enter must not start navigating back the other way.
+        await page.keyboard.press('Enter')
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            counterText(TOTAL_IMAGES),
+        )
+
+        await page.keyboard.press('ArrowLeft')
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            counterText(TOTAL_IMAGES - 1),
+        )
+    })
+
+    test('keeps focus in the dialog when a clicked Previous disables itself on the first slide', async ({
+        page,
+    }) => {
+        // Chromium focuses a clicked button, so the pointer path hits this too.
+        await openLightboxOn(page, page.locator('.prose figure img').nth(1))
+        const prev = page.locator('#lightbox-prev')
+        await prev.click()
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            counterText(1),
+        )
+        await expect(prev).toBeDisabled()
+        await expect(page.locator('#lightbox-track')).toBeFocused()
+
+        await page.keyboard.press('ArrowRight')
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            counterText(2),
+        )
+    })
+
     test('closes on Escape and returns focus to the trigger image', async ({
         page,
     }) => {

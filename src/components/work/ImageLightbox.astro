@@ -161,8 +161,18 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
                 figures.length > 1
                     ? `${currentIndex + 1} / ${figures.length}`
                     : ''
+            const focused = document.activeElement
             prevBtn.disabled = currentIndex === 0
             nextBtn.disabled = currentIndex === figures.length - 1
+            // Disabling the focused button drops focus to <body>, outside the
+            // dialog, which kills arrow-key nav. Track, not the other button,
+            // so repeated Enter doesn't start walking back the other way.
+            if (
+                (focused === prevBtn && prevBtn.disabled) ||
+                (focused === nextBtn && nextBtn.disabled)
+            ) {
+                track.focus()
+            }
             // Only active slide in the a11y tree, not every image at once.
             slideElements.forEach((slide, index) => {
                 if (index === currentIndex) slide.removeAttribute('aria-hidden')
