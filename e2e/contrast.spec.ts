@@ -9,7 +9,31 @@ import { pages, themes, resultFileName } from '../scripts/contrast-pages.mjs'
 
 const outDir = path.join(process.cwd(), 'contrast-results')
 
+// axe can't parse a `none` color channel (Tailwind's neutral palette, incl.
+// Typography's prose colors) and skips those nodes as `incomplete`. Outside
+// interpolation `none` means 0 (CSS Color 4), so pinning it is render-identical.
+async function normalizeNoneColorChannels(page: Page) {
+    await page.evaluate(() => {
+        for (const el of document.querySelectorAll('*')) {
+            if (!(el instanceof HTMLElement || el instanceof SVGElement))
+                continue
+            const style = getComputedStyle(el)
+            for (const prop of ['color', 'background-color']) {
+                const value = style.getPropertyValue(prop)
+                if (/\bnone\b/.test(value)) {
+                    el.style.setProperty(
+                        prop,
+                        value.replace(/\bnone\b/g, '0'),
+                        'important',
+                    )
+                }
+            }
+        }
+    })
+}
+
 async function scanAndWrite(page: Page, reportedPath: string, theme: string) {
+    await normalizeNoneColorChannels(page)
     const results = await new AxeBuilder({ page })
         .withRules(['color-contrast'])
         .analyze()
@@ -17,7 +41,12 @@ async function scanAndWrite(page: Page, reportedPath: string, theme: string) {
     fs.writeFileSync(
         path.join(outDir, resultFileName(reportedPath, theme)),
         JSON.stringify(
-            { page: reportedPath, theme, violations: results.violations },
+            {
+                page: reportedPath,
+                theme,
+                violations: results.violations,
+                incomplete: results.incomplete,
+            },
             null,
             2,
         ),
