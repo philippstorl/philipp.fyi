@@ -58,6 +58,27 @@ test.describe('Home page', () => {
         await expect(cards).toHaveCount(6)
     })
 
+    test('recommendation names are not clipped at 320px', async ({ page }) => {
+        // WCAG 1.4.10 reflow width; the name is a quote's attribution.
+        await page.setViewportSize({ width: 320, height: 800 })
+        await page.goto('/')
+        // Mobile emulation widens the layout viewport if anything overflows.
+        expect(
+            await page.evaluate(() => document.documentElement.clientWidth),
+        ).toBe(320)
+        await page.evaluate(async () => {
+            await document.fonts.ready
+        })
+        const names = page.locator('#recommendations article h3')
+        await expect(names).toHaveCount(6)
+        const clipped = await names.evaluateAll((headings) =>
+            headings
+                .filter((h) => h.scrollWidth > h.clientWidth)
+                .map((h) => h.textContent?.trim()),
+        )
+        expect(clipped).toEqual([])
+    })
+
     test('card grids are exposed as ordered lists', async ({ page }) => {
         await page.goto('/')
         await expect(page.locator('#work ol > li > article')).toHaveCount(4)
