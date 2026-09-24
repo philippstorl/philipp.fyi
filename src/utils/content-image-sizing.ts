@@ -50,16 +50,18 @@ function buildSizesAttr(tiers: SizeTier[], fallbackExpr: string): string {
 
 // Drops a candidate within `threshold` px of another, to avoid a separate
 // build-time encode for two srcset widths a browser would never tell apart.
+// Keeps the larger of a close pair: Chrome picks the smallest candidate that
+// covers the need, so dropping the larger one jumps a whole ladder rung (#345).
 function mergeCloseWidths(widths: number[], threshold = 24): number[] {
-    const sorted = [...widths].sort((a, b) => a - b)
+    const sorted = [...widths].sort((a, b) => b - a)
     const merged: number[] = []
     for (const width of sorted) {
         const last = merged[merged.length - 1]
-        if (last === undefined || width - last > threshold) {
+        if (last === undefined || last - width > threshold) {
             merged.push(width)
         }
     }
-    return merged
+    return merged.reverse()
 }
 
 // Tiers for responsiveGridFigureSizing. A named export rather than a `Parameters<typeof ...>`
@@ -70,12 +72,29 @@ export type ResponsiveGridTiers = [
     { columns: number },
 ]
 
-// Caps the fallback ladder at the narrowest real tier's breakpoint, not
-// columnWidth(1) -- below that point the container isn't at its cap yet.
-function responsiveWidths(
-    realTiers: { minWidth: number; columns: number }[],
-    fallback: { columns: number },
-): number[] {
+type RealTier = { minWidth: number; columns: number }
+
+function splitTiers(tiers: ResponsiveGridTiers): {
+    realTiers: RealTier[]
+    fallback: { columns: number }
+} {
+    // ResponsiveGridTiers' own shape ([A, ...A[], B]) guarantees a last
+    // element, but the type checker can't see that through a computed index.
+    const fallback = tiers[tiers.length - 1]
+    if (!fallback) {
+        throw new Error('ResponsiveGridTiers must include a fallback tier')
+    }
+    const realTiers = tiers.filter(
+        (tier): tier is RealTier => 'minWidth' in tier,
+    )
+    return { realTiers, fallback }
+}
+
+// Unmerged srcset candidates for one tier set. Caps the fallback ladder at the
+// narrowest real tier's breakpoint, not columnWidth(1) -- below that point the
+// container isn't at its cap yet.
+function responsiveCandidates(tiers: ResponsiveGridTiers): number[] {
+    const { realTiers, fallback } = splitTiers(tiers)
     // Math.min over every tier, not array position — ordering isn't guaranteed.
     const narrowestRealTierMinWidth = Math.min(
         ...realTiers.map((tier) => tier.minWidth),
@@ -100,28 +119,16 @@ function responsiveWidths(
             ? Math.round(Math.sqrt(fallbackBase * nextRealAboveFallback))
             : undefined
 
-    return mergeCloseWidths(
-        [...realCandidates, ...fallbackCandidates, bridge].filter(
-            (width): width is number => width !== undefined,
-        ),
+    return [...realCandidates, ...fallbackCandidates, bridge].filter(
+        (width): width is number => width !== undefined,
     )
 }
 
-/** Figure in a grid whose column count changes at breakpoints. `tiers`
- * widest-first; last tier is the sub-`sm:` fallback with no `minWidth`. */
-export function responsiveGridFigureSizing(
+function gridFigureSizing(
     tiers: ResponsiveGridTiers,
+    sharedTierSets: ResponsiveGridTiers[],
 ): FigureSizing {
-    // ResponsiveGridTiers' own shape ([A, ...A[], B]) guarantees a last
-    // element, but the type checker can't see that through a computed index.
-    const fallback = tiers[tiers.length - 1]
-    if (!fallback) {
-        throw new Error('ResponsiveGridTiers must include a fallback tier')
-    }
-    const realTiers = tiers.filter(
-        (tier): tier is { minWidth: number; columns: number } =>
-            'minWidth' in tier,
-    )
+    const { realTiers, fallback } = splitTiers(tiers)
     const sizeTiers: SizeTier[] = realTiers.flatMap((tier) => {
         const width = columnWidth(tier.columns)
         // A tier's own breakpoint can fire before the container reaches its
@@ -134,24 +141,34 @@ export function responsiveGridFigureSizing(
             { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
         ]
     })
-    // Widest real tier by minWidth, not tiers[0] — order isn't guaranteed.
-    const widestRealTier = realTiers.reduce((widest, tier) =>
-        tier.minWidth > widest.minWidth ? tier : widest,
+    const widths = mergeCloseWidths(
+        [tiers, ...sharedTierSets].flatMap(responsiveCandidates),
     )
     return {
-        width: columnWidth(widestRealTier.columns),
+        // full-width CSS ignores `width`; it only sets the aspect ratio every srcset height
+        // rounds from, so it must match wherever the ladder does (#345). A ladder member
+        // also keeps the fallback `src` from needing its own encode.
+        width: Math.min(...widths),
         sizes: buildSizesAttr(sizeTiers, columnFluidExpr(fallback.columns)),
-        widths: responsiveWidths(realTiers, fallback),
+        widths,
         layout: 'full-width',
     }
 }
 
+/** Figure in a grid whose column count changes at breakpoints. `tiers`
+ * widest-first; last tier is the sub-`sm:` fallback with no `minWidth`. */
+export function responsiveGridFigureSizing(
+    tiers: ResponsiveGridTiers,
+): FigureSizing {
+    return gridFigureSizing(tiers, SHARED_LADDER_TIER_SETS)
+}
+
 /** A standalone figure spanning the full prose column width. Multi-column grids use `responsiveGridFigureSizing`'s tier constants (#274). */
 export function fullWidthFigureSizing(): FigureSizing {
-    return responsiveGridFigureSizing([
-        { minWidth: CONTAINER_CAP_BREAKPOINT, columns: 1 },
-        { columns: 1 },
-    ])
+    return gridFigureSizing(
+        [{ minWidth: CONTAINER_CAP_BREAKPOINT, columns: 1 }, { columns: 1 }],
+        [],
+    )
 }
 
 /** Figure with an explicit width narrower than the column at every viewport. */
@@ -221,4 +238,12 @@ export const THREE_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
 export const REGIONAL_RESPONSIVE_TIERS: ResponsiveGridTiers = [
     { minWidth: 640, columns: 3 },
     { columns: 1 },
+]
+
+// Every grid figure's srcset is the union of all these ladders, so a screenshot
+// reused across grids picks the same candidate wherever it renders at one width (#345).
+const SHARED_LADDER_TIER_SETS: ResponsiveGridTiers[] = [
+    TWO_COLUMN_RESPONSIVE_TIERS,
+    THREE_COLUMN_RESPONSIVE_TIERS,
+    REGIONAL_RESPONSIVE_TIERS,
 ]

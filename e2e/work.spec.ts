@@ -70,6 +70,35 @@ test('case study pages preload JetBrains Mono, the homepage does not', async ({
     await expect(monoPreload).toHaveCount(0)
 })
 
+test('a screenshot reused across grids gets one srcset, so phones fetch it once', async ({
+    page,
+}) => {
+    // Regression (#345): voices-2020/voices-2026 each sit in two differently-tiered grids.
+    await page.goto('/work/voices-conference-website/')
+    const figures = await page
+        .locator('.prose figure img')
+        .evaluateAll((images) =>
+            images.map((img) => ({
+                source: img.getAttribute('data-lightbox-src'),
+                srcset: img.getAttribute('srcset'),
+            })),
+        )
+    const srcsetsBySource = new Map<string | null, (string | null)[]>()
+    for (const { source, srcset } of figures) {
+        srcsetsBySource.set(source, [
+            ...(srcsetsBySource.get(source) ?? []),
+            srcset,
+        ])
+    }
+    const reused = [...srcsetsBySource.values()].filter(
+        (srcsets) => srcsets.length > 1,
+    )
+    expect(reused).toHaveLength(2)
+    for (const srcsets of reused) {
+        expect(new Set(srcsets).size).toBe(1)
+    }
+})
+
 test('work cards link to correct case study URLs', async ({ page }) => {
     await page.goto('/')
     const firstCard = page.locator('#work article').first()
