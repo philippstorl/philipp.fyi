@@ -44,12 +44,19 @@ const {
 const responsiveProps = sizing.sizes
     ? sizing
     : { densities: sizing.densities ?? [1, 2, 3] }
+
+// full-width's `width` only sets the srcset aspect ratio (CSS fills the box); past the
+// source, Astro's clamp swaps in src.width, so match it rather than add an unused encode.
+const intrinsicWidth =
+    sizing.sizes && sizing.layout === 'full-width'
+        ? Math.min(width, src.width)
+        : width
 ---
 
 <Image
     src={src}
     alt={alt}
-    width={width}
+    width={intrinsicWidth}
     class={className}
     data-lightbox-src={lightboxSrc}
     {...responsiveProps}
