@@ -186,6 +186,53 @@ test.describe('Contact form', () => {
         ).toBeVisible()
     })
 
+    test('a failed send keeps keyboard focus on the submit button', async ({
+        page,
+    }) => {
+        // Regression: native `disabled` on the focused button dropped focus
+        // to <body>, and the error path never moved it back.
+        await gotoAndWaitForContactFormHydration(page)
+        let postCount = 0
+        let releaseResponse = () => {}
+        const responseReleased = new Promise<void>((resolve) => {
+            releaseResponse = resolve
+        })
+        await page.route('/', async (route) => {
+            if (route.request().method() !== 'POST') return route.continue()
+            postCount++
+            await responseReleased
+            await route.fulfill({ status: 500, body: 'error' })
+        })
+
+        await page.locator('#contact-name').fill('Test User')
+        await page.locator('#contact-email').fill('test@example.com')
+        await page.locator('#contact-message').fill('Hello there')
+        const submit = page.locator(
+            'form[name="contact"] button[type="submit"]',
+        )
+        await submit.focus()
+        await page.keyboard.press('Enter')
+
+        await expect(submit).toHaveText('Sending…')
+        await expect(submit).toBeFocused()
+        await expect(submit).toHaveAttribute('aria-disabled', 'true')
+
+        // No native `disabled` to block a resubmit anymore: neither the button
+        // nor implicit submission from a text field may send a second POST.
+        await page.keyboard.press('Enter')
+        await page.locator('#contact-name').press('Enter')
+        await submit.focus()
+        releaseResponse()
+
+        await expect(
+            page.getByRole('alert').filter({ hasText: 'Something went wrong' }),
+        ).toBeVisible()
+        await expect(submit).toHaveText('Send message')
+        await expect(submit).toHaveAttribute('aria-disabled', 'false')
+        await expect(submit).toBeFocused()
+        expect(postCount).toBe(1)
+    })
+
     test('a successful submission shows the success confirmation and moves focus to it', async ({
         page,
     }) => {
