@@ -104,6 +104,7 @@ jobs:
             # same commit; see issue #126.
             - run: npm run build:app
             - run: npm run check:font-preloads
+            - run: npm run check:inline-module-scripts
 
     test:
         name: Test
