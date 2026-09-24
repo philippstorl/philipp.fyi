@@ -323,6 +323,32 @@ test.describe('Navigation', () => {
         await expect(page.locator('#skip-link')).not.toHaveAttribute('inert')
     })
 
+    test('reverse-tabbing never leaves the focused element hidden under the sticky header (issue #333)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        await page.goto('/')
+        await page.locator('#site-footer a').last().focus()
+
+        const obscured: string[] = []
+        for (let i = 0; i < 80; i++) {
+            await page.keyboard.press('Shift+Tab')
+            const result = await page.evaluate(() => {
+                const el = document.activeElement
+                const header = document.getElementById('site-header')
+                if (!el || !header || el === document.body) return 'done'
+                if (header.contains(el)) return 'done'
+                const { bottom } = el.getBoundingClientRect()
+                return bottom <= header.getBoundingClientRect().bottom
+                    ? (el.textContent?.trim().slice(0, 40) ?? el.tagName)
+                    : null
+            })
+            if (result === 'done') break
+            if (result) obscured.push(result)
+        }
+        expect(obscured).toEqual([])
+    })
+
     test('skip link moves keyboard focus to main content', async ({ page }) => {
         await page.goto('/')
         await page.keyboard.press('Tab')

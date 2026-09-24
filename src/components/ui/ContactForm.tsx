@@ -29,6 +29,19 @@ function validateField(
     }
 }
 
+// focus() alone won't scroll a partly visible field in Firefox/WebKit, which
+// can leave it under the sticky header (WCAG 2.4.11).
+function focusIntoView(el: HTMLElement | null) {
+    if (!el) return
+    el.focus({ preventScroll: true })
+    el.scrollIntoView({
+        block: 'center',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            ? 'instant'
+            : 'smooth',
+    })
+}
+
 function validate(data: FormData): FieldErrors {
     const errors: FieldErrors = {}
     for (const field of ['name', 'email', 'message'] as const) {
@@ -66,9 +79,9 @@ export default function ContactForm() {
     useEffect(() => {
         if (!focusOnNextErrorRef.current) return
         focusOnNextErrorRef.current = false
-        if (errors.name) nameInputRef.current?.focus()
-        else if (errors.email) emailInputRef.current?.focus()
-        else if (errors.message) messageInputRef.current?.focus()
+        if (errors.name) focusIntoView(nameInputRef.current)
+        else if (errors.email) focusIntoView(emailInputRef.current)
+        else if (errors.message) focusIntoView(messageInputRef.current)
     }, [errors])
 
     // Clears a field's error as soon as it's corrected, not just non-empty.

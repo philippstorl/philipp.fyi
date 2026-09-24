@@ -121,6 +121,16 @@ html {
     -moz-osx-font-smoothing: grayscale;
 }
 
+/*
+    Keeps focused/scrolled-to elements clear of the sticky #site-header
+    (~85px tall), WCAG 2.4.11. Adds to any scroll-margin, so don't stack both.
+*/
+@layer base {
+    html {
+        scroll-padding-top: 6rem;
+    }
+}
+
 ::selection {
     background-color: color-mix(in oklch, var(--color-accent) 20%, transparent);
     color: var(--color-foreground);
