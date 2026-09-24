@@ -3,7 +3,7 @@ import { getPublishedEntries } from '@/utils/collections'
 import WorkCard from './WorkCard.astro'
 
 interface Props {
-    /** Eagerly loads the true LCP candidate. Only pass where a work card is actually the LCP -- not on the homepage, where Hero's <h1> is. */
+    /** Eagerly loads the mobile LCP cover and the first desktop-row cover. Only pass where a work card is actually the LCP -- not on the homepage, where Hero's <h1> is. */
     eagerLoadFirst?: boolean
     /** Forwarded to WorkCard: h3 under a page's own h2 (homepage), h2 when the grid sits directly under an h1 (/work/). */
     headingLevel?: 'h2' | 'h3'
