@@ -124,9 +124,33 @@ function responsiveCandidates(tiers: ResponsiveGridTiers): number[] {
     )
 }
 
+// Reused grid-tier shapes for MDX case studies, defined here rather than as MDX-local
+// consts since `astro check` doesn't type-check expressions inside an MDX body at all.
+export const TWO_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
+    { minWidth: 640, columns: 2 },
+    { columns: 1 },
+]
+export const THREE_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
+    { minWidth: 1024, columns: 3 },
+    { minWidth: 640, columns: 2 },
+    { columns: 1 },
+]
+export const REGIONAL_RESPONSIVE_TIERS: ResponsiveGridTiers = [
+    { minWidth: 640, columns: 3 },
+    { columns: 1 },
+]
+
+// Every grid figure's srcset includes the union of all these ladders, so a screenshot
+// reused across grids picks the same candidate wherever it renders at one width (#345).
+const SHARED_GRID_CANDIDATES = [
+    TWO_COLUMN_RESPONSIVE_TIERS,
+    THREE_COLUMN_RESPONSIVE_TIERS,
+    REGIONAL_RESPONSIVE_TIERS,
+].flatMap(responsiveCandidates)
+
 function gridFigureSizing(
     tiers: ResponsiveGridTiers,
-    sharedTierSets: ResponsiveGridTiers[],
+    sharedCandidates: number[],
 ): FigureSizing {
     const { realTiers, fallback } = splitTiers(tiers)
     const sizeTiers: SizeTier[] = realTiers.flatMap((tier) => {
@@ -141,14 +165,15 @@ function gridFigureSizing(
             { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
         ]
     })
-    const widths = mergeCloseWidths(
-        [tiers, ...sharedTierSets].flatMap(responsiveCandidates),
-    )
+    const widths = mergeCloseWidths([
+        ...responsiveCandidates(tiers),
+        ...sharedCandidates,
+    ])
     return {
-        // full-width CSS ignores `width`; it only sets the aspect ratio every srcset height
-        // rounds from, so it must match wherever the ladder does (#345). A ladder member
-        // also keeps the fallback `src` from needing its own encode.
-        width: Math.min(...widths),
+        // full-width CSS ignores `width`; it's only the base every srcset height rounds
+        // from, so it must match wherever the ladder does (#345). The largest candidate
+        // keeps that rounding sub-pixel and reuses an existing encode for the fallback src.
+        width: Math.max(...widths),
         sizes: buildSizesAttr(sizeTiers, columnFluidExpr(fallback.columns)),
         widths,
         layout: 'full-width',
@@ -160,7 +185,7 @@ function gridFigureSizing(
 export function responsiveGridFigureSizing(
     tiers: ResponsiveGridTiers,
 ): FigureSizing {
-    return gridFigureSizing(tiers, SHARED_LADDER_TIER_SETS)
+    return gridFigureSizing(tiers, SHARED_GRID_CANDIDATES)
 }
 
 /** A standalone figure spanning the full prose column width. Multi-column grids use `responsiveGridFigureSizing`'s tier constants (#274). */
@@ -223,27 +248,3 @@ export function workCardCoverSizing(): Pick<FigureSizing, 'sizes' | 'widths'> {
 
     return { sizes, widths }
 }
-
-// Reused grid-tier shapes for MDX case studies, defined here rather than as MDX-local
-// consts since `astro check` doesn't type-check expressions inside an MDX body at all.
-export const TWO_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
-    { minWidth: 640, columns: 2 },
-    { columns: 1 },
-]
-export const THREE_COLUMN_RESPONSIVE_TIERS: ResponsiveGridTiers = [
-    { minWidth: 1024, columns: 3 },
-    { minWidth: 640, columns: 2 },
-    { columns: 1 },
-]
-export const REGIONAL_RESPONSIVE_TIERS: ResponsiveGridTiers = [
-    { minWidth: 640, columns: 3 },
-    { columns: 1 },
-]
-
-// Every grid figure's srcset is the union of all these ladders, so a screenshot
-// reused across grids picks the same candidate wherever it renders at one width (#345).
-const SHARED_LADDER_TIER_SETS: ResponsiveGridTiers[] = [
-    TWO_COLUMN_RESPONSIVE_TIERS,
-    THREE_COLUMN_RESPONSIVE_TIERS,
-    REGIONAL_RESPONSIVE_TIERS,
-]

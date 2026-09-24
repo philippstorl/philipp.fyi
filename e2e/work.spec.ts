@@ -74,29 +74,31 @@ test('a screenshot reused across grids gets one srcset, so phones fetch it once'
     page,
 }) => {
     // Regression (#345): voices-2020/voices-2026 each sit in two differently-tiered grids.
-    await page.goto('/work/voices-conference-website/')
-    const figures = await page
-        .locator('.prose figure img')
-        .evaluateAll((images) =>
-            images.map((img) => ({
-                source: img.getAttribute('data-lightbox-src'),
-                srcset: img.getAttribute('srcset'),
-            })),
-        )
-    const srcsetsBySource = new Map<string | null, (string | null)[]>()
-    for (const { source, srcset } of figures) {
-        srcsetsBySource.set(source, [
-            ...(srcsetsBySource.get(source) ?? []),
-            srcset,
-        ])
+    let reusedCount = 0
+    for (const { slug } of caseStudies) {
+        await page.goto(`/work/${slug}/`)
+        const figures = await page
+            .locator('.prose figure img')
+            .evaluateAll((images) =>
+                images.map((img) => ({
+                    source: img.getAttribute('data-lightbox-src'),
+                    srcset: img.getAttribute('srcset'),
+                })),
+            )
+        const srcsetsBySource = new Map<string | null, (string | null)[]>()
+        for (const { source, srcset } of figures) {
+            srcsetsBySource.set(source, [
+                ...(srcsetsBySource.get(source) ?? []),
+                srcset,
+            ])
+        }
+        for (const srcsets of srcsetsBySource.values()) {
+            if (srcsets.length < 2) continue
+            reusedCount++
+            expect(new Set(srcsets).size, slug).toBe(1)
+        }
     }
-    const reused = [...srcsetsBySource.values()].filter(
-        (srcsets) => srcsets.length > 1,
-    )
-    expect(reused).toHaveLength(2)
-    for (const srcsets of reused) {
-        expect(new Set(srcsets).size).toBe(1)
-    }
+    expect(reusedCount).toBeGreaterThan(0)
 })
 
 test('work cards link to correct case study URLs', async ({ page }) => {
