@@ -213,6 +213,62 @@ test.describe('Navigation', () => {
         await expect(page.locator('html')).not.toHaveClass(/dark/)
     })
 
+    test('active nav link and pressed theme button keep a visible cue in forced-colors mode (issue #420)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ forcedColors: 'active' })
+        // No click: the pre-paint script already presses "System preference",
+        // and a click would leave the pointer hovering the button under test.
+        await page.goto('/work/')
+
+        // Forced colors repaints non-system colors to Canvas, so the cues
+        // only survive if they resolve to the system colors themselves.
+        await expect
+            .poll(() =>
+                page.evaluate(() => {
+                    const resolve = (systemColor: string) => {
+                        const probe = document.createElement('div')
+                        probe.style.backgroundColor = systemColor
+                        document.body.append(probe)
+                        const value = getComputedStyle(probe).backgroundColor
+                        probe.remove()
+                        return value
+                    }
+                    const canvasText = resolve('CanvasText')
+                    const highlight = resolve('Highlight')
+                    const highlightText = resolve('HighlightText')
+                    const underlines = [
+                        ...document.querySelectorAll(
+                            'a[data-nav-link][aria-current]',
+                        ),
+                    ].map((a) => getComputedStyle(a, '::after'))
+                    const pressed = document.querySelector(
+                        '[data-theme-value][aria-pressed="true"]',
+                    )
+                    if (!pressed) return null
+                    const pressedStyle = getComputedStyle(pressed)
+                    return {
+                        underline:
+                            underlines.length > 0 &&
+                            underlines.every(
+                                (u) =>
+                                    u.backgroundColor === canvasText &&
+                                    parseFloat(u.width) > 0 &&
+                                    parseFloat(u.height) > 0,
+                            ),
+                        pressedBackground:
+                            pressedStyle.backgroundColor === highlight,
+                        pressedText: pressedStyle.color === highlightText,
+                    }
+                }),
+            )
+            .toEqual({
+                underline: true,
+                pressedBackground: true,
+                pressedText: true,
+            })
+    })
+
     test('dark mode persists across client-side navigation', async ({
         page,
     }) => {
