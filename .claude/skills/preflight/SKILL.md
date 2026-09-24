@@ -22,7 +22,7 @@ Fix failures before moving on — there's no value running later, slower steps a
 ## 3. Conditional steps
 
 4. `npm run check:trailing-slashes` — run if any changed file is a route, link, or test that could contain one: anything under `src/pages/`, `e2e/`, any `.astro`/`.md`/`.mdx` file, or `astro.config.mjs`. It's cheap; if you're unsure whether a change touches a link, run it anyway.
-5. `npm run check:favicons` — run if any changed file is under `public/` or is `scripts/generate-favicons.mjs`/`scripts/favicon-stamp.mjs`/`scripts/favicons.sha256`. On a failure, run `npm run generate:favicons` (macOS only) and commit its output; don't hand-edit the stamp.
+5. `npm run check:favicons` — run if any changed file is under `public/` or is `scripts/favicons.sha256`. It only hashes the SVG and rasters, so a generator-only edit needs its own `npm run generate:favicons` run. On a failure, run `npm run generate:favicons` (macOS only) and commit its output; don't hand-edit the stamp.
 6. `npm run build` — run unless the change is content-only prose with zero risk of a type error (e.g. fixing a typo in an existing paragraph). `build` runs `astro check` before `astro build`, so it's also your typecheck-with-full-context step. When in doubt, run it.
 7. `npm run check:font-preloads` and `npm run check:inline-module-scripts` — run whenever step 6 ran; they check the fresh `dist/`. CI runs both on every build, so skipping them locally can let a CI failure through.
 8. `npm test` (Playwright) — run if any changed file is under `src/components/`, `src/pages/`, `src/content/`, `src/layouts/`, or `e2e/` itself. Skip it for changes confined to docs, config comments, or CI YAML with no behavioral effect.

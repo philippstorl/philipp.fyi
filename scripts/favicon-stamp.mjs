@@ -16,12 +16,20 @@ export const stampedFiles = [
     'public/apple-touch-icon.png',
 ]
 
-export async function computeStamp() {
+// `contents` lets the generator hash the exact bytes it rendered from.
+export async function computeStamp(contents = {}) {
     const lines = await Promise.all(
         stampedFiles.map(async (file) => {
-            const hash = createHash('sha256')
-                .update(await fs.readFile(path.join(root, file)))
-                .digest('hex')
+            let data = contents[file]
+            if (!data) {
+                try {
+                    data = await fs.readFile(path.join(root, file))
+                } catch (error) {
+                    if (error.code !== 'ENOENT') throw error
+                    return `missing  ${file}\n`
+                }
+            }
+            const hash = createHash('sha256').update(data).digest('hex')
             return `${hash}  ${file}\n`
         }),
     )

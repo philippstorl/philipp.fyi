@@ -68,7 +68,7 @@ await fs.writeFile(
     Buffer.concat([header, ...entries, ...images.map(({ png }) => png)]),
 )
 
-await fs.writeFile(stampPath, await computeStamp())
+await fs.writeFile(stampPath, await computeStamp({ 'public/favicon.svg': svg }))
 
 console.log(
     'Wrote public/apple-touch-icon.png, public/favicon.ico and scripts/favicons.sha256',
