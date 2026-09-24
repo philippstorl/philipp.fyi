@@ -101,6 +101,33 @@ test('a screenshot reused across grids gets one srcset, so phones fetch it once'
     expect(reusedCount).toBeGreaterThan(0)
 })
 
+test('full-width figures offer a 1080w candidate between 720w and 1440w', async ({
+    page,
+}) => {
+    // Regression (#396): with only 720/1440w, a ~950px phone need jumped to 1440w.
+    let fullWidthCount = 0
+    for (const { slug } of caseStudies) {
+        await page.goto(`/work/${slug}/`)
+        const srcsets = await page
+            .locator(
+                '.prose figure img[data-astro-image="full-width"][sizes="(min-width: 768px) 720px, calc(100vw - 48px)"]',
+            )
+            .evaluateAll((images) =>
+                images.map((img) => img.getAttribute('srcset') ?? ''),
+            )
+        for (const srcset of srcsets) {
+            const widths = [...srcset.matchAll(/ (\d+)w/g)].map((m) =>
+                Number(m[1]),
+            )
+            // Astro drops candidates wider than the source, so a narrow source can't have one.
+            if (Math.max(...widths) <= 1080) continue
+            fullWidthCount++
+            expect(widths, slug).toContain(1080)
+        }
+    }
+    expect(fullWidthCount).toBeGreaterThan(0)
+})
+
 test('work cards link to correct case study URLs', async ({ page }) => {
     await page.goto('/')
     const firstCard = page.locator('#work article').first()

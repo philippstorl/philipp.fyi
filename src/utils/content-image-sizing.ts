@@ -150,7 +150,7 @@ const SHARED_GRID_CANDIDATES = [
 
 function gridFigureSizing(
     tiers: ResponsiveGridTiers,
-    sharedCandidates: number[],
+    extraCandidates: number[],
 ): FigureSizing {
     const { realTiers, fallback } = splitTiers(tiers)
     const sizeTiers: SizeTier[] = realTiers.flatMap((tier) => {
@@ -167,7 +167,7 @@ function gridFigureSizing(
     })
     const widths = mergeCloseWidths([
         ...responsiveCandidates(tiers),
-        ...sharedCandidates,
+        ...extraCandidates,
     ])
     return {
         // full-width CSS ignores `width`; it's only the base every srcset height rounds
@@ -192,7 +192,8 @@ export function responsiveGridFigureSizing(
 export function fullWidthFigureSizing(): FigureSizing {
     return gridFigureSizing(
         [{ minWidth: CONTAINER_CAP_BREAKPOINT, columns: 1 }, { columns: 1 }],
-        [],
+        // A 1.5x rung (1080): 360-412px phones at DPR 2.6-3 need ~936-956px, not 2x (#396).
+        [Math.round(columnWidth(1) * 1.5)],
     )
 }
 
