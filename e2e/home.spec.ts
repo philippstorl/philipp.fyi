@@ -62,13 +62,20 @@ test.describe('Home page', () => {
         // WCAG 1.4.10 reflow width; the name is a quote's attribution.
         await page.setViewportSize({ width: 320, height: 800 })
         await page.goto('/')
-        const clipped = await page
-            .locator('#recommendations article h3')
-            .evaluateAll((headings) =>
-                headings
-                    .filter((h) => h.scrollWidth > h.clientWidth)
-                    .map((h) => h.textContent?.trim()),
-            )
+        // Mobile emulation widens the layout viewport if anything overflows.
+        expect(
+            await page.evaluate(() => document.documentElement.clientWidth),
+        ).toBe(320)
+        await page.evaluate(async () => {
+            await document.fonts.ready
+        })
+        const names = page.locator('#recommendations article h3')
+        await expect(names).toHaveCount(6)
+        const clipped = await names.evaluateAll((headings) =>
+            headings
+                .filter((h) => h.scrollWidth > h.clientWidth)
+                .map((h) => h.textContent?.trim()),
+        )
         expect(clipped).toEqual([])
     })
 
