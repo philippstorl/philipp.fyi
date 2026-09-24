@@ -19,9 +19,9 @@ const pathname = Astro.url.pathname
     class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm"
     transition:persist
 >
-    {/* gap keeps the logo's focus ring off the theme toggle; px-3 buys that room back at 320px so the logo doesn't wrap. */}
+    {/* gap keeps the logo's focus ring off the theme toggle; the narrower padding below 360px keeps the logo on one line. */}
     <div
-        class="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-4 sm:px-6"
+        class="mx-auto flex max-w-6xl items-center justify-between gap-2 px-2.5 py-4 min-[360px]:px-4 sm:px-6"
     >
         <a
             href="/"

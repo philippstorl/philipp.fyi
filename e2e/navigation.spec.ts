@@ -445,6 +445,8 @@ test.describe('Navigation', () => {
     }) => {
         await page.setViewportSize({ width: 320, height: 640 })
         await page.goto('/')
+        // Fallback-font metrics would wrap the logo regardless of the layout.
+        await page.evaluate(() => document.fonts.ready)
         const logo = page.getByRole('link', { name: 'Philipp Storl, home' })
         await page.keyboard.press('Tab')
         await page.keyboard.press('Tab')
@@ -461,6 +463,7 @@ test.describe('Navigation', () => {
             const style = getComputedStyle(el)
             return {
                 logoRight: rect.right,
+                logoWidth: rect.width,
                 logoHeight: rect.height,
                 lineHeight: parseFloat(style.lineHeight),
                 ringRight:
@@ -472,7 +475,10 @@ test.describe('Navigation', () => {
         })
         expect(toggle.x - layout.logoRight).toBeGreaterThanOrEqual(8)
         expect(layout.ringRight).toBeLessThan(toggle.x)
-        expect(layout.logoHeight).toBeLessThanOrEqual(layout.lineHeight)
+        expect(
+            layout.logoHeight,
+            `logo wrapped (width ${layout.logoWidth}px, toggle at ${toggle.x}px)`,
+        ).toBeLessThanOrEqual(layout.lineHeight)
         expect(layout.scrollWidth).toBeLessThanOrEqual(320)
     })
 
