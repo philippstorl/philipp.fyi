@@ -195,6 +195,12 @@ const pathname = Astro.url.pathname
         link.addEventListener('click', () => closeMenu())
     })
 
+    // A swap not started from a nav link (e.g. browser Back) would leave the
+    // persisted menu open over fresh, non-inert background nodes.
+    document.addEventListener('astro:after-swap', () => {
+        if (isMenuOpen()) closeMenu()
+    })
+
     // APG disclosure pattern: Escape closes and refocuses the toggle;
     // an outside click closes without stealing focus.
     document.addEventListener('keydown', (event) => {

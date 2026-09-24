@@ -299,6 +299,30 @@ test.describe('Navigation', () => {
         await expect(page.locator('#site-footer')).not.toHaveAttribute('inert')
     })
 
+    test('mobile nav closes when a client-side navigation swaps the page underneath it', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+
+        await mobileToggle.click()
+        await page.locator('nav a[href="/about/"]:visible').click()
+        await expect(page).toHaveURL('/about/')
+
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+        await page.goBack()
+        await expect(page).toHaveURL('/')
+
+        await expect(page.locator('#mobile-nav')).toBeHidden()
+        await expect(page.locator('#main-content')).not.toHaveAttribute('inert')
+        await expect(page.locator('#skip-link')).not.toHaveAttribute('inert')
+    })
+
     test('skip link moves keyboard focus to main content', async ({ page }) => {
         await page.goto('/')
         await page.keyboard.press('Tab')
@@ -322,11 +346,16 @@ test.describe('Navigation', () => {
         await mobileToggle.click()
         await expect(skipLink).toHaveAttribute('inert', '')
 
-        // Shift+Tab past the logo used to land on the skip link, whose
-        // fragment jump then failed against the still-inert <main>.
+        // Its target is inert while open, so activating it would strand focus on <body>.
         await logo.focus()
         await page.keyboard.press('Shift+Tab')
-        await expect(skipLink).not.toBeFocused()
+        const escapedToBackground = await page.evaluate(
+            () =>
+                !!document.activeElement?.closest(
+                    '#skip-link, #main-content, #site-footer',
+                ),
+        )
+        expect(escapedToBackground).toBe(false)
 
         await page.keyboard.press('Escape')
         await expect(skipLink).not.toHaveAttribute('inert')
