@@ -178,3 +178,4 @@ This repo follows [Conventional Commits](https://www.conventionalcommits.org/). 
 - Don't add a `tailwind.config.js` — config is CSS-first in `global.css`.
 - Don't edit `dist/`, `.astro/`, or `.netlify/` — generated/local, gitignored.
 - Don't loosen security headers or the CSP in `netlify.toml` without being explicitly asked.
+- Don't enable a Netlify build plugin through `netlify.toml`'s `[[plugins]]` alone: Netlify then `npm install`s it on every build with no lockfile, so Dependabot and `check:audit` never see its tree. `@netlify/plugin-lighthouse` was removed for this (issue #415), after it had also silently reported an `undefined` score on every deploy. Pin any build plugin as a devDependency.
