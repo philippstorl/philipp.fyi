@@ -33,8 +33,8 @@ test.describe('Privacy policy page', () => {
             await expect(link).toHaveCSS('text-decoration-line', 'underline')
         }
 
-        // Hovering surrounding prose must not strip every link's underline.
-        await page.locator('article p').first().hover()
+        // Hovering elsewhere in the article must not strip every link's underline.
+        await page.locator('article h2').first().hover()
         await expect(links.first()).toHaveCSS(
             'text-decoration-line',
             'underline',

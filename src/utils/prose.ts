@@ -4,4 +4,5 @@ export const PROSE_BLOCKQUOTE_CLASSES =
     'prose-blockquote:border-accent prose-blockquote:text-muted'
 
 // Full prose-wrapper treatment for CaseStudyLayout.astro/blog/[slug].astro/privacy.astro long-form bodies.
+// Links underlined at rest (WCAG 1.4.1). Keep `prose-a:hover:`, not `hover:prose-a:`: the latter fires on hovering the whole article.
 export const PROSE_CONTENT_CLASSES = `prose max-w-none prose-neutral dark:prose-invert prose-headings:font-display prose-headings:font-bold prose-headings:tracking-tight prose-a:text-accent prose-a:underline prose-a:underline-offset-2 prose-a:hover:no-underline ${PROSE_BLOCKQUOTE_CLASSES} prose-code:font-mono prose-code:text-sm`
