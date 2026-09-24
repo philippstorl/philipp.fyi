@@ -2,7 +2,7 @@
 
 A dated, append-only log of what was discovered while working on this repo — the history and reasoning that neither of the other two mechanisms keeps. Standing rules and conventions belong in [CLAUDE.md](CLAUDE.md) (kept current there via the `doc-sync` skill); feedback about working style belongs in Claude's own cross-session memory. This file is for context that doesn't rise to either: a decision and why, a dead end, an open question, or domain knowledge about the tooling itself rather than the site.
 
-Updated automatically at the end of each session; read automatically at the start of the next one.
+Updated automatically at the end of each session. A new session only gets a bounded digest of it (see [CLAUDE.md](CLAUDE.md)'s Learnings section), so read this file directly for older entries.
 
 ## Open questions
 
