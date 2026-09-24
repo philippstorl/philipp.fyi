@@ -93,9 +93,10 @@ const ogFile = 'src/utils/og-image.ts'
 const ogSource = await read(ogFile)
 const ogBlock = ogSource.match(/const colors = \{([\s\S]*?)^\}/m)
 // Any `key: value` line, so an unexpected key or value shape fails loudly.
+// Trailing `//` and `/* */` comments are dropped from the value.
 const ogEntries = [
     ...(ogBlock?.[1] ?? '').matchAll(
-        /^[ \t]*(['"]?)([\w-]+)\1[ \t]*:[ \t]*(.*?),?[ \t]*$/gm,
+        /^[ \t]*(['"]?)([\w-]+)\1[ \t]*:[ \t]*(.*?)[ \t]*,?(?:[ \t]*(?:\/\/.*|\/\*.*?\*\/))*[ \t]*$/gm,
     ),
 ]
 if (ogEntries.length === 0) {
