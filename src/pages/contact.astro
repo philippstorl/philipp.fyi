@@ -8,6 +8,7 @@ import SocialIcon from '@/components/ui/SocialIcon.astro'
 import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
 import ContactForm from '@/components/ui/ContactForm'
 import { hero, type HeroLink } from '@/data/hero'
+import { staticPageMeta } from '@/data/og-pages'
 
 // Keyed by icon so TS forces an update if hero.links gains a third entry.
 const contactLinkLabels: Record<HeroLink['icon'], string> = {
@@ -17,9 +18,8 @@ const contactLinkLabels: Record<HeroLink['icon'], string> = {
 ---
 
 <BaseLayout
-    title="Contact"
+    {...staticPageMeta('contact')}
     description="Get in touch with Philipp Storl, available for remote, full-stack web development work worldwide."
-    ogImage="/og/contact.png"
 >
     <Header />
     <Main>

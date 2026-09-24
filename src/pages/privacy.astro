@@ -5,13 +5,13 @@ import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
+import { staticPageMeta } from '@/data/og-pages'
 import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
 ---
 
 <BaseLayout
-    title="Privacy Policy"
+    {...staticPageMeta('privacy')}
     description="What personal data philipp.fyi collects, why it's processed, and what rights you have under the GDPR."
-    ogImage="/og/privacy.png"
     robots="noindex"
 >
     <Header />

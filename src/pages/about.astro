@@ -8,13 +8,10 @@ import PageHeader from '@/components/ui/PageHeader.astro'
 import { about } from '@/data/about'
 import { stack } from '@/data/stack'
 import { getDefaultDescription } from '@/data/site'
+import { staticPageMeta } from '@/data/og-pages'
 ---
 
-<BaseLayout
-    title="About"
-    description={getDefaultDescription()}
-    ogImage="/og/about.png"
->
+<BaseLayout {...staticPageMeta('about')} description={getDefaultDescription()}>
     <Header />
     <Main>
         <PageHeader eyebrow="Who I am" title="About">
