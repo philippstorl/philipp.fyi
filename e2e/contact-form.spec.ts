@@ -35,6 +35,39 @@ test.describe('Contact form', () => {
         await expect(page.locator('#contact-name')).toBeFocused()
     })
 
+    test('the error-focused field is scrolled clear of the sticky header (issue #333)', async ({
+        page,
+    }) => {
+        await page.setViewportSize({ width: 393, height: 700 })
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        await gotoAndWaitForContactFormHydration(page)
+
+        // Name input partly visible but under the header. Plain focus() only
+        // fails here in Firefox/WebKit, which CI's Chromium projects don't run.
+        await page.evaluate(() => {
+            const input = document.getElementById('contact-name')
+            if (input)
+                window.scrollBy(0, input.getBoundingClientRect().top + 14)
+        })
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await expect(page.locator('#contact-name')).toBeFocused()
+
+        const headerBottom = await page
+            .locator('#site-header')
+            .evaluate((el) => el.getBoundingClientRect().bottom)
+        await expect
+            .poll(() =>
+                page
+                    .locator('#contact-name')
+                    .evaluate((el) => el.getBoundingClientRect().top),
+            )
+            .toBeGreaterThanOrEqual(headerBottom)
+        const errorBottom = await page
+            .locator('#contact-name-error')
+            .evaluate((el) => el.getBoundingClientRect().bottom)
+        expect(errorBottom).toBeLessThanOrEqual(700)
+    })
+
     test('multi-field validation failure fires one summary alert, not three', async ({
         page,
     }) => {
