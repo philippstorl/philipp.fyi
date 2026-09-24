@@ -10,6 +10,11 @@ updates:
       open-pull-requests-limit: 5
       labels:
           - "dependencies"
+      # Pinned so Dependabot stops inferring the prefix from recent history (issue #419).
+      commit-message:
+          prefix: "chore"
+          prefix-development: "chore"
+          include: "scope"
       groups:
           minor-and-patch:
               update-types:
@@ -25,6 +30,10 @@ updates:
       open-pull-requests-limit: 5
       labels:
           - "dependencies"
+      # Same pin as npm above.
+      commit-message:
+          prefix: "chore"
+          include: "scope"
       groups:
           minor-and-patch:
               update-types:

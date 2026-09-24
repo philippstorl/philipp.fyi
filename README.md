@@ -82,7 +82,7 @@ Nine jobs run in parallel, all on Node 26:
 | `functions`          | `npm run test:functions`: unit tests for `netlify/functions/` (signature verification, CSP-report and deploy-notification handlers, Slack escaping), plain Node with no browser or dev server                                                                                                                                                 |
 | `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations, or nodes axe could not check, not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md |
 
-Dependabot (`.github/dependabot.yml`) opens npm dependency and GitHub Actions PRs weekly, capped at 5 open at a time per ecosystem, labeled `dependencies`. Every Actions step in `ci.yml` is pinned to a commit SHA with a version comment (see CLAUDE.md) — Dependabot bumps both together.
+Dependabot (`.github/dependabot.yml`) opens npm dependency and GitHub Actions PRs weekly, capped at 5 open at a time per ecosystem, labeled `dependencies` and titled `chore(deps)`/`chore(deps-dev)`. Every Actions step in `ci.yml` is pinned to a commit SHA with a version comment (see CLAUDE.md) — Dependabot bumps both together.
 
 ## Deployment
 
