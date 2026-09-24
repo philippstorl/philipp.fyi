@@ -254,13 +254,13 @@ test.describe('Navigation', () => {
         await expect(page.locator('#main-content')).toHaveAttribute('inert', '')
         await expect(page.locator('#site-footer')).toHaveAttribute('inert', '')
 
-        // Cycling back to the skip link is fine; landing in the inert regions isn't.
         for (let i = 0; i < 8; i++) {
             await page.keyboard.press('Tab')
             const escapedToBackground = await page.evaluate(() => {
                 const el = document.activeElement
                 if (!el) return false
                 return (
+                    !!el.closest('#skip-link') ||
                     !!el.closest('#main-content') ||
                     !!el.closest('#site-footer')
                 )
@@ -299,10 +299,69 @@ test.describe('Navigation', () => {
         await expect(page.locator('#site-footer')).not.toHaveAttribute('inert')
     })
 
+    test('mobile nav closes when a client-side navigation swaps the page underneath it', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+
+        await mobileToggle.click()
+        await page.locator('nav a[href="/about/"]:visible').click()
+        await expect(page).toHaveURL('/about/')
+
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+        await page.goBack()
+        await expect(page).toHaveURL('/')
+
+        await expect(page.locator('#mobile-nav')).toBeHidden()
+        await expect(page.locator('#main-content')).not.toHaveAttribute('inert')
+        await expect(page.locator('#skip-link')).not.toHaveAttribute('inert')
+    })
+
     test('skip link moves keyboard focus to main content', async ({ page }) => {
         await page.goto('/')
         await page.keyboard.press('Tab')
         await expect(page.getByText('Skip to main content')).toBeFocused()
+        await page.keyboard.press('Enter')
+        await expect(page.locator('#main-content')).toBeFocused()
+    })
+
+    test('skip link is unreachable while the mobile nav is open and works again once closed (issue #337)', async ({
+        page,
+    }) => {
+        await page.goto('/about/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+        const skipLink = page.locator('#skip-link')
+        const logo = page.getByRole('link', { name: 'Philipp Storl, home' })
+
+        await mobileToggle.click()
+        await expect(skipLink).toHaveAttribute('inert', '')
+
+        // Its target is inert while open, so activating it would strand focus on <body>.
+        await logo.focus()
+        await page.keyboard.press('Shift+Tab')
+        const escapedToBackground = await page.evaluate(
+            () =>
+                !!document.activeElement?.closest(
+                    '#skip-link, #main-content, #site-footer',
+                ),
+        )
+        expect(escapedToBackground).toBe(false)
+
+        await page.keyboard.press('Escape')
+        await expect(skipLink).not.toHaveAttribute('inert')
+        await logo.focus()
+        await page.keyboard.press('Shift+Tab')
+        await expect(skipLink).toBeFocused()
         await page.keyboard.press('Enter')
         await expect(page.locator('#main-content')).toBeFocused()
     })
