@@ -14,16 +14,21 @@ concurrency:
 permissions:
     contents: read
 
+# Every checkout sets persist-credentials: false: no job pushes, so the token
+# shouldn't sit in .git/config where dependency install scripts can read it.
 jobs:
     repository-hygiene:
         name: Repository hygiene
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - run: |
                   # .npmrc is deliberately not in this list: the repo commits one with
                   # engine-strict=true (see CLAUDE.md's Node 26 bullet) to enforce the
-                  # `engines` field, rather than leaving it advisory-only. Everything
+                  # `engines` field, rather than leaving it advisory-only, and
+                  # strict-allow-scripts=true to gate install scripts. Everything
                   # else here stays forbidden as local/generated config that shouldn't
                   # be tracked.
                   forbidden=$(git ls-files | grep -E '^(node_modules|\.astro|dist|playwright-report|test-results|contrast-results|\.vscode|\.idea|\.env$|\.env\.|\.yarnrc)' || true)
@@ -38,6 +43,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: ".nvmrc"
@@ -50,6 +57,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: ".nvmrc"
@@ -62,6 +71,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: ".nvmrc"
@@ -74,6 +85,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: ".nvmrc"
@@ -93,6 +106,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: ".nvmrc"
@@ -114,6 +129,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: ".nvmrc"
@@ -142,6 +159,8 @@ jobs:
             pull-requests: write
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
               with:
                   node-version-file: ".nvmrc"

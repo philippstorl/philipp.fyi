@@ -74,5 +74,12 @@
         "eslint-plugin-jsx-a11y": {
             "eslint": "$eslint"
         }
+    },
+    "allowScripts": {
+        "esbuild": true,
+        "netlify-cli": true,
+        "fsevents": false,
+        "sharp": false,
+        "unix-dgram": false
     }
 }
