@@ -6,6 +6,9 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const root = path.resolve(__dirname, '..')
 const allowedExtensions = new Set(['.astro', '.ts', '.tsx', '.js'])
+// Markdown is only scanned under src/ (site content); repo docs quote bad examples.
+const contentExtensions = new Set(['.md', '.mdx'])
+const contentRoot = path.join(root, 'src') + path.sep
 const ignoreDirs = new Set([
     'node_modules',
     'dist',
@@ -49,6 +52,9 @@ async function deriveRoutes() {
     return { staticRoutes, dynamicPrefixes }
 }
 
+// JSX/HTML attribute (`href="..."`, `href={...}`) or object property (`href: '...'`).
+const hrefPrefix = String.raw`(?:href\s*=\s*\{?|\bhref\s*:)\s*`
+
 function buildChecks({ staticRoutes, dynamicPrefixes }) {
     const checks = []
 
@@ -57,9 +63,13 @@ function buildChecks({ staticRoutes, dynamicPrefixes }) {
         checks.push({
             name: `missing trailing slash for /${route}`,
             regex: new RegExp(
-                `href\\s*=\\s*\\{?\\s*['"]\\/${escaped}(?=['"\\s\\}])`,
+                `${hrefPrefix}['"\`]\\/${escaped}(?=['"\`\\s\\}#?])`,
                 'g',
             ),
+        })
+        checks.push({
+            name: `missing trailing slash in Markdown link for /${route}`,
+            regex: new RegExp(`\\]\\(\\s*\\/${escaped}(?=[)#?\\s])`, 'g'),
         })
     }
 
@@ -68,14 +78,21 @@ function buildChecks({ staticRoutes, dynamicPrefixes }) {
         checks.push({
             name: `missing trailing slash for /${prefix} route`,
             regex: new RegExp(
-                `href\\s*=\\s*\\{?\\s*['"]\\/${escaped}\\/[^'"\\s]+[^\\/\\s'"\\}](['"]\\s*\\}?)`,
+                `${hrefPrefix}['"]\\/${escaped}\\/[^'"\\s]+[^\\/\\s'"\\}](['"]\\s*\\}?)`,
                 'g',
             ),
         })
         checks.push({
             name: `missing trailing slash in template-literal href for /${prefix} route`,
             regex: new RegExp(
-                `(?:href\\s*=\\s*\\{\\s*|(?:const|let)\\s+\\w+\\s*=\\s*)\`\\/${escaped}\\/[^\`#]*\\$\\{[^}]*\\}[^\`\\/]*\``,
+                `(?:href\\s*=\\s*\\{\\s*|\\bhref\\s*:\\s*|(?:const|let)\\s+\\w+\\s*=\\s*)\`\\/${escaped}\\/[^\`#]*\\$\\{[^}]*\\}[^\`\\/]*\``,
+                'g',
+            ),
+        })
+        checks.push({
+            name: `missing trailing slash in Markdown link for /${prefix} route`,
+            regex: new RegExp(
+                `\\]\\(\\s*\\/${escaped}\\/[^)\\s#?]*[^\\/)\\s#?](?=[)#?\\s])`,
                 'g',
             ),
         })
@@ -115,8 +132,14 @@ async function walk(dir) {
         const resolved = path.join(dir, entry.name)
         if (entry.isDirectory()) {
             files.push(...(await walk(resolved)))
-        } else if (allowedExtensions.has(path.extname(entry.name))) {
-            files.push(resolved)
+        } else {
+            const ext = path.extname(entry.name)
+            if (
+                allowedExtensions.has(ext) ||
+                (contentExtensions.has(ext) && resolved.startsWith(contentRoot))
+            ) {
+                files.push(resolved)
+            }
         }
     }
 
