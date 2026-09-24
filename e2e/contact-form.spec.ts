@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Page, type Request } from '@playwright/test'
 
 // A pre-hydration click falls through to a real form POST/reload, wiping
 // test state -- wait for the submit button's React fiber prop first.
@@ -301,11 +301,12 @@ test.describe('Contact form', () => {
         page,
     }) => {
         await gotoAndWaitForContactFormHydration(page)
-        await page.route('/', (route) =>
-            route.request().method() === 'POST'
-                ? route.fulfill({ status: 200, body: 'ok' })
-                : route.continue(),
-        )
+        let postRequest: Request | undefined
+        await page.route('/', (route) => {
+            if (route.request().method() !== 'POST') return route.continue()
+            postRequest = route.request()
+            return route.fulfill({ status: 200, body: 'ok' })
+        })
 
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-email').fill('test@example.com')
@@ -317,5 +318,25 @@ test.describe('Contact form', () => {
         })
         await expect(confirmation).toBeVisible()
         await expect(confirmation).toBeFocused()
+
+        // Netlify matches an AJAX submission to its form only via `form-name`,
+        // and only keeps fields the hidden static form registered at deploy.
+        expect(postRequest?.headers()['content-type']).toBe(
+            'application/x-www-form-urlencoded',
+        )
+        const body = new URLSearchParams(postRequest?.postData() ?? '')
+        expect(body.get('form-name')).toBe('contact')
+        expect(body.get('bot-field')).toBe('')
+        expect(body.get('name')).toBe('Test User')
+        expect(body.get('email')).toBe('test@example.com')
+        expect(body.get('message')).toBe('Hello there')
+        const registeredFields = await page
+            .locator('form[name="contact"][hidden] [name]')
+            .evaluateAll((els) => els.map((el) => el.getAttribute('name')))
+        expect(
+            [...body.keys()].filter(
+                (key) => key !== 'form-name' && key !== 'bot-field',
+            ),
+        ).toEqual(registeredFields)
     })
 })
