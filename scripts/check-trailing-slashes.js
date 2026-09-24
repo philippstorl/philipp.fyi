@@ -14,6 +14,9 @@ const ignoreDirs = new Set([
     'dist',
     '.astro',
     '.git',
+    '.netlify',
+    // Claude Code worktrees (full repo copies) live under .claude/worktrees/.
+    '.claude',
     'playwright-report',
     'test-results',
     '.vscode',
@@ -78,14 +81,14 @@ function buildChecks({ staticRoutes, dynamicPrefixes }) {
         checks.push({
             name: `missing trailing slash for /${prefix} route`,
             regex: new RegExp(
-                `${hrefPrefix}['"]\\/${escaped}\\/[^'"\\s]+[^\\/\\s'"\\}](['"]\\s*\\}?)`,
+                `${hrefPrefix}['"\`]\\/${escaped}\\/[^'"\`\\s#?]*[^\\/\\s'"\`\\}#?](?=['"\`#?])`,
                 'g',
             ),
         })
         checks.push({
             name: `missing trailing slash in template-literal href for /${prefix} route`,
             regex: new RegExp(
-                `(?:href\\s*=\\s*\\{\\s*|\\bhref\\s*:\\s*|(?:const|let)\\s+\\w+\\s*=\\s*)\`\\/${escaped}\\/[^\`#]*\\$\\{[^}]*\\}[^\`\\/]*\``,
+                `(?:href\\s*=\\s*\\{\\s*|\\bhref\\s*:\\s*|(?:const|let)\\s+\\w+\\s*=\\s*)\`\\/${escaped}\\/[^\`#?]*\\$\\{[^}]*\\}[^\`\\/]*\``,
                 'g',
             ),
         })
