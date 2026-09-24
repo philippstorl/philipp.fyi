@@ -42,8 +42,8 @@ test.describe('Contact form', () => {
         await page.emulateMedia({ reducedMotion: 'reduce' })
         await gotoAndWaitForContactFormHydration(page)
 
-        // Name input partly visible but under the header: focus() alone
-        // doesn't re-scroll it in Firefox/WebKit.
+        // Name input partly visible but under the header. Plain focus() only
+        // fails here in Firefox/WebKit, which CI's Chromium projects don't run.
         await page.evaluate(() => {
             const input = document.getElementById('contact-name')
             if (input)

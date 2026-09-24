@@ -331,7 +331,8 @@ test.describe('Navigation', () => {
         await page.locator('#site-footer a').last().focus()
 
         const obscured: string[] = []
-        for (let i = 0; i < 80; i++) {
+        let reachedHeader = false
+        for (let i = 0; i < 200 && !reachedHeader; i++) {
             await page.keyboard.press('Shift+Tab')
             const result = await page.evaluate(() => {
                 const el = document.activeElement
@@ -339,13 +340,18 @@ test.describe('Navigation', () => {
                 if (!el || !header || el === document.body) return 'done'
                 if (header.contains(el)) return 'done'
                 const { bottom } = el.getBoundingClientRect()
-                return bottom <= header.getBoundingClientRect().bottom
-                    ? (el.textContent?.trim().slice(0, 40) ?? el.tagName)
-                    : null
+                if (bottom > header.getBoundingClientRect().bottom) return null
+                return (
+                    el.textContent?.trim().slice(0, 40) ||
+                    el.getAttribute('aria-label') ||
+                    el.tagName
+                )
             })
-            if (result === 'done') break
-            if (result) obscured.push(result)
+            if (result === 'done') reachedHeader = true
+            else if (result !== null) obscured.push(result)
         }
+        // Fails loudly if the walk never got back to the top of the page.
+        expect(reachedHeader).toBe(true)
         expect(obscured).toEqual([])
     })
 
