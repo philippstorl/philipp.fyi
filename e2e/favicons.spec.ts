@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+const PNG_SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10])
+
 test.describe('favicons', () => {
     test('links an apple-touch-icon in the head', async ({ page }) => {
         await page.goto('/')
@@ -15,7 +17,7 @@ test.describe('favicons', () => {
 
         // IHDR width/height sit at fixed offsets after the 8-byte PNG signature.
         const body = await response.body()
-        expect(body.subarray(1, 4).toString('ascii')).toBe('PNG')
+        expect(body.subarray(0, 8).equals(PNG_SIGNATURE)).toBe(true)
         expect(body.readUInt32BE(16)).toBe(180)
         expect(body.readUInt32BE(20)).toBe(180)
     })
@@ -30,6 +32,14 @@ test.describe('favicons', () => {
         const body = await response.body()
         expect(body.readUInt16LE(0)).toBe(0)
         expect(body.readUInt16LE(2)).toBe(1)
-        expect(body.readUInt16LE(4)).toBeGreaterThan(0)
+        const count = body.readUInt16LE(4)
+        expect(count).toBeGreaterThan(0)
+
+        // Each 16-byte directory entry's offset must point at an embedded PNG.
+        for (let index = 0; index < count; index++) {
+            const offset = body.readUInt32LE(6 + 16 * index + 12)
+            const png = body.subarray(offset, offset + 8)
+            expect(png.equals(PNG_SIGNATURE)).toBe(true)
+        }
     })
 })

@@ -3,8 +3,12 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import sharp from 'sharp'
 
-// Rasterizes public/favicon.svg into the PNG/ICO fallbacks so they can't drift
-// from it. Text renders with this machine's fonts: run it on macOS (Helvetica Neue).
+// Rasterizes public/favicon.svg into the PNG/ICO fallbacks; rerun after editing it.
+// librsvg uses this machine's fonts, and only macOS has the SVG's Helvetica Neue.
+if (process.platform !== 'darwin') {
+    throw new Error('Run on macOS: other platforms lack Helvetica Neue')
+}
+
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const publicDir = path.join(root, 'public')
 const svg = await fs.readFile(path.join(publicDir, 'favicon.svg'))
