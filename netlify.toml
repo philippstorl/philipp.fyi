@@ -30,7 +30,8 @@
 
     [headers.values]
         # Enforce HTTPS for 1 year; instructs the browser to refuse
-        # plain HTTP before it even hits the server.
+        # plain HTTP before it even hits the server. Function responses
+        # skip these rules; keep netlify/functions/_shared/hsts.ts in sync.
         Strict-Transport-Security = "max-age=31536000; includeSubDomains"
 
         # Prevent clickjacking — this site should never be framed.

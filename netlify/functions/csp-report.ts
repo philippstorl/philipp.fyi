@@ -1,4 +1,5 @@
 import { getStore } from '@netlify/blobs'
+import { withHsts } from './_shared/hsts'
 import { postToSlack, truncateForSlack } from './_shared/slack'
 
 interface NormalizedViolation {
@@ -120,7 +121,7 @@ function summarize(
 }
 
 // Unauthenticated by design -- hit directly by browsers, not a signed webhook.
-export default async (
+const handler = async (
     req: Request,
     context: FunctionContext,
 ): Promise<Response> => {
@@ -213,3 +214,5 @@ export default async (
 
     return new Response(null, { status: 204 })
 }
+
+export default withHsts(handler)
