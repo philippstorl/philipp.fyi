@@ -153,12 +153,12 @@ const pathname = Astro.url.pathname
     const iconClose = document.getElementById('icon-close')
 
     // Looked up fresh each time -- unlike <header>, these aren't
-    // transition:persist'ed, so a soft nav swaps in new nodes.
-    function getMainContent() {
-        return document.getElementById('main-content')
-    }
-    function getSiteFooter() {
-        return document.getElementById('site-footer')
+    // transition:persist'ed, so a soft nav swaps in new nodes. Skip link
+    // too: its #main-content target is inert while the menu is open.
+    function getBackgroundRegions() {
+        return ['skip-link', 'main-content', 'site-footer']
+            .map((id) => document.getElementById(id))
+            .filter((el) => el !== null)
     }
 
     function openMenu() {
@@ -168,8 +168,7 @@ const pathname = Astro.url.pathname
         iconMenu?.classList.add('hidden')
         iconClose?.classList.remove('hidden')
         // Keep Tab from reaching background content while the overlay is open.
-        getMainContent()?.setAttribute('inert', '')
-        getSiteFooter()?.setAttribute('inert', '')
+        getBackgroundRegions().forEach((el) => el.setAttribute('inert', ''))
     }
 
     function closeMenu({ focusToggle = false } = {}) {
@@ -178,8 +177,7 @@ const pathname = Astro.url.pathname
         toggle?.setAttribute('aria-expanded', 'false')
         iconMenu?.classList.remove('hidden')
         iconClose?.classList.add('hidden')
-        getMainContent()?.removeAttribute('inert')
-        getSiteFooter()?.removeAttribute('inert')
+        getBackgroundRegions().forEach((el) => el.removeAttribute('inert'))
         if (focusToggle) toggle?.focus()
     }
 
