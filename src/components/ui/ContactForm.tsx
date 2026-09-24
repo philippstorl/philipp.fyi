@@ -55,7 +55,6 @@ function validate(data: FormData): FieldErrors {
 }
 
 export default function ContactForm() {
-    const formRef = useRef<HTMLFormElement>(null)
     const nameInputRef = useRef<HTMLInputElement>(null)
     const emailInputRef = useRef<HTMLInputElement>(null)
     const messageInputRef = useRef<HTMLTextAreaElement>(null)
@@ -107,6 +106,8 @@ export default function ContactForm() {
             focusOnNextErrorRef.current = true
             setErrors(fieldErrors)
             setSubmitAttempt((n) => n + 1)
+            // Drop a previous send's error banner so it can't sit beside these.
+            setStatus('idle')
             return
         }
 
@@ -171,7 +172,6 @@ export default function ContactForm() {
 
     return (
         <form
-            ref={formRef}
             onSubmit={handleSubmit}
             name="contact"
             method="POST"
