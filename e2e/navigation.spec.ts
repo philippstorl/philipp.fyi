@@ -75,14 +75,14 @@ test.describe('Navigation', () => {
         )
         await expect(
             desktopNav.locator('a[href="/recommendations/"]'),
-        ).not.toHaveAttribute('aria-current', 'page')
+        ).not.toHaveAttribute('aria-current')
         await expect(mobileNav.locator('a[href="/about/"]')).toHaveAttribute(
             'aria-current',
             'page',
         )
         await expect(
             mobileNav.locator('a[href="/recommendations/"]'),
-        ).not.toHaveAttribute('aria-current', 'page')
+        ).not.toHaveAttribute('aria-current')
     })
 
     test('Work nav link is aria-current="true" inside the section, "page" on /work/ (issue #341)', async ({
@@ -93,7 +93,17 @@ test.describe('Navigation', () => {
         )
         const mobileWork = page.locator('#mobile-nav a[href="/work/"]')
 
-        // Server render on a hard load of a case study.
+        // Raw HTML, since updateActiveNav() rewrites the attribute on load.
+        const html = await (
+            await page.request.get('/work/brand-evolution/')
+        ).text()
+        const serverWorkLinks =
+            html.match(/<a href="\/work\/"[^>]*data-nav-link[^>]*>/g) ?? []
+        expect(serverWorkLinks).toHaveLength(2)
+        for (const tag of serverWorkLinks) {
+            expect(tag).toContain('aria-current="true"')
+        }
+
         await page.goto('/work/brand-evolution/')
         await expect(desktopWork).toHaveAttribute('aria-current', 'true')
         await expect(mobileWork).toHaveAttribute('aria-current', 'true')

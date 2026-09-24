@@ -112,7 +112,6 @@ const pathname = Astro.url.pathname
 <script>
     import {
         getNavLinkAriaCurrent,
-        isNavLinkActive,
         NAV_LINK_ACTIVE_CLASS,
         NAV_LINK_INACTIVE_CLASSES,
         NAV_LINK_UNDERLINE_ACTIVE_CLASS,
@@ -121,16 +120,16 @@ const pathname = Astro.url.pathname
     // Header is transition:persist'ed, so re-run on astro:page-load to
     // keep the active-link class in sync with the new URL.
     function setLinkActive(link: Element, pathname: string) {
-        const href = link.getAttribute('href')
-        const isActive = !!href && isNavLinkActive(pathname, href)
+        const ariaCurrent = getNavLinkAriaCurrent(
+            pathname,
+            link.getAttribute('href') ?? '',
+        )
+        const isActive = ariaCurrent !== undefined
         link.classList.toggle(NAV_LINK_ACTIVE_CLASS, isActive)
         NAV_LINK_INACTIVE_CLASSES.forEach((cls) =>
             link.classList.toggle(cls, !isActive),
         )
         link.classList.toggle(NAV_LINK_UNDERLINE_ACTIVE_CLASS, isActive)
-        const ariaCurrent = href
-            ? getNavLinkAriaCurrent(pathname, href)
-            : undefined
         if (ariaCurrent) {
             link.setAttribute('aria-current', ariaCurrent)
         } else {
