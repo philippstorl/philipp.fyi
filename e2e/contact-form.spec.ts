@@ -219,6 +219,37 @@ test.describe('Contact form', () => {
         ).toBeVisible()
     })
 
+    test('a new invalid submit clears a stale send-error banner', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+        await page.route('/', (route) =>
+            route.request().method() === 'POST'
+                ? route.fulfill({ status: 500, body: 'error' })
+                : route.continue(),
+        )
+
+        await page.locator('#contact-name').fill('Test User')
+        await page.locator('#contact-email').fill('test@example.com')
+        await page.locator('#contact-message').fill('Hello there')
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+        const sendError = page
+            .getByRole('alert')
+            .filter({ hasText: 'Something went wrong' })
+        await expect(sendError).toBeVisible()
+
+        await page.locator('#contact-email').fill('not-an-email')
+        await page.locator('form[name="contact"] button[type="submit"]').click()
+
+        await expect(page.locator('#contact-email-error')).toHaveText(
+            'Please enter a valid email address.',
+        )
+        await expect(sendError).toBeHidden()
+        await expect(page.getByRole('alert')).toHaveText(
+            '1 field needs attention.',
+        )
+    })
+
     test('a failed send keeps keyboard focus on the submit button', async ({
         page,
     }) => {
