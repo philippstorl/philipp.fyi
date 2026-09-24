@@ -23,6 +23,24 @@ test.describe('Privacy policy page', () => {
         await expect(links.first()).toBeVisible()
     })
 
+    test('prose links are underlined at rest, not only on hover', async ({
+        page,
+    }) => {
+        await page.goto('/privacy/')
+        const links = page.locator('article a')
+        expect(await links.count()).toBeGreaterThan(0)
+        for (const link of await links.all()) {
+            await expect(link).toHaveCSS('text-decoration-line', 'underline')
+        }
+
+        // Hovering elsewhere in the article must not strip every link's underline.
+        await page.locator('article h2').first().hover()
+        await expect(links.first()).toHaveCSS(
+            'text-decoration-line',
+            'underline',
+        )
+    })
+
     test('external links carry the correct href and a new-tab accessible-name suffix', async ({
         page,
     }) => {
