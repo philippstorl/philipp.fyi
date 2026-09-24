@@ -22,7 +22,7 @@ This site has three content collections, each with different ordering rules and 
 4. Update tests — the homepage renders **every** work entry (no preview slice), so both of these need to change:
     - `e2e/work.spec.ts` — add `{ slug, title }` to the `caseStudies` array so the new page gets its own render assertion.
     - `e2e/home.spec.ts` — the test named `shows all N work cards` asserts `toHaveCount(N)` where N is the current total. Bump it to match the new total.
-    - `e2e/meta-description-length.spec.ts` — add `{ reportedPath: '/work/<slug>/', gotoPath: '/work/<slug>/' }` to its `pages` array so the new case study's meta description length is guarded too, not just the ones that happened to be over length when that test was written.
+    - `scripts/contrast-pages.mjs` — add `{ reportedPath: '/work/<slug>/', gotoPath: '/work/<slug>/' }` to its `pages` array. That one list drives both `e2e/meta-description-length.spec.ts` (meta description length) and the contrast scan (`e2e/contrast.spec.ts`), so a single entry covers both.
 
 ## Responsive image sizing (case-study and future blog screenshots)
 
