@@ -31,14 +31,38 @@ function blobsStoreUrl(
         : undefined
 }
 
+// Pretty-print indentation grows with depth, so a ~9KB nested-array body
+// expands to ~40M chars. Real reports nest 3 levels deep.
+const MAX_PRETTY_PRINT_DEPTH = 8
+
+// Iterative, since a 50KB body can nest deeper than the call stack allows.
+function exceedsDepth(value: unknown, maxDepth: number): boolean {
+    const stack: Array<[unknown, number]> = [[value, 0]]
+    let entry: [unknown, number] | undefined
+    while ((entry = stack.pop())) {
+        const [node, depth] = entry
+        if (typeof node !== 'object' || node === null) continue
+        if (depth >= maxDepth) return true
+        for (const child of Object.values(node)) stack.push([child, depth + 1])
+    }
+    return false
+}
+
 function formatJsonBlock(record: unknown): string {
-    const json = JSON.stringify(record, null, 2)
+    const json = exceedsDepth(record, MAX_PRETTY_PRINT_DEPTH)
+        ? JSON.stringify(record)
+        : JSON.stringify(record, null, 2)
     const body = truncateForSlack(
         json,
         MAX_JSON_BLOCK_LENGTH,
         '\n... (truncated)',
     )
     return `\`\`\`\n${body}\n\`\`\``
+}
+
+// Runtime check, not a cast: a non-string (e.g. `{length: 1e8}`) is dropped.
+function asString(value: unknown): string | undefined {
+    return typeof value === 'string' ? value : undefined
 }
 
 // Handles both the legacy report-uri shape ({ "csp-report": {...} }) and
@@ -51,15 +75,17 @@ function normalize(raw: unknown): NormalizedViolation {
         record) as Record<string, unknown>
 
     return {
-        documentUri: (body['document-uri'] ??
-            body['documentURL'] ??
-            record['url']) as string | undefined,
-        blockedUri: (body['blocked-uri'] ?? body['blockedURL']) as
-            string | undefined,
-        violatedDirective: (body['violated-directive'] ??
-            body['effective-directive'] ??
-            body['effectiveDirective']) as string | undefined,
-        disposition: body['disposition'] as string | undefined,
+        documentUri:
+            asString(body['document-uri']) ??
+            asString(body['documentURL']) ??
+            asString(record['url']),
+        blockedUri:
+            asString(body['blocked-uri']) ?? asString(body['blockedURL']),
+        violatedDirective:
+            asString(body['violated-directive']) ??
+            asString(body['effective-directive']) ??
+            asString(body['effectiveDirective']),
+        disposition: asString(body['disposition']),
     }
 }
 

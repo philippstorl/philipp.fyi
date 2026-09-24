@@ -9,15 +9,23 @@ export function sanitizeSlackText(text: string): string {
 }
 
 // Truncates by code point, not `.slice()` (can split a surrogate pair), and
-// before sanitizing (can't cut mid-entity, e.g. inside `&amp;`).
+// before sanitizing (can't cut mid-entity, e.g. inside `&amp;`). Stops after
+// maxLength code points, so cost doesn't scale with an attacker-sized input.
 export function truncateForSlack(
     text: string,
     maxLength: number,
     marker: string,
 ): string {
-    const codePoints = Array.from(text)
-    if (codePoints.length <= maxLength) return sanitizeSlackText(text)
-    return sanitizeSlackText(codePoints.slice(0, maxLength).join('')) + marker
+    // UTF-16 length is never below the code-point count.
+    if (text.length <= maxLength) return sanitizeSlackText(text)
+    let truncated = ''
+    let count = 0
+    for (const char of text) {
+        if (count === maxLength) return sanitizeSlackText(truncated) + marker
+        truncated += char
+        count++
+    }
+    return sanitizeSlackText(text)
 }
 
 export async function postToSlack(
