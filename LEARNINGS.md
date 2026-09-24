@@ -7,9 +7,12 @@ Updated automatically at the end of each session; read automatically at the star
 ## Open questions
 
 - Whether `preflight/SKILL.md` should stop restating CLAUDE.md's command list verbatim (flagged by `self-review` on 2026-06-25) — redundant but arguably more robust against either file being edited in isolation; undecided.
-- Trailing slashes are only ever generated (`astro.config.mjs`'s `trailingSlash: 'always'`), never enforced server-side — noted as a possible future addition when trailing-slash generation was first added (PR #9, 2026-06-17) but never revisited. Both `/route` and `/route/` currently resolve; no `netlify.toml` redirect exists for this.
 
 ## Log
+
+### 2026-09-24
+
+- Issue #353: the "Open questions" bullet claiming trailing slashes are never enforced server-side (both `/route` and `/route/` resolve) was stale. Production 301s the slashless form: `curl -sI` on `/about`, `/work`, `/principles` and `/work/brand-evolution` each returned `HTTP/2 301` with `location:` the same path plus `/`. This is Netlify-side (likely its Pretty URLs setting, which lives outside version control), not repo config (`netlify.toml`'s only `[[redirects]]` rule is the `/404` catch-all). Removed the bullet. The 2026-07-21 entry below cites that question to justify `Header.astro`'s slashless-pathname fallback (now in `nav-active.ts`'s `isNavLinkActive()`); production doesn't reach that case, but the normalization is harmless and was left alone.
 
 ### 2026-09-23
 
