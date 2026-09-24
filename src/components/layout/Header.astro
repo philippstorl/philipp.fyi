@@ -19,8 +19,9 @@ const pathname = Astro.url.pathname
     class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm"
     transition:persist
 >
+    {/* gap keeps the logo's focus ring off the theme toggle; px-3 buys that room back at 320px so the logo doesn't wrap. */}
     <div
-        class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6"
+        class="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-4 sm:px-6"
     >
         <a
             href="/"
@@ -91,10 +92,11 @@ const pathname = Astro.url.pathname
         </div>
     </div>
 
+    {/* Scrolls itself, since the page behind is scroll-locked; 100% is the header's padding box, same basis as top-full. */}
     <nav
         id="mobile-nav"
         aria-label="Mobile navigation"
-        class="animate-mobile-nav-in absolute inset-x-0 top-full hidden border-t border-b border-border bg-background md:hidden"
+        class="animate-mobile-nav-in absolute inset-x-0 top-full hidden max-h-[calc(100dvh-100%)] overflow-y-auto overscroll-contain border-t border-b border-border bg-background md:hidden"
     >
         <ul class="mx-auto flex max-w-6xl flex-col px-6 py-4">
             {navItems.map((item) => <li>
