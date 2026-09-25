@@ -118,4 +118,30 @@ test.describe('Home page', () => {
         await page.goto('/')
         await expect(page.locator('#contact')).toBeVisible()
     })
+
+    test('rounded controls keep their own shape while focused (issue #450)', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const controls = [
+            page
+                .getByRole('region', { name: 'Introduction' })
+                .locator('a[href*="linkedin.com"]'),
+            page.locator('[data-theme-value="dark"]'),
+            page.locator('#site-footer a[href*="github.com"]'),
+        ]
+        for (const control of controls) {
+            const radius = () =>
+                control.evaluate((el) => getComputedStyle(el).borderRadius)
+            const resting = await radius()
+            expect(parseFloat(resting)).toBeGreaterThan(2)
+            // Keyboard modality, so focus() matches :focus-visible.
+            await page.keyboard.press('Shift')
+            await control.focus()
+            expect(
+                await control.evaluate((el) => el.matches(':focus-visible')),
+            ).toBe(true)
+            expect(await radius()).toBe(resting)
+        }
+    })
 })

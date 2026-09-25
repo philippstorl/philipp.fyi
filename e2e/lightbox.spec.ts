@@ -218,6 +218,23 @@ test.describe('Image lightbox', () => {
         }
     })
 
+    test('a focused control keeps its round shape (issue #450)', async ({
+        page,
+    }) => {
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+        const close = page.getByRole('button', { name: 'Close' })
+        const radius = () =>
+            close.evaluate((el) => getComputedStyle(el).borderRadius)
+        const resting = await radius()
+        await page.keyboard.press('Shift')
+        await close.focus()
+        expect(await close.evaluate((el) => el.matches(':focus-visible'))).toBe(
+            true,
+        )
+        expect(await radius()).toBe(resting)
+        expect(parseFloat(resting)).toBeGreaterThan(20)
+    })
+
     test('arrow keys move exactly one slide when the track itself has focus', async ({
         page,
     }) => {
