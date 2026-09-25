@@ -118,4 +118,59 @@ test.describe('Home page', () => {
         await page.goto('/')
         await expect(page.locator('#contact')).toBeVisible()
     })
+
+    test('a focused card shows only its own ring, not a second title outline (issue #467)', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        for (const section of ['#work', '#principles', '#recommendations']) {
+            const card = page.locator(`${section} article`).first()
+            const title = card.locator('h3 a')
+            // Keyboard modality, so focus() matches :focus-visible.
+            await page.keyboard.press('Shift')
+            await title.focus()
+            expect(
+                await title.evaluate((el) => el.matches(':focus-visible')),
+            ).toBe(true)
+            await expect(card).not.toHaveCSS('box-shadow', 'none')
+            await expect(title).toHaveCSS('outline-style', 'none')
+        }
+
+        // Forced colors drops the ring (a box-shadow), so the title's
+        // outline-hidden fallback outline must take over.
+        await page.emulateMedia({ forcedColors: 'active' })
+        for (const section of ['#work', '#principles', '#recommendations']) {
+            const title = page.locator(`${section} article h3 a`).first()
+            await page.keyboard.press('Shift')
+            await title.focus()
+            await expect(title).toHaveCSS('outline-style', 'solid')
+            await expect(title).toHaveCSS('outline-width', '2px')
+        }
+    })
+
+    test('rounded controls keep their own shape while focused (issue #450)', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const controls = [
+            page
+                .getByRole('region', { name: 'Introduction' })
+                .locator('a[href*="linkedin.com"]'),
+            page.locator('[data-theme-value="dark"]'),
+            page.locator('#site-footer a[href*="github.com"]'),
+        ]
+        for (const control of controls) {
+            const radius = () =>
+                control.evaluate((el) => getComputedStyle(el).borderRadius)
+            const resting = await radius()
+            expect(parseFloat(resting)).toBeGreaterThan(2)
+            // Keyboard modality, so focus() matches :focus-visible.
+            await page.keyboard.press('Shift')
+            await control.focus()
+            expect(
+                await control.evaluate((el) => el.matches(':focus-visible')),
+            ).toBe(true)
+            expect(await radius()).toBe(resting)
+        }
+    })
 })
