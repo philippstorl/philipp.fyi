@@ -11,10 +11,11 @@ const options: ThemeOption[] = [
 ]
 ---
 
+{/* Without JS the buttons are inert with none pressed (issue #421): gone below md, invisible above so the desktop header keeps its layout. */}
 <div
     role="group"
     aria-label="Color theme"
-    class="flex items-center gap-1 rounded-lg border border-border bg-card p-[3px]"
+    class="flex items-center gap-1 rounded-lg border border-border bg-card p-[3px] noscript:invisible noscript:max-md:hidden"
 >
     {/* `title` alone is the name on purpose: adding a matching aria-label makes browsers expose `title` as a duplicate description (#336). */}
     {options.map(({ value, label }) => <button

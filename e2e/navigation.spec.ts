@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { navItems } from '../src/data/navigation'
 
 test.describe('Navigation', () => {
     test('header is sticky and shows name mark', async ({ page }) => {
@@ -742,5 +743,71 @@ test.describe('Navigation', () => {
         await expect(skipLink).toBeFocused()
         await page.keyboard.press('Enter')
         await expect(page.locator('#main-content')).toBeFocused()
+    })
+})
+
+// Issue #421: without JS the hamburger can't open, so a noscript: fallback
+// shows #mobile-nav in flow below md.
+test.describe('Navigation without JavaScript', () => {
+    test.use({ javaScriptEnabled: false })
+
+    for (const width of [320, 393]) {
+        for (const path of [
+            '/contact/',
+            '/privacy/',
+            '/this-page-does-not-exist/',
+        ]) {
+            test(`${path} shows every section link at ${width}px`, async ({
+                page,
+            }, testInfo) => {
+                test.skip(testInfo.project.name !== 'mobile', 'phone widths')
+                await page.setViewportSize({ width, height: 800 })
+                await page.goto(path)
+
+                await expect(page.locator('#nav-toggle')).toBeHidden()
+                await expect(
+                    page.getByRole('group', { name: 'Color theme' }),
+                ).toBeHidden()
+                // The scroll lock and backdrop key off classes only JS removes.
+                await expect(page.locator('#mobile-nav-backdrop')).toBeHidden()
+                const root = await page.locator('html').evaluate((html) => ({
+                    overflow: getComputedStyle(html).overflow,
+                    scrollPaddingTop: getComputedStyle(html).scrollPaddingTop,
+                    fits: html.scrollWidth <= html.clientWidth,
+                }))
+                expect(root.overflow).not.toBe('hidden')
+                // The header isn't sticky here, so anchors shouldn't stop short of it.
+                expect(root.scrollPaddingTop).toBe('0px')
+                expect(root.fits).toBe(true)
+                // Nor should the header's negative scroll-margin from #453 apply.
+                await expect(
+                    page.getByRole('link', { name: 'Philipp Storl, home' }),
+                ).toHaveCSS('scroll-margin-top', '0px')
+
+                const nav = page.locator('#mobile-nav')
+                for (const { href } of navItems) {
+                    const link = nav.locator(`a[href="${href}"]`)
+                    await expect(link).toBeVisible()
+                    await link.click({ trial: true })
+                }
+                await nav.locator('a[href="/work/"]').click()
+                await expect(page).toHaveURL('/work/')
+            })
+        }
+    }
+
+    test('desktop keeps its inline nav and hides the inert theme toggle', async ({
+        page,
+    }, testInfo) => {
+        test.skip(testInfo.project.name !== 'chromium', 'desktop width')
+        await page.setViewportSize({ width: 1280, height: 800 })
+        await page.goto('/contact/')
+        await expect(page.locator('#mobile-nav')).toBeHidden()
+        await expect(
+            page.getByRole('navigation', { name: 'Main navigation' }),
+        ).toBeVisible()
+        await expect(
+            page.getByRole('group', { name: 'Color theme' }),
+        ).toBeHidden()
     })
 })

@@ -141,6 +141,13 @@ html {
     #site-header :is(a, button):not(#mobile-nav *) {
         scroll-margin-top: calc(-1 * var(--header-scroll-padding));
     }
+
+    /* Without JS the header isn't sticky below md (issue #421), so nothing to clear. */
+    @media (scripting: none) and (width < 768px) {
+        html {
+            --header-scroll-padding: 0;
+        }
+    }
 }
 
 ::selection {
