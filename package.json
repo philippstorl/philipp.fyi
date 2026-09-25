@@ -22,6 +22,7 @@
         "check:favicons": "node scripts/check-favicons.mjs",
         "check:page-coverage": "node scripts/check-page-coverage.mjs",
         "check:csp": "node scripts/check-csp.mjs",
+        "check:learnings": "node scripts/check-learnings.mjs",
         "check:audit": "npm audit --omit=dev --audit-level=high",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
