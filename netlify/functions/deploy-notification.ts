@@ -1,3 +1,4 @@
+import { withHsts } from './_shared/hsts'
 import { postToSlack, truncateForSlack } from './_shared/slack'
 import { verifyNetlifySignature } from './_shared/verify-netlify-signature'
 
@@ -52,7 +53,7 @@ function summarize(deploy: DeployNotification): string {
         .join('\n')
 }
 
-export default async (req: Request): Promise<Response> => {
+const handler = async (req: Request): Promise<Response> => {
     if (req.method !== 'POST') {
         return new Response('Method Not Allowed', { status: 405 })
     }
@@ -107,3 +108,5 @@ export default async (req: Request): Promise<Response> => {
 
     return new Response(null, { status: 204 })
 }
+
+export default withHsts(handler)
