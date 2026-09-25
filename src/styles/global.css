@@ -145,7 +145,7 @@ html {
     /* Without JS the header isn't sticky below md (issue #421), so nothing to clear. */
     @media (scripting: none) and (width < 768px) {
         html {
-            scroll-padding-top: 0;
+            --header-scroll-padding: 0;
         }
     }
 }

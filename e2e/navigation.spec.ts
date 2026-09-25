@@ -779,6 +779,10 @@ test.describe('Navigation without JavaScript', () => {
                 // The header isn't sticky here, so anchors shouldn't stop short of it.
                 expect(root.scrollPaddingTop).toBe('0px')
                 expect(root.fits).toBe(true)
+                // Nor should the header's negative scroll-margin from #453 apply.
+                await expect(
+                    page.getByRole('link', { name: 'Philipp Storl, home' }),
+                ).toHaveCSS('scroll-margin-top', '0px')
 
                 const nav = page.locator('#mobile-nav')
                 for (const { href } of navItems) {
