@@ -12,7 +12,8 @@ export default defineConfig({
     compressHTML: true,
     security: {
         // is:inline scripts aren't auto-hashed -- if ThemeToggle's script changes,
-        // recompute over its dist/index.html (not source) output (openssl dgst -sha256 | base64).
+        // recompute over its dist/index.html (not source) output
+        // (openssl dgst -sha256 -binary | openssl base64), or copy it from `npm run check:csp`.
         // No `data:`: it would let an injected <script src="data:..."> through.
         csp: {
             scriptDirective: {
