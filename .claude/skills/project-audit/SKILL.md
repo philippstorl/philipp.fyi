@@ -15,7 +15,9 @@ Developed and refined across three audit passes (2026-08-21, issues #174-191) an
 2026-09-24 (#388-#423). The single most important lesson from that history: **run every chosen
 category in one parallel wave, not sequential rounds.** Rounds only happened that first time because the categories were decided
 one at a time in conversation — nothing about the categories themselves requires sequencing.
-Pick every category worth running this time and launch them together.
+Pick every category worth running this time and launch them together. A two-round pass on
+2026-09-25 (#470-#533, then #534-#551) added the round-2 lenses in §1's table, which are the one
+deliberate exception (see below the table).
 
 ## 1. Pick categories
 
@@ -43,8 +45,20 @@ or excluding it.
 | **Alternative display modes**                | Whether navigation, state cues and content survive forced colors (Windows High Contrast), JavaScript disabled, print and browser zoom                                                      | Playwright against a built site (`astro preview --port <N>` after `npm run build`, so no dev toolbar or dev bundle): `emulateMedia({ forcedColors: 'active' })` (Chromium only), `javaScriptEnabled: false`, `emulateMedia({ media: 'print' })`, and narrow viewports as an approximation of 400% zoom, which Playwright can't emulate. Compare screenshots between states rather than trusting ARIA attributes | Validated (full pass 2026-09-24: #420, #421)                                                                                                                                                                     |
 | **DNS & email**                              | Mail-authentication records (SPF, DMARC, MX or null MX) and other public DNS records for the domain, i.e. whether anyone can spoof mail from it                                            | Real `dig` queries against public DNS + grep of `src/`, `public/` and `netlify/` for any mail the site actually sends or publishes                                                                                                                                                                                                                                                                              | Validated (full pass 2026-09-24: #422). Fixes are registrar-side DNS changes only the owner can make.                                                                                                            |
 | **Content consistency**                      | Facts that contradict each other or their sources across case studies, principles, `src/data/` and captions (dates, years, roles), and quotes that drift from the recommendation they cite | Cross-read every content file against the others, `src/data/recommendations.ts` and each case study's `.sources.txt`, checking each date against its cited source                                                                                                                                                                                                                                               | Validated (full pass 2026-09-24: #423; #393 and #394 came from that pass's UX/content agent). Owns cross-checking facts between files and against sources; UX/UI, content, SEO reads each page for clarity.      |
+| **Fix completeness** (round 2)               | Whether recently closed issues landed every point of their own suggested fix, and whether ticked checklist items actually merged                                                           | Read each closed issue's fix and acceptance points against the merged diff and `HEAD`, then prove each gap by running the code or a scoped test                                                                                                                                                                                                                                                                 | Validated (2026-09-25: #551; round 1's #489 was the same pattern)                                                                                                                                                |
+| **Visitor journeys** (round 2)               | Multi-step sequences: Back/Forward and fragment links under ClientRouter, form state across navigation, viewport and input-mode changes with an overlay open                               | Playwright on a built site, one scripted step list per persona, checking DOM/ARIA state after every step rather than only on the final page                                                                                                                                                                                                                                                                     | Validated (2026-09-25: #545-#547, comment on #532)                                                                                                                                                               |
+| **Content-authoring dry run** (round 2)      | Code paths that exist but have never run in production (the first published blog post, a fifth case study, edge-case content)                                                              | Follow the `add-content` skill literally in a throwaway checkout, build, and check every surface the new content reaches                                                                                                                                                                                                                                                                                        | Validated (2026-09-25: #534-#538, #544, comment on #481)                                                                                                                                                         |
+| **Tooling blind spots** (round 2)            | Files no quality gate touches, and checks that pass vacuously                                                                                                                              | Map each tracked file to the gates that cover it, plant a realistic mistake in each gap and show every CI command stays green                                                                                                                                                                                                                                                                                   | Validated (2026-09-25: #539-#544)                                                                                                                                                                                |
+| **Devil's advocate** (round 2)               | Round 1's "clean" conclusions and rejections, and angles no category took (e.g. a larger browser default font size)                                                                        | Re-check sample-based Ruled-out items exhaustively, and re-test a few rejections for new evidence                                                                                                                                                                                                                                                                                                               | Validated (2026-09-25: #548-#550)                                                                                                                                                                                |
 
 Explicitly out of scope: internationalization/i18n — this site is single-language by design.
+
+**The round-2 rows need round 1's results as input**, which is why they run as a second, smaller
+wave after round 1 is verified and filed, not alongside it: give each round-2 agent round 1's
+findings, verdicts and every category's "Ruled out" list, and tell it not to re-report any of
+it. On 2026-09-25 the five lenses found 18 more issues that no round-1 category was positioned to
+see (never-run publish paths, multi-step navigation state, gates that pass vacuously, a larger
+default font size). Verify and file them the same way (§3, §5).
 
 If new categories prove valuable in a future run, add them to this table (with `Status:
 Validated` once actually run) rather than letting them live only in a conversation transcript.
@@ -61,7 +75,8 @@ they run concurrently. Each agent's prompt must include:
 2. **Run `gh issue list --state all --limit 300` and cross-check against it** before finalizing
    any finding, not just at the start — don't re-file a closed issue's topic, and don't duplicate
    a currently-open one (`gh issue list --state open` — check what's open right now, the count
-   grows over time).
+   grows over time). Where there's no `gh` (cloud sessions), fetch every issue once with the
+   GitHub MCP `list_issues` tool into a scratchpad file that all agents read.
 3. **Do the real thing, not the guessed thing.** Read actual files at actual line numbers, run
    the actual tool, inspect actual built output (`npm run build` then `dist/`). Every finding
    needs evidence that was actually observed this run, not paraphrased from memory of what the
@@ -158,7 +173,21 @@ completed`. Caught by checking its actual scratchpad output and process list, no
   `public, max-age=0` (re-tested 2026-09-24; see CLAUDE.md's `Cache-Control` bullet). Any
   category measuring caching needs production (after confirming it's running the same commit as
   local `HEAD`) or `@netlify/headers-parser` against the config, or an explicit caveat on the
-  local-only result. CSP and security headers can be checked locally with `netlify serve`.
+  local-only result. CSP and security headers can be checked locally with `netlify serve`, unless
+  it can't download Deno (behind the cloud-session proxy it builds, then crashes on the first
+  request); then apply `@netlify/headers-parser`'s rules with a small local server.
+- **Match CI's browser before reporting browser behavior.** A container's pre-installed Chromium
+  can be much older than CI's (2026-09-25: 141 locally, 153 in CI), and five scroll-position
+  tests failed locally on a clean `HEAD`. The npm package `@sparticuz/chromium@<CI's major>`
+  provides a matching binary when browser downloads are blocked. Scripted and user-initiated
+  paths differ too: a Medium "print leaves lazy images blank" finding held for `page.pdf()` and
+  `window.print()` but not for a real Ctrl+P (driven in headful Chromium under Xvfb).
+- **Without `gh`, the GitHub MCP issue tools rewrite text.** On 2026-09-25 they stripped a `!`
+  directly before `[` (reversing a code snippet's logic), turned `\uXXXX` escapes into raw
+  characters, stripped HTML-tag-like text from titles, HTML-escaped a full `<img ...>` tag inside
+  inline code, and dropped the attribution footer from issue bodies (not from comments). They
+  also can't read rulesets. Scan drafts for these patterns before filing, and read every filed
+  issue back and compare it with the draft.
 - **Scratchpad-only, always.** Screenshots, JSON reports, temp scripts, logs — all go in the
   scratchpad directory, never the repo. Confirm `git status --porcelain` is clean before an agent
   (audit or verification) reports itself done. This includes not leaving stray `.tmp-*` files at
