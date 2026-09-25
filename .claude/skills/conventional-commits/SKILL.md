@@ -23,7 +23,7 @@ Examples of scopes already used here: `content`, `format`, `comments`, `deps`, `
 
 Only omit the scope when there's genuinely no single good concern-word for the change — that should be rare, not the default for anything broad.
 
-Don't second-guess this for Dependabot PRs — `.github/dependabot.yml` already formats those (`deps`/`deps-dev`) and they shouldn't be hand-edited.
+Don't second-guess this for Dependabot PRs — `.github/dependabot.yml`'s `commit-message` blocks pin them to `chore(deps)`/`chore(deps-dev)` (issue #419; unpinned, Dependabot copied recent history and followed two hand-titled `fix(deps)` PRs), and they shouldn't be hand-edited.
 
 ## Linking the issue
 
