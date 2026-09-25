@@ -427,6 +427,54 @@ test.describe('Navigation', () => {
         await expect(mobileToggle).toBeFocused()
     })
 
+    test('opening and closing the mobile nav leaves a scrolled page where it was (issue #453)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        await page.goto('/about/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+        const scrollY = () => page.evaluate(() => window.scrollY)
+        await page.evaluate(() => window.scrollTo(0, 500))
+        expect(await scrollY()).toBe(500)
+
+        // locator.click() scrolls the toggle into view before clicking.
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+        expect(await scrollY()).toBe(500)
+
+        await page.keyboard.press('Tab')
+        await expect(page.locator('#mobile-nav a').first()).toBeFocused()
+        await page.keyboard.press('Escape')
+        await expect(mobileToggle).toBeFocused()
+        expect(await scrollY()).toBe(500)
+    })
+
+    test('tabbing into the sticky header leaves a scrolled page where it was (issue #453)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ reducedMotion: 'reduce' })
+        await page.goto('/about/')
+        await page.evaluate(() => window.scrollTo(0, 500))
+        await page
+            .locator('#site-header a')
+            .first()
+            .evaluate((el: HTMLElement) => el.focus({ preventScroll: true }))
+
+        await page.keyboard.press('Tab')
+        expect(
+            await page.evaluate(() =>
+                document
+                    .getElementById('site-header')
+                    ?.contains(document.activeElement),
+            ),
+        ).toBe(true)
+        expect(await page.evaluate(() => window.scrollY)).toBe(500)
+    })
+
     test('mobile nav closes when clicking outside it', async ({ page }) => {
         await page.goto('/')
         const mobileToggle = page.locator('#nav-toggle')
