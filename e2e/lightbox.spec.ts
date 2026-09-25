@@ -235,6 +235,18 @@ test.describe('Image lightbox', () => {
         expect(parseFloat(resting)).toBeGreaterThan(20)
     })
 
+    test('the focused track keeps its white inset outline (issue #467)', async ({
+        page,
+    }) => {
+        // The accent ring fails 3:1 against the backdrop (#299).
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+        const track = page.locator('#lightbox-track')
+        await page.keyboard.press('Shift')
+        await track.focus()
+        await expect(track).toHaveCSS('outline-color', 'rgb(255, 255, 255)')
+        await expect(track).toHaveCSS('outline-offset', '-2px')
+    })
+
     test('arrow keys move exactly one slide when the track itself has focus', async ({
         page,
     }) => {

@@ -155,11 +155,13 @@ html {
     color: var(--color-foreground);
 }
 
-/* No border-radius here: outlines follow each element's own radius, and an
-   unlayered radius would override every rounded-* utility while focused. */
-:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 3px;
+/* In @layer base so focus-visible:outline-* utilities can override it. No
+   border-radius: outlines follow each element's own radius. */
+@layer base {
+    :focus-visible {
+        outline: 2px solid var(--color-accent);
+        outline-offset: 3px;
+    }
 }
 
 /*

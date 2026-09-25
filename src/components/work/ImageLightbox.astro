@@ -48,14 +48,15 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             />
         </button>
 
-        {/* Focusable for axe scrollable-region-focusable (Safari); arrows are handled at dialog level. */}
+        {/* Focusable for axe scrollable-region-focusable (Safari); arrows are handled at dialog level.
+            White inset ring: the accent fails 3:1 against the near-black backdrop. */}
         {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
         <div
             id="lightbox-track"
             tabindex="0"
             role="region"
             aria-label="Screenshot gallery"
-            class="flex flex-1 snap-x snap-mandatory overflow-x-auto"
+            class="flex flex-1 snap-x snap-mandatory overflow-x-auto focus-visible:-outline-offset-2 focus-visible:outline-white"
         ></div>
         {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
 
@@ -82,12 +83,6 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
     .lightbox-slide {
         scroll-snap-stop: always;
-    }
-
-    /* The accent outline fails 3:1 against the near-black backdrop. */
-    #lightbox-track:focus-visible {
-        outline-color: white;
-        outline-offset: -2px;
     }
 
     /* Inset onto the button's own dark fill: outside it, the ring sits over the
