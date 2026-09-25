@@ -1,8 +1,8 @@
 import { defineConfig } from 'astro/config'
 import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
-import sitemap from '@astrojs/sitemap'
 import tailwindcss from '@tailwindcss/vite'
+import { sitemapWithoutNoindexPages } from './src/utils/sitemap.ts'
 
 export default defineConfig({
     site: 'https://philipp.fyi',
@@ -22,20 +22,7 @@ export default defineConfig({
             },
         },
     },
-    integrations: [
-        mdx(),
-        react(),
-        sitemap({
-            // Exclude the 404 page (not a real destination) and /privacy/
-            // (noindex). Exact pathname match, not a substring check, so a
-            // future route that merely contains "404"/"privacy" isn't
-            // silently dropped too.
-            filter: (page) => {
-                const { pathname } = new URL(page)
-                return pathname !== '/404' && pathname !== '/privacy/'
-            },
-        }),
-    ],
+    integrations: [mdx(), react(), sitemapWithoutNoindexPages()],
     vite: {
         plugins: [tailwindcss()],
         build: {

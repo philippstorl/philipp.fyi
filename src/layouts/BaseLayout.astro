@@ -9,6 +9,7 @@ import jetbrainsMonoWoff2Url from '@fontsource/jetbrains-mono/files/jetbrains-mo
 import { STATIC_PAGES, ogImagePath } from '@/data/static-pages'
 import { SITE_NAME, getDefaultDescription } from '@/data/site'
 import { toAbsoluteUrl } from '@/utils/url'
+import { getPublishedEntries } from '@/utils/collections'
 
 interface Props {
     /** Page title — shown as "Title | Philipp Storl", omit for home page */
@@ -39,6 +40,8 @@ const {
     preloadMonoFont = false,
 } = Astro.props
 
+// Don't advertise the feed while it's empty (issue #392).
+const hasPublishedPosts = (await getPublishedEntries('blog')).length > 0
 const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
 const canonicalURL = toAbsoluteUrl(Astro.url.pathname, Astro.site)
 const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
@@ -60,12 +63,14 @@ const ogImageAlt =
         <meta name="description" content={description} />
         {robots && <meta name="robots" content={robots} />}
         {canonical && <link rel="canonical" href={canonicalURL} />}
-        <link
-            rel="alternate"
-            type="application/rss+xml"
-            title={`${SITE_NAME} Blog`}
-            href="/rss.xml"
-        />
+        {hasPublishedPosts && (
+            <link
+                rel="alternate"
+                type="application/rss+xml"
+                title={`${SITE_NAME} Blog`}
+                href="/rss.xml"
+            />
+        )}
 
         <meta property="og:type" content={ogType} />
         {ogType === 'article' && articlePublishedTime && (
