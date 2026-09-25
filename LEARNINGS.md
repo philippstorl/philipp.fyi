@@ -10,6 +10,10 @@ Updated automatically at the end of each session. A new session only gets a boun
 
 ## Log
 
+### 2026-09-25
+
+- Issue #395 (hero LCP fade; current facts in CLAUDE.md's `eagerLoadFirst` bullet): measured with a Chromium LCP observer on Pixel 5 at 4× CPU/slow 4G against `astro preview`, median of 5. Baseline LCP was the subheading `<p>` at 2244 ms, 752 ms after FCP (1488 ms). The delay alone doesn't matter: dropping the subheading's 200 ms delay left the gap at 752 ms, since Chrome ignores `opacity: 0` paints and records the text only once the fade ends. Two changes "fixed" the metric, gap 0 in 5 of 5 runs: starting `fade-up` at `opacity: 0.01` (LCP 1492 ms, frames within 2/255 per channel of the original) and a movement-only subheading (1456 ms). Both were rejected. 0.01 only changes what Chrome measures, not what visitors see, and would break if Chrome also ignored near-zero opacity. Movement-only showed the subheading before the headline, breaking the stagger. The fade stays as designed, since 2244 ms is still "good" (under 2.5 s).
+
 ### 2026-09-24
 
 - Issue #353: the "Open questions" bullet claiming trailing slashes are never enforced server-side (both `/route` and `/route/` resolve) was stale. Production 301s the slashless form: `curl -sI` on `/about`, `/work`, `/principles` and `/work/brand-evolution` each returned `HTTP/2 301` with `location:` the same path plus `/`. This is Netlify-side (likely its Pretty URLs setting, which lives outside version control), not repo config (`netlify.toml`'s only `[[redirects]]` rule is the `/404` catch-all). Removed the bullet. The 2026-07-21 entry below cites that question to justify `Header.astro`'s slashless-pathname fallback (now in `nav-active.ts`'s `isNavLinkActive()`); production doesn't reach that case, but the normalization is harmless and was left alone.
