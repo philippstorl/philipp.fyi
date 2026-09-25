@@ -225,7 +225,7 @@ test.describe('Image lightbox', () => {
             counterText(2),
         )
         await expect(page.locator('#lightbox-caption')).toHaveText(
-            'After - October 2020, the first Eleventy build',
+            'After - August 2020, the first Eleventy build, ahead of the October event',
         )
     })
 

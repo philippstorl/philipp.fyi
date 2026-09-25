@@ -56,8 +56,8 @@ When I took on the VOICES website in mid-2020, the existing setup was plain HTML
     />
     <ResponsiveFigure
         src={voices2020}
-        alt="VOICES website homepage in October 2020, the first Eleventy build"
-        caption="After - October 2020, the first Eleventy build"
+        alt="VOICES website homepage in August 2020, the first Eleventy build, counting down to the October 2020 event"
+        caption="After - August 2020, the first Eleventy build, ahead of the October event"
         {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
@@ -192,7 +192,7 @@ Six years is a long time in brand and technology terms. The VOICES website went 
 
 What made this manageable was the component architecture established in 2020. New brand colors and typography get applied to the design system once; every component inherits the update. Annual content changes happen in data files rather than template code. The result is a site that looks purpose-built for each year's event while requiring significantly less effort than a ground-up rebuild would.
 
-The NA/US 2023 MVP introduced a third regional edition, extending a 2-region codebase to 3 without touching the underlying component system. By 2026 the platform serves three simultaneous global events: VOICES Berlin (in-person, German), VOICES Americas (virtual), and VOICES London (in-person), each with its own configuration but sharing the same component library, the same styling system, and the same deployment pipeline I set up in 2020. A fourth event, the VOICES APJ Customer Awards, is linked from the site but lives on a separate HubSpot landing page outside the Eleventy platform.
+The 2022 editions (Berlin, London, and the first VOICES New York) took the codebase from two regions to three without touching the underlying component system. The lineup has flexed with each year's events since (2023 ran just Berlin and New York), and by 2026 the platform serves three simultaneous global events: VOICES Berlin (in-person, German), VOICES Americas (virtual), and VOICES London (in-person), each with its own configuration but sharing the same component library, the same styling system, and the same deployment pipeline I set up in 2020. A fourth event, the VOICES APJ Customer Awards, is linked from the site but lives on a separate HubSpot landing page outside the Eleventy platform.
 
 ## What six years of ownership produces
 

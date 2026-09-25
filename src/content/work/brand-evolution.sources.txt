@@ -170,3 +170,9 @@ Gaps / things worth double-checking
   the public merger-announcement date both independently point to
   March 4, 2021, so this one was a genuine correction rather than an
   intended-vs-archived gap like the December 2018 pair.
+- The "2022 - Beneath the surface" section originally dated all three
+  later acquisitions to 2022. PRNewswire announcement dates: Teambay
+  October 1, 2020 (before the Bananatag merger), Valo November 30,
+  2021, dirico June 1, 2022. Corrected to "Between 2020 and 2022"
+  (issue #423). Not a screenshot, but recorded here so the date claim
+  stays traceable.

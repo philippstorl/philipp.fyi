@@ -9,4 +9,4 @@ In November 2023 I published a comprehensive communication guide to the entire m
 
 That's the level of transparency I tried to bring to everything: not just the big conversations, but the small ones. The Jira card closed with a screenshot and a clear before-and-after. The feedback given in the 1:1, not the corridor. The difficult observation written in a message, followed up with a call. Nothing buried, nothing softened into uselessness.
 
-A direct report once put it simply: _"an atmosphere of openness, transparency, and growth."_
+A direct report once put it simply: an _"atmosphere of openness, transparency, and growth."_

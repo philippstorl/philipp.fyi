@@ -18,6 +18,7 @@ voices-2020.png
   https://web.archive.org/web/20200815012544/https://voices.staffbase.com/de/
   DE homepage, first Eleventy build. "Die neue Ära digitaler
   Mitarbeiterkommunikation", "1. Oktober 2020", "047 Tage" countdown.
+  Snapshot date: August 15, 2020 (see the correction note below).
   Captured: June 23, 2026, 5:40 PM
   Used as the "after" image in the same before/after pairing, and also as
   the "2020" entry in the year-by-year evolution grid further down.
@@ -111,3 +112,17 @@ Gaps / things worth double-checking
   "next event announcement" will drift from what's shown here over time —
   the screenshots are a snapshot of that specific afternoon, not a
   permanent state of those URLs.
+- voices-2020.png was originally captioned "October 2020" (the event
+  date shown on the page) before being checked against this list. The
+  snapshot is from August 15, 2020, 47 days before the October 1
+  event, and by the October 24, 2020 snapshot the page had already
+  become a post-event recordings page with no event date. Corrected to
+  "August 2020, ahead of the October event" (issue #423).
+- The regional-edition timeline originally credited a "NA/US 2023 MVP"
+  with adding the third edition. Public snapshots show the move from
+  two editions (/de/, /en/, 2020-21) to three happened in 2022 (hub
+  lists VOICES Berlin, London and New York; /us/ and /uk/ exist from
+  February 2022; see the 2022 US/NYC snapshot above), and that 2023
+  dropped back to two (hub lists Berlin and New York; /uk/ redirects
+  to /us/). Corrected in the "Consistency through change" section
+  (issue #423).
