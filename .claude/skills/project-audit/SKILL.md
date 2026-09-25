@@ -11,9 +11,9 @@ independent of any recent change. Runs as multiple parallel agents in the curren
 forked) because it needs to spawn sub-agents itself and create real GitHub issues at the end —
 actions the user should see happen, not something buried inside an isolated fork.
 
-Developed and refined across three audit passes (2026-08-21, issues #174-191). The single most
-important lesson from that history: **run every chosen category in one parallel wave, not
-sequential rounds.** Rounds only happened that first time because the categories were decided
+Developed and refined across three audit passes (2026-08-21, issues #174-191) and a full pass on
+2026-09-24 (#388-#423). The single most important lesson from that history: **run every chosen
+category in one parallel wave, not sequential rounds.** Rounds only happened that first time because the categories were decided
 one at a time in conversation — nothing about the categories themselves requires sequencing.
 Pick every category worth running this time and launch them together.
 
@@ -21,24 +21,27 @@ Pick every category worth running this time and launch them together.
 
 Ask the user, or infer from their request, which categories to run. Default to **all validated
 categories** for "do a full audit"; run a subset for a targeted request ("check performance
-again", "audit accessibility"). Categories marked _proposed_ haven't been run against this repo
-yet — mention them as available options rather than silently including or excluding them.
+again", "audit accessibility"). A new category starts out marked _Proposed_ until it has run
+as a full pass; mention any such category as an available option rather than silently including
+or excluding it.
 
-| Category                                     | What it checks                                                                                                                                                          | Method                                                                                                                                                                 | Status                                                                                                                                                              |
-| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Security**                                 | CSP/headers, Netlify Functions (injection, auth, signature verification), secrets, `npm audit`, dependency vulns, GitHub repo security settings                         | Static reading + real `gh api`/`npm audit` runs                                                                                                                        | Validated                                                                                                                                                           |
-| **Accessibility & semantic HTML**            | Heading hierarchy, landmarks, ARIA correctness, alt text, list/button/link semantics, focus order                                                                       | Static reading, spot-check contrast math                                                                                                                               | Validated                                                                                                                                                           |
-| **Code quality, bugs, refactoring**          | Logic bugs, dead code, duplication, TS quality, error-handling gaps, lint/typecheck/build health                                                                        | Static reading + running `typecheck`/`lint`/`build`                                                                                                                    | Validated                                                                                                                                                           |
-| **UX/UI, content, SEO**                      | Copy clarity, broken/dead links, meta tags, structured data, responsive breakpoints, error/empty states                                                                 | Static reading + built-output inspection                                                                                                                               | Validated                                                                                                                                                           |
-| **Real performance measurement**             | Actual Lighthouse scores, Core Web Vitals, unused JS/CSS, cache headers, request waterfall                                                                              | Real Lighthouse run against a live build (see §4 gotchas — local preview servers don't apply `netlify.toml` headers, so production is often the only authentic target) | Validated                                                                                                                                                           |
-| **Cross-browser / responsive visual QA**     | Real rendering differences (color functions, CSS features, animations) across engines, not just Chromium                                                                | Playwright screenshots in Chromium + Firefox + WebKit, visually reviewed                                                                                               | Validated                                                                                                                                                           |
-| **Dependency license audit**                 | Copyleft/unknown licenses in shipped code vs. build-only tooling, attribution gaps                                                                                      | Real `license-checker` run + grep of built JS for stripped license banners                                                                                             | Validated                                                                                                                                                           |
-| **Accessibility tree (screen-reader proxy)** | What a real screen reader actually receives — reading order, redundant/missing announcements, live-region behavior, state exposure — not axe DOM rules                  | Playwright + a raw CDP session (`Accessibility.getFullAXTree`) against Chromium; see §4 gotchas for the sharp edges                                                    | Validated                                                                                                                                                           |
-| **Legal & compliance**                       | Impressum/DDG requirements, GDPR/cookie consent posture, privacy policy for contact-form data (Netlify Forms retention), whether an accessibility statement is expected | Research + static reading                                                                                                                                              | _Proposed_ — not yet run as a full pass. Some informal impressum research already exists (issue #61); check it before re-researching from scratch.                  |
-| **CI/CD & supply-chain hardening**           | GitHub Actions pinned by tag vs. commit SHA, branch protection / required status checks on `main`, `npm ci` vs `npm install` in CI, secrets exposure in Action logs     | Static reading of `.github/workflows/*.yml` + `gh api` for branch protection settings                                                                                  | _Proposed_ — not yet run. Distinct from the Security category above, which covered CSP/Netlify/npm-audit but not Actions-pinning or branch protection specifically. |
+| Category                                     | What it checks                                                                                                                                                                       | Method                                                                                                                                                                | Status                                                                                                                                                                                                           |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Security**                                 | CSP/headers, Netlify Functions (injection, auth, signature verification), secrets, `npm audit`, dependency vulns, GitHub repo security settings                                      | Static reading + real `gh api`/`npm audit` runs                                                                                                                       | Validated                                                                                                                                                                                                        |
+| **Accessibility & semantic HTML**            | Heading hierarchy, landmarks, ARIA correctness, alt text, list/button/link semantics, focus order                                                                                    | Static reading, spot-check contrast math                                                                                                                              | Validated                                                                                                                                                                                                        |
+| **Code quality, bugs, refactoring**          | Logic bugs, dead code, duplication, TS quality, error-handling gaps, lint/typecheck/build health                                                                                     | Static reading + running `typecheck`/`lint`/`build`                                                                                                                   | Validated                                                                                                                                                                                                        |
+| **UX/UI, content, SEO**                      | Copy clarity, broken/dead links, meta tags, structured data, responsive breakpoints, error/empty states                                                                              | Static reading + built-output inspection                                                                                                                              | Validated                                                                                                                                                                                                        |
+| **Real performance measurement**             | Actual Lighthouse scores, Core Web Vitals, unused JS/CSS, cache headers, request waterfall                                                                                           | Real Lighthouse run against a live build (see §4 gotchas: no local server reproduces production `Cache-Control`, so production is often the only authentic target)    | Validated                                                                                                                                                                                                        |
+| **Cross-browser / responsive visual QA**     | Real rendering differences (color functions, CSS features, animations) across engines, not just Chromium                                                                             | Playwright screenshots in Chromium + Firefox + WebKit, visually reviewed                                                                                              | Validated                                                                                                                                                                                                        |
+| **Dependency license audit**                 | Copyleft/unknown licenses in shipped code vs. build-only tooling, attribution gaps                                                                                                   | Real `license-checker` run + grep of built JS for stripped license banners                                                                                            | Validated                                                                                                                                                                                                        |
+| **Accessibility tree (screen-reader proxy)** | What a real screen reader actually receives — reading order, redundant/missing announcements, live-region behavior, state exposure — not axe DOM rules                               | Playwright + a raw CDP session (`Accessibility.getFullAXTree`) against Chromium; see §4 gotchas for the sharp edges                                                   | Validated                                                                                                                                                                                                        |
+| **Legal & compliance**                       | Impressum/DDG requirements, GDPR/cookie consent posture, privacy policy for contact-form data (Netlify Forms retention), whether an accessibility statement is expected              | Research + static reading                                                                                                                                             | Validated (#302; full pass 2026-09-24: #401-#404). The impressum question is still open in #61; check it before re-researching from scratch.                                                                     |
+| **CI/CD & supply-chain hardening**           | GitHub Actions pinned by tag vs. commit SHA, branch protection / required status checks on `main`, `npm ci` vs `npm install` in CI, secrets exposure in Action logs, install scripts | Static reading of `.github/workflows/*.yml` + `gh api` for branch protection settings                                                                                 | Validated (#303, #304; full pass 2026-09-24: #417, #418, co-found #409, #415, #419). Distinct from the Security category above, which covers CSP/Netlify/npm-audit but not Actions pinning or branch protection. |
+| **Ops & maintenance**                        | Build warnings and deprecations, outdated majors Dependabot isn't handling, Netlify runtime config (404s, function schedules, env handling), date-based time bombs, monitoring gaps  | Real `npm run build` log + `npm outdated` + static reading of `netlify.toml`/`netlify/functions/`                                                                     | Validated (full pass 2026-09-24: #415, #416, co-found #409)                                                                                                                                                      |
+| **Test & CI coverage gaps**                  | Whether CI would actually catch a realistic regression, per check and per documented invariant                                                                                       | Apply realistic mutations to a scratch copy (never the working tree), prove every CI check stays green, then propose the smallest check that catches it               | Validated (full pass 2026-09-24: #411-#414)                                                                                                                                                                      |
+| **Docs & agent-tooling accuracy**            | Whether CLAUDE.md, README, LEARNINGS.md, skills and hooks still match the code they describe                                                                                         | Verify each claim against the file on disk and by running the command or hook, not against a CLAUDE.md snapshot injected into the agent's context, which can be stale | Validated (full pass 2026-09-24: #405-#410, co-found #419)                                                                                                                                                       |
 
-Explicitly out of scope: internationalization/i18n — this site is single-language by design
-(see CLAUDE.md).
+Explicitly out of scope: internationalization/i18n — this site is single-language by design.
 
 If new categories prove valuable in a future run, add them to this table (with `Status:
 Validated` once actually run) rather than letting them live only in a conversation transcript.
@@ -65,21 +68,46 @@ they run concurrently. Each agent's prompt must include:
    empty or short findings list is a valid, useful outcome, not a failure.
 5. **Strict cleanup discipline** (see §4) — this has gone wrong in practice, don't skip it.
 
-Use the three rounds' actual prompts (this conversation's history, or ask the user to point back
-to it) as templates for prompt depth and specificity — a thin one-line brief produces a thin
-audit.
+Past audits' prompts aren't stored in the repo, so ask the user whether they have one to reuse
+as a template for depth and specificity — a thin one-line brief produces a thin audit.
 
 ### Port/process coordination
 
 Categories that need a live site (performance, cross-browser, accessibility-tree) running in the
-same wave can collide on the same port. In practice this worked out as: each agent checks
-`curl -sf http://localhost:4321 >/dev/null && echo running` first and **reuses** an existing dev
-server rather than starting a duplicate (`astro dev` errors "Another astro dev server is already
-running" if you don't check first); the performance category is the outlier since it needs a
-`netlify.toml`-header-accurate target, which neither `astro preview` nor local `netlify serve`
-provides — production (if it's confirmed running the same commit as local `HEAD`) is usually the
-only authentic option, sidestepping the local-port question entirely. Tell every server-needing
-agent explicitly which port to expect/use and to reuse rather than duplicate.
+same wave must not share one server. **Never reuse whatever is already listening on port 4321.**
+Per CLAUDE.md's Testing section, a stray server there is exactly how the Vite dependency cache
+gets corrupted when another agent runs `npm run build`, and Playwright's `webServer` silently
+reuses it (`reuseExistingServer` is on outside CI). What worked in practice (2026-09-24 audit):
+
+- **Each server-needing agent gets its own port**, named in its prompt (e.g. 4331, 4332, …),
+  and its own checkout (see the worktree note below).
+- **Playwright runs through an untracked override config inside that agent's own checkout**, e.g.
+  `playwright.audit.config.ts` spreading the config it overrides (and `...base.webServer`, so
+  `env: { ASTRO_DEV_BACKGROUND: '1' }` survives) with `use.baseURL`, `webServer.url` and
+  `webServer.command` (`npm run dev:astro -- --port <N>`) pointed at its port and
+  `reuseExistingServer: false`, run with `npx playwright test --config=<file>`. The contrast scan
+  is separate: `playwright.contrast.config.ts` and `e2e/contrast.global-setup.ts` both hardcode
+  4321, so override that config and edit the setup file in the agent's own copy. Never put these
+  files in a shared scratchpad location: parallel agents writing same-named files there
+  overwrite each other's.
+- **Cleanup is by PID**: `lsof -ti:<N>` for its own port only, then confirm the port is free.
+  In a worktree, delete the override config too: it's the one file allowed inside a checkout
+  rather than the scratchpad, and only while the agent runs (§4's `git status --porcelain` check
+  still applies there).
+
+The performance category is the outlier since it needs a production-accurate `Cache-Control`,
+which no local server reproduces (see §4). Production (if it's confirmed running the same commit
+as local `HEAD`) is usually the only authentic option, sidestepping the local-port question
+entirely.
+
+**Agent worktrees can disappear mid-run.** On 2026-09-24 a session interruption removed the
+audit agents' `isolation: "worktree"` checkouts, taking anything not yet written elsewhere with
+them. Have each agent append findings to its scratchpad output file as it goes, not only at the
+end. To avoid worktrees entirely, give each agent a plain copy of the committed tree in its own
+scratchpad subdirectory instead: `mkdir -p <scratchpad>/<category> && git archive HEAD | tar -x
+-C <scratchpad>/<category>`, then `npm ci` there. Nothing cleans that up behind the agent's back,
+and it can't touch the real checkout. The copy has no `.git` and is throwaway, so the
+`git status --porcelain` check means the real checkout, which must still be clean.
 
 ## 3. Merge, then verify independently — don't skip straight to filing
 
@@ -120,11 +148,13 @@ completed`. Caught by checking its actual scratchpad output and process list, no
   domain property at all, even on an isolated blank test page — a tooling limitation, not
   evidence a real screen reader misses it; don't report it as a site bug without a DOM-level
   cross-check first.
-- **Local preview servers lie about headers.** `astro preview` and `netlify serve` don't apply
-  `netlify.toml`'s `[[headers]]` rules — confirmed via `curl -I`, both return wrong
-  `Cache-Control` and no CSP at all where production returns the real thing. Any category
-  measuring headers/CSP/caching needs to target production (after confirming it's running the
-  same commit as local `HEAD`) or explicitly caveat the local-only result.
+- **Local preview servers lie about headers, in different ways.** `astro preview` applies none of
+  `netlify.toml`'s `[[headers]]`. `netlify serve` does send the real CSP, HSTS and
+  X-Frame-Options, but its static server overrides every `Cache-Control` with its own
+  `public, max-age=0` (re-tested 2026-09-24; see CLAUDE.md's `Cache-Control` bullet). Any
+  category measuring caching needs production (after confirming it's running the same commit as
+  local `HEAD`) or `@netlify/headers-parser` against the config, or an explicit caveat on the
+  local-only result. CSP and security headers can be checked locally with `netlify serve`.
 - **Scratchpad-only, always.** Screenshots, JSON reports, temp scripts, logs — all go in the
   scratchpad directory, never the repo. Confirm `git status --porcelain` is clean before an agent
   (audit or verification) reports itself done. This includes not leaving stray `.tmp-*` files at
@@ -135,6 +165,9 @@ completed`. Caught by checking its actual scratchpad output and process list, no
 - **Use only the existing label set** — `security`, `accessibility`, `performance`, `testing`,
   `tech-debt`, `bug`, `enhancement`, `priority-high`, `priority-medium`, `priority-low`. Don't
   invent new labels; combine exactly one type label with exactly one priority label per issue.
+  The repo also has GitHub's default labels, including `documentation`; whether audits should
+  use it (e.g. for docs & tooling findings, which so far went out as `tech-debt` or `bug`) is
+  undecided, so stick to the list above until the owner decides.
 
 ## 5. File one GitHub issue per confirmed finding
 
