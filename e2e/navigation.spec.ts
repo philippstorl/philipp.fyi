@@ -213,6 +213,24 @@ test.describe('Navigation', () => {
         await expect(page.locator('html')).not.toHaveClass(/dark/)
     })
 
+    test('an unknown stored theme value follows the OS like System and gets cleared (issue #448)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ colorScheme: 'dark' })
+        await page.addInitScript(() => {
+            localStorage.setItem('theme', 'system')
+        })
+        await page.goto('/')
+
+        await expect(page.locator('html')).toHaveClass(/dark/)
+        await expect(
+            page.getByRole('button', { name: 'System preference' }),
+        ).toHaveAttribute('aria-pressed', 'true')
+        expect(
+            await page.evaluate(() => localStorage.getItem('theme')),
+        ).toBeNull()
+    })
+
     test('active nav link and pressed theme button keep a visible cue in forced-colors mode (issue #420)', async ({
         page,
     }) => {
