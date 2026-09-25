@@ -89,6 +89,14 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         outline-color: white;
         outline-offset: -2px;
     }
+
+    /* Inset onto the button's own dark fill: outside it, the ring sits over the
+       backdrop or screenshot, which the accent (or white) fails 3:1 against. */
+    .lightbox-btn:focus-visible {
+        outline-color: white;
+        outline-offset: -5px;
+        border-radius: 9999px;
+    }
 </style>
 
 <script>
@@ -133,6 +141,9 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         let currentIndex = 0
         let lastTrigger: HTMLElement | null = null
         let scrollTimeout: ReturnType<typeof setTimeout>
+        // Slide goTo() is scrolling to; settled readings elsewhere are stale
+        // (queued before its scroll moved the track) until it lands.
+        let scrollTarget: number | null = null
 
         // Checked at call time so a live preference change applies immediately.
         const prefersReducedMotion = () =>
@@ -188,6 +199,10 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             // reading shouldn't stomp an index goTo() already set.
             const isSettled = Math.abs(rawIndex - index) < 0.02
             if (!isSettled) return
+            if (scrollTarget !== null) {
+                if (index !== scrollTarget) return
+                scrollTarget = null
+            }
             if (
                 index !== currentIndex &&
                 index >= 0 &&
@@ -199,12 +214,18 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         }
 
         const goTo = (index: number) => {
+            clearTimeout(scrollTimeout)
             const clamped = Math.max(0, Math.min(index, figures.length - 1))
             // Update immediately -- don't wait on the debounced scroll sync.
             if (clamped !== currentIndex) {
                 currentIndex = clamped
                 updateCaption()
             }
+            // Already there: no scroll event would ever clear the target.
+            // Compared in slides, since scrollLeft can be fractional.
+            const alreadyThere =
+                Math.abs(track.scrollLeft / track.clientWidth - clamped) < 0.02
+            scrollTarget = alreadyThere ? null : clamped
             track.scrollTo({
                 left: clamped * track.clientWidth,
                 behavior: prefersReducedMotion() ? 'instant' : 'smooth',
@@ -214,6 +235,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         const openLightbox = (index: number, trigger: HTMLElement) => {
             currentIndex = index
             lastTrigger = trigger
+            scrollTarget = null
 
             dialog.showModal()
             // Always instant -- initial jump, not a navigation animation.
@@ -268,6 +290,20 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         // Swipe has no known destination -- sync on scrollend; debounce
         // above is a fallback for browsers without it.
         track.addEventListener('scrollend', syncFromScroll)
+        // A swipe, wheel or key scroll takes over from goTo()'s scroll, so
+        // wherever it settles is real. Mouse presses and non-scrolling keys
+        // don't move the track, so they keep the guard.
+        const releaseScrollTarget = () => {
+            scrollTarget = null
+        }
+        const scrollKeys = new Set(['Home', 'End', 'PageUp', 'PageDown', ' '])
+        track.addEventListener('pointerdown', (event) => {
+            if (event.pointerType !== 'mouse') releaseScrollTarget()
+        })
+        track.addEventListener('wheel', releaseScrollTarget, { passive: true })
+        track.addEventListener('keydown', (event) => {
+            if (scrollKeys.has(event.key)) releaseScrollTarget()
+        })
 
         prevBtn.addEventListener('click', () => goTo(currentIndex - 1))
         nextBtn.addEventListener('click', () => goTo(currentIndex + 1))
