@@ -146,6 +146,20 @@ jobs:
                   path: playwright-report/
                   retention-days: 30
 
+    # Unit tests for netlify/functions: plain Node via the Playwright runner,
+    # no browser needed (the e2e suite's astro dev server doesn't serve functions).
+    functions:
+        name: Functions
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version-file: ".nvmrc"
+                  cache: "npm"
+            - run: npm ci
+            - run: npm run test:functions
+
     contrast:
         name: Color Contrast (report only)
         runs-on: ubuntu-latest

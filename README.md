@@ -57,6 +57,7 @@ npm run dev:astro  # http://localhost:4321
 | `npm test`                            | Run Playwright E2E tests                                                   |
 | `npm run test:ui`                     | Run Playwright tests in interactive UI mode                                |
 | `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)           |
+| `npm run test:functions`              | Run the Netlify Functions unit tests (`tests/functions/`, no browser)      |
 | `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist                   |
 | `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`         |
 
@@ -66,7 +67,7 @@ The `build` script runs `astro check` before `astro build` — TypeScript errors
 
 Every pull request, and every push to `main`, runs the workflow in `.github/workflows/ci.yml`. It can also be triggered manually (`workflow_dispatch`). Runs are canceled and restarted if you push again to the same branch before the previous run finishes.
 
-Eight jobs run in parallel, all on Node 26:
+Nine jobs run in parallel, all on Node 26:
 
 | Job                  | What it does                                                                                                                                                                                                                                                                                                                                  |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -77,6 +78,7 @@ Eight jobs run in parallel, all on Node 26:
 | `audit`              | `npm run check:audit` — production dependencies only, see CLAUDE.md for why                                                                                                                                                                                                                                                                   |
 | `build`              | `npm run check:trailing-slashes`, `npm run check:favicons` and `npm run check:color-copies`, then `npm run build:app`, then `npm run check:font-preloads`, `npm run check:inline-module-scripts` and `npm run check:page-coverage` (skips the `astro check` prefix — the `typecheck` job already covers that on the same commit)              |
 | `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail                                                                                                                                                                            |
+| `functions`          | `npm run test:functions`: unit tests for `netlify/functions/` (signature verification, CSP-report and deploy-notification handlers, Slack escaping), plain Node with no browser or dev server                                                                                                                                                 |
 | `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations, or nodes axe could not check, not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md |
 
 Dependabot (`.github/dependabot.yml`) opens npm dependency and GitHub Actions PRs weekly, capped at 5 open at a time per ecosystem, labeled `dependencies`. Every Actions step in `ci.yml` is pinned to a commit SHA with a version comment (see CLAUDE.md) — Dependabot bumps both together.
@@ -170,6 +172,10 @@ Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 wi
 `e2e/blog.spec.ts` only covers `/blog/`'s current empty state, not `/blog/[slug]/` post content — there's no published post to test against yet. Add slug-page coverage once a post ships (see the `add-content` skill).
 
 `e2e/contrast.spec.ts` is not part of this table or `npm test` — it's a report-only color-contrast scan (light and dark, Desktop Chrome only) run separately via `npm run test:contrast` / `playwright.contrast.config.ts`, aggregated by `npm run check:contrast` against `contrast-allowlist.json`. See the `contrast` CI job above and CLAUDE.md for how it's wired up.
+
+### Netlify Functions unit tests
+
+`astro dev` doesn't serve Netlify Functions, so `tests/functions/` unit-tests them directly: `npm run test:functions` (`playwright.functions.config.ts`, plain Node, no browser, about a second) imports each handler, calls it with a real `Request`, and stubs `fetch` so nothing reaches the network, the real Slack webhooks, or Netlify Blobs. It covers `X-Webhook-Signature` verification (valid, wrong secret, tampered body, missing/stripped/truncated token, wrong `alg`/`iss`), the `deploy-notification` 401/400/204 paths, `csp-report`'s 405/413/400 paths, report normalization, batch cap and non-string-field handling, Slack escaping of attacker-controlled fields in both handlers, and `csp-report-cleanup`'s retention. It runs as the `functions` CI job, not as part of `npm test`.
 
 ### First run
 
@@ -301,6 +307,7 @@ src/
     a11y.ts            → NEW_TAB_SUFFIX, the shared "(opens in a new tab)" wording used by NewTabIndicator.astro and Footer.astro
     content-image-sizing.ts → sizes/widths helpers for ResponsiveFigure/ResponsiveImage call sites in case-study (and future blog) MDX bodies
 e2e/               → Playwright E2E tests
+tests/functions/   → Netlify Functions unit tests (npm run test:functions)
 public/
   favicon.svg
   favicon.ico          → generated from favicon.svg (npm run generate:favicons)
@@ -317,6 +324,7 @@ netlify/
     deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
 netlify.toml       → Build, Node version, security headers, cache headers, 404 redirect, CSP reporting headers
 playwright.config.ts
+playwright.functions.config.ts → Browserless Playwright config for tests/functions/
 ```
 
 ## Security

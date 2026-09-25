@@ -27,6 +27,7 @@ Fix failures before moving on — there's no value running later, slower steps a
 7. `npm run build` — run unless the change is content-only prose with zero risk of a type error (e.g. fixing a typo in an existing paragraph). `build` runs `astro check` before `astro build`, so it's also your typecheck-with-full-context step. When in doubt, run it.
 8. `npm run check:font-preloads`, `npm run check:inline-module-scripts` and `npm run check:page-coverage` — run whenever step 7 ran; they check the fresh `dist/`. CI runs all three on every build, so skipping them locally can let a CI failure through.
 9. `npm test` (Playwright) — run if any changed file is under `src/components/`, `src/pages/`, `src/content/`, `src/layouts/`, or `e2e/` itself. Skip it for changes confined to docs, config comments, or CI YAML with no behavioral effect.
+10. `npm run test:functions` — run if any changed file is under `netlify/functions/` or `tests/functions/`, or is `playwright.functions.config.ts`. Plain Node, about a second, no dev server or port.
 
 ## 4. Report
 

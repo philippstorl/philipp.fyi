@@ -27,6 +27,7 @@
         "test": "playwright test",
         "test:ui": "playwright test --ui",
         "test:contrast": "playwright test --config=playwright.contrast.config.ts",
+        "test:functions": "playwright test --config=playwright.functions.config.ts",
         "check:contrast": "node scripts/check-contrast.mjs",
         "generate:favicons": "node scripts/generate-favicons.mjs"
     },
