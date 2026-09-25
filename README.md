@@ -162,6 +162,7 @@ npx playwright test e2e/home.spec.ts --debug
 | `e2e/privacy.spec.ts`                 | Privacy Policy page heading/GDPR sections, links to /contact, footer "Privacy" link leads to /privacy, external links (Netlify, the Saxon DPA) carry the correct href plus a new-tab accessible-name suffix, prose links stay underlined at rest (WCAG 1.4.1), stays noindexed with a real canonical link                                                                                                                                                                                                                                                                                                                                                                                                                 |
 | `e2e/meta-description-length.spec.ts` | Every page's `<meta name="description">` stays within Google's ~155-char SERP snippet length                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
 | `e2e/robots-txt.spec.ts`              | `robots.txt` lets Twitterbot and LinkedInBot fetch every page's `og:image`/`twitter:image` (Desktop Chrome only)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `e2e/security-txt.spec.ts`            | `/.well-known/security.txt` serves RFC 9116 `Contact`/`Policy`/`Canonical` fields and an `Expires` date in the future but under a year out                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | `e2e/favicons.spec.ts`                | `rel="apple-touch-icon"` link, `/apple-touch-icon.png` served as a 180×180 full-bleed PNG (uniform border, no baked-in rounded corners), `/favicon.ico` served as a real ICO (not the 404 page)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
@@ -271,6 +272,7 @@ src/
     index.astro
     about.astro
     contact.astro
+    privacy.astro
     principles.astro
     recommendations.astro
     work/index.astro
@@ -293,6 +295,9 @@ src/
     blog-posts.ts      → getPublishedBlogPosts(), the shared draft-filter + sort used by every blog page/route
     collections.ts     → getPublishedEntries(collection), the shared draft-filter behind work and blog
     url.ts             → toAbsoluteUrl(path, site), the shared canonical/OG/JSON-LD absolute-URL builder
+    slug.ts            → stripContentExtension(id), the shared content-entry id → URL slug helper
+    date.ts            → formatBlogDate(date), the shared UTC blog-date formatter
+    prose.ts           → PROSE_CONTENT_CLASSES, the shared prose wrapper classes for case studies, blog posts and /privacy/
     a11y.ts            → NEW_TAB_SUFFIX, the shared "(opens in a new tab)" wording used by NewTabIndicator.astro and Footer.astro
     content-image-sizing.ts → sizes/widths helpers for ResponsiveFigure/ResponsiveImage call sites in case-study (and future blog) MDX bodies
 e2e/               → Playwright E2E tests
@@ -305,6 +310,7 @@ netlify/
   functions/
     _shared/
       slack.ts             → Shared postToSlack() + Slack mrkdwn sanitization (sanitizeSlackText/truncateForSlack) used by both functions below
+      verify-netlify-signature.ts → Verifies Netlify's X-Webhook-Signature JWS for deploy-notification.ts
     CLAUDE.md              → Directory-scoped Claude Code guidance, loaded only when working under netlify/functions/
     csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
     csp-report-cleanup.ts  → Scheduled function; deletes csp-reports Blobs entries older than 30 days
