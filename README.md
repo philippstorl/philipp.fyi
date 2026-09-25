@@ -171,6 +171,8 @@ npx playwright test e2e/home.spec.ts --debug
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
+Shared test helpers live in `e2e/helpers/` (not matched as specs). Any test that submits the contact form calls `gotoAndWaitForContactFormHydration(page)` from `e2e/helpers/contact-form.ts` first: a click before React hydrates the island falls through to a native form POST.
+
 `e2e/blog.spec.ts` only covers `/blog/`'s current empty state, not `/blog/[slug]/` post content — there's no published post to test against yet. Add slug-page coverage once a post ships (see the `add-content` skill).
 
 `e2e/contrast.spec.ts` is not part of this table or `npm test` — it's a report-only color-contrast scan (light and dark, Desktop Chrome only) run separately via `npm run test:contrast` / `playwright.contrast.config.ts`, aggregated by `npm run check:contrast` against `contrast-allowlist.json`. See the `contrast` CI job above and CLAUDE.md for how it's wired up.
@@ -310,6 +312,8 @@ src/
     a11y.ts            → NEW_TAB_SUFFIX, the shared "(opens in a new tab)" wording used by NewTabIndicator.astro and Footer.astro
     content-image-sizing.ts → sizes/widths helpers for ResponsiveFigure/ResponsiveImage call sites in case-study (and future blog) MDX bodies
 e2e/               → Playwright E2E tests
+  helpers/
+    contact-form.ts → gotoAndWaitForContactFormHydration(page) + CONTACT_SUBMIT_SELECTOR, shared by every contact-form test
 tests/functions/   → Netlify Functions unit tests (npm run test:functions)
 public/
   favicon.svg
