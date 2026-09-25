@@ -10,7 +10,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 
 // Built pages deliberately left out of contrast-pages.mjs. Empty today:
-// /404 and /privacy are noindex but still scanned.
+// /404, /privacy/ and (while empty) /blog/ are noindex but still scanned.
 const excludedPaths = new Set()
 
 async function walk(dir) {
