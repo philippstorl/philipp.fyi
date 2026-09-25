@@ -17,6 +17,49 @@ test.describe('Privacy policy page', () => {
         ).toBeVisible()
     })
 
+    test('matches what the site actually processes (issues #401-#404)', async ({
+        page,
+    }) => {
+        await page.goto('/privacy/')
+        const article = page.locator('article')
+
+        // RUM stays on: per-page-view records, § 25 TDDDG statement (#401).
+        await expect(
+            page.getByRole('heading', { name: 'Performance monitoring' }),
+        ).toBeVisible()
+        await expect(article).toContainText('one record per page view')
+        await expect(article).toContainText('§ 25(2) Nr. 2 TDDDG')
+        await expect(article).not.toContainText('aggregate performance metrics')
+
+        // Slack gets the report with the user agent and is a named recipient (#402).
+        await expect(article).toContainText(
+            "including your browser's user agent, is also posted to Slack",
+        )
+        await expect(article).toContainText(
+            'The Slack copy is kept only as long as needed',
+        )
+        await expect(article).toContainText(
+            'Slack relies on the EU-U.S. Data Privacy Framework',
+        )
+
+        // Contact form: legitimate interest, not consent (#403).
+        await expect(article).toContainText(
+            'Legal basis: Art. 6(1)(f) GDPR, my legitimate interest in answering messages',
+        )
+        await expect(article).not.toContainText(/Art\. 6\(1\)\(a\)|7\(3\)/)
+        await expect(article).toContainText('Right to object (Art. 21)')
+
+        // Voluntariness, log retention and Netlify Forms metadata (#404).
+        await expect(article).toContainText('Using the form is voluntary')
+        await expect(article).toContainText(
+            "Netlify doesn't publish a fixed period for these logs",
+        )
+        await expect(article).toContainText(
+            "your IP address, your browser's user agent, the page you sent the form from (referrer)",
+        )
+        await expect(article).toContainText('Akismet')
+    })
+
     test('links to the contact form', async ({ page }) => {
         await page.goto('/privacy/')
         const links = page.locator('article a[href="/contact/"]')
@@ -49,7 +92,7 @@ test.describe('Privacy policy page', () => {
         const netlifyLinks = page.locator(
             'article a[href="https://www.netlify.com/privacy/"]',
         )
-        await expect(netlifyLinks).toHaveCount(2)
+        await expect(netlifyLinks).toHaveCount(3)
         for (const link of await netlifyLinks.all()) {
             await expect(link).toHaveAttribute('target', '_blank')
             await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
@@ -61,6 +104,17 @@ test.describe('Privacy policy page', () => {
         )
         await expect(dpaLink).toHaveAttribute('target', '_blank')
         await expect(dpaLink).toHaveAccessibleName(/opens in a new tab/)
+
+        for (const href of [
+            'https://automattic.com/privacy/',
+            'https://slack.com/trust/privacy/privacy-policy',
+            'https://docs.netlify.com/manage/monitoring/real-user-monitoring/',
+        ]) {
+            const link = page.locator(`article a[href="${href}"]`)
+            await expect(link).toHaveAttribute('target', '_blank')
+            await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+            await expect(link).toHaveAccessibleName(/opens in a new tab/)
+        }
     })
 
     test('footer Privacy link leads to /privacy/', async ({ page }) => {
