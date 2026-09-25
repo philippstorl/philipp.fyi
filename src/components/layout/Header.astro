@@ -14,9 +14,10 @@ const pathname = Astro.url.pathname
     transition:persist
 ></div>
 
+{/* noscript: (scripting: none) swaps the JS-only disclosure for an always-open, in-flow nav below md (issue #421); not sticky then, or its links would pin half the viewport. */}
 <header
     id="site-header"
-    class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm"
+    class="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-sm noscript:max-md:relative"
     transition:persist
 >
     {/* gap keeps the logo's focus ring off the theme toggle; the narrower padding below 360px keeps the logo on one line. */}
@@ -52,7 +53,7 @@ const pathname = Astro.url.pathname
                 aria-label="Toggle navigation"
                 aria-expanded="false"
                 aria-controls="mobile-nav"
-                class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground md:hidden"
+                class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground md:hidden noscript:hidden"
             >
                 <svg
                     id="icon-menu"
@@ -96,7 +97,7 @@ const pathname = Astro.url.pathname
     <nav
         id="mobile-nav"
         aria-label="Mobile navigation"
-        class="animate-mobile-nav-in absolute inset-x-0 top-full hidden max-h-[calc(100dvh-100%)] overflow-y-auto overscroll-contain border-t border-b border-border bg-background md:hidden"
+        class="animate-mobile-nav-in absolute inset-x-0 top-full hidden max-h-[calc(100dvh-100%)] overflow-y-auto overscroll-contain border-t border-b border-border bg-background md:hidden noscript:max-md:static noscript:max-md:block noscript:max-md:max-h-none noscript:max-md:animate-none noscript:max-md:overflow-visible noscript:max-md:border-b-0"
     >
         <ul class="mx-auto flex max-w-6xl flex-col px-6 py-4">
             {navItems.map((item) => <li>
