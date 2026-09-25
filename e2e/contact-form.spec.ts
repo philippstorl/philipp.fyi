@@ -1,19 +1,8 @@
-import { test, expect, type Page, type Request } from '@playwright/test'
-
-// A pre-hydration click falls through to a real form POST/reload, wiping
-// test state -- wait for the submit button's React fiber prop first.
-async function gotoAndWaitForContactFormHydration(page: Page) {
-    await page.goto('/contact/')
-    await page.waitForFunction(() => {
-        const button = document.querySelector(
-            'form[name="contact"] button[type="submit"]',
-        )
-        return (
-            !!button &&
-            Object.keys(button).some((key) => key.startsWith('__reactProps'))
-        )
-    })
-}
+import { test, expect, type Request } from '@playwright/test'
+import {
+    CONTACT_SUBMIT_SELECTOR,
+    gotoAndWaitForContactFormHydration,
+} from './helpers/contact-form'
 
 test.describe('Contact form', () => {
     test('submitting with empty fields shows inline errors and focuses the first invalid field', async ({
@@ -21,7 +10,7 @@ test.describe('Contact form', () => {
     }) => {
         await gotoAndWaitForContactFormHydration(page)
 
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
 
         await expect(page.locator('#contact-name-error')).toHaveText(
             'Name is required.',
@@ -49,7 +38,7 @@ test.describe('Contact form', () => {
             if (input)
                 window.scrollBy(0, input.getBoundingClientRect().top + 14)
         })
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
         await expect(page.locator('#contact-name')).toBeFocused()
 
         const headerBottom = await page
@@ -74,7 +63,7 @@ test.describe('Contact form', () => {
         // Regression: 3 competing role="alert" regions used to fire at once.
         await gotoAndWaitForContactFormHydration(page)
 
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
 
         await expect(page.getByRole('alert')).toHaveText(
             '3 fields need attention.',
@@ -101,7 +90,7 @@ test.describe('Contact form', () => {
 
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-message').fill('Hello there')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
         await expect(page.getByRole('alert')).toHaveText(
             '1 field needs attention.',
         )
@@ -114,7 +103,7 @@ test.describe('Contact form', () => {
 
         await page.locator('#contact-email').fill('test@example.com')
         await page.locator('#contact-name').fill('')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
 
         await expect(page.getByRole('alert')).toHaveText(
             '1 field needs attention.',
@@ -135,7 +124,7 @@ test.describe('Contact form', () => {
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-email').fill('not-an-email')
         await page.locator('#contact-message').fill('Hello there')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
 
         await expect(page.locator('#contact-email-error')).toHaveText(
             'Please enter a valid email address.',
@@ -148,7 +137,7 @@ test.describe('Contact form', () => {
     }) => {
         await gotoAndWaitForContactFormHydration(page)
 
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
         await expect(page.locator('#contact-name-error')).toHaveText(
             'Name is required.',
         )
@@ -171,7 +160,7 @@ test.describe('Contact form', () => {
         // yanking focus to the next erroring field mid-correction.
         await gotoAndWaitForContactFormHydration(page)
 
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
         await expect(page.locator('#contact-name')).toBeFocused()
 
         await page.locator('#contact-name').fill('Test User')
@@ -187,7 +176,7 @@ test.describe('Contact form', () => {
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-email').fill('not-an-email')
         await page.locator('#contact-message').fill('Hello there')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
         await expect(page.locator('#contact-email-error')).toHaveText(
             'Please enter a valid email address.',
         )
@@ -212,7 +201,7 @@ test.describe('Contact form', () => {
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-email').fill('test@example.com')
         await page.locator('#contact-message').fill('Hello there')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
 
         await expect(
             page.getByRole('alert').filter({ hasText: 'Something went wrong' }),
@@ -232,14 +221,14 @@ test.describe('Contact form', () => {
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-email').fill('test@example.com')
         await page.locator('#contact-message').fill('Hello there')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
         const sendError = page
             .getByRole('alert')
             .filter({ hasText: 'Something went wrong' })
         await expect(sendError).toBeVisible()
 
         await page.locator('#contact-email').fill('not-an-email')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
 
         await expect(page.locator('#contact-email-error')).toHaveText(
             'Please enter a valid email address.',
@@ -271,9 +260,7 @@ test.describe('Contact form', () => {
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-email').fill('test@example.com')
         await page.locator('#contact-message').fill('Hello there')
-        const submit = page.locator(
-            'form[name="contact"] button[type="submit"]',
-        )
+        const submit = page.locator(CONTACT_SUBMIT_SELECTOR)
         await submit.focus()
         await page.keyboard.press('Enter')
 
@@ -311,7 +298,7 @@ test.describe('Contact form', () => {
         await page.locator('#contact-name').fill('Test User')
         await page.locator('#contact-email').fill('test@example.com')
         await page.locator('#contact-message').fill('Hello there')
-        await page.locator('form[name="contact"] button[type="submit"]').click()
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
 
         const confirmation = page.getByRole('status').filter({
             hasText: 'Message sent.',

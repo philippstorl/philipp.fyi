@@ -1,4 +1,8 @@
 import { test, expect, type Page } from '@playwright/test'
+import {
+    CONTACT_SUBMIT_SELECTOR,
+    gotoAndWaitForContactFormHydration,
+} from './helpers/contact-form'
 
 // Gating regressed twice (#115, the `@theme --animate-*` token) with every
 // check green. Each case runs under both preferences, so the `reduce`
@@ -142,22 +146,8 @@ for (const [preference, other] of [
             page,
         }) => {
             await recordScrollCalls(page)
-            await page.goto('/contact/')
-            // A pre-hydration click would fall through to a native submit.
-            await page.waitForFunction(() => {
-                const button = document.querySelector(
-                    'form[name="contact"] button[type="submit"]',
-                )
-                return (
-                    !!button &&
-                    Object.keys(button).some((key) =>
-                        key.startsWith('__reactProps'),
-                    )
-                )
-            })
-            const submit = page.locator(
-                'form[name="contact"] button[type="submit"]',
-            )
+            await gotoAndWaitForContactFormHydration(page)
+            const submit = page.locator(CONTACT_SUBMIT_SELECTOR)
 
             await submit.click()
             await expect(page.locator('#contact-name')).toBeFocused()
