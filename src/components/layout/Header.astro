@@ -182,7 +182,8 @@ const pathname = Astro.url.pathname
         iconMenu?.classList.remove('hidden')
         iconClose?.classList.add('hidden')
         getBackgroundRegions().forEach((el) => el.removeAttribute('inert'))
-        if (focusToggle) toggle?.focus()
+        // The sticky toggle is always on screen, so never scroll to it.
+        if (focusToggle) toggle?.focus({ preventScroll: true })
     }
 
     // Computed display, not the hidden class -- nav also has md:hidden.

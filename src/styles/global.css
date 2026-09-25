@@ -124,11 +124,22 @@ html {
 
 /*
     Keeps focused/scrolled-to elements clear of the sticky #site-header
-    (~85px tall), WCAG 2.4.11. Adds to any scroll-margin, so don't stack both.
+    (~85px tall), WCAG 2.4.11. Adds to any scroll-margin, so don't stack both
+    (the header's own controls below are the one deliberate exception).
 */
 @layer base {
     html {
-        scroll-padding-top: 6rem;
+        --header-scroll-padding: 6rem;
+        scroll-padding-top: var(--header-scroll-padding);
+    }
+
+    /*
+        The header's own controls sit inside that padded band, so focusing
+        one would scroll the page up (issue #453). Mobile nav links scroll
+        inside #mobile-nav, where a negative margin would hide them.
+    */
+    #site-header :is(a, button):not(#mobile-nav *) {
+        scroll-margin-top: calc(-1 * var(--header-scroll-padding));
     }
 }
 
