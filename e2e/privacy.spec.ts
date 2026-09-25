@@ -52,6 +52,9 @@ test.describe('Privacy policy page', () => {
         // Voluntariness, log retention and Netlify Forms metadata (#404).
         await expect(article).toContainText('Using the form is voluntary')
         await expect(article).toContainText(
+            'unless statutory retention periods require keeping it longer',
+        )
+        await expect(article).toContainText(
             "Netlify doesn't publish a fixed period for these logs",
         )
         await expect(article).toContainText(
