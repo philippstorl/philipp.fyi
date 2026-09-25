@@ -135,6 +135,15 @@ const ogImageAlt =
                     let stored = null
                     try {
                         stored = localStorage.getItem('theme')
+                        // Anything but light/dark (e.g. a leftover 'system')
+                        // means "follow the OS", same as ThemeToggle.
+                        if (
+                            stored !== null &&
+                            stored !== 'light' &&
+                            stored !== 'dark'
+                        ) {
+                            localStorage.removeItem('theme')
+                        }
                     } catch {
                         // Storage blocked: fall back to the OS preference.
                     }
@@ -143,7 +152,8 @@ const ogImageAlt =
                     ).matches
                     document.documentElement.classList.toggle(
                         'dark',
-                        stored === 'dark' || (!stored && prefersDark),
+                        stored === 'dark' ||
+                            (stored !== 'light' && prefersDark),
                     )
                 }
                 applyStoredTheme()
