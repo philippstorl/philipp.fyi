@@ -127,7 +127,12 @@ const ogImageAlt =
         <script is:inline>
             ;(function () {
                 function applyStoredTheme() {
-                    const stored = localStorage.getItem('theme')
+                    let stored = null
+                    try {
+                        stored = localStorage.getItem('theme')
+                    } catch {
+                        // Storage blocked: fall back to the OS preference.
+                    }
                     const prefersDark = window.matchMedia(
                         '(prefers-color-scheme: dark)',
                     ).matches

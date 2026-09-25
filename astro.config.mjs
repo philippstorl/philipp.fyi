@@ -17,7 +17,7 @@ export default defineConfig({
         csp: {
             scriptDirective: {
                 resources: ["'self'"],
-                hashes: ['sha256-IRaG082Oqalg5nWJ3yQUo4NGnPeCzDqF/rvDL4QO65M='],
+                hashes: ['sha256-utnkX60dhgydIywfkzN8vNyWLG8VHV2/nnt2c5rm7OY='],
             },
         },
     },
