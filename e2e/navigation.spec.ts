@@ -231,6 +231,43 @@ test.describe('Navigation', () => {
         ).toBeNull()
     })
 
+    test('pressed theme button styling follows aria-pressed alone (issue #449)', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const readStyles = () =>
+            page.evaluate(() => {
+                const resolve = (value: string) => {
+                    const probe = document.createElement('div')
+                    probe.style.color = value
+                    document.body.append(probe)
+                    const color = getComputedStyle(probe).color
+                    probe.remove()
+                    return color
+                }
+                const accent = resolve('var(--color-accent)')
+                const muted = resolve('var(--color-muted)')
+                return [...document.querySelectorAll('[data-theme-value]')].map(
+                    (btn) => {
+                        const style = getComputedStyle(btn)
+                        const pressed =
+                            btn.getAttribute('aria-pressed') === 'true'
+                        return pressed
+                            ? style.color === accent &&
+                                  style.backgroundColor !== 'rgba(0, 0, 0, 0)'
+                            : style.color === muted &&
+                                  style.backgroundColor === 'rgba(0, 0, 0, 0)'
+                    },
+                )
+            })
+
+        // Covers both the pre-paint script's and the click handler's state.
+        await expect.poll(readStyles).toEqual([true, true, true])
+        await page.getByRole('button', { name: 'Dark mode' }).click()
+        await page.mouse.move(0, 0)
+        await expect.poll(readStyles).toEqual([true, true, true])
+    })
+
     test('active nav link and pressed theme button keep a visible cue in forced-colors mode (issue #420)', async ({
         page,
     }) => {
