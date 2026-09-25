@@ -18,9 +18,10 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
     <Main>
         <PageHeader eyebrow="Your data, explained" title="Privacy Policy">
             philipp.fyi collects a small amount of personal data through its
-            contact form, hosting infrastructure, and server-side analytics.
-            This page explains what's collected, who processes it, and how to
-            exercise your rights.
+            contact form, hosting infrastructure, performance monitoring,
+            server-side analytics, and browser security reports. This page
+            explains what's collected, who processes it, and how to exercise
+            your rights.
         </PageHeader>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
@@ -38,13 +39,25 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                 <h3>Contact form</h3>
                 <p>
                     When you submit the contact form, I collect your name, email
-                    address, and the message you write. This data is used solely
-                    to respond to your inquiry.
+                    address, and the message you write. Netlify Forms also
+                    records your IP address, your browser's user agent, the page
+                    you sent the form from (referrer), and the time of
+                    submission with every message. I use this data only to
+                    respond to your inquiry, after Netlify has screened it for
+                    spam (see below).
+                </p>
+                <p>
+                    Using the form is voluntary, and no law or contract requires
+                    you to provide this data. The form can't be sent without all
+                    three fields, though, and without your email address I can't
+                    reply to you.
                 </p>
                 <ul>
                     <li>
-                        Legal basis: Art. 6(1)(a) GDPR, your consent, given by
-                        submitting the form.
+                        Legal basis: Art. 6(1)(f) GDPR, my legitimate interest
+                        in answering messages sent to me. Where your inquiry is
+                        about working together, also Art. 6(1)(b) GDPR, steps
+                        taken at your request before entering into a contract.
                     </li>
                     <li>
                         Recipient:
@@ -55,7 +68,9 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                             >Netlify, Inc.<NewTabIndicator
                         /></a
                         >, which stores form submissions on my behalf as a
-                        processor (Netlify Forms).
+                        processor (Netlify Forms). Netlify checks every
+                        submission for spam with Akismet, a service of
+                        Automattic Inc.
                     </li>
                     <li>
                         Retention: kept for as long as needed to respond to and
@@ -69,8 +84,8 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                     This site is hosted on Netlify. Like most hosting providers,
                     Netlify's infrastructure automatically logs technical
                     request data (for example IP address, requested URL,
-                    timestamp, and user agent) for a limited time, to operate,
-                    secure, and troubleshoot the site.
+                    timestamp, and user agent) to operate, secure, and
+                    troubleshoot the site.
                 </p>
                 <ul>
                     <li>
@@ -78,23 +93,65 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                         in operating a secure, reliable website.
                     </li>
                     <li>Recipient: Netlify, Inc.</li>
+                    <li>
+                        Retention: Netlify doesn't publish a fixed period for
+                        these logs. Under
+                        <a
+                            href="https://www.netlify.com/privacy/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >its privacy policy<NewTabIndicator
+                        /></a
+                        >, it keeps personal data only as long as needed for the
+                        purpose it was collected for, or as long as the law
+                        requires, weighing how sensitive the data is and the
+                        risk of misuse.
+                    </li>
                 </ul>
 
                 <h3>Performance monitoring</h3>
                 <p>
-                    Netlify's hosting platform includes a built-in Real User
-                    Monitoring beacon, served from this domain, that reports
-                    aggregate performance metrics (for example page load times)
-                    to Netlify. It doesn't use cookies or any persistent
-                    identifier, and isn't used for advertising or to track you
-                    across other sites.
+                    Netlify's Real User Monitoring measures how fast pages load
+                    for real visitors. On every page view, a script served from
+                    this domain reads your browser's user agent, platform and
+                    screen size, reduces the user agent to browser, operating
+                    system and device type, and sends one record per page view
+                    to Netlify: those values, the page's address, the time, and
+                    load-time measurements (Core Web Vitals). Your IP address
+                    reaches Netlify with that request. The script sets no
+                    cookies and stores nothing in your browser. I only see
+                    figures Netlify aggregates from these records.
                 </p>
                 <ul>
                     <li>
                         Legal basis: Art. 6(1)(f) GDPR, my legitimate interest
-                        in monitoring and improving site performance.
+                        in noticing and fixing slow or broken pages.
+                    </li>
+                    <li>
+                        Reading information from your device: under §&nbsp;25(2)
+                        Nr.&nbsp;2 TDDDG this needs no consent, because reading
+                        these properties is strictly necessary to deliver the
+                        service you requested, a website that loads and works
+                        without errors. The German data protection authorities'
+                        guidance on digital services (DSK Orientierungshilfe
+                        Digitale Dienste, Rn. 90) counts error-free delivery of
+                        a website as part of what a visitor asks for.
                     </li>
                     <li>Recipient: Netlify, Inc.</li>
+                    <li>
+                        Retention: on this site's Netlify plan, the figures I
+                        can see cover the last 7 days, per
+                        <a
+                            href="https://docs.netlify.com/manage/monitoring/real-user-monitoring/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            >Netlify's Real User Monitoring
+                            documentation<NewTabIndicator
+                        /></a
+                        >. Netlify doesn't publish a separate period for the
+                        underlying records, so the same criteria as for the
+                        hosting logs above apply.
+                    </li>
                 </ul>
 
                 <h3>Site analytics</h3>
@@ -117,9 +174,8 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                     <li>Recipient: Netlify, Inc.</li>
                     <li>
                         Retention: the figures I can see cover the last 30 days.
-                        Netlify doesn't publish a separate retention period for
-                        the underlying request data; its privacy policy (linked
-                        below) applies.
+                        The underlying request data is the hosting logs above,
+                        with the same retention.
                     </li>
                 </ul>
 
@@ -127,9 +183,13 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                 <p>
                     This site's browser security policy asks your browser to
                     report any blocked or unexpected script/style activity. If
-                    your browser sends one, it's stored (via Netlify Blobs) for
-                    up to 30 days so it can be investigated, then automatically
-                    deleted.
+                    your browser sends one, it's stored (via Netlify Blobs) so
+                    it can be investigated, then automatically deleted about 30
+                    days later. A report contains the page's URL, the blocked
+                    address, the referring page, the policy rule and the file
+                    and line that triggered it, a short sample of the blocked
+                    code, the time it was received, and your browser's user
+                    agent.
                 </p>
                 <ul>
                     <li>
@@ -137,10 +197,16 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                         in detecting and fixing security issues.
                     </li>
                     <li>
-                        Recipient: Netlify, Inc. If a Slack alert channel is
-                        configured, a summary of the report (including the
-                        blocked/document URL and your browser's user agent) is
-                        also forwarded there so I can investigate promptly.
+                        Recipients: Netlify, Inc. If a Slack alert channel is
+                        configured, the report (shortened if very long),
+                        including your browser's user agent, is also posted to
+                        Slack (Slack Technologies Limited, Dublin, Ireland) so I
+                        can investigate promptly.
+                    </li>
+                    <li>
+                        Retention: the stored copy is deleted automatically, as
+                        described above. The Slack copy is kept only as long as
+                        needed to investigate the violation, then deleted.
                     </li>
                 </ul>
 
@@ -156,18 +222,44 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                         rel="noopener noreferrer"
                         >Netlify's privacy policy<NewTabIndicator
                     /></a>
-                    for details.
+                    for details. Akismet, the spam filter Netlify runs on
+                    contact form submissions, is operated by Automattic Inc.,
+                    also based in the United States. Netlify engages Akismet as
+                    a sub-processor, and Automattic relies on the Standard
+                    Contractual Clauses for transfers from the European Economic
+                    Area; see
+                    <a
+                        href="https://automattic.com/privacy/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Automattic's privacy policy<NewTabIndicator
+                    /></a
+                    >.
+                </p>
+                <p>
+                    Slack Technologies Limited, which receives CSP violation
+                    reports, also processes data in the United States. For those
+                    transfers Slack relies on the EU-U.S. Data Privacy Framework
+                    (through its parent company Salesforce) and the Standard
+                    Contractual Clauses; see
+                    <a
+                        href="https://slack.com/trust/privacy/privacy-policy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >Slack's privacy policy<NewTabIndicator
+                    /></a
+                    >.
                 </p>
 
                 <h2>Cookies and local storage</h2>
                 <p>
                     This site doesn't use cookies and doesn't run any
                     third-party advertising or tracking scripts. The
-                    performance-monitoring beacon and site analytics described
-                    above use neither. Separately, this site stores exactly one
-                    preference, your light/dark theme choice, in your browser's
-                    local storage. That value never leaves your browser and
-                    isn't linked to you personally.
+                    performance-monitoring script and site analytics described
+                    above use no cookies or browser storage. Separately, this
+                    site stores exactly one preference, your light/dark theme
+                    choice, in your browser's local storage. That value never
+                    leaves your browser and isn't linked to you personally.
                 </p>
 
                 <h2>Your rights</h2>
@@ -177,16 +269,20 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                     <li>have inaccurate data corrected (Art. 16)</li>
                     <li>have your data deleted (Art. 17)</li>
                     <li>restrict how your data is processed (Art. 18)</li>
-                    <li>receive your data in a portable format (Art. 20)</li>
                     <li>
-                        object to processing based on legitimate interest (Art.
-                        21)
-                    </li>
-                    <li>
-                        withdraw consent at any time, without affecting
-                        processing that already happened (Art. 7(3))
+                        receive the data you gave me in a portable format, where
+                        I process it to prepare working together (Art. 20)
                     </li>
                 </ul>
+                <p>
+                    <strong>Right to object (Art. 21):</strong> where I process
+                    your data based on my legitimate interest (Art. 6(1)(f)
+                    GDPR), you can object at any time, on grounds relating to
+                    your particular situation. I'll then stop processing it
+                    unless I can show compelling legitimate grounds that
+                    override your interests, or need it to establish, exercise,
+                    or defend legal claims.
+                </p>
                 <p>
                     To exercise any of these, use the
                     <a href="/contact/">contact form</a>. You also have the
@@ -207,7 +303,7 @@ import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
                 <h2>Changes to this policy</h2>
                 <p>
                     I'll update this page if what this site collects or how it's
-                    processed changes. Last updated: September 23, 2026.
+                    processed changes. Last updated: September 25, 2026.
                 </p>
             </article>
         </div>
