@@ -25,7 +25,7 @@ const isDesktop = variant === 'desktop'
     data-nav-link
     class:list={[
         'relative text-sm font-medium transition-colors duration-150',
-        'after:absolute after:left-0 after:h-px after:w-0 after:bg-accent after:transition-[width] forced-colors:after:bg-[CanvasText] after:duration-200 hover:after:w-full',
+        'after:absolute after:left-0 after:h-px after:w-0 after:bg-accent after:transition-[width] forced-colors:after:bg-[LinkText] after:duration-200 hover:after:w-full',
         isDesktop ? 'after:-bottom-0.5' : 'block py-3 after:bottom-0',
         isActive && NAV_LINK_UNDERLINE_ACTIVE_CLASS,
         isActive ? NAV_LINK_ACTIVE_CLASS : NAV_LINK_INACTIVE_CLASSES,

@@ -326,4 +326,43 @@ test.describe('Contact form', () => {
             ),
         ).toEqual(registeredFields)
     })
+
+    test('every form control keeps a visible edge in forced-colors mode (issue #451)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ forcedColors: 'active' })
+        await gotoAndWaitForContactFormHydration(page)
+
+        // Forced colors repaints fills to Canvas, so a control only keeps
+        // its edge through a border in a non-Canvas system color.
+        const edges = await page
+            .locator(
+                'form[name="contact"]:not([hidden]) :is(input:not([type="hidden"]):not([tabindex="-1"]), textarea, button)',
+            )
+            .evaluateAll((controls) => {
+                const probe = document.createElement('div')
+                probe.style.backgroundColor = 'Canvas'
+                document.body.append(probe)
+                const canvas = getComputedStyle(probe).backgroundColor
+                probe.remove()
+                return controls.map((control) => {
+                    const style = getComputedStyle(control)
+                    return {
+                        control:
+                            control.id || control.textContent?.trim() || '',
+                        visibleEdge:
+                            style.borderTopStyle !== 'none' &&
+                            parseFloat(style.borderTopWidth) >= 1 &&
+                            style.borderTopColor !== canvas,
+                    }
+                })
+            })
+        expect(edges.map((e) => e.control)).toEqual([
+            'contact-name',
+            'contact-email',
+            'contact-message',
+            'Send message',
+        ])
+        expect(edges.filter((e) => !e.visibleEdge)).toEqual([])
+    })
 })

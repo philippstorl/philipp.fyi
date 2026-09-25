@@ -290,28 +290,32 @@ test.describe('Navigation', () => {
                         probe.remove()
                         return value
                     }
-                    const canvasText = resolve('CanvasText')
+                    const linkText = resolve('LinkText')
                     const highlight = resolve('Highlight')
                     const highlightText = resolve('HighlightText')
-                    const underlines = [
+                    const links = [
                         ...document.querySelectorAll(
                             'a[data-nav-link][aria-current]',
                         ),
-                    ].map((a) => getComputedStyle(a, '::after'))
+                    ]
                     const pressed = document.querySelector(
                         '[data-theme-value][aria-pressed="true"]',
                     )
                     if (!pressed) return null
                     const pressedStyle = getComputedStyle(pressed)
                     return {
+                        // LinkText, the color forced colors paints the
+                        // link text in (issue #451).
                         underline:
-                            underlines.length > 0 &&
-                            underlines.every(
-                                (u) =>
-                                    u.backgroundColor === canvasText &&
+                            links.length > 0 &&
+                            links.every((a) => {
+                                const u = getComputedStyle(a, '::after')
+                                return (
+                                    u.backgroundColor === linkText &&
                                     parseFloat(u.width) > 0 &&
-                                    parseFloat(u.height) > 0,
-                            ),
+                                    parseFloat(u.height) > 0
+                                )
+                            }),
                         pressedBackground:
                             pressedStyle.backgroundColor === highlight,
                         pressedText: pressedStyle.color === highlightText,

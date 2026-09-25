@@ -291,7 +291,7 @@ export default function ContactForm() {
                     // Not `disabled`: that drops a focused button's focus to <body>.
                     // submittingRef blocks the resubmit instead.
                     aria-disabled={status === 'submitting'}
-                    className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity duration-150 hover:opacity-80 aria-disabled:opacity-50"
+                    className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity duration-150 hover:opacity-80 aria-disabled:opacity-50 forced-colors:border"
                 >
                     {status === 'submitting' ? 'Sending…' : 'Send message'}
                 </button>

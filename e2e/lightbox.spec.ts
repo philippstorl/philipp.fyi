@@ -195,6 +195,29 @@ test.describe('Image lightbox', () => {
         expect(results.violations).toEqual([])
     })
 
+    test('controls keep a visible edge in forced-colors mode (issue #451)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ forcedColors: 'active' })
+        await openLightboxOn(page, page.locator('.prose figure img').nth(1))
+
+        // Forced colors drops the ring (a box-shadow) and repaints the fill,
+        // so only a border in a non-Canvas system color keeps an edge.
+        const canvas = await page.evaluate(() => {
+            const probe = document.createElement('div')
+            probe.style.backgroundColor = 'Canvas'
+            document.body.append(probe)
+            const color = getComputedStyle(probe).backgroundColor
+            probe.remove()
+            return color
+        })
+        for (const name of ['Close', 'Previous image', 'Next image']) {
+            const button = page.getByRole('button', { name })
+            await expect(button).toHaveCSS('border-top-width', '1px')
+            await expect(button).not.toHaveCSS('border-top-color', canvas)
+        }
+    })
+
     test('arrow keys move exactly one slide when the track itself has focus', async ({
         page,
     }) => {
