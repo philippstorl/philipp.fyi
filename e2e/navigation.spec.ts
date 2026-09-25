@@ -409,6 +409,79 @@ test.describe('Navigation', () => {
         await expect(backdrop).toBeHidden()
     })
 
+    test('mobile nav scrolls its last link into view on a short viewport while the page stays locked (issue #388)', async ({
+        page,
+    }) => {
+        // 400% zoom of 1280×1024.
+        await page.setViewportSize({ width: 320, height: 256 })
+        await page.goto('/about/')
+        await page.locator('#nav-toggle').focus()
+        await page.keyboard.press('Enter')
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+
+        const contact = page.locator('#mobile-nav a[href="/contact/"]')
+        for (let i = 0; i < 10; i++) {
+            if (await contact.evaluate((el) => el === document.activeElement))
+                break
+            await page.keyboard.press('Tab')
+        }
+        await expect(contact).toBeFocused()
+
+        const header = await page.locator('#site-header').boundingBox()
+        const link = await contact.boundingBox()
+        expect(header).not.toBeNull()
+        expect(link).not.toBeNull()
+        if (!header || !link) return
+        expect(link.y).toBeGreaterThanOrEqual(header.y + header.height)
+        expect(link.y + link.height).toBeLessThanOrEqual(256)
+        expect(await page.evaluate(() => window.scrollY)).toBe(0)
+
+        await page.keyboard.press('Enter')
+        await expect(page).toHaveURL('/contact/')
+    })
+
+    test('header logo and its focus ring stay clear of the theme toggle at 320px (issue #390)', async ({
+        page,
+    }) => {
+        await page.setViewportSize({ width: 320, height: 640 })
+        await page.goto('/')
+        // Fallback-font metrics would wrap the logo regardless of the layout.
+        await page.evaluate(() => document.fonts.ready)
+        const logo = page.getByRole('link', { name: 'Philipp Storl, home' })
+        await page.keyboard.press('Tab')
+        await page.keyboard.press('Tab')
+        await expect(logo).toBeFocused()
+
+        const toggle = await page
+            .getByRole('group', { name: 'Color theme' })
+            .boundingBox()
+        expect(toggle).not.toBeNull()
+        if (!toggle) return
+
+        const layout = await logo.evaluate((el) => {
+            const rect = el.getBoundingClientRect()
+            const style = getComputedStyle(el)
+            return {
+                logoRight: rect.right,
+                logoWidth: rect.width,
+                logoHeight: rect.height,
+                lineHeight: parseFloat(style.lineHeight),
+                ringRight:
+                    rect.right +
+                    parseFloat(style.outlineOffset) +
+                    parseFloat(style.outlineWidth),
+                scrollWidth: document.documentElement.scrollWidth,
+            }
+        })
+        expect(toggle.x - layout.logoRight).toBeGreaterThanOrEqual(8)
+        expect(layout.ringRight).toBeLessThan(toggle.x)
+        expect(
+            layout.logoHeight,
+            `logo wrapped (width ${layout.logoWidth}px, toggle at ${toggle.x}px)`,
+        ).toBeLessThanOrEqual(layout.lineHeight)
+        expect(layout.scrollWidth).toBeLessThanOrEqual(320)
+    })
+
     test('mobile nav keeps keyboard focus out of background content while open (issue #231)', async ({
         page,
     }) => {
