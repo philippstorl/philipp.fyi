@@ -9,9 +9,9 @@
     ],
     "tailwindStylesheet": "./src/styles/global.css",
     "astroCompressHTML": "html",
-    "indentEntries": true,
-    "indentTables": true,
-    "alignEntries": true,
+    "indentTableKeyValuePairs": true,
+    "indentSubTables": true,
+    "keyValueEqualsSignAlignment": true,
     "overrides": [
         {
             "files": "*.astro",
@@ -20,7 +20,7 @@
             }
         },
         {
-            "files": ["*.css", "*.md", "*.mdx", "*.yml", "*.yaml"],
+            "files": ["*.css", "*.md", "*.mdx", "*.toml", "*.yml", "*.yaml"],
             "options": {
                 "singleQuote": false
             }
