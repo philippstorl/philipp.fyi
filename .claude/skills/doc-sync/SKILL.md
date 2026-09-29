@@ -29,3 +29,5 @@ README.md and CLAUDE.md are useful only as long as they describe what's actually
 3. If nothing in the diff matches anything above — e.g. a pure prose fix, a dependency patch bump, a one-line bug fix with no new behavior — say so explicitly ("no README/CLAUDE.md updates needed because \_\_\_") rather than silently skipping the check. The goal is for this check to visibly happen every time, not to force an edit every time.
 
 This is a separate concern from `preflight` (code correctness) — run both, not one instead of the other.
+
+Nothing appends to LEARNINGS.md automatically, so if the change involved a decision made in conversation, a dead end, or an open question (none of which shows up in the diff), also consider recording it with the `log-learning` skill.

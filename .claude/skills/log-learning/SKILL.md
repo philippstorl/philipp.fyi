@@ -1,11 +1,11 @@
 ---
 name: log-learning
-description: Record something from the current conversation into LEARNINGS.md right now, instead of waiting for the automatic end-of-session sweep. Use when the user explicitly asks to log, save, or record something as a learning, or when something significant was just decided or discovered that might not show up in a git diff (the automatic sweep only looks at git status/diff/log).
+description: Record something from the current conversation into LEARNINGS.md right now. Use when the user explicitly asks to log, save, or record something as a learning, or when something significant was just decided or discovered that might not show up in a git diff.
 ---
 
 # Log a learning now
 
-Apply the same bar as the automatic `SessionEnd` sweep — don't lower it just because this is manual:
+Apply this bar, don't lower it:
 
 - A standing rule or convention about this repo belongs in CLAUDE.md (via the `doc-sync` skill), not here.
 - Feedback about working style belongs in Claude's own cross-session memory, not here.
