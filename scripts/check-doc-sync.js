@@ -1,4 +1,17 @@
 import { execSync } from 'child_process'
+import fs from 'fs'
+import tty from 'tty'
+
+// additionalContext on Stop continues the turn; nudge once, not on every continuation.
+// tty.isatty, not process.stdin.isTTY: touching process.stdin makes a pipe non-blocking (EAGAIN).
+if (!tty.isatty(0)) {
+    try {
+        const input = JSON.parse(fs.readFileSync(0, 'utf8') || '{}')
+        if (input?.stop_hook_active) process.exit(0)
+    } catch {
+        process.exit(0)
+    }
+}
 
 // -z: unquoted paths, renames as separate "new\0old" fields. -uall: files inside untracked dirs.
 const fields = execSync('git status --porcelain -z -uall', {

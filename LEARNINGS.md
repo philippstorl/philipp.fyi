@@ -13,6 +13,7 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 ### 2026-09-29
 
 - Issue #472: the `SessionEnd` LEARNINGS.md sweep (a `type: "agent"` hook in `.claude/settings.json`, in place since #42 on 2026-06-25) never ran. Claude Code's hooks docs exclude `prompt`/`agent` hooks on `SessionEnd` in every mode, not just outside the REPL, and cap its budget at 60 s (the hook asked for 120 s); a `claude -p` repro ended with "Agent stop hooks are not yet supported outside REPL" and left LEARNINGS.md untouched. The hook was removed and logging is manual now (see CLAUDE.md's Learnings section); a detached `claude -p` command hook was rejected because it would cost a full model session at every session end.
+- Issue #473: the 2026-06-25 entry's premise that `additionalContext` makes the `doc-sync` Stop hook a "non-blocking nudge" no longer holds. On Stop, Claude Code now continues the conversation so the agent can act on it, with the same loop guards as `decision: "block"` (`stop_hook_active`, a documented 8-continuation cap); since the hook only checks git state and never read stdin, one run fired the hook 19 times (18 with `stop_hook_active: true`), and the cap didn't stop it. `scripts/check-doc-sync.js` now exits silently when `stop_hook_active` is true, so it nudges at most once per stop. It checks `tty.isatty(0)`, not the issue's suggested `process.stdin.isTTY`: reading that getter switches a piped fd 0 to non-blocking, so `readFileSync(0)` threw `EAGAIN` whenever the JSON arrived late, and the guard was skipped.
 
 ### 2026-09-25
 
