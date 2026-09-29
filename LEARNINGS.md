@@ -2,13 +2,17 @@
 
 A dated, append-only log of what was discovered while working on this repo — the history and reasoning that neither of the other two mechanisms keeps. Standing rules and conventions belong in [CLAUDE.md](CLAUDE.md) (kept current there via the `doc-sync` skill); feedback about working style belongs in Claude's own cross-session memory. This file is for context that doesn't rise to either: a decision and why, a dead end, an open question, or domain knowledge about the tooling itself rather than the site.
 
-Updated automatically at the end of each session. A new session only gets a bounded digest of it (see [CLAUDE.md](CLAUDE.md)'s Learnings section), so read this file directly for older entries.
+Entries are added by hand or with the `log-learning` skill. A new session only gets a bounded digest of it (see [CLAUDE.md](CLAUDE.md)'s Learnings section), so read this file directly for older entries.
 
 ## Open questions
 
 - Whether `preflight/SKILL.md` should stop restating CLAUDE.md's command list verbatim (flagged by `self-review` on 2026-06-25) — redundant but arguably more robust against either file being edited in isolation; undecided.
 
 ## Log
+
+### 2026-09-29
+
+- Issue #472: the `SessionEnd` LEARNINGS.md sweep (a `type: "agent"` hook in `.claude/settings.json`, in place since #42 on 2026-06-25) never ran. Claude Code's hooks docs exclude `prompt`/`agent` hooks on `SessionEnd` in every mode, not just outside the REPL, and cap its budget at 60 s (the hook asked for 120 s); a `claude -p` repro ended with "Agent stop hooks are not yet supported outside REPL" and left LEARNINGS.md untouched. The hook was removed and logging is manual now (see CLAUDE.md's Learnings section); a detached `claude -p` command hook was rejected because it would cost a full model session at every session end.
 
 ### 2026-09-25
 
