@@ -111,37 +111,44 @@
 # here: those also match /_astro/*, and overlapping Cache-Control rules conflict.
 [[headers]]
     for = "/og/*"
+
     [headers.values]
         Cache-Control = "public, max-age=86400"
 
 [[headers]]
     for = "/favicon.svg"
+
     [headers.values]
         Cache-Control = "public, max-age=86400"
 
 [[headers]]
     for = "/favicon.ico"
+
     [headers.values]
         Cache-Control = "public, max-age=86400"
 
 [[headers]]
     for = "/apple-touch-icon.png"
+
     [headers.values]
         Cache-Control = "public, max-age=86400"
 
 # Shorter: these list new/changed pages, so staleness matters more.
 [[headers]]
     for = "/robots.txt"
+
     [headers.values]
         Cache-Control = "public, max-age=3600"
 
 [[headers]]
     for = "/sitemap-*.xml"
+
     [headers.values]
         Cache-Control = "public, max-age=3600"
 
 [[headers]]
     for = "/rss.xml"
+
     [headers.values]
         Cache-Control = "public, max-age=3600"
 
@@ -149,35 +156,42 @@
 # Visitors should land on /work/storyblok-migration, not screenshot.png.
 [[headers]]
     for = "*.pdf"
+
     [headers.values]
         X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
     for = "*.jpg"
+
     [headers.values]
         X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
     for = "*.jpeg"
+
     [headers.values]
         X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
     for = "*.png"
+
     [headers.values]
         X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
     for = "*.webp"
+
     [headers.values]
         X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
     for = "*.avif"
+
     [headers.values]
         X-Robots-Tag = "noindex, nofollow"
 
 [[headers]]
     for = "*.svg"
+
     [headers.values]
         X-Robots-Tag = "noindex, nofollow"

@@ -67,7 +67,7 @@
         "prettier": "^3.9.9",
         "prettier-plugin-astro": "^1.1.0",
         "prettier-plugin-tailwindcss": "^0.8.1",
-        "prettier-plugin-toml": "^2.0.6",
+        "prettier-plugin-toml": "^3.0.2",
         "robots-parser": "^3.0.1",
         "tailwindcss": "^4.3.0",
         "typescript": "^6.0.3",
