@@ -1,5 +1,6 @@
-// Every real page. Shared by contrast.spec.ts, check-contrast.mjs and
-// meta-description-length.spec.ts so coverage/filenames can't drift.
+// Every real page, shared by every per-page check (contrast, axe, skip link,
+// meta description, dev-server warmup) so coverage/filenames can't drift.
+// check-page-coverage.mjs fails if it falls out of sync with dist/.
 // gotoPath differs from reportedPath only for /404.
 export const pages = [
     { reportedPath: '/', gotoPath: '/' },
