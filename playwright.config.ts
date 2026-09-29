@@ -6,6 +6,7 @@ export default defineConfig({
     // Contrast checks run separately via playwright.contrast.config.ts —
     // report-only, not part of the pass/fail test suite. See CLAUDE.md.
     testIgnore: '**/contrast.spec.ts',
+    globalSetup: './e2e/global-setup.ts',
 
     fullyParallel: true,
 

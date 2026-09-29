@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { navItems } from '../src/data/navigation'
+import { pages } from '../scripts/contrast-pages.mjs'
 
 test.describe('Navigation', () => {
     test('header is sticky and shows name mark', async ({ page }) => {
@@ -706,13 +707,17 @@ test.describe('Navigation', () => {
         expect(obscured).toEqual([])
     })
 
-    test('skip link moves keyboard focus to main content', async ({ page }) => {
-        await page.goto('/')
-        await page.keyboard.press('Tab')
-        await expect(page.getByText('Skip to main content')).toBeFocused()
-        await page.keyboard.press('Enter')
-        await expect(page.locator('#main-content')).toBeFocused()
-    })
+    for (const { reportedPath, gotoPath } of pages) {
+        test(`skip link moves keyboard focus to main content on ${reportedPath}`, async ({
+            page,
+        }) => {
+            await page.goto(gotoPath)
+            await page.keyboard.press('Tab')
+            await expect(page.getByText('Skip to main content')).toBeFocused()
+            await page.keyboard.press('Enter')
+            await expect(page.locator('#main-content')).toBeFocused()
+        })
+    }
 
     test('skip link is unreachable while the mobile nav is open and works again once closed (issue #337)', async ({
         page,
