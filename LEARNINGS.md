@@ -10,6 +10,13 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ## Log
 
+### 2026-10-31
+
+- Two owner decisions that until now lived only in closed GitHub issues (issue #484). Don't re-raise either on a future audit without asking again.
+    - **No Impressum (#61, closed as not planned 2026-09-25).** The site is treated as a private self-presentation, and the owner accepts the residual Abmahnung risk under § 5 DDG / § 18 MStV. Revisit only if the site starts offering services or selling work directly, or if an Abmahnung or authority request arrives.
+    - **No third-party license notices in the served bundle (#189).** Vite strips the MIT/ISC banners of React, React DOM and lucide-react, and that's accepted: the owner judged the notice clause to be aimed at source/package redistribution and disputed for a minified bundle served over HTTP. PR #204 (a notices page) was closed unmerged. GitHub shows #189 as "completed", which hides the won't-fix.
+- Re-validated all 80 open issues, 79 of them from the 2026-09-25 audit, against `main` @ c880b5c7 with six parallel triage agents. One was fixed (#508, by its own Dependabot bump, #553), two were partly fixed (#490, #546), and 77 still reproduced. None had been fixed by hand: every issue from that audit was filed after the day's fix commits, and only #558 and dependency bumps have landed since. The bodies that went stale did so through line numbers, pinned versions, a "do #N first" precondition and browser-version behavior (Chromium 156 lazy-loads ±4 lightbox slides on phones, not ±2), not through wrong findings. 17 same-shape issues were folded into checklists (#576 e2e guards, #577 build-output checks, #578 owner actions). The project-audit skill now has filing rules against that volume and a re-validation mode.
+
 ### 2026-09-29
 
 - Issue #472: the `SessionEnd` LEARNINGS.md sweep (a `type: "agent"` hook in `.claude/settings.json`, in place since #42 on 2026-06-25) never ran. Claude Code's hooks docs exclude `prompt`/`agent` hooks on `SessionEnd` in every mode, not just outside the REPL, and cap its budget at 60 s (the hook asked for 120 s); a `claude -p` repro ended with "Agent stop hooks are not yet supported outside REPL" and left LEARNINGS.md untouched. The hook was removed and logging is manual now (see CLAUDE.md's Learnings section); a detached `claude -p` command hook was rejected because it would cost a full model session at every session end.
