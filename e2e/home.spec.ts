@@ -94,12 +94,14 @@ test.describe('Home page', () => {
 
     test('card grids are exposed as ordered lists', async ({ page }) => {
         await page.goto('/')
-        await expect(page.locator('#work ol > li > article')).toHaveCount(4)
-        await expect(page.locator('#principles ol > li > article')).toHaveCount(
-            6,
-        )
         await expect(
-            page.locator('#recommendations ol > li > article'),
+            page.locator('#work ol[role="list"] > li > article'),
+        ).toHaveCount(4)
+        await expect(
+            page.locator('#principles ol[role="list"] > li > article'),
+        ).toHaveCount(6)
+        await expect(
+            page.locator('#recommendations ol[role="list"] > li > article'),
         ).toHaveCount(6)
     })
 

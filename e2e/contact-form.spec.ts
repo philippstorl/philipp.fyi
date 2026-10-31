@@ -327,6 +327,24 @@ test.describe('Contact form', () => {
         ).toEqual(registeredFields)
     })
 
+    test('text fields stay at 16px so iOS Safari does not zoom on focus (issue #151)', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+        const fields = await page
+            .locator(
+                'form[name="contact"]:not([hidden]) :is(input:not([type="hidden"]):not([tabindex="-1"]), textarea)',
+            )
+            .evaluateAll((els) =>
+                els.map((el) => ({
+                    field: el.id,
+                    fontSize: parseFloat(getComputedStyle(el).fontSize),
+                })),
+            )
+        expect(fields).toHaveLength(3)
+        expect(fields.filter(({ fontSize }) => fontSize < 16)).toEqual([])
+    })
+
     test('every form control keeps a visible edge in forced-colors mode (issue #451)', async ({
         page,
     }) => {
