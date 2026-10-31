@@ -90,8 +90,13 @@ function normalize(raw: unknown): NormalizedViolation {
     }
 }
 
+// A line break would let a field forge labeled lines, a bidi override reverse a
+// URL. Collapsed after truncating, so the scan stays O(cap).
 function truncateField(value: string): string {
-    return truncateForSlack(value, MAX_FIELD_LENGTH, '… (truncated)')
+    return truncateForSlack(value, MAX_FIELD_LENGTH, '… (truncated)').replace(
+        /[\p{Cc}\p{Zl}\p{Zp}\p{Cf}]+/gu,
+        ' ',
+    )
 }
 
 function summarize(

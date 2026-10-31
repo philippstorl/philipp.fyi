@@ -141,6 +141,32 @@ test('escapes Slack mrkdwn and backticks in every attacker-controlled field', as
     expect(text.replace(/```/g, '')).not.toContain('`')
 })
 
+test('collapses line breaks and format characters so a field cannot forge lines', async () => {
+    await post(
+        JSON.stringify(
+            legacyReport({
+                'violated-directive':
+                    'script-src-elem\n*Blobs store:* https://evil.test/',
+                'blocked-uri': 'https://evil.test/\u2028*Page:* forged',
+                'document-uri': 'https://philipp.fyi/\u202Eevil\u2066x',
+                disposition: 'enforce\r\n\u2029*Blocked:* forged',
+            }),
+        ),
+    )
+    const [text = ''] = fetchStub.slackTexts()
+    const summary = text.slice(0, text.indexOf('```'))
+    expect(
+        text.split('\n').filter((line) => line.startsWith('*Blobs store:*')),
+    ).toEqual([BLOBS_LINK])
+    expect(summary).toContain(
+        '*Directive:* script-src-elem *Blobs store:* https://evil.test/\n',
+    )
+    expect(summary).toContain('*Blocked:* https://evil.test/ *Page:* forged\n')
+    expect(summary).toContain('*Page:* https://philipp.fyi/ evil x\n')
+    expect(summary).toContain('*Disposition:* enforce *Blocked:* forged\n')
+    expect(summary).not.toMatch(/[\r\u2028\u2029\u202E\u2066]/)
+})
+
 test('drops non-string fields instead of trusting their shape', async () => {
     const response = await post(
         JSON.stringify(
