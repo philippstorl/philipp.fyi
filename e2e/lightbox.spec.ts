@@ -218,21 +218,33 @@ test.describe('Image lightbox', () => {
         }
     })
 
-    test('a focused control keeps its round shape (issue #450)', async ({
+    test('a focused control keeps its round shape and white inset ring (issues #389, #450)', async ({
         page,
     }) => {
-        await openLightboxOn(page, page.locator('.prose figure img').first())
-        const close = page.getByRole('button', { name: 'Close' })
-        const radius = () =>
-            close.evaluate((el) => getComputedStyle(el).borderRadius)
-        const resting = await radius()
-        await page.keyboard.press('Shift')
-        await close.focus()
-        expect(await close.evaluate((el) => el.matches(':focus-visible'))).toBe(
-            true,
+        // The accent ring outside the button fails 3:1 against the backdrop (#389).
+        // Second slide, so Previous is enabled too.
+        await openLightboxOn(page, page.locator('.prose figure img').nth(1))
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            counterText(2),
         )
-        expect(await radius()).toBe(resting)
-        expect(parseFloat(resting)).toBeGreaterThan(20)
+        await page.keyboard.press('Shift')
+        for (const name of ['Close', 'Previous image', 'Next image']) {
+            const control = page.getByRole('button', { name })
+            const radius = () =>
+                control.evaluate((el) => getComputedStyle(el).borderRadius)
+            const resting = await radius()
+            await control.focus()
+            expect(
+                await control.evaluate((el) => el.matches(':focus-visible')),
+            ).toBe(true)
+            expect(await radius()).toBe(resting)
+            expect(parseFloat(resting)).toBeGreaterThan(20)
+            await expect(control).toHaveCSS(
+                'outline-color',
+                'rgb(255, 255, 255)',
+            )
+            await expect(control).toHaveCSS('outline-offset', '-5px')
+        }
     })
 
     test('the focused track keeps its white inset outline (issue #467)', async ({
