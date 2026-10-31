@@ -651,6 +651,23 @@ test.describe('Navigation', () => {
         await expect(page.locator('#site-footer')).not.toHaveAttribute('inert')
     })
 
+    test('resizing past md with the mobile nav open releases the inert background (issue #231)', async ({
+        page,
+    }) => {
+        // inert has no media-query fallback, so only the min-width listener undoes it.
+        await page.setViewportSize({ width: 393, height: 800 })
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        await mobileToggle.click()
+        await expect(page.locator('#main-content')).toHaveAttribute('inert', '')
+
+        await page.setViewportSize({ width: 1024, height: 800 })
+        await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
+        for (const id of ['skip-link', 'main-content', 'site-footer']) {
+            await expect(page.locator(`#${id}`)).not.toHaveAttribute('inert')
+        }
+    })
+
     test('mobile nav closes when a client-side navigation swaps the page underneath it', async ({
         page,
     }) => {
@@ -779,6 +796,11 @@ test.describe('Navigation without JavaScript', () => {
                 ).toBeHidden()
                 // The scroll lock and backdrop key off classes only JS removes.
                 await expect(page.locator('#mobile-nav-backdrop')).toBeHidden()
+                // A sticky (or fixed) header would pin the open nav over most of the viewport.
+                await expect(page.locator('#site-header')).toHaveCSS(
+                    'position',
+                    'relative',
+                )
                 const root = await page.locator('html').evaluate((html) => ({
                     overflow: getComputedStyle(html).overflow,
                     scrollPaddingTop: getComputedStyle(html).scrollPaddingTop,
