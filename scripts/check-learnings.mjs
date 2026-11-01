@@ -14,10 +14,14 @@ const read = (file) => fs.readFileSync(path.join(root, file), 'utf8')
 const HOOK_LIMIT = 10_000
 const SUPPRESSION = /\s*2>\/dev\/null\s*\|\|\s*true\s*$/
 
+// A `## <heading>` line as the loader's parse() matches it.
+const isHeading = (line, heading) =>
+    /^## (.+)$/.exec(line)?.[1]?.trim() === heading
+
 // Lines under `## <heading>` up to the next `## `, like the loader's parse().
 function section(text, heading) {
     const lines = text.split(/\r?\n/)
-    const start = lines.findIndex((line) => line.trim() === `## ${heading}`)
+    const start = lines.findIndex((line) => isHeading(line, heading))
     if (start === -1) return ''
     const end = lines.findIndex((line, i) => i > start && /^## /.test(line))
     return lines.slice(start + 1, end === -1 ? undefined : end).join('\n')
@@ -45,6 +49,19 @@ const learnings = fs.existsSync(path.join(root, 'LEARNINGS.md'))
     : null
 const hasOpenQuestions =
     learnings !== null && /^- /m.test(section(learnings, 'Open questions'))
+
+// The loader finds these sections by exact heading text, and silently drops
+// a renamed one.
+const missingHeadings = ['Open questions', 'Log'].filter(
+    (heading) =>
+        learnings !== null &&
+        !learnings.split(/\r?\n/).some((line) => isHeading(line, heading)),
+)
+if (missingHeadings.length > 0) {
+    problems.push(
+        `LEARNINGS.md has no ${missingHeadings.map((heading) => `"## ${heading}"`).join(' or ')} heading, which load-learnings.js reads by exact text`,
+    )
+}
 
 if (learnings === null) {
     problems.push('LEARNINGS.md is missing')
@@ -94,6 +111,16 @@ if (learnings === null) {
         ) {
             problems.push(
                 "additionalContext has none of LEARNINGS.md's open questions",
+            )
+        }
+        // Counts the file's log bullets, not its `### ` lines, so day headings
+        // at a level the loader skips are caught too.
+        if (
+            /^- /m.test(section(learnings, 'Log')) &&
+            !/^### /m.test(section(context, 'Log'))
+        ) {
+            problems.push(
+                "additionalContext has none of LEARNINGS.md's log entries",
             )
         }
     }
