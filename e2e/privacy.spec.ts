@@ -128,6 +128,24 @@ test.describe('Privacy policy page', () => {
         ).toHaveAttribute('href', '/privacy/')
     })
 
+    test('footer copyright line is centered when stacked, left in the row (issue #517)', async ({
+        page,
+    }) => {
+        const copyright = page.locator('#site-footer p')
+
+        // At 320px the line wraps above the centered icon row.
+        await page.setViewportSize({ width: 320, height: 800 })
+        await page.goto('/privacy/')
+        await expect(copyright).toHaveCSS('text-align', 'center')
+        await expect(copyright).toHaveCSS('text-wrap-style', 'balance')
+
+        // From sm (640px) the footer is a row and the line sits left.
+        for (const width of [640, 1280]) {
+            await page.setViewportSize({ width, height: 800 })
+            await expect(copyright).toHaveCSS('text-align', 'left')
+        }
+    })
+
     test('is noindexed but keeps a real canonical link', async ({ page }) => {
         await page.goto('/privacy/')
         await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
