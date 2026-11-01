@@ -15,7 +15,7 @@ Apply this bar, don't lower it:
 
 1. Read `LEARNINGS.md` first, so you don't duplicate an entry that's already there.
 2. If `$ARGUMENTS` describes what to log, use that. Otherwise, infer it from the recent conversation — what was just decided, discovered, or ruled out.
-3. Append one short, specific entry (1-3 sentences) to the `## Log` section under today's date — add a new `### YYYY-MM-DD` heading if today doesn't have one yet, otherwise add to the existing one. Add to `## Open questions` instead if it's unresolved rather than a settled fact.
+3. Append one short, specific entry (1-3 sentences) to the `## Log` section under today's date — add a new `### YYYY-MM-DD` heading if today doesn't have one yet, otherwise add to the existing one. Add to `## Open questions` instead if it's unresolved rather than a settled fact. If it only makes sense after the entry above it, add it under the same date and start it with "Follow-up", "Same session" or "Correction to the entry above": the SessionStart digest keeps such an entry together with its predecessor (`FOLLOW_UP` in `scripts/load-learnings.js`).
 4. If it resulted in (or should result in) a CLAUDE.md or memory change, make that change too and link to it from the entry rather than restating it.
 5. Confirm back to the user in one line what you logged.
 
