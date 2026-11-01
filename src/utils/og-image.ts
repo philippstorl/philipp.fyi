@@ -1,4 +1,4 @@
-import satori from 'satori'
+import satori, { type Font } from 'satori'
 import sharp from 'sharp'
 import { readFileSync, readdirSync } from 'node:fs'
 import { resolve } from 'node:path'
@@ -13,8 +13,7 @@ interface SatoriTemplateNode {
     props: Record<string, unknown>
 }
 
-type FontCache = { regular: ArrayBuffer; bold: ArrayBuffer } | null
-let fontCache: FontCache = null
+let fontCache: Font[] | null = null
 
 function nodeBufferToArrayBuffer(buf: Buffer): ArrayBuffer {
     return buf.buffer.slice(
@@ -33,34 +32,67 @@ function findFontFile(dir: string, matcher: (name: string) => boolean): string {
     return resolve(dir, match)
 }
 
-function loadFonts(): NonNullable<FontCache> {
+function loadFonts(): Font[] {
     if (fontCache) return fontCache
 
     // Satori can't read WOFF2; the variable font package only ships WOFF2,
-    // so the two static weights come from the non-variable @fontsource/geist.
+    // so the static weights come from the non-variable @fontsource/geist.
     const geistDir = resolve('./node_modules/@fontsource/geist/files')
+    const readWoff = (subset: string): ArrayBuffer =>
+        nodeBufferToArrayBuffer(
+            readFileSync(
+                findFontFile(
+                    geistDir,
+                    (f) =>
+                        f.includes(`-${subset}-normal`) && f.endsWith('.woff'),
+                ),
+            ),
+        )
 
-    // Match WOFF files — the package ships latin-{weight}-normal.woff alongside .woff2
-    const regularPath = findFontFile(
-        geistDir,
-        (f) =>
-            f.includes('latin-400-normal') &&
-            f.endsWith('.woff') &&
-            !f.endsWith('.woff2'),
-    )
-    const boldPath = findFontFile(
-        geistDir,
-        (f) =>
-            f.includes('latin-700-normal') &&
-            f.endsWith('.woff') &&
-            !f.endsWith('.woff2'),
-    )
-
-    fontCache = {
-        regular: nodeBufferToArrayBuffer(readFileSync(regularPath)),
-        bold: nodeBufferToArrayBuffer(readFileSync(boldPath)),
-    }
+    fontCache = [
+        {
+            name: 'Geist',
+            data: readWoff('latin-400'),
+            weight: 400,
+            style: 'normal',
+        },
+        {
+            name: 'Geist',
+            data: readWoff('latin-700'),
+            weight: 700,
+            style: 'normal',
+        },
+        // Per-glyph fallback for Ł, ř, ş, ő... Satori keeps only the first font
+        // per name and weight, so latin-ext needs its own family name.
+        {
+            name: 'Geist Latin Ext',
+            data: readWoff('latin-ext-400'),
+            weight: 400,
+            style: 'normal',
+        },
+        {
+            name: 'Geist Latin Ext',
+            data: readWoff('latin-ext-700'),
+            weight: 700,
+            style: 'normal',
+        },
+    ]
     return fontCache
+}
+
+const graphemeSegmenter = new Intl.Segmenter(undefined, {
+    granularity: 'grapheme',
+})
+
+// "👍🏽 (U+1F44D U+1F3FD)": code points make invisible/combining marks findable.
+function describeGrapheme(grapheme: string): string {
+    const codePoints = Array.from(
+        grapheme,
+        // Array.from(string) only yields non-empty code points.
+        (cp) =>
+            `U+${cp.codePointAt(0)!.toString(16).toUpperCase().padStart(4, '0')}`,
+    )
+    return `${grapheme} (${codePoints.join(' ')})`
 }
 
 // Hex copies of global.css's light tokens (Satori can't read CSS variables);
@@ -277,11 +309,11 @@ export async function generateOgImage(
     coverImagePath?: string,
     category?: WorkCategory,
 ): Promise<Response> {
-    const fonts = loadFonts()
     const coverImageDataUri = coverImagePath
         ? await buildCoverImageDataUri(coverImagePath)
         : undefined
 
+    const missingGraphemes = new Set<string>()
     const svg = await satori(
         // satori() wants a real ReactNode; this file's plain {type,props}
         // objects work anyway -- Satori accepts the shape at runtime.
@@ -294,22 +326,25 @@ export async function generateOgImage(
         {
             width: OG_WIDTH,
             height: OG_HEIGHT,
-            fonts: [
-                {
-                    name: 'Geist',
-                    data: fonts.regular,
-                    weight: 400,
-                    style: 'normal',
-                },
-                {
-                    name: 'Geist',
-                    data: fonts.bold,
-                    weight: 700,
-                    style: 'normal',
-                },
-            ],
+            fonts: loadFonts(),
+            // Satori calls this with the characters no loaded font covers
+            // (arrows, check marks, emoji); none ship, so just record them.
+            loadAdditionalAsset: async (_languageCode, segment) => {
+                for (const { segment: grapheme } of graphemeSegmenter.segment(
+                    segment,
+                ))
+                    missingGraphemes.add(grapheme)
+                return []
+            },
         },
     )
+
+    // Covers the whole card (title, label, badge, footer), not just the title.
+    if (missingGraphemes.size > 0) {
+        console.warn(
+            `[og-image] OG card for "${title}": no OG font has ${[...missingGraphemes].map(describeGrapheme).join(', ')}, so it draws them as empty boxes.`,
+        )
+    }
 
     const png = await sharp(Buffer.from(svg)).png().toBuffer()
 
