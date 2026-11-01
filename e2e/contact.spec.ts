@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Locator } from '@playwright/test'
 
 test.describe('Contact page', () => {
     test('shows heading and the contact form', async ({ page }) => {
@@ -38,5 +38,49 @@ test.describe('Contact page', () => {
         await expect(
             page.locator('footer a[aria-label="Contact"]'),
         ).toHaveAttribute('href', '/contact/')
+    })
+})
+
+// Outline pill buttons meet the site's 44px touch target (issue #497).
+test.describe('Pill button touch targets', () => {
+    async function expectTouchTargetHeight(link: Locator) {
+        await expect(link).toBeVisible()
+        const box = await link.boundingBox()
+        expect(box?.height).toBeGreaterThanOrEqual(44)
+    }
+
+    for (const { path, names } of [
+        { path: '/', names: ['LinkedIn', 'GitHub'] },
+        {
+            path: '/contact/',
+            names: ['Connect on LinkedIn', 'Browse my code on GitHub'],
+        },
+    ]) {
+        test(`pill buttons on ${path} are at least 44px tall`, async ({
+            page,
+        }) => {
+            await page.goto(path)
+            for (const name of names) {
+                await expectTouchTargetHeight(
+                    page.locator('#main-content').getByRole('link', {
+                        name: `${name} (opens in a new tab)`,
+                        exact: true,
+                    }),
+                )
+            }
+        })
+    }
+
+    test('404 "Back home" pill button is at least 44px tall', async ({
+        page,
+    }) => {
+        await page.goto('/this-page-does-not-exist/', {
+            waitUntil: 'domcontentloaded',
+        })
+        await expectTouchTargetHeight(
+            page
+                .locator('#main-content')
+                .getByRole('link', { name: '← Back home', exact: true }),
+        )
     })
 })
