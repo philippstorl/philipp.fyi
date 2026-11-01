@@ -113,7 +113,7 @@ npx netlify blobs:get csp-reports <key>
 
 ## CSP report retention
 
-`netlify/functions/csp-report-cleanup.ts` runs daily on a Netlify scheduled function (a `config` export with a cron `schedule`, not a dashboard/`netlify.toml` setting) and deletes any `csp-reports` Blobs entry older than 30 days — the Blobs SDK has no TTL/expiration option, so nothing else prunes the store. No setup needed; it runs automatically once deployed. See [`netlify/functions/CLAUDE.md`](netlify/functions/CLAUDE.md)'s `csp-report-cleanup.ts` bullet for how it works and what it's verified against.
+`netlify/functions/csp-report-cleanup.ts` runs daily on a Netlify scheduled function (a `config` export with a cron `schedule`, not a dashboard/`netlify.toml` setting) and deletes any `csp-reports` Blobs entry older than 30 days — the Blobs SDK has no TTL/expiration option, so nothing else prunes the store. If a delete or the store listing fails, it posts an alert to the same `SLACK_WEBHOOK_URL` channel as CSP violations (skipped if unset). No setup needed; it runs automatically once deployed. See [`netlify/functions/CLAUDE.md`](netlify/functions/CLAUDE.md)'s `csp-report-cleanup.ts` bullet for how it works and what it's verified against.
 
 ## Deploy notifications
 
@@ -181,7 +181,7 @@ Shared test helpers live in `e2e/helpers/` (not matched as specs). Before any wo
 
 ### Netlify Functions unit tests
 
-`astro dev` doesn't serve Netlify Functions, so `tests/functions/` unit-tests them directly: `npm run test:functions` (`playwright.functions.config.ts`, plain Node, no browser, about a second) imports each handler, calls it with a real `Request`, and stubs `fetch` so nothing reaches the network, the real Slack webhooks, or Netlify Blobs. It covers `X-Webhook-Signature` verification (valid, wrong secret, tampered body, missing/stripped/truncated token, wrong `alg`/`iss`), the `deploy-notification` 401/400/204 paths, `csp-report`'s 405/413/400 paths, report normalization, batch cap and non-string-field handling, Slack escaping of attacker-controlled fields in both handlers (and `csp-report`'s collapsing of line breaks and format characters in its summary lines), `csp-report-cleanup`'s retention, and the `includeSubDomains` HSTS header on both HTTP functions' responses (matched against `netlify.toml`). It runs as the `functions` CI job, not as part of `npm test`.
+`astro dev` doesn't serve Netlify Functions, so `tests/functions/` unit-tests them directly: `npm run test:functions` (`playwright.functions.config.ts`, plain Node, no browser, about a second) imports each handler, calls it with a real `Request`, and stubs `fetch` so nothing reaches the network, the real Slack webhooks, or Netlify Blobs. It covers `X-Webhook-Signature` verification (valid, wrong secret, tampered body, missing/stripped/truncated token, wrong `alg`/`iss`), the `deploy-notification` 401/400/204 paths, `csp-report`'s 405/413/400 paths, report normalization, batch cap and non-string-field handling, Slack escaping of attacker-controlled fields in both handlers (and `csp-report`'s collapsing of line breaks and format characters in its summary lines), `csp-report-cleanup`'s retention, pinned schedule and Slack alerts on a failed run, and the `includeSubDomains` HSTS header on both HTTP functions' responses (matched against `netlify.toml`). It runs as the `functions` CI job, not as part of `npm test`.
 
 ### First run
 
