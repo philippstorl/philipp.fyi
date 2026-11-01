@@ -249,7 +249,7 @@ Every static page, case study, and published blog post gets its own `/og/<slug>.
 
 ## Structured data (JSON-LD)
 
-The homepage renders a `Person` schema (name, job title, and `sameAs` links to LinkedIn/GitHub) and each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), both as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
+The homepage renders a `Person` schema (name, job title, and `sameAs` links to LinkedIn/GitHub), each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), and each published blog post renders a `BlogPosting` schema (headline, description, publish date, author, URL, and OG image), all as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
 
 ## Analytics
 
@@ -262,7 +262,7 @@ src/
   components/
     home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader
     layout/        → Header, NavLink, Footer, Main
-    seo/           → JsonLd (renders Person/CreativeWork JSON-LD, see src/utils/schema.ts)
+    seo/           → JsonLd (renders Person/CreativeWork/BlogPosting JSON-LD, see src/utils/schema.ts)
     ui/            → ThemeToggle, ContactForm, SocialIcon, CategoryBadge, InitialsAvatar, InterlinkCard, InterlinkRow, PageHeader, NewTabIndicator, ResponsiveImage, ResponsiveFigure
     work/          → CaseStudyLayout, ImageLightbox, WorkCard, WorkGrid
   content/
@@ -300,7 +300,7 @@ src/
     global.css     → Tailwind v4 config, design tokens, dark mode
   utils/
     og-image.ts        → Satori template + Sharp PNG generation
-    schema.ts          → Person/CreativeWork JSON-LD schema builders, rendered by components/seo/JsonLd.astro
+    schema.ts          → Person/CreativeWork/BlogPosting JSON-LD schema builders, rendered by components/seo/JsonLd.astro
     experience.ts      → Computes career-length and Staffbase-tenure year figures from fixed dates
     category-colors.ts → Shared category → badge-color mapping (Tailwind classes + Satori hex equivalents)
     nav-active.ts      → Shared active-nav-link match + class vocabulary, used by NavLink.astro and Header.astro's client script

@@ -66,3 +66,38 @@ export function buildCreativeWorkSchema(
         ...(params.image ? { image: params.image } : {}),
     }
 }
+
+export interface BlogPostingSchema {
+    '@context': 'https://schema.org'
+    '@type': 'BlogPosting'
+    headline: string
+    description: string
+    datePublished: string
+    author: { '@type': 'Person'; name: string }
+    url: string
+    image: string
+}
+
+export interface BlogPostingSchemaParams {
+    title: string
+    description: string
+    date: Date
+    url: string
+    image: string
+}
+
+/** BlogPosting schema for a blog post page. */
+export function buildBlogPostingSchema(
+    params: BlogPostingSchemaParams,
+): BlogPostingSchema {
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: params.title,
+        description: params.description,
+        datePublished: params.date.toISOString(),
+        author: { '@type': 'Person', name: SITE_NAME },
+        url: params.url,
+        image: params.image,
+    }
+}
