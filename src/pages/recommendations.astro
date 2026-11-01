@@ -8,6 +8,7 @@ import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { recommendations } from '@/data/recommendations'
+import { LINKEDIN_URL } from '@/data/social'
 import { staticPageMeta } from '@/data/static-pages'
 import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
 ---
@@ -23,7 +24,7 @@ import { PROSE_BLOCKQUOTE_CLASSES } from '@/utils/prose'
             external partners I've worked with over the years, collected
             from{' '}
             <a
-                href="https://www.linkedin.com/in/philipp-storl/details/recommendations/"
+                href={`${LINKEDIN_URL}details/recommendations/`}
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-accent underline underline-offset-2 hover:no-underline"

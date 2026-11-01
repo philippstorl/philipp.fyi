@@ -1,3 +1,4 @@
+import { GITHUB_URL, LINKEDIN_URL, type SocialIcon } from '@/data/social'
 import {
     getStaffbaseTenureYears,
     getYearsOfExperience,
@@ -6,7 +7,7 @@ import {
 export interface HeroLink {
     label: string
     href: string
-    icon: 'linkedin' | 'github'
+    icon: Exclude<SocialIcon, 'mail'>
 }
 
 export interface HeroData {
@@ -32,12 +33,12 @@ export const hero: HeroData = {
     links: [
         {
             label: 'LinkedIn',
-            href: 'https://www.linkedin.com/in/philipp-storl/',
+            href: LINKEDIN_URL,
             icon: 'linkedin',
         },
         {
             label: 'GitHub',
-            href: 'https://github.com/philippstorl',
+            href: GITHUB_URL,
             icon: 'github',
         },
     ],

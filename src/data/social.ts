@@ -1,5 +1,8 @@
 export type SocialIcon = 'github' | 'linkedin' | 'mail'
 
+export const LINKEDIN_URL = 'https://www.linkedin.com/in/philipp-storl/'
+export const GITHUB_URL = 'https://github.com/philippstorl'
+
 export interface SocialLink {
     label: string
     href: string
@@ -9,12 +12,12 @@ export interface SocialLink {
 export const socialLinks: SocialLink[] = [
     {
         label: 'LinkedIn',
-        href: 'https://www.linkedin.com/in/philipp-storl/',
+        href: LINKEDIN_URL,
         icon: 'linkedin',
     },
     {
         label: 'GitHub',
-        href: 'https://github.com/philippstorl',
+        href: GITHUB_URL,
         icon: 'github',
     },
     {
