@@ -2,8 +2,9 @@
 import { navItems } from '@/data/navigation'
 import ThemeToggle from '@/components/ui/ThemeToggle.astro'
 import NavLink from '@/components/layout/NavLink.astro'
+import { getNavPathname } from '@/utils/nav-active'
 
-const pathname = Astro.url.pathname
+const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
 ---
 
 {/* Sibling of #site-header, not a child -- nesting it would carry it into the header's own z-50 stacking context. */}
@@ -141,7 +142,10 @@ const pathname = Astro.url.pathname
     }
 
     function updateActiveNav() {
-        const { pathname } = window.location
+        // Main is swapped on soft nav; a 404 keeps the requested URL.
+        const pathname =
+            document.getElementById('main-content')?.dataset.navPathname ??
+            window.location.pathname
 
         document
             .querySelectorAll('#site-header a[data-nav-link]')
