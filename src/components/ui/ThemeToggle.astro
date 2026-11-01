@@ -170,6 +170,16 @@ const options: ThemeOption[] = [
         if (themeUnsaved) applyTheme(currentTheme)
     })
 
+    // Follows a theme change made in another tab; a null key is clear().
+    window.addEventListener('storage', (event) => {
+        if (event.storageArea !== localStorage) return
+        if (event.key !== 'theme' && event.key !== null) return
+        currentTheme = getStoredTheme()
+        themeUnsaved = false
+        applyTheme(currentTheme)
+        setActiveButtons(currentTheme)
+    })
+
     // Live-updates the applied theme while 'system' is selected.
     window
         .matchMedia('(prefers-color-scheme: dark)')
