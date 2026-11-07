@@ -1,4 +1,5 @@
-@import "tailwindcss";
+/* Detect classes in src/ only: docs, e2e/ and scripts/ quote class names that would otherwise ship as dead CSS */
+@import "tailwindcss" source("../../src");
 
 /* Provides `prose` classes for rendering MDX content */
 @plugin "@tailwindcss/typography";
