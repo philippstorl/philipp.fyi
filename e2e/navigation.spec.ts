@@ -1,6 +1,14 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
 import { navItems } from '../src/data/navigation'
 import { pages } from '../scripts/contrast-pages.mjs'
+
+// Sets the browser's default font size the way a user's settings do, which
+// rem-based media queries (Tailwind's breakpoints) scale with. The session
+// stays attached: detaching it drops the override.
+async function setDefaultFontSize(page: Page, px: number) {
+    const cdp = await page.context().newCDPSession(page)
+    await cdp.send('Page.setFontSizes', { fontSizes: { standard: px } })
+}
 
 test.describe('Navigation', () => {
     test('header is sticky and shows name mark', async ({ page }) => {
@@ -683,6 +691,25 @@ test.describe('Navigation', () => {
         }
     })
 
+    test('a larger browser font size moves every md check with the breakpoint (issue #549)', async ({
+        page,
+    }) => {
+        // md is 48rem, so at a 20px default font the hamburger layout runs to 960px.
+        await setDefaultFontSize(page, 20)
+        await page.setViewportSize({ width: 900, height: 800 })
+        await page.goto('/about/')
+        const mobileToggle = page.locator('#nav-toggle')
+        await mobileToggle.click()
+        await expect(page.locator('#main-content')).toHaveAttribute('inert', '')
+        await expect(page.locator('html')).toHaveCSS('overflow', 'hidden')
+
+        await page.setViewportSize({ width: 1000, height: 800 })
+        await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
+        for (const id of ['skip-link', 'main-content', 'site-footer']) {
+            await expect(page.locator(`#${id}`)).not.toHaveAttribute('inert')
+        }
+    })
+
     test('mobile nav closes when a client-side navigation swaps the page underneath it', async ({
         page,
     }) => {
@@ -841,6 +868,22 @@ test.describe('Navigation without JavaScript', () => {
             })
         }
     }
+
+    test('a larger browser font size keeps the no-JS scroll padding at 0 below md (issue #549)', async ({
+        page,
+    }) => {
+        await setDefaultFontSize(page, 20)
+        await page.setViewportSize({ width: 900, height: 800 })
+        await page.goto('/contact/')
+        await expect(page.locator('#site-header')).toHaveCSS(
+            'position',
+            'relative',
+        )
+        await expect(page.locator('html')).toHaveCSS(
+            'scroll-padding-top',
+            '0px',
+        )
+    })
 
     test('desktop keeps its inline nav and hides the inert theme toggle', async ({
         page,
