@@ -10,6 +10,10 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ## Log
 
+### 2026-11-07
+
+- **Tailwind now detects classes in `src/` only** (`source("../../src")` on the `global.css` import, issue #510), replacing the 2026-08-19 rule of never quoting an unused class in docs. That rule didn't hold, because docs have to name old classes: 32 dead utilities had leaked from docs and `e2e/`/`scripts/` comments into the site-wide stylesheet (~3.3 KB, ~530 B gzip). Chosen over the issue's `@source not` list for the docs, since nothing outside `src/` supplies classes and that list would need an entry per new doc location. The explicit `../../src` rather than `..` makes a moved `global.css` fail the build instead of silently scanning the repo root.
+
 ### 2026-10-31
 
 - Two owner decisions that until now lived only in closed GitHub issues (issue #484). Don't re-raise either on a future audit without asking again.
