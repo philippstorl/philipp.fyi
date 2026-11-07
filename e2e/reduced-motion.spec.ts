@@ -12,12 +12,14 @@ const REDUCE = {
     scrollBehavior: 'auto',
     jsScrollBehavior: 'instant',
     animationsRun: false,
+    hoverMoves: false,
 } as const
 const NO_PREFERENCE = {
     reducedMotion: 'no-preference',
     scrollBehavior: 'smooth',
     jsScrollBehavior: 'smooth',
     animationsRun: true,
+    hoverMoves: true,
 } as const
 
 // CSS can't gate a JS scroll's explicit `behavior`, so record each call's.
@@ -116,6 +118,40 @@ for (const [preference, other] of [
             expect(animations).toEqual(
                 preference.animationsRun ? animationClasses : [],
             )
+        })
+
+        test('work card cover hover zoom follows the preference', async ({
+            page,
+            isMobile,
+        }) => {
+            // Tailwind's `hover:` only applies under `(hover: hover)`.
+            test.skip(isMobile, 'Pixel 5 emulates a device without hover')
+            await page.goto('/work/')
+            // The featured card's cover is hidden from `md` up.
+            const card = page
+                .locator('article')
+                .filter({ has: page.locator('img').filter({ visible: true }) })
+                .first()
+            const cover = card.locator('img')
+            const width = async () => (await cover.boundingBox())?.width ?? 0
+            const restWidth = await width()
+            expect(restWidth).toBeGreaterThan(0)
+
+            // The stretched title link covers the card, cover included.
+            await card.hover()
+            await expect
+                .poll(() => card.evaluate((el) => el.matches(':hover')))
+                .toBe(true)
+            // getAnimations() flushes style, so a hover transition exists by now.
+            await cover.evaluate((el) =>
+                Promise.all(
+                    el.getAnimations().map((a) => a.finished.catch(() => {})),
+                ),
+            )
+
+            if (preference.hoverMoves)
+                await expect.poll(width).toBeGreaterThan(restWidth)
+            else expect(await width()).toBe(restWidth)
         })
 
         // Each second step flips the preference mid-session: the check must
