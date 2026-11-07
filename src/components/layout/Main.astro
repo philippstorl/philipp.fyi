@@ -1,11 +1,23 @@
 ---
+import { getNavPathname } from '@/utils/nav-active'
+
 interface Props {
     class?: string
+    // Path the nav's active state matches; Header.astro reads it on every page load.
+    navPathname?: string
 }
 
-const { class: className } = Astro.props
+const {
+    class: className,
+    navPathname = getNavPathname(Astro.url.pathname, Astro.routePattern),
+} = Astro.props
 ---
 
-<main id="main-content" tabindex="-1" class={className}>
+<main
+    id="main-content"
+    tabindex="-1"
+    class={className}
+    data-nav-pathname={navPathname}
+>
     <slot />
 </main>

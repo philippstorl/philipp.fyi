@@ -16,6 +16,12 @@ export function getNavLinkAriaCurrent(
     return undefined
 }
 
+// The path nav links match against. The 404 page keeps the requested URL
+// (e.g. /work/nope/), which must not mark that section current (issue #548).
+export function getNavPathname(pathname: string, routePattern: string): string {
+    return routePattern === '/404' ? '/404/' : pathname
+}
+
 export const NAV_LINK_ACTIVE_CLASS = 'text-foreground'
 export const NAV_LINK_INACTIVE_CLASSES = ['text-muted', 'hover:text-foreground']
 export const NAV_LINK_UNDERLINE_ACTIVE_CLASS = 'after:w-full'
