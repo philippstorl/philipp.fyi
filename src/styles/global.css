@@ -33,7 +33,16 @@
     --color-border-strong: oklch(60% 0.006 80);
 }
 
+/* Scrollbars follow the toggle via .dark below (issue #530). No
+   <meta name="color-scheme">: it would follow the OS instead. */
+@layer base {
+    :root {
+        color-scheme: light;
+    }
+}
+
 .dark {
+    color-scheme: dark;
     --color-background: oklch(11% 0.005 80);
     --color-card: oklch(15% 0.006 80);
     --color-foreground: oklch(96% 0.005 80);

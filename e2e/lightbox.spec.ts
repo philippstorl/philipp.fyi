@@ -195,6 +195,22 @@ test.describe('Image lightbox', () => {
         expect(results.violations).toEqual([])
     })
 
+    test('the dialog uses a dark color-scheme in the light theme too (issue #530)', async ({
+        page,
+    }) => {
+        // It's black in both themes, so its track scrollbar must be dark.
+        await expect(page.locator('html')).toHaveCSS('color-scheme', 'light')
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+        await expect(page.locator('#lightbox')).toHaveCSS(
+            'color-scheme',
+            'dark',
+        )
+        await expect(page.locator('#lightbox-track')).toHaveCSS(
+            'color-scheme',
+            'dark',
+        )
+    })
+
     test('controls keep a visible edge in forced-colors mode (issue #451)', async ({
         page,
     }) => {

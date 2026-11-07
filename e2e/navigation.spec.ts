@@ -215,6 +215,20 @@ test.describe('Navigation', () => {
         await expect(page.locator('html')).not.toHaveClass(/dark/)
     })
 
+    test('color-scheme follows the theme toggle, not the OS, so scrollbars match (issue #530)', async ({
+        page,
+    }) => {
+        const html = page.locator('html')
+        await page.emulateMedia({ colorScheme: 'dark' })
+        await page.goto('/')
+        await page.getByRole('button', { name: 'Light mode' }).click()
+        await expect(html).toHaveCSS('color-scheme', 'light')
+
+        await page.emulateMedia({ colorScheme: 'light' })
+        await page.getByRole('button', { name: 'Dark mode' }).click()
+        await expect(html).toHaveCSS('color-scheme', 'dark')
+    })
+
     test('an unknown stored theme value follows the OS like System and gets cleared (issue #448)', async ({
         page,
     }) => {
@@ -345,6 +359,7 @@ test.describe('Navigation', () => {
         await page.locator('nav a[href="/principles/"]:visible').click()
         await expect(page).toHaveURL('/principles/')
         await expect(page.locator('html')).toHaveClass(/dark/)
+        await expect(page.locator('html')).toHaveCSS('color-scheme', 'dark')
     })
 
     test('theme still applies and toggles when localStorage is blocked (issue #398)', async ({
