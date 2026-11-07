@@ -42,8 +42,10 @@ for (let i = 0; i < fields.length; i++) {
 
 const docPattern =
     /(^|\/)(README\.md|CLAUDE\.md)$|^\.claude\/skills\/[^/]+\/SKILL\.md$/
+// An allowlist, not "everything but docs + an ignore list": no ignore list anticipates untracked scratch
+// files (e.g. a root-level measure.mjs), and each false nudge continues the turn.
 const sourcePattern =
-    /^(src\/|e2e\/|scripts\/|netlify\/|\.github\/|package\.json$|netlify\.toml$|astro\.config\.mjs$|tsconfig\.json$|eslint\.config\.mjs$|playwright[^/]*\.config\.ts$|\.npmrc$|\.nvmrc$|\.claude\/(skills\/|settings\.json$))/
+    /^(src\/|e2e\/|tests\/|public\/|scripts\/|netlify\/|\.github\/|package\.json$|netlify\.toml$|astro\.config\.mjs$|tsconfig\.json$|eslint\.config\.mjs$|\.prettierrc\.json$|playwright[^/]*\.config\.ts$|\.npmrc$|\.nvmrc$|\.claude\/(skills\/|settings\.json$))/
 const sourceChanged = changed.some(
     ({ path }) => !docPattern.test(path) && sourcePattern.test(path),
 )
