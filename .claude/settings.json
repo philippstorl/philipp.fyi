@@ -22,7 +22,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "node scripts/check-doc-sync.js 2>/dev/null || true",
+                        "command": "node \"$CLAUDE_PROJECT_DIR/scripts/check-doc-sync.js\" 2>/dev/null || true",
                         "timeout": 10
                     }
                 ]
@@ -33,7 +33,7 @@
                 "hooks": [
                     {
                         "type": "command",
-                        "command": "node scripts/load-learnings.js 2>/dev/null || true",
+                        "command": "node \"$CLAUDE_PROJECT_DIR/scripts/load-learnings.js\" 2>/dev/null || true",
                         "timeout": 10
                     }
                 ]

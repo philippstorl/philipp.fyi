@@ -1,6 +1,8 @@
 import { execSync } from 'child_process'
 import fs from 'fs'
+import { dirname, resolve } from 'path'
 import tty from 'tty'
+import { fileURLToPath } from 'url'
 
 // additionalContext on Stop continues the turn; nudge once, not on every continuation.
 // tty.isatty, not process.stdin.isTTY: touching process.stdin makes a pipe non-blocking (EAGAIN).
@@ -14,9 +16,21 @@ if (!tty.isatty(0)) {
 }
 
 // -z: unquoted paths, renames as separate "new\0old" fields. -uall: files inside untracked dirs.
-const fields = execSync('git status --porcelain -z -uall', {
-    encoding: 'utf8',
-}).split('\0')
+// Paths are repo-root-relative from any subdirectory. Prefer the cwd's tree (it may be a
+// worktree); fall back to this script's repo when Claude has `cd`'d outside any repo.
+const gitStatus = (cwd) =>
+    execSync('git status --porcelain -z -uall', {
+        cwd,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+    })
+let status
+try {
+    status = gitStatus(process.cwd())
+} catch {
+    status = gitStatus(resolve(dirname(fileURLToPath(import.meta.url)), '..'))
+}
+const fields = status.split('\0')
 const changed = []
 for (let i = 0; i < fields.length; i++) {
     const field = fields[i]
