@@ -35,7 +35,17 @@ async function normalizeNoneColorChannels(page: Page) {
 
 async function scanAndWrite(page: Page, reportedPath: string, theme: string) {
     await normalizeNoneColorChannels(page)
+    // axe skips symbol-only text (e.g. the back links' aria-hidden `←`) as
+    // `incomplete` (nonBmp) by default; check it like any other text instead.
+    // axe-core reads run-time `checks` options, but its RunOptions type omits them.
+    const checkOptions: Parameters<AxeBuilder['options']>[0] & {
+        checks: object
+    } = {
+        checks: { 'color-contrast': { options: { ignoreUnicode: false } } },
+    }
+    // options() replaces all run options, so it must come before withRules().
     const results = await new AxeBuilder({ page })
+        .options(checkOptions)
         .withRules(['color-contrast'])
         .analyze()
 
