@@ -101,9 +101,15 @@ test.describe('Contact form', () => {
                 ?.setAttribute('data-marker', 'first-attempt')
         })
 
-        await page.locator('#contact-email').fill('test@example.com')
-        await page.locator('#contact-name').fill('')
+        // Still invalid, so the alert stays mounted until the key remounts it.
+        await page.locator('#contact-email').fill('not-an-email')
+        await expect(page.locator('[data-marker="first-attempt"]')).toHaveCount(
+            1,
+        )
         await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(page.locator('#contact-email-error')).toHaveText(
+            'Please enter a valid email address.',
+        )
 
         await expect(page.getByRole('alert')).toHaveText(
             '1 field needs attention.',
@@ -114,6 +120,28 @@ test.describe('Contact form', () => {
                 ?.getAttribute('data-marker'),
         )
         expect(marker).toBeNull()
+    })
+
+    test('correcting a field removes the summary alert instead of rewriting its count (issue #499)', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(page.getByRole('alert')).toHaveText(
+            '3 fields need attention.',
+        )
+
+        // A text change in a live alert is announced; a removal isn't.
+        await page.locator('#contact-name').pressSequentially('T')
+        await expect(page.locator('#contact-name-error')).toHaveCount(0)
+        await expect(page.locator('[role="alert"]')).toHaveCount(0)
+        await expect(page.locator('#contact-email-error')).toBeVisible()
+
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(page.getByRole('alert')).toHaveText(
+            '2 fields need attention.',
+        )
     })
 
     test('an invalid email shows a validation error instead of "required"', async ({
