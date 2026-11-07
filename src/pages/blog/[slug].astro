@@ -4,10 +4,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
+import JsonLd from '@/components/seo/JsonLd.astro'
 import { PROSE_CONTENT_CLASSES } from '@/utils/prose'
 import { getPublishedBlogPosts } from '@/utils/blog-posts'
 import { stripContentExtension } from '@/utils/slug'
 import { formatBlogDate } from '@/utils/date'
+import { buildBlogPostingSchema } from '@/utils/schema'
+import { toAbsoluteUrl } from '@/utils/url'
 
 export async function getStaticPaths() {
     const posts = await getPublishedBlogPosts()
@@ -21,6 +24,13 @@ const { post } = Astro.props
 const { Content } = await render(post)
 const { title, description, date, tags } = post.data
 const ogImage = `/og/blog/${stripContentExtension(post.id)}.png`
+const blogPostingSchema = buildBlogPostingSchema({
+    title,
+    description,
+    date,
+    url: toAbsoluteUrl(Astro.url.pathname, Astro.site),
+    image: toAbsoluteUrl(ogImage, Astro.site),
+})
 ---
 
 <BaseLayout
@@ -33,6 +43,7 @@ const ogImage = `/og/blog/${stripContentExtension(post.id)}.png`
 >
     <Header />
     <Main class="mx-auto max-w-3xl px-6 py-24">
+        <JsonLd data={blogPostingSchema} />
         <a
             href="/blog/"
             class="mb-12 inline-flex items-center gap-1.5 text-sm text-accent"
@@ -52,7 +63,7 @@ const ogImage = `/og/blog/${stripContentExtension(post.id)}.png`
             >
                 {title}
             </h1>
-            <ul class="flex flex-wrap gap-2">
+            <ul class="flex flex-wrap gap-2" aria-label="Topics">
                 {tags.map((tag) => <li
                     class="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted"
                 >
@@ -63,9 +74,9 @@ const ogImage = `/og/blog/${stripContentExtension(post.id)}.png`
 
         <hr class="mb-12 border-border" />
 
-        <div class={PROSE_CONTENT_CLASSES}>
+        <article class={PROSE_CONTENT_CLASSES}>
             <Content />
-        </div>
+        </article>
 
         <div class="mt-20 border-t border-border pt-10">
             <a
