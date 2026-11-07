@@ -153,6 +153,7 @@ npm run check:trailing-slashes   # if routes/links/tests changed
 npm run check:favicons           # if public/favicon.* or apple-touch-icon.png changed
 npm run check:color-copies       # if global.css tokens or a hex copy changed
 npm run check:learnings          # if LEARNINGS.md, scripts/*-learnings.* or .claude/settings.json changed
+npm run test:hooks               # if scripts/check-pr-body.* changed
 npm run check:audit              # if package.json/package-lock.json changed
 npm run build
 npm run check:font-preloads      # after every build (checks dist/)
@@ -185,6 +186,7 @@ This repo follows [Conventional Commits](https://www.conventionalcommits.org/). 
 
 - **Type** is required — `feat` and `fix` are the common ones, but any type is fine when it fits better (`docs`, `chore`, `refactor`, `test`, `ci`, `style`, `perf`, …). History so far uses `feat:`, `fix:`, `chore(deps):`, `chore(deps-dev):`, `chore(ci):`.
 - **Scope** is optional — a noun in parentheses naming the area touched, e.g. `feat(ci):`, `chore(deps):`. Omit it when the change isn't scoped to one area.
+- **PR descriptions follow the `conventional-commits` skill's structure, and a `PreToolUse` hook enforces it.** `scripts/check-pr-body.js` (in `.claude/settings.json`, anchored on `"$CLAUDE_PROJECT_DIR"` like the other hooks) blocks a `gh pr create`/`gh pr edit` whose body has a `Resolves`/`Relates to`/`Fixes`/`Closes #N` line without the `- #N` bullet after it, or lacks `## Summary`/`## Test plan`, and tells Claude what to fix. It only looks at an unquoted `gh pr create|edit` (so one quoted in a commit message is ignored) and that command's own flags. It reads `--body-file`/`-F` (relative to the hook's `cwd` plus any leading `cd`), `--body "$(cat path)"`, a heredoc and a plain quoted `--body`, and lets through what it can't resolve (stdin, a `$VAR`, `$(<file)`, a missing file), so such a body reaches GitHub unchecked; edits on github.com aren't covered either. Nothing in CI runs `npm run test:hooks` (`node --test`) yet, since adding a `ci.yml` step needs a token with the `workflow` scope, so run it after touching the hook: a crash exits 1, which doesn't block, so a broken hook enforces nothing.
 - Dependabot (`.github/dependabot.yml`) handles weekly npm and GitHub Actions (SHA-pinned, see above) bumps — don't manually bump a dependency or an Actions pin it would otherwise cover.
 
 ## Don't

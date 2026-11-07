@@ -47,7 +47,7 @@ This repo creates branches from GitHub issues (the "create a branch" button, or 
 
 ## PR description
 
-Use this structure (matches existing merged PRs in this repo):
+Use this structure (matches existing merged PRs in this repo). A `PreToolUse` hook (`scripts/check-pr-body.js`) blocks `gh pr create`/`gh pr edit` when the `- #<N>` bullet or either heading is missing. When delegating PR work, point the agent at this file rather than restating the template:
 
 ```markdown
 Resolves #<N> <!-- omit this block entirely if there's no linked issue -->

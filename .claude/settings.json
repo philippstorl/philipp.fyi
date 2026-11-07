@@ -17,6 +17,18 @@
         ]
     },
     "hooks": {
+        "PreToolUse": [
+            {
+                "matcher": "Bash",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "node \"$CLAUDE_PROJECT_DIR/scripts/check-pr-body.js\"",
+                        "timeout": 10
+                    }
+                ]
+            }
+        ],
         "Stop": [
             {
                 "hooks": [

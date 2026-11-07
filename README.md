@@ -52,6 +52,7 @@ npm run dev:astro  # http://localhost:4321
 | `npm run check:page-coverage`         | Fail if `scripts/contrast-pages.mjs` and the pages built in `dist/` differ |
 | `npm run check:csp`                   | Fail if `dist/` has inline code or a `style` attribute the meta CSP blocks |
 | `npm run check:learnings`             | Run the SessionStart hook's LEARNINGS.md loader and check its output       |
+| `npm run test:hooks`                  | Unit-test the PreToolUse hook that checks PR descriptions                  |
 | `npm run check:audit`                 | Audit production dependencies for high-severity vulnerabilities            |
 | `npm run format`                      | Format all files with Prettier                                             |
 | `npm run format:check`                | Check formatting without writing (used in CI)                              |
