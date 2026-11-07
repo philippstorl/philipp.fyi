@@ -64,6 +64,9 @@ export default function ContactForm() {
     // Alert's React key, so a same-count retry still remounts and re-announces.
     const [submitAttempt, setSubmitAttempt] = useState(0)
     const errorCount = Object.keys(errors).length
+    // The count the alert announced. A correction then unmounts the alert
+    // (unannounced) rather than rewriting the live region's text.
+    const [announcedErrorCount, setAnnouncedErrorCount] = useState(0)
     // Only handleSubmit sets this, so a live correction never steals focus.
     const focusOnNextErrorRef = useRef(false)
     // Sync guard: the button stays enabled while sending, so a second submit
@@ -105,6 +108,7 @@ export default function ContactForm() {
         if (Object.keys(fieldErrors).length > 0) {
             focusOnNextErrorRef.current = true
             setErrors(fieldErrors)
+            setAnnouncedErrorCount(Object.keys(fieldErrors).length)
             setSubmitAttempt((n) => n + 1)
             // Drop a previous send's error banner so it can't sit beside these.
             setStatus('idle')
@@ -187,7 +191,7 @@ export default function ContactForm() {
             </div>
 
             {/* One summary alert, not one per field — avoids competing announcements. */}
-            {errorCount > 0 && (
+            {errorCount > 0 && errorCount === announcedErrorCount && (
                 <p key={submitAttempt} role="alert" className="sr-only">
                     {errorCount === 1
                         ? '1 field needs attention.'
