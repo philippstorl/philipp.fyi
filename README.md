@@ -273,7 +273,7 @@ src/
     about.ts            → About page/section copy and facts
     hero.ts             → Hero section copy
     navigation.ts       → Nav items
-    social.ts           → LinkedIn, GitHub, Contact links
+    social.ts           → Footer LinkedIn/GitHub/Contact links, plus LINKEDIN_URL/GITHUB_URL (the only copy of the profile URLs)
     recommendations.ts  → LinkedIn recommendations (14 entries, 6 featured on the home page)
     stack.ts            → This site's own tech stack, shown on the About page
     site.ts             → Site name/default description, shared by BaseLayout.astro and rss.xml.ts
