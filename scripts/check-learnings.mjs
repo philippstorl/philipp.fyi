@@ -1,5 +1,6 @@
 import { spawnSync } from 'child_process'
 import fs from 'fs'
+import os from 'os'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
@@ -71,7 +72,10 @@ if (learnings === null) {
     )
 } else {
     const run = spawnSync(command.replace(SUPPRESSION, ''), {
-        cwd: root,
+        // Hooks run wherever Claude last `cd`'d, so a cwd-relative path must fail here.
+        cwd: os.tmpdir(),
+        // Claude Code sets this for hooks; CI and a plain shell don't.
+        env: { ...process.env, CLAUDE_PROJECT_DIR: root },
         encoding: 'utf8',
         shell: true,
         timeout: 10_000,
