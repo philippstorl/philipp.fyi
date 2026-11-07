@@ -23,36 +23,75 @@ const ignoreDirs = new Set([
     '.idea',
 ])
 
-// 'index' maps to '/', not a real segment. '404' is excluded -- Astro
-// always builds it flat (dist/404.html); see netlify.toml's /404 redirect.
-const excludedStaticPageNames = new Set(['index', '404'])
+// Astro builds these flat (dist/404.html) despite trailingSlash; see
+// netlify.toml's /404 redirect.
+const excludedRootRoutes = new Set(['404', '500'])
+// Mirrors Astro's page extensions (astro/dist/core/routing/create-manifest.js).
+const pageExtensions = new Set([
+    '.astro',
+    '.md',
+    '.mdx',
+    '.markdown',
+    '.mdown',
+    '.mkdn',
+    '.mkd',
+    '.mdwn',
+])
+const endpointExtensions = new Set(['.ts', '.js'])
+const isParamSegment = (segment) => segment.includes('[')
 
 function escapeRegex(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
 
-async function deriveRoutes() {
-    const pagesDir = path.join(root, 'src/pages')
-    const entries = await fs.readdir(pagesDir, { withFileTypes: true })
-    const staticRoutes = []
-    const dynamicPrefixes = []
+// Returns each routable file's path segments, skipping what Astro's router skips.
+async function walkPages(dir, segments = []) {
+    const routes = []
 
-    for (const entry of entries) {
-        if (entry.isFile() && entry.name.endsWith('.astro')) {
-            const name = entry.name.replace(/\.astro$/, '')
-            if (!excludedStaticPageNames.has(name)) staticRoutes.push(name)
-        } else if (entry.isDirectory()) {
-            const subEntries = await fs.readdir(path.join(pagesDir, entry.name))
-            if (subEntries.includes('index.astro')) {
-                staticRoutes.push(entry.name)
-            }
-            if (subEntries.some((f) => /^\[\.{0,3}slug\]\.astro$/.test(f))) {
-                dynamicPrefixes.push(entry.name)
-            }
+    for (const basename of await fs.readdir(dir)) {
+        if (basename.startsWith('_')) continue
+        if (basename.startsWith('.') && basename !== '.well-known') continue
+        const resolved = path.join(dir, basename)
+        // stat (not Dirent) so symlinked directories are followed, like Astro.
+        if ((await fs.stat(resolved)).isDirectory()) {
+            routes.push(...(await walkPages(resolved, [...segments, basename])))
+            continue
+        }
+        const ext = path.extname(basename)
+        const name = basename.slice(0, -ext.length)
+        // Astro exempts only endpoints whose route has an extension (rss.xml.ts).
+        const isRoute =
+            pageExtensions.has(ext) ||
+            (endpointExtensions.has(ext) && !name.includes('.'))
+        if (!isRoute) continue
+        routes.push(name === 'index' ? segments : [...segments, name])
+    }
+
+    return routes
+}
+
+async function deriveRoutes() {
+    const staticRoutes = new Set()
+    const dynamicPrefixes = new Set()
+
+    for (const segments of await walkPages(path.join(root, 'src/pages'))) {
+        const paramIndex = segments.findIndex(isParamSegment)
+        if (paramIndex === -1) {
+            const route = segments.join('/')
+            if (route && !excludedRootRoutes.has(route)) staticRoutes.add(route)
+        } else if (paramIndex > 0) {
+            // A root-level param (src/pages/[lang]/...) has no literal prefix to match.
+            dynamicPrefixes.add(segments.slice(0, paramIndex).join('/'))
         }
     }
 
-    return { staticRoutes, dynamicPrefixes }
+    // A dynamic prefix's checks already match every route under it (work/page under work).
+    const prefixes = [...dynamicPrefixes]
+    const isCovered = (route) => prefixes.some((q) => route.startsWith(`${q}/`))
+    return {
+        staticRoutes: [...staticRoutes].filter((r) => !isCovered(r)).sort(),
+        dynamicPrefixes: prefixes.filter((p) => !isCovered(p)).sort(),
+    }
 }
 
 // JSX/HTML attribute (`href="..."`, `href={...}`) or object property (`href: '...'`).
