@@ -37,6 +37,15 @@ jobs:
                     echo "$forbidden"
                     exit 1
                   fi
+            # Enforces the persist-credentials invariant above. Both patterns are
+            # anchored so neither the header comment nor this step's own text counts.
+            - run: |
+                  checkouts=$(grep -cE '^[[:space:]]+(- )?uses: actions/checkout@' .github/workflows/ci.yml || true)
+                  disabled=$(grep -cE '^[[:space:]]+persist-credentials: false$' .github/workflows/ci.yml || true)
+                  if [ "$checkouts" != "$disabled" ]; then
+                    echo "Every actions/checkout needs persist-credentials: false ($disabled of $checkouts set)"
+                    exit 1
+                  fi
             # Plain Node, no dependencies, so no `npm ci`.
             - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
               with:
@@ -159,6 +168,8 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
             - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
               with:
                   node-version-file: ".nvmrc"
