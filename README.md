@@ -88,7 +88,7 @@ Dependabot (`.github/dependabot.yml`) opens npm dependency and GitHub Actions PR
 
 ## Deployment
 
-Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml` — the dashboard-only settings are `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below) and `SLACK_DEPLOY_WEBHOOK_URL`/`DEPLOY_NOTIFICATION_WEBHOOK_SECRET` (see [Deploy notifications](#deploy-notifications) below), none of which can be committed.
+Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml`. The dashboard-only parts are three environment variables, `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below) and `SLACK_DEPLOY_WEBHOOK_URL`/`DEPLOY_NOTIFICATION_WEBHOOK_SECRET` (see [Deploy notifications](#deploy-notifications) below), none of which can be committed, plus three features set up only in the dashboard: the deploy notifications' Outgoing Webhooks (same section), [Netlify Analytics](#analytics), and Real User Monitoring, whose beacon needs `netlify.toml`'s `connect-src` allowance and is disclosed on `/privacy/`.
 
 Check what's deployed at any time: `https://philipp.fyi/build.txt`
 
