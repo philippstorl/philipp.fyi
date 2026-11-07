@@ -230,7 +230,7 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
     // inert has no media-query fallback -- close the menu once the
     // viewport crosses md so main/footer can't stay stranded inert.
     window
-        .matchMedia('(min-width: 768px)')
+        .matchMedia('(min-width: 48rem)')
         .addEventListener('change', (event) => {
             if (event.matches) closeMenu()
         })

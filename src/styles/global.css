@@ -153,7 +153,7 @@ html {
     }
 
     /* Without JS the header isn't sticky below md (issue #421), so nothing to clear. */
-    @media (scripting: none) and (width < 768px) {
+    @media (scripting: none) and (width < theme(--breakpoint-md)) {
         html {
             --header-scroll-padding: 0;
         }
@@ -227,7 +227,7 @@ html:has(dialog[open]) #site-header {
     overflow:hidden on <html> (same reason isMenuOpen() checks computed
     display, not the class).
 */
-@media (width < 768px) {
+@media (width < theme(--breakpoint-md)) {
     html:has(#mobile-nav:not(.hidden)) {
         overflow: hidden;
     }
