@@ -47,7 +47,10 @@ export function quietConsole() {
 interface FetchStubOptions {
     // Fail writes with a 4xx, not a 5xx: @netlify/blobs retries 5xx/429 after real sleeps.
     blobsWriteStatus?: number
+    blobsListStatus?: number
+    blobsListNfError?: string
     blobsList?: Array<{ key: string; etag: string }>
+    slackStatus?: number
 }
 
 // Replaces global fetch for the Slack webhook and the Blobs edge API, so no
@@ -73,11 +76,21 @@ export function stubFetch(options: FetchStubOptions = {}) {
         const body = typeof init?.body === 'string' ? init.body : ''
         if (url === SLACK_WEBHOOK) {
             slack.push({ url, method, body })
-            return new Response('ok', { status: 200 })
+            return new Response('ok', { status: options.slackStatus ?? 200 })
         }
         if (url.startsWith(BLOBS_EDGE_URL)) {
             blobs.push({ url, method, body })
             if (method === 'GET') {
+                if (options.blobsListStatus) {
+                    // @netlify/blobs puts x-nf-error in the error message.
+                    const headers = options.blobsListNfError
+                        ? { 'x-nf-error': options.blobsListNfError }
+                        : undefined
+                    return new Response(null, {
+                        status: options.blobsListStatus,
+                        headers,
+                    })
+                }
                 return Response.json({
                     blobs: options.blobsList ?? [],
                     directories: [],
