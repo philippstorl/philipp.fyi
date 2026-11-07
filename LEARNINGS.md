@@ -12,6 +12,7 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ### 2026-11-07
 
+- **A `PreToolUse` hook now checks PR descriptions** (`scripts/check-pr-body.js`). Five PRs (#598-#602) shipped without the `- #N` issue-title bullet because the subagent brief restated the PR template by hand and dropped it, while the `conventional-commits` skill had it right. Briefs should point agents at the skill file instead; the hook catches what slips through.
 - **Tailwind now detects classes in `src/` only** (`source("../../src")` on the `global.css` import, issue #510), replacing the 2026-08-19 rule of never quoting an unused class in docs. That rule didn't hold, because docs have to name old classes: 32 dead utilities had leaked from docs and `e2e/`/`scripts/` comments into the site-wide stylesheet (~3.3 KB, ~530 B gzip). Chosen over the issue's `@source not` list for the docs, since nothing outside `src/` supplies classes and that list would need an entry per new doc location. The explicit `../../src` rather than `..` makes a moved `global.css` fail the build instead of silently scanning the repo root.
 
 ### 2026-10-31

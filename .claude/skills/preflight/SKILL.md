@@ -30,6 +30,7 @@ Fix failures before moving on — there's no value running later, slower steps a
 10. `npm test` (Playwright) — run if any changed file is under `src/components/`, `src/pages/`, `src/content/`, `src/layouts/`, or `e2e/` itself. Skip it for changes confined to docs, config comments, or CI YAML with no behavioral effect.
 11. `npm run test:functions` — run if any changed file is under `netlify/functions/` or `tests/functions/`, or is `playwright.functions.config.ts`. Plain Node, about a second, no dev server or port.
 12. `npm run check:audit` — run if `package.json` or `package-lock.json` changed. It's CI's `audit` job (`npm audit --omit=dev --audit-level=high`), independent of the build, so its position in this list doesn't matter. Use the script, not bare `npm audit`, which drops that scoping.
+13. `npm run test:hooks` — run if `scripts/check-pr-body.js` or its test changed. It unit-tests the PreToolUse hook that checks PR descriptions; a crash there exits 1, which doesn't block, so nothing else would notice. Plain Node, under a second.
 
 ## 4. Report
 
