@@ -80,7 +80,7 @@ test.describe('Pill button touch targets', () => {
         await expectTouchTargetHeight(
             page
                 .locator('#main-content')
-                .getByRole('link', { name: '← Back home', exact: true }),
+                .getByRole('link', { name: 'Back home', exact: true }),
         )
     })
 })

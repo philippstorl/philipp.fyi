@@ -406,7 +406,10 @@ test.describe('Image lightbox', () => {
         page,
     }) => {
         // Regression: soft nav via view transitions left images without click handlers.
-        await page.getByText('← All work').first().click()
+        await page
+            .locator('#main-content')
+            .getByRole('link', { name: 'All work', exact: true })
+            .click()
         await page.waitForURL('**/work/')
 
         await page
