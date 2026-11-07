@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Principles page', () => {
     test('shows all principles', async ({ page }) => {
         await page.goto('/principles/')
-        const items = page.locator('ol > li')
+        const items = page.locator('ol[role="list"] > li')
         await expect(items).toHaveCount(15)
     })
 
@@ -11,7 +11,7 @@ test.describe('Principles page', () => {
         page,
     }) => {
         await page.goto('/principles/')
-        const count = await page.locator('ol > li').count()
+        const count = await page.locator('ol[role="list"] > li').count()
         await expect(page.locator('meta[name="description"]')).toHaveAttribute(
             'content',
             new RegExp(`^${count} things I hold close`),

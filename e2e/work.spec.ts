@@ -212,9 +212,11 @@ test.describe('Work page', () => {
         page,
     }) => {
         await page.goto('/work/')
-        await expect(page.locator('main ol > li > article')).toHaveCount(4)
         await expect(
-            page.locator('main ul > li > a[href="/about/"]'),
+            page.locator('main ol[role="list"] > li > article'),
+        ).toHaveCount(4)
+        await expect(
+            page.locator('main ul[role="list"] > li > a[href="/about/"]'),
         ).toHaveCount(1)
     })
 

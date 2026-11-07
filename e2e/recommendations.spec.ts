@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test'
 test.describe('Recommendations page', () => {
     test('shows all recommendations', async ({ page }) => {
         await page.goto('/recommendations/')
-        const items = page.locator('ol li')
+        const items = page.locator('ol[role="list"] > li')
         await expect(items).toHaveCount(14)
     })
 
@@ -16,6 +16,25 @@ test.describe('Recommendations page', () => {
         await expect(intro).toHaveText(
             "Recommendations from colleagues, managers, direct reports, and external partners I've worked with over the years, collected from LinkedIn (opens in a new tab), unedited except for formatting.",
         )
+        // toHaveText normalizes whitespace, so a space before the out-of-flow
+        // sr-only suffix ("LinkedIn , unedited") only shows up on screen.
+        const gap = await intro.locator('a').evaluate((link) => {
+            const label = link.firstChild
+            const after = link.nextSibling
+            const start = label?.textContent?.indexOf('LinkedIn') ?? -1
+            if (!label || !after || start < 0) {
+                throw new Error('missing text nodes')
+            }
+            const range = document.createRange()
+            range.setStart(label, start)
+            range.setEnd(label, start + 'LinkedIn'.length)
+            const labelRight = range.getBoundingClientRect().right
+            range.setStart(after, 0)
+            range.setEnd(after, 1)
+            if (range.toString() !== ',') throw new Error('expected a comma')
+            return range.getBoundingClientRect().left - labelRight
+        })
+        expect(Math.abs(gap)).toBeLessThan(1)
     })
 
     test('"What people I\'ve worked with say" section CTA on home links to /recommendations/', async ({
