@@ -50,7 +50,7 @@ npm run dev:astro  # http://localhost:4321
 | `npm run check:font-preloads`         | Check every font preload in `dist/` matches a built `@font-face` URL       |
 | `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`               |
 | `npm run check:page-coverage`         | Fail if `contrast-pages.mjs` and `dist/` differ, or a `<p>` nests a block  |
-| `npm run check:csp`                   | Fail if `dist/` has inline code or a `style` attribute the meta CSP blocks |
+| `npm run check:csp`                   | Fail if `dist/` has code or an image the meta or `netlify.toml` CSP blocks |
 | `npm run check:learnings`             | Run the SessionStart hook's LEARNINGS.md loader and check its output       |
 | `npm run test:hooks`                  | Unit-test the PreToolUse hook that checks PR descriptions                  |
 | `npm run check:audit`                 | Audit production dependencies for high-severity vulnerabilities            |
