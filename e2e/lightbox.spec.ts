@@ -44,6 +44,20 @@ test.describe('Image lightbox', () => {
         await expect(slides.nth(1)).not.toHaveAttribute('aria-hidden')
     })
 
+    test('every slide sets scroll-snap-stop: always (issue #505)', async ({
+        page,
+    }) => {
+        // Checks the style only; without it a quick flick skips screenshots.
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+
+        const stops = await page
+            .locator('.lightbox-slide')
+            .evaluateAll((slides) =>
+                slides.map((slide) => getComputedStyle(slide).scrollSnapStop),
+            )
+        expect(stops).toEqual(Array(TOTAL_IMAGES).fill('always'))
+    })
+
     test('the enlarged image is a full-resolution source, not the downscaled inline one', async ({
         page,
     }) => {

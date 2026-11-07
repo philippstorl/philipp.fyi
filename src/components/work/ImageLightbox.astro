@@ -81,10 +81,6 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         right: max(0.5rem, env(safe-area-inset-right));
     }
 
-    .lightbox-slide {
-        scroll-snap-stop: always;
-    }
-
     /* Inset onto the button's own dark fill: outside it, the ring sits over the
        backdrop or screenshot, which the accent (or white) fails 3:1 against. */
     .lightbox-btn:focus-visible {
@@ -244,8 +240,9 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         // off-screen, so loading="lazy" defers fetch until scrolled near.
         for (const { src, alt } of slides) {
             const slide = document.createElement('div')
+            // Utilities, not the scoped <style>: script-built nodes lack its data-astro-cid.
             slide.className =
-                'lightbox-slide flex h-full w-full shrink-0 snap-center items-center justify-center'
+                'lightbox-slide flex h-full w-full shrink-0 snap-center snap-always items-center justify-center'
             const img = document.createElement('img')
             img.loading = 'lazy'
             img.decoding = 'async'
