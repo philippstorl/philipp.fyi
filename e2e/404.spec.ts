@@ -26,7 +26,11 @@ test.describe('404 page', () => {
         await page.goto('/this-page-does-not-exist/', {
             waitUntil: 'domcontentloaded',
         })
-        await page.click('text=← Back home')
+        // Exact name guards the decorative arrow staying out of it (issue #500).
+        await page
+            .locator('#main-content')
+            .getByRole('link', { name: 'Back home', exact: true })
+            .click()
         await expect(page).toHaveURL('/')
     })
 

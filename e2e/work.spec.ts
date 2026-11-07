@@ -25,7 +25,17 @@ for (const { slug, title } of caseStudies) {
         await expect(page.getByRole('heading', { level: 1 })).toContainText(
             title,
         )
-        await expect(page.getByText('← All work').first()).toBeVisible()
+        // Exact names keep the decorative "←" out of them; NVDA reads it as
+        // "left arrow" (issue #500).
+        const main = page.locator('#main-content')
+        for (const name of ['All work', 'Back to all work']) {
+            const link = main.getByRole('link', { name, exact: true })
+            await expect(link).toHaveAttribute('href', '/work/')
+            await expect(link).toContainText('←')
+        }
+        await expect(
+            main.getByRole('link', { name: 'All work', exact: true }),
+        ).toBeVisible()
     })
 }
 
