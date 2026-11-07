@@ -138,6 +138,33 @@ test('full-width figures offer a 1080w candidate between 720w and 1440w', async 
     expect(fullWidthCount).toBeGreaterThan(0)
 })
 
+test('VOICES regional-grid lead-in renders as one muted 14px paragraph', async ({
+    page,
+}) => {
+    // Regression (#506): MDX wrapped the line-broken text in a nested <p>.
+    await page.goto('/work/voices-conference-website/')
+    const leadIn = page.getByText(
+        'Same component library, three regional configurations, captured side by side in 2026:',
+        { exact: true },
+    )
+    await expect(leadIn).toHaveClass('mb-2 text-sm text-muted')
+    await expect(leadIn).toHaveCSS('font-size', '14px')
+    const { color, mutedColor, nextIsGrid } = await leadIn.evaluate((el) => {
+        const probe = document.createElement('span')
+        probe.className = 'text-muted'
+        el.parentElement?.append(probe)
+        const mutedColor = getComputedStyle(probe).color
+        probe.remove()
+        return {
+            color: getComputedStyle(el).color,
+            mutedColor,
+            nextIsGrid: el.nextElementSibling?.classList.contains('grid'),
+        }
+    })
+    expect(color).toBe(mutedColor)
+    expect(nextIsGrid).toBe(true)
+})
+
 test('work cards link to correct case study URLs', async ({ page }) => {
     await page.goto('/')
     const firstCard = page.locator('#work article').first()

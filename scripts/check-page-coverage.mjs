@@ -5,7 +5,9 @@ import { pages } from './contrast-pages.mjs'
 
 // contrast-pages.mjs is hand-typed, so a new page or published collection
 // entry would silently skip the contrast and meta-description specs. Diffs
-// it against the built HTML in dist/ in both directions.
+// it against the built HTML in dist/ in both directions. Also fails on a
+// block element inside an open <p> (e.g. MDX wrapping a raw <p>'s line-broken
+// text in its own <p>), which the browser splits into stray paragraphs.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 
@@ -42,9 +44,29 @@ try {
     process.exit(1)
 }
 
-const builtPaths = new Set(
-    files.filter((f) => f.endsWith('.html')).map(toRoutePath),
+const htmlFiles = files.filter((f) => f.endsWith('.html'))
+const builtPaths = new Set(htmlFiles.map(toRoutePath))
+
+// Start tags that implicitly close an open <p> (HTML spec, "in body" mode).
+const pClosers =
+    'address|article|aside|blockquote|center|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|h[1-6]|header|hgroup|hr|li|listing|main|menu|nav|ol|p|plaintext|pre|search|section|summary|table|ul|xmp'
+const attrsSource = String.raw`(?:[^>"']|"[^"]*"|'[^']*')*`
+const blockInParagraph = new RegExp(
+    `(<p(?=[\\s/>])${attrsSource}>)(?:(?!</p\\s*>)[\\s\\S])*?<(${pClosers})(?=[\\s/>])`,
+    'gi',
 )
+const nestingProblems = []
+for (const file of htmlFiles) {
+    const html = (await fs.readFile(file, 'utf8')).replace(
+        /<!--[\s\S]*?-->|<(script|style|template|textarea|svg)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*(?<!\/)>[\s\S]*?<\/\1\s*>/gi,
+        '',
+    )
+    for (const [, openTag, tag] of html.matchAll(blockInParagraph)) {
+        nestingProblems.push(
+            `${toRoutePath(file)}: <${tag.toLowerCase()}> inside ${openTag}`,
+        )
+    }
+}
 const listedPaths = new Set(pages.map((p) => p.reportedPath))
 const duplicates = pages
     .map((p) => p.reportedPath)
@@ -94,7 +116,12 @@ if (mismatchedGoto.length > 0) {
         console.error(`  ${p.reportedPath} -> ${p.gotoPath}`)
     }
 }
+if (nestingProblems.length > 0) {
+    console.error('Block elements inside an open <p> (invalid HTML nesting):')
+    for (const p of nestingProblems) console.error(`  ${p}`)
+}
 const problemCount =
+    nestingProblems.length +
     missing.length +
     stale.length +
     staleExclusions.length +
@@ -108,5 +135,5 @@ if (problemCount > 0) {
 }
 
 console.log(
-    `Page coverage check passed (${listedPaths.size} listed pages match the build).`,
+    `Page coverage check passed (${listedPaths.size} listed pages match the build, no block elements inside a <p>).`,
 )
