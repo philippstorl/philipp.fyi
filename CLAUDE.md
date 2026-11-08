@@ -160,7 +160,7 @@ npm run check:font-preloads      # after every build (checks dist/)
 npm run check:inline-module-scripts # after every build (checks dist/)
 npm run check:page-coverage      # after every build (checks dist/, incl. nested <p>)
 npm run check:csp                # after every build (checks dist/)
-npm test                          # if components/pages/content changed
+npm test                          # unless only docs, netlify/functions/, tests/functions/ or CI YAML changed
 npm run test:functions            # if netlify/functions/ or tests/functions/ changed
 ```
 
