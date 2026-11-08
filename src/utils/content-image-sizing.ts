@@ -1,5 +1,7 @@
 // Sizing for case-study prose figures (CaseStudyLayout.astro's max-w-3xl
 // px-6 container). Below 768px the container is fluid, not capped-width.
+// Constants are px at the default 16px font size; anything that is rem in the
+// layout goes into `sizes` via toEm(), so it scales with the browser font size (#550).
 
 const CONTAINER_CAP_PX = 720
 const CONTAINER_CAP_BREAKPOINT = 768
@@ -17,6 +19,13 @@ interface FigureSizing {
 interface SizeTier {
     minWidth: number
     expr: string
+    /** Emit the condition in px, not em: only for a breakpoint set by a px-wide slot. */
+    pxCondition?: boolean
+}
+
+// In `sizes` (as in media queries) em is relative to the browser's default font size.
+function toEm(px: number): string {
+    return `${px / 16}em`
 }
 
 // 1x/2x/3x of `base`, unclamped — Astro's own getSrcSet() already clamps `widths`
@@ -34,16 +43,27 @@ function columnWidth(columns: number): number {
 function columnFluidExpr(columns: number): string {
     const gutter = CONTAINER_PADDING_PX + (columns - 1) * GRID_GAP_PX
     return columns === 1
-        ? `calc(100vw - ${gutter}px)`
-        : `calc((100vw - ${gutter}px) / ${columns})`
+        ? `calc(100vw - ${toEm(gutter)})`
+        : `calc((100vw - ${toEm(gutter)}) / ${columns})`
 }
 
 // Sorts by minWidth descending before joining — `sizes` matches its first
 // satisfied condition, so a wrong order silently picks the wrong value.
 function buildSizesAttr(tiers: SizeTier[], fallbackExpr: string): string {
+    // The sort compares 16px-font values, which mixed px/em conditions don't keep in order.
+    if (new Set(tiers.map((tier) => Boolean(tier.pxCondition))).size > 1) {
+        throw new Error(
+            'buildSizesAttr tiers must not mix px and em conditions',
+        )
+    }
     const sorted = [...tiers].sort((a, b) => b.minWidth - a.minWidth)
     return [
-        ...sorted.map((tier) => `(min-width: ${tier.minWidth}px) ${tier.expr}`),
+        ...sorted.map((tier) => {
+            const condition = tier.pxCondition
+                ? `${tier.minWidth}px`
+                : toEm(tier.minWidth)
+            return `(min-width: ${condition}) ${tier.expr}`
+        }),
         fallbackExpr,
     ].join(', ')
 }
@@ -158,10 +178,10 @@ function gridFigureSizing(
         // A tier's own breakpoint can fire before the container reaches its
         // 768px cap, so the range below that still needs the fluid formula.
         if (tier.minWidth >= CONTAINER_CAP_BREAKPOINT) {
-            return [{ minWidth: tier.minWidth, expr: `${width}px` }]
+            return [{ minWidth: tier.minWidth, expr: toEm(width) }]
         }
         return [
-            { minWidth: CONTAINER_CAP_BREAKPOINT, expr: `${width}px` },
+            { minWidth: CONTAINER_CAP_BREAKPOINT, expr: toEm(width) },
             { minWidth: tier.minWidth, expr: columnFluidExpr(tier.columns) },
         ]
     })
@@ -199,8 +219,14 @@ export function fullWidthFigureSizing(): FigureSizing {
 
 /** Figure with an explicit width narrower than the column at every viewport. */
 export function fixedWidthFigureSizing(width: number): FigureSizing {
+    // The slot really is `width` CSS px. Its breakpoint stays px too: as em it would
+    // fire later at a larger font size, overstating the fluid slot below it.
     const tiers: SizeTier[] = [
-        { minWidth: width + CONTAINER_PADDING_PX, expr: `${width}px` },
+        {
+            minWidth: width + CONTAINER_PADDING_PX,
+            expr: `${width}px`,
+            pxCondition: true,
+        },
     ]
     return {
         width,
@@ -224,14 +250,14 @@ export function workCardCoverSizing(): Pick<FigureSizing, 'sizes' | 'widths'> {
     const threeColCappedWidth = Math.round(
         (WORK_GRID_CAP_PX - 2 * WORK_GRID_GAP_PX) / 3,
     )
-    const threeColFluidExpr = `calc((100vw - ${WORK_GRID_PADDING_PX + 2 * WORK_GRID_GAP_PX}px) / 3)`
-    const oneColFluidExpr = `calc(100vw - ${WORK_GRID_PADDING_PX}px)`
+    const threeColFluidExpr = `calc((100vw - ${toEm(WORK_GRID_PADDING_PX + 2 * WORK_GRID_GAP_PX)}) / 3)`
+    const oneColFluidExpr = `calc(100vw - ${toEm(WORK_GRID_PADDING_PX)})`
 
     const sizes = buildSizesAttr(
         [
             {
                 minWidth: WORK_GRID_CAP_BREAKPOINT,
-                expr: `${threeColCappedWidth}px`,
+                expr: toEm(threeColCappedWidth),
             },
             { minWidth: WORK_GRID_COLUMN_BREAKPOINT, expr: threeColFluidExpr },
         ],
