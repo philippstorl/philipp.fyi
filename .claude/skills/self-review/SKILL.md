@@ -3,6 +3,7 @@ name: self-review
 description: Get an independent, fresh-eyes review of the current diff from an isolated subagent that has no memory of how the code was written. Use as a standing step after implementing a non-trivial feature, fix, or refactor in philipp.fyi, before considering the change done — reviewing your own just-written code in the same context that wrote it tends to rubber-stamp it.
 context: fork
 agent: general-purpose
+background: false # issue #475: the caller must get the findings in the invoking turn
 disallowed-tools: Edit Write NotebookEdit
 ---
 

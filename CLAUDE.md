@@ -169,7 +169,7 @@ These mirror the CI jobs in `.github/workflows/ci.yml` (repository-hygiene, lint
 
 For non-trivial feature, fix, or refactor work, follow these with the `self-review` skill before considering the change done. It forks an independent subagent with no memory of this conversation to review the diff — reviewing your own just-written code in the same context that wrote it tends to rubber-stamp it. Fix high-confidence bugs it reports directly; surface debatable or stylistic findings instead of changing them unasked. Re-run the relevant steps above if the fixes touched anything they cover.
 
-This only closes the loop when _you_ invoke `self-review` mid-task and stay in the same turn to act on its findings. If a human runs `/self-review` directly as a standalone command, the findings are returned as plain output with nothing to automatically continue the loop — fixing them then requires an explicit follow-up turn.
+This only closes the loop when _you_ invoke `self-review` mid-task and stay in the same turn to act on its findings. If a human runs `/self-review` directly as a standalone command, the findings are returned as plain output with nothing to automatically continue the loop — fixing them then requires an explicit follow-up turn. The same-turn result depends on the skill's `background: false` frontmatter key (issue #475): since Claude Code v2.1.218 a `context: fork` skill runs in the background by default, so the Skill call would return only an agent name and the review would land after you'd already committed or reported done. Keep that key, and give any future `context: fork` skill whose result the caller has to act on the same key.
 
 ## Testing
 
