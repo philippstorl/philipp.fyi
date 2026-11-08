@@ -18,8 +18,7 @@
 # emit a flat dist/404.html instead of dist/404/index.html, regardless of
 # the trailingSlash setting (node_modules/astro/dist/core/output-filename.js,
 # STATUS_CODE_PAGES). This is undocumented, version-specific Astro behavior,
-# not a guaranteed contract — re-verify dist/404.html still exists at the
-# build root after any Astro major-version bump.
+# not a guaranteed contract: npm run check:page-coverage fails if it moves.
 [[redirects]]
     from   = "/*"
     to     = "/404"
