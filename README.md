@@ -238,7 +238,7 @@ draft: false
 tags: ["tag"] # at least 1 required
 ```
 
-Create the file as `src/content/blog/your-post-slug.md`. Publishing (flipping `draft` to `false`) also gets the post a per-slug OG image automatically — see [OG images](#og-images) below.
+Copy `src/content/blog/_template.mdx` to `src/content/blog/your-post-slug.mdx`. Add images with `<ResponsiveFigure>` and a sizing helper from `src/utils/content-image-sizing.ts`, as in a case study, not Markdown image syntax, which ships the image at its full native resolution with no `srcset`. Publishing (flipping `draft` to `false`) also gets the post a per-slug OG image automatically — see [OG images](#og-images) below.
 
 Published posts (`draft: false`) also appear automatically in the RSS feed at `/rss.xml` (`src/pages/rss.xml.ts`) — no separate step needed. The feed is empty while every post is still a draft. Until the first post is published, `/blog/` is also `noindex`, left out of the sitemap, and no page advertises the feed; publishing flips all three automatically. Unlike the feed, `scripts/contrast-pages.mjs` does need a `/blog/<slug>/` entry for each published post, same as a case study.
 
@@ -271,7 +271,7 @@ src/
   content/
     work/          → Case study MDX files (4 entries)
     principles/    → Principle MD files (15 entries)
-    blog/          → Blog post MD files (all draft by default)
+    blog/          → Blog post MDX files (all draft by default)
   content.config.ts → Collection schemas for work, principles and blog
   data/
     about.ts            → About page/section copy and facts
