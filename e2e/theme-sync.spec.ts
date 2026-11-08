@@ -1,4 +1,5 @@
 import { test, expect, type Page } from '@playwright/test'
+import { expectThemeColor } from './helpers/theme-color'
 
 const pressedButton = (page: Page) =>
     page.locator('[data-theme-value][aria-pressed="true"]')
@@ -22,6 +23,7 @@ test.describe('Theme sync across tabs (issue #503)', () => {
             'data-theme-value',
             'dark',
         )
+        await expectThemeColor(page, 'dark')
 
         const mobileToggle = page.locator('#nav-toggle')
         if (await mobileToggle.isVisible()) {
@@ -33,6 +35,7 @@ test.describe('Theme sync across tabs (issue #503)', () => {
             'data-theme-value',
             'dark',
         )
+        await expectThemeColor(page, 'dark')
 
         // A stale 'system' selection would follow this OS change.
         await page.emulateMedia({ colorScheme: 'dark' })
@@ -42,6 +45,9 @@ test.describe('Theme sync across tabs (issue #503)', () => {
         // System is stored as a removed key, so the event's newValue is null.
         await other.getByRole('button', { name: 'System preference' }).click()
         await expect(html).not.toHaveClass(/dark/)
+        await expectThemeColor(page, 'light')
+        await page.emulateMedia({ colorScheme: 'dark' })
+        await expectThemeColor(page, 'dark')
         await expect(pressedButton(page)).toHaveAttribute(
             'data-theme-value',
             'system',
@@ -63,6 +69,7 @@ test.describe('Theme sync across tabs (issue #503)', () => {
         await other.evaluate(() => localStorage.clear())
 
         await expect(html).not.toHaveClass(/dark/)
+        await expectThemeColor(page, 'light')
         await expect(pressedButton(page)).toHaveAttribute(
             'data-theme-value',
             'system',

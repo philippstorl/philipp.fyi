@@ -117,6 +117,25 @@ const options: ThemeOption[] = [
         }
     }
 
+    // Forces the matching theme-color meta for Light/Dark and restores the
+    // OS-keyed media for System (#507). Mirrors BaseLayout's pre-paint copy.
+    function syncThemeColor(theme: Theme) {
+        document
+            .querySelectorAll<HTMLMetaElement>('meta[name="theme-color"]')
+            .forEach((meta) => {
+                if (!meta.hasAttribute('data-media')) {
+                    meta.dataset.media = meta.media
+                }
+                const original = meta.dataset.media ?? ''
+                meta.media =
+                    theme === 'system'
+                        ? original
+                        : meta.dataset.scheme === theme
+                          ? 'all'
+                          : 'not all'
+            })
+    }
+
     function applyTheme(theme: Theme) {
         const html = document.documentElement
         if (theme === 'dark') {
@@ -129,6 +148,7 @@ const options: ThemeOption[] = [
                 window.matchMedia('(prefers-color-scheme: dark)').matches,
             )
         }
+        syncThemeColor(theme)
     }
 
     const buttons = document.querySelectorAll('[data-theme-value]')
