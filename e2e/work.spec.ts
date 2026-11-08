@@ -120,7 +120,7 @@ test('full-width figures offer a 1080w candidate between 720w and 1440w', async 
         await page.goto(`/work/${slug}/`)
         const srcsets = await page
             .locator(
-                '.prose figure img[data-astro-image="full-width"][sizes="(min-width: 768px) 720px, calc(100vw - 48px)"]',
+                '.prose figure img[data-astro-image="full-width"][sizes="(min-width: 48em) 45em, calc(100vw - 3em)"]',
             )
             .evaluateAll((images) =>
                 images.map((img) => img.getAttribute('srcset') ?? ''),
@@ -136,6 +136,84 @@ test('full-width figures offer a 1080w candidate between 720w and 1440w', async 
         }
     }
     expect(fullWidthCount).toBeGreaterThan(0)
+})
+
+test('image sizes are in em, so they scale with the browser font size', async ({
+    page,
+}) => {
+    // Regression (#550): px sizes understate the rem layout at a larger default font size.
+    let checked = 0
+    for (const path of [
+        '/',
+        '/work/',
+        ...caseStudies.map(({ slug }) => `/work/${slug}/`),
+    ]) {
+        await page.goto(path)
+        const images = await page.locator('img[sizes]').evaluateAll((imgs) =>
+            imgs.map((img) => ({
+                sizes: img.getAttribute('sizes') ?? '',
+                width: img.getAttribute('width'),
+                proseConstrained:
+                    img.closest('.prose') !== null &&
+                    img.getAttribute('data-astro-image') === 'constrained',
+            })),
+        )
+        for (const { sizes, width, proseConstrained } of images) {
+            checked++
+            // fixedWidthFigureSizing's slot really is `width` CSS px, and so is its breakpoint.
+            const rest = proseConstrained
+                ? sizes.replace(
+                      new RegExp(`^\\(min-width: \\d+px\\) ${width}px, `),
+                      '',
+                  )
+                : sizes
+            expect(rest, `${path}: ${sizes}`).not.toContain('px')
+        }
+    }
+    expect(checked).toBeGreaterThan(0)
+})
+
+test('screenshots are not upscaled at a larger browser font size', async ({
+    page,
+}) => {
+    // Regression (#550). Sets the default font size like a user setting; the
+    // CDP session stays attached, since detaching it drops the override.
+    const cdp = await page.context().newCDPSession(page)
+    await cdp.send('Page.setFontSizes', { fontSizes: { standard: 20 } })
+    for (const path of ['/work/', '/work/brand-evolution/']) {
+        await page.goto(path)
+        const picks = await page
+            .locator('img[sizes]')
+            .evaluateAll(async (imgs: HTMLImageElement[]) => {
+                for (const img of imgs) img.loading = 'eager'
+                await Promise.all(imgs.map((img) => img.decode()))
+                return imgs.map((img) => {
+                    const candidates = img.srcset.split(', ').map((entry) => {
+                        const [url = '', descriptor = ''] = entry.split(' ')
+                        return {
+                            url: new URL(url, location.href).href,
+                            width: parseInt(descriptor),
+                        }
+                    })
+                    const chosen = candidates.find(
+                        ({ url }) => url === img.currentSrc,
+                    )
+                    return {
+                        src: img.currentSrc,
+                        chosen: chosen?.width ?? 0,
+                        widest: Math.max(...candidates.map((c) => c.width)),
+                        needed:
+                            img.getBoundingClientRect().width *
+                            devicePixelRatio,
+                    }
+                })
+            })
+        for (const { src, chosen, widest, needed } of picks) {
+            // A hidden cover needs nothing; the widest candidate is the source's limit.
+            if (needed === 0 || chosen === widest) continue
+            expect(chosen, src).toBeGreaterThanOrEqual(Math.floor(needed))
+        }
+    }
 })
 
 test('VOICES regional-grid lead-in renders as one muted 14px paragraph', async ({
