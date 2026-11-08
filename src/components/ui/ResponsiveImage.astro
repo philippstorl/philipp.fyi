@@ -39,6 +39,18 @@ const {
     ...sizing
 } = Astro.props
 
+// MDX bodies aren't type-checked; NaN/-Infinity come from an empty tier list.
+if (!Number.isFinite(width) || width <= 0) {
+    throw new Error(
+        `ResponsiveImage "${alt}" needs a positive width, got ${width}`,
+    )
+}
+if (sizing.sizes && (!sizing.widths?.length || !sizing.layout)) {
+    throw new Error(
+        `ResponsiveImage "${alt}" sets sizes without widths and layout`,
+    )
+}
+
 // `sizing` is either mode of ResponsiveImageSizing -- the sizes-branch (including
 // its caller-chosen `layout`) passes straight through; only densities gets a default.
 const responsiveProps = sizing.sizes

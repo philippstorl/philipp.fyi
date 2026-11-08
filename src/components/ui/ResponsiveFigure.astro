@@ -30,6 +30,17 @@ const {
     ...sizing
 } = Astro.props
 
+// MDX bodies aren't type-checked, so enforce the required props at build time.
+if (typeof caption !== 'string' || !caption.trim()) {
+    throw new Error(`ResponsiveFigure "${alt}" needs a caption`)
+}
+// Every helper's spread sets `sizes`; a bare `width` would fall back to 1x/2x/3x.
+if (typeof sizing.sizes !== 'string') {
+    throw new Error(
+        `ResponsiveFigure "${alt}" needs a sizing spread from content-image-sizing.ts`,
+    )
+}
+
 // The inline image is deliberately downscaled; the lightbox needs a full-
 // resolution source of its own, handed off via `data-lightbox-src`.
 const lightboxImage = await getImage({
