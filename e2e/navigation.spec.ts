@@ -1,6 +1,7 @@
 import { test, expect, type Page } from '@playwright/test'
 import { navItems } from '../src/data/navigation'
 import { pages } from '../scripts/contrast-pages.mjs'
+import { expectThemeColor } from './helpers/theme-color'
 
 // Sets the browser's default font size the way a user's settings do, which
 // rem-based media queries (Tailwind's breakpoints) scale with. The session
@@ -237,6 +238,36 @@ test.describe('Navigation', () => {
         await expect(html).toHaveCSS('color-scheme', 'dark')
     })
 
+    test('theme-color follows the theme toggle, not just the OS (issue #507)', async ({
+        page,
+    }) => {
+        await page.emulateMedia({ colorScheme: 'light' })
+        await page.goto('/')
+        await expectThemeColor(page, 'light')
+
+        await page.getByRole('button', { name: 'Dark mode' }).click()
+        await expectThemeColor(page, 'dark')
+
+        const mobileToggle = page.locator('#nav-toggle')
+        if (await mobileToggle.isVisible()) {
+            await mobileToggle.click()
+        }
+        await page.locator('nav a[href="/principles/"]:visible').click()
+        await expect(page).toHaveURL('/principles/')
+        await expectThemeColor(page, 'dark')
+
+        await page.reload()
+        await expectThemeColor(page, 'dark')
+
+        await page.getByRole('button', { name: 'System preference' }).click()
+        await expectThemeColor(page, 'light')
+        await page.emulateMedia({ colorScheme: 'dark' })
+        await expectThemeColor(page, 'dark')
+
+        await page.getByRole('button', { name: 'Light mode' }).click()
+        await expectThemeColor(page, 'light')
+    })
+
     test('an unknown stored theme value follows the OS like System and gets cleared (issue #448)', async ({
         page,
     }) => {
@@ -405,6 +436,7 @@ test.describe('Navigation', () => {
         await page.locator('nav a[href="/principles/"]:visible').click()
         await expect(page).toHaveURL('/principles/')
         await expect(html).not.toHaveClass(/dark/)
+        await expectThemeColor(page, 'light')
     })
 
     test('an unsaved theme choice outlives a stale stored one when only writes fail (issue #398)', async ({
@@ -435,6 +467,7 @@ test.describe('Navigation', () => {
         await page.locator('nav a[href="/principles/"]:visible').click()
         await expect(page).toHaveURL('/principles/')
         await expect(html).not.toHaveClass(/dark/)
+        await expectThemeColor(page, 'light')
     })
 
     test('mobile nav closes on Escape and returns focus to the toggle', async ({

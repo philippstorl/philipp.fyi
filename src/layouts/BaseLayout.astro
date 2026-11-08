@@ -98,11 +98,13 @@ const ogImageAlt =
             name="theme-color"
             media="(prefers-color-scheme: light)"
             content="#FAF8F5"
+            data-scheme="light"
         />
         <meta
             name="theme-color"
             media="(prefers-color-scheme: dark)"
             content="#050403"
+            data-scheme="dark"
         />
 
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -155,6 +157,21 @@ const ogImageAlt =
                         stored === 'dark' ||
                             (stored !== 'light' && prefersDark),
                     )
+                    // Keep in sync with ThemeToggle's syncThemeColor (#507).
+                    document
+                        .querySelectorAll('meta[name="theme-color"]')
+                        .forEach(function (meta) {
+                            if (!meta.hasAttribute('data-media')) {
+                                meta.dataset.media = meta.media
+                            }
+                            const original = meta.dataset.media
+                            meta.media =
+                                stored !== 'light' && stored !== 'dark'
+                                    ? original
+                                    : meta.dataset.scheme === stored
+                                      ? 'all'
+                                      : 'not all'
+                        })
                 }
                 applyStoredTheme()
                 document.addEventListener('astro:after-swap', applyStoredTheme)
