@@ -88,7 +88,7 @@ Dependabot (`.github/dependabot.yml`) opens npm dependency and GitHub Actions PR
 
 ## Deployment
 
-Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml`. The dashboard-only parts are three environment variables, `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below) and `SLACK_DEPLOY_WEBHOOK_URL`/`DEPLOY_NOTIFICATION_WEBHOOK_SECRET` (see [Deploy notifications](#deploy-notifications) below), none of which can be committed, plus three features set up only in the dashboard: the deploy notifications' Outgoing Webhooks (same section), [Netlify Analytics](#analytics), and Real User Monitoring, whose beacon needs `netlify.toml`'s `connect-src` allowance and is disclosed on `/privacy/`.
+Netlify builds automatically from the `main` branch. Configuration lives almost entirely in `netlify.toml`. The dashboard-only parts are three environment variables, `SLACK_WEBHOOK_URL` (see [CSP violation reporting](#csp-violation-reporting) below) and `SLACK_DEPLOY_WEBHOOK_URL`/`DEPLOY_NOTIFICATION_WEBHOOK_SECRET` (see [Deploy notifications](#deploy-notifications) below), none of which can be committed, plus three features set up only in the dashboard: the deploy notifications' Outgoing Webhooks (same section), [Netlify Analytics](#analytics), and Real User Monitoring (Analytics & metrics → Real User Monitoring). RUM must stay on (issue #401 chose to keep and disclose it): `netlify.toml`'s CSP `connect-src` allows its beacon's endpoint and `/privacy/`'s Performance monitoring section discloses it, so turning it off means removing both.
 
 Check what's deployed at any time: `https://philipp.fyi/build.txt`
 
@@ -272,6 +272,7 @@ src/
     work/          → Case study MDX files (4 entries)
     principles/    → Principle MD files (15 entries)
     blog/          → Blog post MD files (all draft by default)
+  content.config.ts → Collection schemas for work, principles and blog
   data/
     about.ts            → About page/section copy and facts
     hero.ts             → Hero section copy
@@ -317,8 +318,11 @@ src/
     a11y.ts            → NEW_TAB_SUFFIX, the shared "(opens in a new tab)" wording used by NewTabIndicator.astro and Footer.astro
     content-image-sizing.ts → sizes/widths helpers for ResponsiveFigure/ResponsiveImage call sites in case-study (and future blog) MDX bodies
 e2e/               → Playwright E2E tests
+  global-setup.ts          → Warms the dev server before npm test's workers start
+  contrast.global-setup.ts → Same warmup for the contrast scan
   helpers/
-    contact-form.ts → gotoAndWaitForContactFormHydration(page) + CONTACT_SUBMIT_SELECTOR, shared by every contact-form test
+    contact-form.ts    → gotoAndWaitForContactFormHydration(page) + CONTACT_SUBMIT_SELECTOR, shared by every contact-form test
+    warm-dev-server.ts → warmDevServer(config), visits every page once before workers start; shared by both Playwright global setups
 tests/functions/   → Netlify Functions unit tests (npm run test:functions)
 public/
   favicon.svg
@@ -328,7 +332,8 @@ public/
 netlify/
   functions/
     _shared/
-      slack.ts             → Shared postToSlack() + Slack mrkdwn sanitization (sanitizeSlackText/truncateForSlack) used by both functions below
+      hsts.ts              → withHsts(), the includeSubDomains HSTS wrapper around every HTTP function's default export (issue #399)
+      slack.ts             → Shared postToSlack() + Slack mrkdwn sanitization (sanitizeSlackText/truncateForSlack) used by all three functions below
       verify-netlify-signature.ts → Verifies Netlify's X-Webhook-Signature JWS for deploy-notification.ts
     CLAUDE.md              → Directory-scoped Claude Code guidance, loaded only when working under netlify/functions/
     csp-report.ts          → Receives CSP violation reports, logs to Netlify Blobs, posts to Slack
@@ -336,7 +341,9 @@ netlify/
     deploy-notification.ts → Reformats Netlify's raw deploy webhook into a Slack message, posts to Slack
 netlify.toml       → Build, Node version, security headers, cache headers, 404 redirect, CSP reporting headers
 playwright.config.ts
+playwright.contrast.config.ts  → Report-only contrast scan config (npm run test:contrast)
 playwright.functions.config.ts → Browserless Playwright config for tests/functions/
+scripts/           → Node scripts behind the check:*/generate:* npm scripts and .claude/settings.json's hooks, plus contrast-pages.mjs (the page list shared by the a11y, contrast and meta-description tests)
 ```
 
 ## Security
