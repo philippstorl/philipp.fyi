@@ -458,6 +458,50 @@ test.describe('Image lightbox — brand-evolution', () => {
         )
     })
 
+    test('opening a slide loads only it and its immediate neighbors (issue #511)', async ({
+        page,
+    }) => {
+        // Phones' lazy-load margin used to fetch up to four full-res slides each side.
+        const images = page.locator('.prose figure img')
+        const lightboxSrcs = await images.evaluateAll((imgs) =>
+            imgs.map(
+                (img) =>
+                    new URL(
+                        (img as HTMLImageElement).dataset.lightboxSrc!,
+                        location.href,
+                    ).href,
+            ),
+        )
+        const requested = new Set<number>()
+        page.on('request', (request) => {
+            const index = lightboxSrcs.indexOf(request.url())
+            if (index >= 0) requested.add(index)
+        })
+        const requestedSlides = () => [...requested].sort((a, b) => a - b)
+        const slidesWithSrc = () =>
+            page
+                .locator('#lightbox-track img')
+                .evaluateAll((imgs) =>
+                    imgs.flatMap((img, index) =>
+                        img.hasAttribute('src') ? [index] : [],
+                    ),
+                )
+
+        await openLightboxOn(page, images.nth(12))
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            brandEvolutionCounterText(13),
+        )
+        await expect.poll(requestedSlides).toEqual([11, 12, 13])
+        expect(await slidesWithSrc()).toEqual([11, 12, 13])
+
+        await page.locator('#lightbox-next').click()
+        await expect(page.locator('#lightbox-counter')).toHaveText(
+            brandEvolutionCounterText(14),
+        )
+        await expect.poll(requestedSlides).toEqual([11, 12, 13, 14])
+        expect(await slidesWithSrc()).toEqual([11, 12, 13, 14])
+    })
+
     test('the gallery covers every image in the article', async ({ page }) => {
         const lastImage = page
             .locator('.prose')
