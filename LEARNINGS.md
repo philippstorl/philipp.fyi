@@ -12,6 +12,7 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ### 2026-11-08
 
+- **`self-review` now sets `background: false`** (issue #475). Verified before adding it, since Claude Code silently ignores unknown frontmatter keys: the skills reference (code.claude.com/docs/en/skills, frontmatter table and "Run skills in a subagent") documents `background` with default `true`, and the CHANGELOG's 2.1.218 entry reads "Changed skills with `context: fork` to run in the background by default; opt out per skill with `background: false`". The docs page itself doesn't name the version. Not checked in an interactive session: the fix was made by an Agent SDK subagent, where forked skills always wait, so its own inline review result proves nothing.
 - **Print uses the light theme via CSS, not the `beforeprint`/`afterprint` script issue #528 suggested.** Both work: Chrome fires `beforeprint` for Ctrl+P, `window.print()` and even Playwright's `page.pdf()` (checked against `astro preview`). The script was rejected because it flips the live page to light behind the print dialog, adds saved state to BaseLayout's CSP-sensitive head script, and doesn't apply under emulated print media (`page.emulateMedia({ media: 'print' })`), so it couldn't be tested that way. Scoping the `dark` variant and the `.dark` tokens to `@media not print` produced PDFs with the exact light-theme text colors in a dark-scheme context (`#070604` h1, `#171717` h2, `#404040` body, `#55524e` figcaption, read from Chrome's PDF content streams).
 
 ### 2026-11-07
