@@ -554,6 +554,51 @@ test.describe('Navigation', () => {
         await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
     })
 
+    test('a close request (Android Back) closes the mobile nav (issue #547)', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const mobileToggle = page.locator('#nav-toggle')
+        test.skip(
+            !(await mobileToggle.isVisible()),
+            'mobile-only nav toggle not visible on this viewport',
+        )
+        test.skip(
+            !(await page.evaluate(() => 'CloseWatcher' in window)),
+            'needs CloseWatcher',
+        )
+
+        await mobileToggle.click()
+        await expect(page.locator('#mobile-nav')).toBeVisible()
+
+        // Chromium's desktop close request is Escape; hiding its keydown
+        // from the page leaves only the close-request path to close the menu.
+        await page.evaluate(() =>
+            window.addEventListener(
+                'keydown',
+                (event) => {
+                    if (event.key === 'Escape') event.stopImmediatePropagation()
+                },
+                { capture: true },
+            ),
+        )
+        await page.keyboard.press('Escape')
+        await expect(page.locator('#mobile-nav')).toBeHidden()
+        await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
+        await expect(mobileToggle).toBeFocused()
+        await expect(page.locator('#main-content')).not.toHaveAttribute('inert')
+
+        // Closed by another path, the menu must not leave a watcher behind
+        // to swallow the next Back.
+        await mobileToggle.click()
+        await page.locator('#mobile-nav-backdrop').click()
+        await expect(page.locator('#mobile-nav')).toBeHidden()
+        const logo = page.locator('#site-header a[href="/"]').first()
+        await logo.focus()
+        await page.keyboard.press('Escape')
+        await expect(logo).toBeFocused()
+    })
+
     test('mobile nav backdrop appears while the menu is open and disappears once it closes', async ({
         page,
     }) => {

@@ -170,7 +170,19 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
             .filter((el) => el !== null)
     }
 
+    // Not in TypeScript's DOM lib yet, and not every browser has it.
+    type MenuCloseWatcher = { onclose: (() => void) | null; destroy(): void }
+    const CloseWatcherCtor = (
+        window as { CloseWatcher?: new () => MenuCloseWatcher }
+    ).CloseWatcher
+    let menuWatcher: MenuCloseWatcher | null = null
+
     function openMenu() {
+        // Android Back is a close request: close the menu, not the page.
+        if (CloseWatcherCtor) {
+            menuWatcher = new CloseWatcherCtor()
+            menuWatcher.onclose = () => closeMenu({ focusToggle: true })
+        }
         nav?.classList.remove('hidden')
         backdrop?.classList.remove('hidden')
         toggle?.setAttribute('aria-expanded', 'true')
@@ -181,6 +193,9 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
     }
 
     function closeMenu({ focusToggle = false } = {}) {
+        // Every close path ends here, so no watcher outlives the menu.
+        menuWatcher?.destroy()
+        menuWatcher = null
         nav?.classList.add('hidden')
         backdrop?.classList.add('hidden')
         toggle?.setAttribute('aria-expanded', 'false')
