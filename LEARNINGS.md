@@ -10,6 +10,10 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ## Log
 
+### 2026-11-08
+
+- **Print uses the light theme via CSS, not the `beforeprint`/`afterprint` script issue #528 suggested.** Both work: Chrome fires `beforeprint` for Ctrl+P, `window.print()` and even Playwright's `page.pdf()` (checked against `astro preview`). The script was rejected because it flips the live page to light behind the print dialog, adds saved state to BaseLayout's CSP-sensitive head script, and doesn't apply under emulated print media (`page.emulateMedia({ media: 'print' })`), so it couldn't be tested that way. Scoping the `dark` variant and the `.dark` tokens to `@media not print` produced PDFs with the exact light-theme text colors in a dark-scheme context (`#070604` h1, `#171717` h2, `#404040` body, `#55524e` figcaption, read from Chrome's PDF content streams).
+
 ### 2026-11-07
 
 - **A `PreToolUse` hook now checks PR descriptions** (`scripts/check-pr-body.js`). Five PRs (#598-#602) shipped without the `- #N` issue-title bullet because the subagent brief restated the PR template by hand and dropped it, while the `conventional-commits` skill had it right. Briefs should point agents at the skill file instead; the hook catches what slips through.
