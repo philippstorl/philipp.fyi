@@ -83,7 +83,11 @@ const lineOf = (text, index) => text.slice(0, index).split('\n').length
 const css = await read('src/styles/global.css')
 const tokensByTheme = {
     light: parseTokens(css, /^@theme\s*\{([\s\S]*?)^\}/m, '@theme'),
-    dark: parseTokens(css, /^\.dark\s*\{([\s\S]*?)^\}/m, '.dark'),
+    dark: parseTokens(
+        css,
+        /^@media not print\s*\{\s*\.dark\s*\{([\s\S]*?)^[ \t]*\}/m,
+        '@media not print { .dark }',
+    ),
 }
 
 const copies = []
