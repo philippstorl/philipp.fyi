@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useLayoutEffect } from 'react'
 
 type FormStatus = 'idle' | 'submitting' | 'success' | 'error'
 
@@ -72,6 +72,13 @@ export default function ContactForm() {
     // Sync guard: the button stays enabled while sending, so a second submit
     // can land before the `submitting` render commits.
     const submittingRef = useRef(false)
+    const formRef = useRef<HTMLFormElement>(null)
+
+    // Native validation guards the form until React's own takes over. Set
+    // before paint (not in JSX) so SSR matches and no tap lands in between.
+    useLayoutEffect(() => {
+        if (formRef.current) formRef.current.noValidate = true
+    }, [])
 
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
@@ -176,12 +183,15 @@ export default function ContactForm() {
 
     return (
         <form
+            ref={formRef}
             onSubmit={handleSubmit}
             name="contact"
             method="POST"
             data-netlify="true"
             data-netlify-honeypot="bot-field"
-            noValidate
+            // Unhydrated, ClientRouter would fetch-and-swap the submit instead
+            // of letting the browser validate and post it natively.
+            data-astro-reload
             className="rounded-xl border border-border bg-card p-6 md:p-8"
         >
             {/* Required hidden fields for Netlify Forms */}
@@ -212,7 +222,7 @@ export default function ContactForm() {
                         type="text"
                         autoComplete="name"
                         onChange={handleFieldChange('name')}
-                        aria-required="true"
+                        required
                         aria-describedby={
                             errors.name ? 'contact-name-error' : undefined
                         }
@@ -239,7 +249,7 @@ export default function ContactForm() {
                         type="email"
                         autoComplete="email"
                         onChange={handleFieldChange('email')}
-                        aria-required="true"
+                        required
                         aria-describedby={
                             errors.email ? 'contact-email-error' : undefined
                         }
@@ -265,7 +275,7 @@ export default function ContactForm() {
                         name="message"
                         rows={5}
                         onChange={handleFieldChange('message')}
-                        aria-required="true"
+                        required
                         aria-describedby={
                             errors.message ? 'contact-message-error' : undefined
                         }

@@ -1,4 +1,5 @@
 import { test, expect, type Locator } from '@playwright/test'
+import { CONTACT_FORM_SELECTOR } from './helpers/contact-form'
 
 test.describe('Contact page', () => {
     test('shows heading and the contact form', async ({ page }) => {
@@ -6,9 +7,7 @@ test.describe('Contact page', () => {
         await expect(
             page.getByRole('heading', { level: 1, name: 'Contact' }),
         ).toBeVisible()
-        await expect(
-            page.locator('form[name="contact"]:not([hidden])'),
-        ).toBeVisible()
+        await expect(page.locator(CONTACT_FORM_SELECTOR)).toBeVisible()
     })
 
     test('links to LinkedIn and GitHub', async ({ page }) => {
