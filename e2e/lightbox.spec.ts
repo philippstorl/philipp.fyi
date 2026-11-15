@@ -512,3 +512,19 @@ test.describe('Image lightbox — brand-evolution', () => {
         )
     })
 })
+
+test.describe('Image lightbox — leadership-operating-model', () => {
+    test('the dialog and its track have content-neutral names (issue #501)', async ({
+        page,
+    }) => {
+        // This case study's slides are photos, not screenshots.
+        await page.goto('/work/leadership-operating-model/')
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+
+        const dialog = page.getByRole('dialog', { name: 'Enlarged image' })
+        await expect(dialog).toBeVisible()
+        await expect(
+            dialog.getByRole('region', { name: 'Image gallery' }),
+        ).toBeVisible()
+    })
+})
