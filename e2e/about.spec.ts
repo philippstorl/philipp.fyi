@@ -55,4 +55,91 @@ test.describe('About page', () => {
         await recommendationsLink.click()
         await expect(page).toHaveURL('/recommendations/')
     })
+
+    test('interlink card labels keep their arrow and stay inside the card', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name !== 'chromium',
+            'sets its own viewport sizes, so one project covers it',
+        )
+        // Guards issue #529: "Recommendations" overflowed and its arrow collapsed at 640-767px.
+        // Under WCAG 1.4.12 text spacing the unbreakable word may use the padding, not leave the card.
+        const textSpacing =
+            '* { line-height: 1.5 !important; letter-spacing: 0.12em !important; word-spacing: 0.16em !important; }'
+        for (const path of [
+            '/about/',
+            '/principles/',
+            '/recommendations/',
+            '/work/',
+        ]) {
+            await page.goto(path)
+            await page.evaluate(() => document.fonts.ready)
+            for (const spaced of [false, true]) {
+                if (spaced) await page.addStyleTag({ content: textSpacing })
+                for (const width of [640, 767, 768]) {
+                    await page.setViewportSize({ width, height: 900 })
+                    const cards = await page
+                        .locator('main a.group.rounded-xl')
+                        .evaluateAll((els) =>
+                            els.map((card) => {
+                                const label =
+                                    card.querySelector('p:last-of-type')
+                                const text = label
+                                    ? [...label.childNodes].find(
+                                          (node) =>
+                                              node.nodeType ===
+                                                  Node.TEXT_NODE &&
+                                              node.textContent?.trim(),
+                                      )
+                                    : undefined
+                                const range = document.createRange()
+                                if (text) range.selectNodeContents(text)
+                                const arrow = label
+                                    ?.querySelector('svg')
+                                    ?.getBoundingClientRect()
+                                const rect = card.getBoundingClientRect()
+                                const style = getComputedStyle(card)
+                                const row = card.closest('ul')
+                                return {
+                                    label: text?.textContent?.trim(),
+                                    arrowWidth: arrow?.width,
+                                    arrowRight: arrow?.right ?? Infinity,
+                                    arrowBottom: arrow?.bottom ?? Infinity,
+                                    textRight:
+                                        range.getBoundingClientRect().right,
+                                    contentRight:
+                                        rect.right -
+                                        parseFloat(style.paddingRight),
+                                    contentBottom:
+                                        rect.bottom -
+                                        parseFloat(style.paddingBottom),
+                                    borderRight: rect.right,
+                                    rowOverflows: row
+                                        ? row.scrollWidth > row.clientWidth
+                                        : true,
+                                }
+                            }),
+                        )
+                    expect(cards).toHaveLength(3)
+                    for (const card of cards) {
+                        const where = `${path} at ${width}px${spaced ? ' with text spacing' : ''}: ${card.label}`
+                        expect(card.label, where).toBeTruthy()
+                        expect(card.arrowWidth, where).toBe(16)
+                        expect(card.arrowRight, where).toBeLessThanOrEqual(
+                            card.contentRight + 0.5,
+                        )
+                        expect(card.arrowBottom, where).toBeLessThanOrEqual(
+                            card.contentBottom + 0.5,
+                        )
+                        expect(card.textRight, where).toBeLessThanOrEqual(
+                            (spaced ? card.borderRight : card.contentRight) +
+                                0.5,
+                        )
+                        expect(card.rowOverflows, where).toBe(false)
+                    }
+                }
+            }
+        }
+    })
 })
