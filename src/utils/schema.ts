@@ -1,4 +1,4 @@
-import { hero } from '@/data/hero'
+import { JOB_TITLE, hero } from '@/data/hero'
 import { SITE_NAME } from '@/data/site'
 
 export interface PersonSchema {
@@ -16,8 +16,7 @@ export function buildPersonSchema(url: string): PersonSchema {
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: SITE_NAME,
-        // First comma-clause of subheading is the job title; rest is copy.
-        jobTitle: hero.subheading.split(',')[0]!.trim(),
+        jobTitle: JOB_TITLE,
         url,
         sameAs: hero.links.map((link) => link.href),
     }

@@ -8,11 +8,12 @@ import geistWoff2Url from '@fontsource-variable/geist/files/geist-latin-wght-nor
 import jetbrainsMonoWoff2Url from '@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2?url'
 import { STATIC_PAGES, ogImagePath } from '@/data/static-pages'
 import { SITE_NAME, getDefaultDescription } from '@/data/site'
+import { JOB_TITLE } from '@/data/hero'
 import { toAbsoluteUrl } from '@/utils/url'
 import { getPublishedEntries } from '@/utils/collections'
 
 interface Props {
-    /** Page title — shown as "Title | Philipp Storl", omit for home page */
+    /** Page title — shown as "Title | Philipp Storl"; omit for home ("Philipp Storl | <job title>") */
     title?: string
     description?: string
     ogImage?: string
@@ -42,7 +43,9 @@ const {
 
 // Don't advertise the feed while it's empty (issue #392).
 const hasPublishedPosts = (await getPublishedEntries('blog')).length > 0
-const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME
+const fullTitle = title
+    ? `${title} | ${SITE_NAME}`
+    : `${SITE_NAME} | ${JOB_TITLE}`
 const canonicalURL = toAbsoluteUrl(Astro.url.pathname, Astro.site)
 const ogImageURL = toAbsoluteUrl(ogImage, Astro.site)
 // Each OG card's headline is its page title (see static-pages.ts); home's isn't.
