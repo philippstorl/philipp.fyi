@@ -57,6 +57,28 @@ test.describe('Blog page', () => {
         expect(isNoindexHtml(await html('/about/'))).toBe(false)
     })
 
+    test('RSS feed link underline uses the link color, not the faint border token (issue #496)', async ({
+        page,
+    }) => {
+        const link = page.locator('main a[href="/rss.xml"]')
+        for (const colorScheme of ['light', 'dark'] as const) {
+            await page.emulateMedia({ colorScheme })
+            await page.goto('/blog/')
+            await expect(page.locator('html')).toHaveClass(
+                colorScheme === 'dark' ? /\bdark\b/ : /^(?!.*\bdark\b)/,
+            )
+            await expect(link).toHaveCSS('text-decoration-line', 'underline')
+            const { color, textDecorationColor } = await link.evaluate((el) => {
+                const style = getComputedStyle(el)
+                return {
+                    color: style.color,
+                    textDecorationColor: style.textDecorationColor,
+                }
+            })
+            expect(textDecorationColor).toBe(color)
+        }
+    })
+
     test("RSS feed's channel link points at /blog/", async ({ request }) => {
         const response = await request.get('/rss.xml')
         expect(response.ok()).toBe(true)

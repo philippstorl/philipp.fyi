@@ -128,6 +128,28 @@ test.describe('Privacy policy page', () => {
         ).toHaveAttribute('href', '/privacy/')
     })
 
+    test('footer Privacy link underline uses the link color, not the faint border token (issue #496)', async ({
+        page,
+    }) => {
+        const link = page.locator('footer a', { hasText: 'Privacy' })
+        for (const colorScheme of ['light', 'dark'] as const) {
+            await page.emulateMedia({ colorScheme })
+            await page.goto('/')
+            await expect(page.locator('html')).toHaveClass(
+                colorScheme === 'dark' ? /\bdark\b/ : /^(?!.*\bdark\b)/,
+            )
+            await expect(link).toHaveCSS('text-decoration-line', 'underline')
+            const { color, textDecorationColor } = await link.evaluate((el) => {
+                const style = getComputedStyle(el)
+                return {
+                    color: style.color,
+                    textDecorationColor: style.textDecorationColor,
+                }
+            })
+            expect(textDecorationColor).toBe(color)
+        }
+    })
+
     test('footer copyright line is centered when stacked, left in the row (issue #517)', async ({
         page,
     }) => {
