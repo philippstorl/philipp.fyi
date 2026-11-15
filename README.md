@@ -176,7 +176,7 @@ npx playwright test e2e/home.spec.ts --debug
 
 Tests run on Desktop Chrome and Pixel 5 (mobile). On CI, workers are set to 1 with a single retry.
 
-Shared test helpers live in `e2e/helpers/` (not matched as specs). Before any worker starts, `e2e/global-setup.ts` visits every page once (`e2e/helpers/warm-dev-server.ts`, also used by the contrast config) so Vite's dependency optimizer can't full-reload a page mid-test. Any test that submits the contact form calls `gotoAndWaitForContactFormHydration(page)` from `e2e/helpers/contact-form.ts` first: a click before React hydrates the island falls through to a native form POST.
+Shared test helpers live in `e2e/helpers/` (not matched as specs). Before any worker starts, `e2e/global-setup.ts` visits every page once (`e2e/helpers/warm-dev-server.ts`, also used by the contrast config) so Vite's dependency optimizer can't full-reload a page mid-test. Any test that submits the contact form calls `gotoAndWaitForContactFormHydration(page)` from `e2e/helpers/contact-form.ts` first: a click before React hydrates the island falls through to native validation and a native form POST.
 
 `e2e/blog.spec.ts` only covers `/blog/`'s current empty state, not `/blog/[slug]/` post content — there's no published post to test against yet. Add slug-page coverage once a post ships (see the `add-content` skill).
 
@@ -321,7 +321,7 @@ e2e/               → Playwright E2E tests
   global-setup.ts          → Warms the dev server before npm test's workers start
   contrast.global-setup.ts → Same warmup for the contrast scan
   helpers/
-    contact-form.ts    → gotoAndWaitForContactFormHydration(page) + CONTACT_SUBMIT_SELECTOR, shared by every contact-form test
+    contact-form.ts    → gotoAndWaitForContactFormHydration(page) + CONTACT_FORM_SELECTOR/CONTACT_SUBMIT_SELECTOR, shared by every contact-form test
     warm-dev-server.ts → warmDevServer(config), visits every page once before workers start; shared by both Playwright global setups
 tests/functions/   → Netlify Functions unit tests (npm run test:functions)
 public/

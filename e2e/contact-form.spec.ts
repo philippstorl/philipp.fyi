@@ -1,5 +1,6 @@
-import { test, expect, type Request } from '@playwright/test'
+import { test, expect, type Page, type Request } from '@playwright/test'
 import {
+    CONTACT_FORM_SELECTOR,
     CONTACT_SUBMIT_SELECTOR,
     gotoAndWaitForContactFormHydration,
 } from './helpers/contact-form'
@@ -361,7 +362,7 @@ test.describe('Contact form', () => {
         await gotoAndWaitForContactFormHydration(page)
         const fields = await page
             .locator(
-                'form[name="contact"]:not([hidden]) :is(input:not([type="hidden"]):not([tabindex="-1"]), textarea)',
+                `${CONTACT_FORM_SELECTOR} :is(input:not([type="hidden"]):not([tabindex="-1"]), textarea)`,
             )
             .evaluateAll((els) =>
                 els.map((el) => ({
@@ -383,7 +384,7 @@ test.describe('Contact form', () => {
         // its edge through a border in a non-Canvas system color.
         const edges = await page
             .locator(
-                'form[name="contact"]:not([hidden]) :is(input:not([type="hidden"]):not([tabindex="-1"]), textarea, button)',
+                `${CONTACT_FORM_SELECTOR} :is(input:not([type="hidden"]):not([tabindex="-1"]), textarea, button)`,
             )
             .evaluateAll((controls) => {
                 const probe = document.createElement('div')
@@ -411,4 +412,117 @@ test.describe('Contact form', () => {
         ])
         expect(edges.filter((e) => !e.visibleEdge)).toEqual([])
     })
+})
+
+// Issue #532: until React handles the submit, the browser's own constraint
+// validation must stop empty or malformed messages from being posted.
+async function recordContactPosts(page: Page) {
+    const posts: Request[] = []
+    await page.route('**/contact/', (route) => {
+        if (route.request().method() !== 'POST') return route.continue()
+        posts.push(route.request())
+        return route.fulfill({
+            status: 200,
+            contentType: 'text/html',
+            body: '<!doctype html><title>Sent</title><p>Thank you</p>',
+        })
+    })
+    return posts
+}
+
+async function fillContactForm(page: Page, email = 'jane@example.com') {
+    await page.locator('#contact-name').fill('Jane')
+    await page.locator('#contact-email').fill(email)
+    await page.locator('#contact-message').fill('Hello')
+}
+
+// A valid send afterwards proves the interception works, and a blocked click
+// that had posted anyway would have been recorded before it.
+async function expectOnlyTheValidSendPosted(page: Page, posts: Request[]) {
+    await fillContactForm(page)
+    await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+    await expect.poll(() => posts.length).toBe(1)
+    const [post] = posts
+    expect(post?.isNavigationRequest()).toBe(true)
+    expect(
+        Object.fromEntries(new URLSearchParams(post?.postData() ?? '')),
+    ).toEqual({
+        'form-name': 'contact',
+        'bot-field': '',
+        name: 'Jane',
+        email: 'jane@example.com',
+        message: 'Hello',
+    })
+}
+
+test.describe('Contact form without JavaScript (issue #532)', () => {
+    test.use({ javaScriptEnabled: false })
+
+    test('server-renders native constraints', async ({ page }) => {
+        await page.goto('/contact/')
+        const form = page.locator(CONTACT_FORM_SELECTOR)
+        await expect(form).not.toHaveAttribute('novalidate')
+        for (const id of ['contact-name', 'contact-email', 'contact-message']) {
+            await expect(form.locator(`#${id}`)).toHaveAttribute('required')
+        }
+    })
+
+    test('an empty submit is blocked natively and posts nothing', async ({
+        page,
+    }) => {
+        const posts = await recordContactPosts(page)
+        await page.goto('/contact/')
+
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(page.locator('#contact-name')).toBeFocused()
+        expect(posts).toHaveLength(0)
+
+        await expectOnlyTheValidSendPosted(page, posts)
+    })
+
+    test('a malformed email is blocked natively and posts nothing', async ({
+        page,
+    }) => {
+        const posts = await recordContactPosts(page)
+        await page.goto('/contact/')
+
+        await fillContactForm(page, 'not-an-email')
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(page.locator('#contact-email')).toBeFocused()
+        expect(posts).toHaveLength(0)
+
+        await expectOnlyTheValidSendPosted(page, posts)
+    })
+})
+
+test('with JavaScript but React blocked, a submit is native, not a ClientRouter fetch (issue #532)', async ({
+    page,
+}) => {
+    const html = await (await page.request.get('/contact/')).text()
+    const rendererUrl = /<astro-island[^>]*\brenderer-url="([^"]+)"/.exec(
+        html,
+    )?.[1]
+    if (!rendererUrl) throw new Error('No ContactForm island renderer-url')
+    const rendererPath = new URL(rendererUrl, 'http://localhost').pathname
+    let rendererBlocked = false
+    await page.route(
+        (url) => url.pathname === rendererPath,
+        (route) => {
+            rendererBlocked = true
+            return route.abort()
+        },
+    )
+    const posts = await recordContactPosts(page)
+    await page.goto('/contact/')
+
+    // Proves the island really can't hydrate, not just that it hasn't yet.
+    await expect.poll(() => rendererBlocked).toBe(true)
+    await expect(page.locator(CONTACT_FORM_SELECTOR)).not.toHaveAttribute(
+        'novalidate',
+    )
+    await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+    await expect(page.locator('#contact-name')).toBeFocused()
+    expect(posts).toHaveLength(0)
+
+    await expectOnlyTheValidSendPosted(page, posts)
 })
