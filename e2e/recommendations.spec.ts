@@ -1,4 +1,15 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
+
+// Number of rendered lines of the page's <h1>, once the webfont has loaded.
+// Throws if the text overflows its box, which one line could also mean.
+async function h1LineCount(page: Page) {
+    return page.locator('main h1').evaluate(async (h1) => {
+        await document.fonts.ready
+        if (h1.scrollWidth > h1.clientWidth) throw new Error('h1 overflows')
+        const lineHeight = parseFloat(getComputedStyle(h1).lineHeight)
+        return Math.round(h1.getBoundingClientRect().height / lineHeight)
+    })
+}
 
 test.describe('Recommendations page', () => {
     test('shows all recommendations', async ({ page }) => {
@@ -97,5 +108,28 @@ test.describe('Recommendations page', () => {
                 )
             }
         }
+    })
+
+    test('h1 fits "Recommendations" on one line on small phones', async ({
+        page,
+    }) => {
+        // Guards issue #513: at 36px the word split mid-word below ~362px.
+        for (const width of [320, 360]) {
+            await page.setViewportSize({ width, height: 800 })
+            await page.goto('/recommendations/')
+            expect(await h1LineCount(page), `${width}px`).toBe(1)
+        }
+    })
+
+    test('h1 size breakpoint scales with the browser font size', async ({
+        page,
+    }) => {
+        // At a 20px default font the word needs ~452px at 2.25rem but only
+        // ~387px at 1.875rem, so a px breakpoint at 375px splits it at 420px.
+        const cdp = await page.context().newCDPSession(page)
+        await cdp.send('Page.setFontSizes', { fontSizes: { standard: 20 } })
+        await page.setViewportSize({ width: 420, height: 800 })
+        await page.goto('/recommendations/')
+        expect(await h1LineCount(page)).toBe(1)
     })
 })
