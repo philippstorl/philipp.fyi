@@ -30,7 +30,8 @@ export function ogImagePath(page: StaticPageKey): string {
 }
 
 /** BaseLayout's `title`/`ogImage` for a static page.
- * Home is excluded: its <title> is the bare site name, not its `title`. */
+ * Home is excluded: its <title> is BaseLayout's `SITE_NAME | JOB_TITLE`
+ * fallback, not its `title`. */
 export function staticPageMeta(page: Exclude<StaticPageKey, 'home'>): {
     title: string
     ogImage: string

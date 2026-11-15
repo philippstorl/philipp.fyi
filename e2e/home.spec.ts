@@ -3,10 +3,24 @@ import { test, expect } from '@playwright/test'
 test.describe('Home page', () => {
     test('has correct title and headline', async ({ page }) => {
         await page.goto('/')
-        await expect(page).toHaveTitle('Philipp Storl')
+        await expect(page).toHaveTitle(
+            'Philipp Storl | Principal Web Developer',
+        )
         await expect(page.getByRole('heading', { level: 1 })).toContainText(
             'I build things that last.',
         )
+    })
+
+    test('share title names the role, not just the name', async ({ page }) => {
+        await page.goto('/')
+        const title = 'Philipp Storl | Principal Web Developer'
+        await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
+            'content',
+            title,
+        )
+        await expect(
+            page.locator('meta[name="twitter:title"]'),
+        ).toHaveAttribute('content', title)
     })
 
     test('shows availability badge', async ({ page }) => {

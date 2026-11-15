@@ -43,3 +43,6 @@ export const hero: HeroData = {
         },
     ],
 }
+
+/** The subheading's first comma-clause: JSON-LD jobTitle and the home <title>. */
+export const JOB_TITLE = hero.subheading.split(',')[0]!.trim() // split() always returns at least one element
