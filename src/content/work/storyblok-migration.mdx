@@ -49,7 +49,7 @@ The scope was substantial. The migration covered the full staffbase.com estate: 
     <ResponsiveFigure
         src={imgJp}
         alt="staffbase.com homepage in Japanese: hero headline with a product screenshot"
-        caption="Japanese locale at launch: the most immediately legible proof of a working multilingual architecture."
+        caption="Japanese, one of the three launch locales: the most immediately legible proof of a working multilingual architecture."
         {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
     />
     <ResponsiveFigure
@@ -66,7 +66,7 @@ DNS (Route53 and Cloudflare, Terraform-managed) was already part of Staffbase's 
 
 Early on, my contribution was mostly making sure SensioLabs' Symfony expertise stayed grounded in our reality: flagging where a textbook pattern would break against our actual content model, or where marketing's workflow needed something the framework didn't assume by default. As the project went on, I also contributed directly to implementation, and reviewed code across both the Staffbase team and SensioLabs' work, though SensioLabs, as the framework experts, had merge authority on much of the more technical work themselves. We ran it as a genuinely agile, iterative collaboration: constant feedback loops, including on already-merged PRs, rather than a single gate of final sign-off.
 
-Together with my manager, I helped manage the agency relationship: aligning on scope and approach, coordinating the GitHub repository structure (codeowners, branch strategy, CI/CD), and helping maintain the quality bar across releases. When the navigation needed to be fully rebuilt in late 2025 (a structural overhaul under a tight external deadline), I coordinated the implementation directly: reviewing code, giving implementation feedback, and signing off before it went live.
+Together with my manager, I helped manage the agency relationship: aligning on scope and approach, coordinating the GitHub repository structure (codeowners, branch strategy, CI/CD), and helping maintain the quality bar across releases. When the navigation needed to be fully rebuilt in late 2025 (a structural overhaul under a tight external deadline), SensioLabs built it and I coordinated the implementation directly: reviewing code, giving implementation feedback, and signing off before it went live.
 
 <ResponsiveFigure
     src={imgMobileNav}
@@ -87,7 +87,7 @@ The highest-stakes moment was go-live: switching primary domains on a live comme
 
 ## The outcome
 
-I led the migration from initial scoping in late 2024 through go-live in July 2025 and stabilization through the rest of the year, delivering a faster, more stable site with a far better editor experience than WordPress, a better developer experience for the team, and an architecture built to scale. Marketing self-publishes in Storyblok, and the number of web support tickets driven by content management, which had been significant, dropped materially. By go-live, the web team was running the Symfony application independently, calling on SensioLabs only for the rare edge case: proof that the knowledge transfer had actually worked, not just the migration itself. And the new setup proved its value quickly: adding French and Spanish after launch was straightforward, exactly as the architecture intended. It was also the first step in unifying Staffbase's fragmented web properties onto one technical system.
+I led the migration from initial scoping in late 2024 through go-live in July 2025 and stabilization through the rest of the year, delivering a faster, more stable site with a far better editor experience than WordPress, a better developer experience for the team, and an architecture built to scale. Marketing self-publishes in Storyblok, and the number of web support tickets driven by content management, which had been significant, dropped materially. By go-live, the web team was running the Symfony application independently, calling on SensioLabs only for the rare edge case: proof that the knowledge transfer had actually worked, not just the migration itself. Scoped projects like the late-2025 navigation rebuild were the exception. And the new setup proved its value quickly: adding French and Spanish after launch was straightforward, exactly as the architecture intended. It was also the first step in unifying Staffbase's fragmented web properties onto one technical system.
 
 <div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
     <ResponsiveFigure
