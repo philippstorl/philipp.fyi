@@ -42,9 +42,11 @@ function focusIntoView(el: HTMLElement | null) {
     })
 }
 
+const FIELDS = ['name', 'email', 'message'] as const
+
 function validate(data: FormData): FieldErrors {
     const errors: FieldErrors = {}
-    for (const field of ['name', 'email', 'message'] as const) {
+    for (const field of FIELDS) {
         const error = validateField(
             field,
             (data.get(field) as string | null) ?? '',
@@ -52,6 +54,18 @@ function validate(data: FormData): FieldErrors {
         if (error) errors[field] = error
     }
     return errors
+}
+
+// Module scope survives ClientRouter soft navigations (the island module loads
+// once per document), so a Back to /contact/ restores the draft. Not storage:
+// /privacy/ promises a single stored preference.
+let draft: Partial<Record<keyof FieldErrors, string>> = {}
+
+function readDraft(form: HTMLFormElement): typeof draft {
+    const data = new FormData(form)
+    return Object.fromEntries(
+        FIELDS.map((field) => [field, String(data.get(field) ?? '')]),
+    )
 }
 
 export default function ContactForm() {
@@ -80,6 +94,27 @@ export default function ContactForm() {
         if (formRef.current) formRef.current.noValidate = true
     }, [])
 
+    // After hydration, so the server markup still matches; before paint, so
+    // the fields don't flash empty. Text typed pre-hydration fired no onChange,
+    // so it wins and seeds the draft instead.
+    useLayoutEffect(() => {
+        const fieldRefs: Record<
+            keyof FieldErrors,
+            React.RefObject<HTMLInputElement | HTMLTextAreaElement | null>
+        > = {
+            name: nameInputRef,
+            email: emailInputRef,
+            message: messageInputRef,
+        }
+        for (const field of FIELDS) {
+            const el = fieldRefs[field].current
+            const saved = draft[field]
+            if (!el) continue
+            if (el.value) draft[field] = el.value
+            else if (saved) el.value = saved
+        }
+    }, [])
+
     useEffect(() => {
         if (status === 'success') successRef.current?.focus()
     }, [status])
@@ -97,6 +132,7 @@ export default function ContactForm() {
     const handleFieldChange =
         (field: keyof FieldErrors) =>
         (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+            draft[field] = e.target.value
             if (!errors[field] || validateField(field, e.target.value)) return
             setErrors((prev) => {
                 const next = { ...prev }
@@ -125,6 +161,10 @@ export default function ContactForm() {
         setErrors({})
         submittingRef.current = true
         setStatus('submitting')
+        // Not a draft while in flight: a Back mid-send must not refill the form
+        // for a duplicate send. A failed send restores it below.
+        draft = {}
+        let sent = false
 
         try {
             const res = await fetch('/', {
@@ -140,6 +180,7 @@ export default function ContactForm() {
                 ).toString(),
             })
             if (res.ok) {
+                sent = true
                 setStatus('success')
                 form.reset()
             } else {
@@ -149,6 +190,8 @@ export default function ContactForm() {
             setStatus('error')
         } finally {
             submittingRef.current = false
+            // On failure, edits made while sending (already in draft) win.
+            draft = sent ? {} : { ...readDraft(form), ...draft }
         }
     }
 

@@ -11,6 +11,11 @@ export const CONTACT_SUBMIT_SELECTOR = `${CONTACT_FORM_SELECTOR} button[type="su
 // prop and for the post-hydration noValidate, which hands validation to React.
 export async function gotoAndWaitForContactFormHydration(page: Page) {
     await page.goto('/contact/')
+    await waitForContactFormHydration(page)
+}
+
+// For a /contact/ reached by client-side navigation instead of page.goto().
+export async function waitForContactFormHydration(page: Page) {
     await page.waitForFunction(
         ({ formSelector, submitSelector }) => {
             const form = document.querySelector<HTMLFormElement>(formSelector)
