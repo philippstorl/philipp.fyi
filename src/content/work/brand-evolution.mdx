@@ -22,6 +22,7 @@ coverImage: "./brand-evolution/staffbase-2026-05.png"
 import { getStaffbaseTenureYears } from "@/utils/experience"
 import ResponsiveFigure from "@/components/ui/ResponsiveFigure.astro"
 import {
+    fixedWidthFigureSizing,
     fullWidthFigureSizing,
     responsiveGridFigureSizing,
     TWO_COLUMN_RESPONSIVE_TIERS,
@@ -275,20 +276,22 @@ Earlier that year, at the end of July, the WordPress-to-Storyblok migration laun
         {...responsiveGridFigureSizing(THREE_COLUMN_RESPONSIVE_TIERS)}
     />
 </div>
-<div class="my-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-    <ResponsiveFigure
-        src={img2026_05nav}
-        alt="The rebuilt staffbase.com navigation, expanded to show the Platform menu"
-        caption="May 2026 - The navigation, rebuilt from scratch by SensioLabs."
-        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
-    />
-    <ResponsiveFigure
-        src={img2026_05mobile}
-        alt="staffbase.com homepage on mobile in May 2026"
-        caption="May 2026 - The same homepage on mobile."
-        {...responsiveGridFigureSizing(TWO_COLUMN_RESPONSIVE_TIERS)}
-    />
-</div>
+<ResponsiveFigure
+    src={img2026_05nav}
+    alt="The rebuilt staffbase.com navigation, expanded to show the Platform menu"
+    caption="May 2026 - The navigation, rebuilt from scratch by SensioLabs."
+    {...fullWidthFigureSizing()}
+    class="my-8"
+/>
+<ResponsiveFigure
+    src={img2026_05mobile}
+    alt="staffbase.com homepage on mobile in May 2026"
+    caption="May 2026 - The same homepage on mobile."
+    {...fixedWidthFigureSizing(320)}
+    class="my-8"
+    imgClass="mx-auto"
+    captionClass="text-center"
+/>
 
 The final stretch was a sprint to leave things well. The navigation was rebuilt from scratch by SensioLabs, going live right before Christmas 2025, with bug fixes and refinements continuing into early 2026, becoming the clearest expression yet of how far the design language had come. The homepage was reworked again against a hard external deadline: the kind that can't move.
 
