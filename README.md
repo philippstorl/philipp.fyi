@@ -51,7 +51,8 @@ npm run dev:astro  # http://localhost:4321
 | `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`               |
 | `npm run check:page-coverage`         | Fail if `contrast-pages.mjs` and `dist/` differ, or a `<p>` nests a block  |
 | `npm run check:csp`                   | Fail if `dist/` has code or an image the meta or `netlify.toml` CSP blocks |
-| `npm run check:learnings`             | Run the SessionStart hook's LEARNINGS.md loader and check its output       |
+| `npm run check:learnings`             | Check the SessionStart hook's LEARNINGS.md digest, then `check:hooks`      |
+| `npm run check:hooks`                 | Run the Stop hook's doc-sync nudge in a temp repo and check its output     |
 | `npm run test:hooks`                  | Unit-test the PreToolUse hook that checks PR descriptions                  |
 | `npm run check:audit`                 | Audit production dependencies for high-severity vulnerabilities            |
 | `npm run format`                      | Format all files with Prettier                                             |
@@ -74,7 +75,7 @@ Nine jobs run in parallel, all on Node 26:
 
 | Job                  | What it does                                                                                                                                                                                                                                                                                                                                  |
 | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git, or if any `actions/checkout` step in `ci.yml` lacks `persist-credentials: false`, then runs `npm run check:learnings` (plain Node, no `npm ci`)                                                                      |
+| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git, or if any `actions/checkout` step in `ci.yml` lacks `persist-credentials: false`, then runs `npm run check:learnings` (plain Node, no `npm ci`), which also runs `npm run check:hooks`                               |
 | `lint`               | `npm run lint`                                                                                                                                                                                                                                                                                                                                |
 | `format`             | `npm run format:check`                                                                                                                                                                                                                                                                                                                        |
 | `typecheck`          | `npm run typecheck`                                                                                                                                                                                                                                                                                                                           |
