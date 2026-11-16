@@ -85,8 +85,8 @@ const tokensByTheme = {
     light: parseTokens(css, /^@theme\s*\{([\s\S]*?)^\}/m, '@theme'),
     dark: parseTokens(
         css,
-        /^@media not print\s*\{\s*\.dark\s*\{([\s\S]*?)^[ \t]*\}/m,
-        '@media not print { .dark }',
+        /^:root\s*\{\s*@variant dark\s*\{([\s\S]*?)^[ \t]*\}/m,
+        ':root { @variant dark }',
     ),
 }
 
