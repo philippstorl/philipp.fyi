@@ -10,7 +10,7 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
 {/* Sibling of #site-header, not a child -- nesting it would carry it into the header's own z-50 stacking context. */}
 <div
     id="mobile-nav-backdrop"
-    class="animate-mobile-nav-backdrop-in fixed inset-0 z-40 hidden bg-background/60 md:hidden"
+    class="animate-mobile-nav-backdrop-in fixed inset-0 z-40 hidden bg-background/60 md:hidden print:hidden"
     aria-hidden="true"
     transition:persist
 ></div>
@@ -33,7 +33,7 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
             Philipp Storl
         </a>
 
-        <nav aria-label="Main navigation" class="hidden md:block">
+        <nav aria-label="Main navigation" class="hidden md:block print:hidden">
             <ul class="flex items-center gap-8">
                 {navItems.map((item) => <li>
                     <NavLink
@@ -54,7 +54,7 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
                 aria-label="Toggle navigation"
                 aria-expanded="false"
                 aria-controls="mobile-nav"
-                class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground md:hidden noscript:hidden"
+                class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground md:hidden noscript:hidden print:hidden"
             >
                 <svg
                     id="icon-menu"
@@ -98,7 +98,7 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
     <nav
         id="mobile-nav"
         aria-label="Mobile navigation"
-        class="animate-mobile-nav-in absolute inset-x-0 top-full hidden max-h-[calc(100dvh-100%)] overflow-y-auto overscroll-contain border-t border-b border-border bg-background md:hidden noscript:max-md:static noscript:max-md:block noscript:max-md:max-h-none noscript:max-md:animate-none noscript:max-md:overflow-visible noscript:max-md:border-b-0"
+        class="animate-mobile-nav-in absolute inset-x-0 top-full hidden max-h-[calc(100dvh-100%)] overflow-y-auto overscroll-contain border-t border-b border-border bg-background md:hidden noscript:max-md:static noscript:max-md:block noscript:max-md:max-h-none noscript:max-md:animate-none noscript:max-md:overflow-visible noscript:max-md:border-b-0 print:hidden noscript:print:hidden"
     >
         <ul class="mx-auto flex max-w-6xl flex-col px-6 py-4">
             {navItems.map((item) => <li>
