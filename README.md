@@ -355,4 +355,4 @@ To report a vulnerability, use GitHub's private vulnerability reporting rather t
 
 ## License
 
-All rights reserved. This is a personal portfolio repository, not open source; see [LICENSE](LICENSE).
+All rights reserved. This is a personal portfolio repository, not open source; see [LICENSE](LICENSE). Third-party material in it (screenshots of other websites, quotations such as the recommendation texts, brand logos, npm dependencies and a few icons copied from Lucide) is excluded and stays under its owners' terms; Lucide's license is in [THIRD_PARTY_NOTICES](THIRD_PARTY_NOTICES).
