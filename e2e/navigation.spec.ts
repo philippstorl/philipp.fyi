@@ -96,6 +96,39 @@ test.describe('Navigation', () => {
         ).not.toHaveAttribute('aria-current')
     })
 
+    test('homepage card link lands its fragment below the header despite the late italic font (issue #546)', async ({
+        page,
+    }, testInfo) => {
+        test.skip(
+            testInfo.project.name !== 'mobile',
+            'reflow is largest on phones',
+        )
+        await page.goto('/')
+        await page.locator('a[href="/recommendations/#janet-levrel"]').click()
+        await expect(page).toHaveURL('/recommendations/#janet-levrel')
+
+        // Wait out the smooth scroll: a mid-scroll read can pass the target.
+        const targetTop = () =>
+            page
+                .locator('#janet-levrel')
+                .evaluate((el) => el.getBoundingClientRect().top)
+        let settledTop = NaN
+        await expect
+            .poll(async () => {
+                const before = await targetTop()
+                await page.waitForTimeout(300)
+                settledTop = await targetTop()
+                return settledTop === before
+            })
+            .toBe(true)
+        const scrollPadding = await page.evaluate(() =>
+            parseFloat(
+                getComputedStyle(document.documentElement).scrollPaddingTop,
+            ),
+        )
+        expect(Math.abs(settledTop - scrollPadding)).toBeLessThan(12)
+    })
+
     test('Work nav link is aria-current="true" inside the section, "page" on /work/ (issue #341)', async ({
         page,
     }) => {
