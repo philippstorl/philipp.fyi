@@ -155,6 +155,25 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
     updateActiveNav()
     document.addEventListener('astro:page-load', updateActiveNav)
 
+    // The fragment scroll's target is fixed at swap time, so a late italic
+    // face (blockquotes) reflowing above it lands the scroll off target.
+    document.addEventListener('astro:before-preparation', (event) => {
+        if (!event.to.hash) return
+        const load = event.loader
+        event.loader = async () => {
+            await Promise.all([
+                load(),
+                // Capped so a stalled font can't hold the old page on screen.
+                Promise.race([
+                    document.fonts
+                        .load('italic 400 1em "Geist Variable"')
+                        .catch(() => {}),
+                    new Promise((resolve) => setTimeout(resolve, 1000)),
+                ]),
+            ])
+        }
+    })
+
     const toggle = document.getElementById('nav-toggle')
     const nav = document.getElementById('mobile-nav')
     const backdrop = document.getElementById('mobile-nav-backdrop')
