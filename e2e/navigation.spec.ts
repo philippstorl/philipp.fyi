@@ -11,6 +11,16 @@ async function setDefaultFontSize(page: Page, px: number) {
     await cdp.send('Page.setFontSizes', { fontSizes: { standard: px } })
 }
 
+// The backdrop's center sits under the menu once it has six links, so click
+// near the viewport's bottom edge, below the menu, instead (issue #538).
+async function clickBackdropBelowMenu(page: Page) {
+    const viewport = page.viewportSize()
+    if (!viewport) throw new Error('no viewport size')
+    await page
+        .locator('#mobile-nav-backdrop')
+        .click({ position: { x: 10, y: viewport.height - 10 } })
+}
+
 test.describe('Navigation', () => {
     test('header is sticky and shows name mark', async ({ page }) => {
         await page.goto('/')
@@ -652,7 +662,7 @@ test.describe('Navigation', () => {
         await expect(page.locator('#mobile-nav')).toBeVisible()
 
         // The backdrop, not page content, receives the "outside" click now.
-        await page.locator('#mobile-nav-backdrop').click()
+        await clickBackdropBelowMenu(page)
         await expect(page.locator('#mobile-nav')).toBeHidden()
         await expect(mobileToggle).toHaveAttribute('aria-expanded', 'false')
     })
@@ -694,7 +704,7 @@ test.describe('Navigation', () => {
         // Closed by another path, the menu must not leave a watcher behind
         // to swallow the next Back.
         await mobileToggle.click()
-        await page.locator('#mobile-nav-backdrop').click()
+        await clickBackdropBelowMenu(page)
         await expect(page.locator('#mobile-nav')).toBeHidden()
         const logo = page.locator('#site-header a[href="/"]').first()
         await logo.focus()
@@ -793,6 +803,69 @@ test.describe('Navigation', () => {
             `logo wrapped (width ${layout.logoWidth}px, toggle at ${toggle.x}px)`,
         ).toBeLessThanOrEqual(layout.lineHeight)
         expect(layout.scrollWidth).toBeLessThanOrEqual(320)
+    })
+
+    test('header fits a sixth nav link at 768px with the logo on one line (issue #538)', async ({
+        page,
+    }) => {
+        await page.setViewportSize({ width: 768, height: 1024 })
+        await page.goto('/')
+        await page.evaluate(() => document.fonts.ready)
+        const logo = page.getByRole('link', { name: 'Philipp Storl, home' })
+        const nav = page.getByRole('navigation', { name: 'Main navigation' })
+        await expect(nav).toBeVisible()
+
+        // Five links fit at any gap; a sixth (e.g. Blog) is what wrapped the logo.
+        if (navItems.length < 6) {
+            await nav
+                .locator('li')
+                .last()
+                .evaluate((li) => {
+                    const extra = li.cloneNode(true) as HTMLElement
+                    const link = extra.querySelector('a')
+                    if (link) link.textContent = 'Blog'
+                    li.before(extra)
+                })
+        }
+        await page.keyboard.press('Tab')
+        await page.keyboard.press('Tab')
+        await expect(logo).toBeFocused()
+
+        const layout = await logo.evaluate((el) => {
+            const rect = el.getBoundingClientRect()
+            const style = getComputedStyle(el)
+            const firstLink = document
+                .querySelector('nav[aria-label="Main navigation"] a')
+                ?.getBoundingClientRect()
+            return {
+                logoRight: rect.right,
+                logoWidth: rect.width,
+                logoHeight: rect.height,
+                lineHeight: parseFloat(style.lineHeight),
+                ringExtent:
+                    parseFloat(style.outlineOffset) +
+                    parseFloat(style.outlineWidth),
+                firstLinkLeft: firstLink?.left ?? 0,
+                scrollWidth: document.documentElement.scrollWidth,
+            }
+        })
+        const navBox = await nav.boundingBox()
+        const toggle = await page
+            .getByRole('group', { name: 'Color theme' })
+            .boundingBox()
+        expect(navBox).not.toBeNull()
+        expect(toggle).not.toBeNull()
+        if (!navBox || !toggle) return
+        expect(
+            layout.logoHeight,
+            `logo wrapped (width ${layout.logoWidth}px, first link at ${layout.firstLinkLeft}px)`,
+        ).toBeLessThanOrEqual(layout.lineHeight)
+        // Each focus ring (shared global rule) clears its neighbor's box.
+        expect(layout.logoRight + layout.ringExtent).toBeLessThan(
+            layout.firstLinkLeft,
+        )
+        expect(navBox.x + navBox.width).toBeLessThan(toggle.x)
+        expect(layout.scrollWidth).toBeLessThanOrEqual(768)
     })
 
     test('mobile nav keeps keyboard focus out of background content while open (issue #231)', async ({
