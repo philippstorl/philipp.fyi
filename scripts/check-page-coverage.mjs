@@ -1,13 +1,15 @@
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { builtHtmlPath, isNoindexHtml } from '../src/utils/sitemap.ts'
 import { pages } from './contrast-pages.mjs'
 
 // contrast-pages.mjs is hand-typed, so a new page or published collection
 // entry would silently skip the contrast and meta-description specs. Diffs
 // it against the built HTML in dist/ in both directions. Also fails on a
 // block element inside an open <p> (e.g. MDX wrapping a raw <p>'s line-broken
-// text in its own <p>), which the browser splits into stray paragraphs.
+// text in its own <p>), which the browser splits into stray paragraphs, and on
+// a sitemap that's missing or lists a noindex page (e.g. a bare sitemap()).
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 
@@ -67,6 +69,34 @@ for (const file of htmlFiles) {
         )
     }
 }
+const sitemapProblems = []
+const sitemapFiles = files.filter((f) =>
+    /^sitemap-\d+\.xml$/.test(path.relative(dist, f)),
+)
+if (sitemapFiles.length === 0) sitemapProblems.push('no dist/sitemap-*.xml')
+for (const file of sitemapFiles) {
+    const xml = await fs.readFile(file, 'utf8')
+    const locs = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)]
+    if (locs.length === 0) {
+        sitemapProblems.push(`${path.basename(file)} lists no URLs`)
+    }
+    for (const [, loc] of locs) {
+        const { pathname } = new URL(loc)
+        const page = decodeURIComponent(builtHtmlPath(pathname))
+        let html
+        try {
+            html = await fs.readFile(path.join(dist, page), 'utf8')
+        } catch (error) {
+            if (error.code !== 'ENOENT') throw error
+            sitemapProblems.push(`${pathname}: listed, but no built HTML`)
+            continue
+        }
+        if (isNoindexHtml(html)) {
+            sitemapProblems.push(`${pathname}: listed, but the page is noindex`)
+        }
+    }
+}
+
 const listedPaths = new Set(pages.map((p) => p.reportedPath))
 const duplicates = pages
     .map((p) => p.reportedPath)
@@ -120,7 +150,12 @@ if (nestingProblems.length > 0) {
     console.error('Block elements inside an open <p> (invalid HTML nesting):')
     for (const p of nestingProblems) console.error(`  ${p}`)
 }
+if (sitemapProblems.length > 0) {
+    console.error('Sitemap problems:')
+    for (const p of sitemapProblems) console.error(`  ${p}`)
+}
 const problemCount =
+    sitemapProblems.length +
     nestingProblems.length +
     missing.length +
     stale.length +
@@ -135,5 +170,5 @@ if (problemCount > 0) {
 }
 
 console.log(
-    `Page coverage check passed (${listedPaths.size} listed pages match the build, no block elements inside a <p>).`,
+    `Page coverage check passed (${listedPaths.size} listed pages match the build, no block elements inside a <p>, no noindex page in the sitemap).`,
 )
