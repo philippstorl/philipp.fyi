@@ -356,6 +356,65 @@ test.describe('Navigation', () => {
         await expect.poll(readStyles).toEqual([true, true, true])
     })
 
+    test('pressed theme button has an accent border, not just a hue change (issue #495)', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const readButtons = () =>
+            page.evaluate(() => {
+                const probe = document.createElement('div')
+                probe.style.color = 'var(--color-accent)'
+                document.body.append(probe)
+                const accent = getComputedStyle(probe).color
+                probe.remove()
+                return [...document.querySelectorAll('[data-theme-value]')].map(
+                    (btn) => {
+                        const style = getComputedStyle(btn)
+                        const box = btn.getBoundingClientRect()
+                        const iconBox = btn
+                            .querySelector('svg')
+                            ?.getBoundingClientRect()
+                        if (!iconBox) return null
+                        return {
+                            pressed:
+                                btn.getAttribute('aria-pressed') === 'true',
+                            border: parseFloat(style.borderTopWidth) > 0,
+                            accentBorder: style.borderTopColor === accent,
+                            size: [box.width, box.height],
+                            // The border mustn't push the icon off center.
+                            iconCentered:
+                                Math.abs(
+                                    iconBox.x +
+                                        iconBox.width / 2 -
+                                        (box.x + box.width / 2),
+                                ) < 0.5 &&
+                                Math.abs(
+                                    iconBox.y +
+                                        iconBox.height / 2 -
+                                        (box.y + box.height / 2),
+                                ) < 0.5,
+                        }
+                    },
+                )
+            })
+        const expected = (pressedIndex: number) =>
+            [0, 1, 2].map((i) => ({
+                pressed: i === pressedIndex,
+                border: i === pressedIndex,
+                accentBorder: i === pressedIndex,
+                size: [44, 44],
+                iconCentered: true,
+            }))
+
+        await expect.poll(readButtons).toEqual(expected(1))
+        await page.getByRole('button', { name: 'Dark mode' }).click()
+        await page.mouse.move(0, 0)
+        await expect.poll(readButtons).toEqual(expected(2))
+        await page.getByRole('button', { name: 'Light mode' }).click()
+        await page.mouse.move(0, 0)
+        await expect.poll(readButtons).toEqual(expected(0))
+    })
+
     test('active nav link and pressed theme button keep a visible cue in forced-colors mode (issue #420)', async ({
         page,
     }) => {
@@ -406,6 +465,16 @@ test.describe('Navigation', () => {
                         pressedBackground:
                             pressedStyle.backgroundColor === highlight,
                         pressedText: pressedStyle.color === highlightText,
+                        // Only the pressed segment gets a border, so forced
+                        // colors doesn't outline all three (issue #495).
+                        bordered: [
+                            ...document.querySelectorAll('[data-theme-value]'),
+                        ].map(
+                            (btn) =>
+                                parseFloat(
+                                    getComputedStyle(btn).borderTopWidth,
+                                ) > 0,
+                        ),
                     }
                 }),
             )
@@ -413,6 +482,7 @@ test.describe('Navigation', () => {
                 underline: true,
                 pressedBackground: true,
                 pressedText: true,
+                bordered: [false, true, false],
             })
     })
 
