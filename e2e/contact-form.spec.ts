@@ -3,6 +3,7 @@ import {
     CONTACT_FORM_SELECTOR,
     CONTACT_SUBMIT_SELECTOR,
     gotoAndWaitForContactFormHydration,
+    waitForContactFormHydration,
 } from './helpers/contact-form'
 
 test.describe('Contact form', () => {
@@ -356,6 +357,132 @@ test.describe('Contact form', () => {
         ).toEqual(registeredFields)
     })
 
+    test('a draft survives leaving /contact/ and coming back with Back (issue #545)', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+        await page.locator('#contact-name').fill('Recruiter Jane')
+        await page.locator('#contact-email').fill('jane@example.com')
+        await page.locator('#contact-message').fill('Draft about Storyblok')
+
+        await leaveViaWorkNavAndGoBack(page)
+
+        await expectContactFieldValues(page, {
+            name: 'Recruiter Jane',
+            email: 'jane@example.com',
+            message: 'Draft about Storyblok',
+        })
+    })
+
+    test('a successful send clears the draft, so Back shows an empty form (issue #545)', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+        await page.route('/', (route) =>
+            route.request().method() === 'POST'
+                ? route.fulfill({ status: 200, body: 'ok' })
+                : route.continue(),
+        )
+        await page.locator('#contact-name').fill('Test User')
+        await page.locator('#contact-email').fill('test@example.com')
+        await page.locator('#contact-message').fill('Hello there')
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(
+            page.getByRole('status').filter({ hasText: 'Message sent.' }),
+        ).toBeVisible()
+
+        await leaveViaWorkNavAndGoBack(page)
+
+        await expectContactFieldValues(page, EMPTY_FIELDS)
+    })
+
+    test('text typed before hydration also survives Back (issue #545)', async ({
+        page,
+    }) => {
+        const rendererPath = await contactFormRendererPath(page)
+        let releaseRenderer = () => {}
+        const rendererHeld = new Promise<void>((resolve) => {
+            releaseRenderer = resolve
+        })
+        let rendererRequested = false
+        await page.route(
+            (url) => url.pathname === rendererPath,
+            async (route) => {
+                rendererRequested = true
+                await rendererHeld
+                await route.continue()
+            },
+        )
+        await page.goto('/contact/')
+        await expect.poll(() => rendererRequested).toBe(true)
+        await page.locator('#contact-name').fill('Early Jane')
+        await page.locator('#contact-email').fill('early@example.com')
+        await page.locator('#contact-message').fill('Typed before React')
+        releaseRenderer()
+        await waitForContactFormHydration(page)
+
+        await leaveViaWorkNavAndGoBack(page)
+
+        await expectContactFieldValues(page, {
+            name: 'Early Jane',
+            email: 'early@example.com',
+            message: 'Typed before React',
+        })
+    })
+
+    test('a failed send keeps the draft for Back (issue #545)', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+        await page.route('/', (route) =>
+            route.request().method() === 'POST'
+                ? route.fulfill({ status: 500, body: 'error' })
+                : route.continue(),
+        )
+        await page.locator('#contact-name').fill('Test User')
+        await page.locator('#contact-email').fill('test@example.com')
+        await page.locator('#contact-message').fill('Hello there')
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(
+            page.getByRole('alert').filter({ hasText: 'Something went wrong' }),
+        ).toBeVisible()
+
+        await leaveViaWorkNavAndGoBack(page)
+
+        await expectContactFieldValues(page, {
+            name: 'Test User',
+            email: 'test@example.com',
+            message: 'Hello there',
+        })
+    })
+
+    test('a send still in flight is not restored as a draft, so Back cannot resend it (issue #545)', async ({
+        page,
+    }) => {
+        await gotoAndWaitForContactFormHydration(page)
+        let releasePost = () => {}
+        const postHeld = new Promise<void>((resolve) => {
+            releasePost = resolve
+        })
+        await page.route('/', async (route) => {
+            if (route.request().method() !== 'POST') return route.continue()
+            await postHeld
+            return route.fulfill({ status: 200, body: 'ok' })
+        })
+        await page.locator('#contact-name').fill('Test User')
+        await page.locator('#contact-email').fill('test@example.com')
+        await page.locator('#contact-message').fill('Hello there')
+        await page.locator(CONTACT_SUBMIT_SELECTOR).click()
+        await expect(page.locator(CONTACT_SUBMIT_SELECTOR)).toHaveText(
+            'Sending…',
+        )
+
+        await leaveViaWorkNavAndGoBack(page)
+
+        await expectContactFieldValues(page, EMPTY_FIELDS)
+        releasePost()
+    })
+
     test('text fields stay at 16px so iOS Safari does not zoom on focus (issue #151)', async ({
         page,
     }) => {
@@ -413,6 +540,46 @@ test.describe('Contact form', () => {
         expect(edges.filter((e) => !e.visibleEdge)).toEqual([])
     })
 })
+
+// The draft only lives as long as the document, so both legs must be
+// ClientRouter soft navigations; the marker fails the test on a full load.
+type MarkedWindow = Window & { softNavMarker?: boolean }
+
+async function leaveViaWorkNavAndGoBack(page: Page) {
+    await page.evaluate(() => {
+        ;(window as MarkedWindow).softNavMarker = true
+    })
+    const mobileToggle = page.locator('#nav-toggle')
+    if (await mobileToggle.isVisible()) await mobileToggle.click()
+    await page.locator('nav a[href="/work/"]:visible').click()
+    await expect(page).toHaveURL('/work/')
+    await page.goBack()
+    await expect(page).toHaveURL('/contact/')
+    await waitForContactFormHydration(page)
+    expect(
+        await page.evaluate(() => (window as MarkedWindow).softNavMarker),
+    ).toBe(true)
+}
+
+async function expectContactFieldValues(
+    page: Page,
+    values: { name: string; email: string; message: string },
+) {
+    await expect(page.locator('#contact-name')).toHaveValue(values.name)
+    await expect(page.locator('#contact-email')).toHaveValue(values.email)
+    await expect(page.locator('#contact-message')).toHaveValue(values.message)
+}
+
+const EMPTY_FIELDS = { name: '', email: '', message: '' }
+
+async function contactFormRendererPath(page: Page) {
+    const html = await (await page.request.get('/contact/')).text()
+    const rendererUrl = /<astro-island[^>]*\brenderer-url="([^"]+)"/.exec(
+        html,
+    )?.[1]
+    if (!rendererUrl) throw new Error('No ContactForm island renderer-url')
+    return new URL(rendererUrl, 'http://localhost').pathname
+}
 
 // Issue #532: until React handles the submit, the browser's own constraint
 // validation must stop empty or malformed messages from being posted.
@@ -498,12 +665,7 @@ test.describe('Contact form without JavaScript (issue #532)', () => {
 test('with JavaScript but React blocked, a submit is native, not a ClientRouter fetch (issue #532)', async ({
     page,
 }) => {
-    const html = await (await page.request.get('/contact/')).text()
-    const rendererUrl = /<astro-island[^>]*\brenderer-url="([^"]+)"/.exec(
-        html,
-    )?.[1]
-    if (!rendererUrl) throw new Error('No ContactForm island renderer-url')
-    const rendererPath = new URL(rendererUrl, 'http://localhost').pathname
+    const rendererPath = await contactFormRendererPath(page)
     let rendererBlocked = false
     await page.route(
         (url) => url.pathname === rendererPath,
