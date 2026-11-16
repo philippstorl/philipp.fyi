@@ -23,7 +23,7 @@ const options: ThemeOption[] = [
         data-theme-value={value}
         aria-pressed="false"
         title={label}
-        class="flex size-11 items-center justify-center rounded-md transition-colors duration-150 not-aria-pressed:text-muted not-aria-pressed:hover:bg-foreground/5 not-aria-pressed:hover:text-foreground aria-pressed:bg-accent/10 aria-pressed:text-accent forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText]"
+        class="flex size-11 items-center justify-center rounded-md transition-colors duration-150 not-aria-pressed:text-muted not-aria-pressed:hover:bg-foreground/5 not-aria-pressed:hover:text-foreground aria-pressed:border aria-pressed:border-accent aria-pressed:bg-accent/10 aria-pressed:text-accent forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText]"
     >
         {value === 'light' && <svg
             width="16"
