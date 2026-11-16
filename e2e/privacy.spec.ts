@@ -33,7 +33,7 @@ test.describe('Privacy policy page', () => {
 
         // Slack gets the report with the user agent and is a named recipient (#402).
         await expect(article).toContainText(
-            "including your browser's user agent, is also posted to Slack",
+            'including your browser’s user agent, is also posted to Slack',
         )
         await expect(article).toContainText(
             'The Slack copy is kept only as long as needed',
@@ -55,10 +55,10 @@ test.describe('Privacy policy page', () => {
             'unless statutory retention periods require keeping it longer',
         )
         await expect(article).toContainText(
-            "Netlify doesn't publish a fixed period for these logs",
+            'Netlify doesn’t publish a fixed period for these logs',
         )
         await expect(article).toContainText(
-            "your IP address, your browser's user agent, the page you sent the form from (referrer)",
+            'your IP address, your browser’s user agent, the page you sent the form from (referrer)',
         )
         await expect(article).toContainText('Akismet')
     })

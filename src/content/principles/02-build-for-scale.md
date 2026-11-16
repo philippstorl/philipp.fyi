@@ -1,6 +1,6 @@
 ---
 title: "Build for scale from day one"
-description: "Every system I build is designed to outlast me: modular, documented, and ready for a team that hasn't joined yet. Scaling applies to processes, teams, and knowledge, not just code."
+description: "Every system I build is designed to outlast me: modular, documented, and ready for a team that hasn’t joined yet. Scaling applies to processes, teams, and knowledge, not just code."
 ---
 
 The question I ask before almost any technical or process decision is: will this still work when the team is twice the size, the platform is ten times more complex, or the person who built it has left? If the answer is no, the design needs rethinking.

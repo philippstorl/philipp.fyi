@@ -164,7 +164,7 @@ export default function ContactForm() {
                     Message sent.
                 </p>
                 <p className="text-sm text-muted">
-                    Thank you for reaching out. I'll get back to you soon.
+                    Thank you for reaching out. I’ll get back to you soon.
                 </p>
             </div>
         )
@@ -281,7 +281,7 @@ export default function ContactForm() {
                         }
                         aria-invalid={!!errors.message}
                         className={`${inputBase} resize-none`}
-                        placeholder="What's on your mind?"
+                        placeholder="What’s on your mind?"
                     />
                     {errors.message && (
                         <p id="contact-message-error" className={errorBase}>

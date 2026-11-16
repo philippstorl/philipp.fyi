@@ -1,6 +1,6 @@
 ---
-title: "Be proactive - don't wait for something to come to you"
-description: "If you see something that needs doing and you can do it, do it. Waiting to be asked is a choice. Proactiveness is about having enough context to see what's coming before it arrives."
+title: "Be proactive - don’t wait for something to come to you"
+description: "If you see something that needs doing and you can do it, do it. Waiting to be asked is a choice. Proactiveness is about having enough context to see what’s coming before it arrives."
 ---
 
 If you see something that needs doing and you can do it, do it. That's been true in every role I've had, especially in the first weeks: auditing what's already there, noticing what's broken or inefficient, and fixing it without waiting to be asked. It was never about being exceptional; it's just how I approach work.

@@ -25,7 +25,7 @@ test.describe('Recommendations page', () => {
         await page.goto('/recommendations/')
         const intro = page.locator('p', { hasText: 'collected from' })
         await expect(intro).toHaveText(
-            "Recommendations from colleagues, managers, direct reports, and external partners I've worked with over the years, collected from LinkedIn (opens in a new tab), unedited except for formatting and American spelling.",
+            'Recommendations from colleagues, managers, direct reports, and external partners I’ve worked with over the years, collected from LinkedIn (opens in a new tab), unedited except for formatting and American spelling.',
         )
         // toHaveText normalizes whitespace, so a space before the out-of-flow
         // sr-only suffix ("LinkedIn , unedited") only shows up on screen.

@@ -1,5 +1,5 @@
 ---
-title: "Speak up, even when it's uncomfortable"
+title: "Speak up, even when it’s uncomfortable"
 description: "Honest feedback, delivered with care, is one of the most valuable things a colleague can give. Staying silent when something is wrong is always the worse choice."
 ---
 
