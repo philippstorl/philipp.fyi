@@ -170,6 +170,26 @@ html {
     }
 }
 
+/* Keeps headings with what follows, figures whole, and external link targets
+   readable on paper (issue #533). Screen-only header controls use print:hidden. */
+@layer base {
+    @media print {
+        .prose :is(h2, h3) {
+            break-after: avoid;
+        }
+
+        .prose figure {
+            break-inside: avoid;
+        }
+
+        .prose a[href^="http"]::after {
+            content: " (" attr(href) ")";
+            font-size: 0.875em;
+            overflow-wrap: anywhere;
+        }
+    }
+}
+
 ::selection {
     background-color: color-mix(in oklch, var(--color-accent) 20%, transparent);
     color: var(--color-foreground);
