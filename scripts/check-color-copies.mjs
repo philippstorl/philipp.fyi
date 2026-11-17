@@ -97,18 +97,25 @@ const ogFile = 'src/utils/og-image.ts'
 const ogSource = await read(ogFile)
 const ogBlock = ogSource.match(/const colors = \{([\s\S]*?)^\}/m)
 // Any `key: value` line, so an unexpected key or value shape fails loudly.
-// Trailing `//` and `/* */` comments are dropped from the value.
+// Comments and the trailing comma are stripped in code, not in the regex,
+// whose stacked optional whitespace backtracked polynomially (CodeQL js/redos).
 const ogEntries = [
-    ...(ogBlock?.[1] ?? '').matchAll(
-        /^[ \t]*(['"]?)([\w-]+)\1[ \t]*:[ \t]*(.*?)[ \t]*,?(?:[ \t]*(?:\/\/.*|\/\*.*?\*\/))*[ \t]*$/gm,
-    ),
+    ...(ogBlock?.[1] ?? '').matchAll(/^[ \t]*(['"]?)([\w-]+)\1[ \t]*:(.*)$/gm),
 ]
+const ogValue = (rest) =>
+    rest
+        .replace(/\/\*.*?\*\//g, '')
+        .replace(/\/\/.*$/, '')
+        .trim()
+        .replace(/,$/, '')
+        .trimEnd()
 if (ogEntries.length === 0) {
     problems.push(`${ogFile}: no \`const colors = { ... }\` entries found`)
 } else {
     const bodyStart = ogBlock.index + ogBlock[0].indexOf('{') + 1
     for (const entry of ogEntries) {
-        const [, , key, value] = entry
+        const [, , key, rest] = entry
+        const value = ogValue(rest)
         copies.push({
             file: ogFile,
             line: lineOf(ogSource, bodyStart + entry.index),

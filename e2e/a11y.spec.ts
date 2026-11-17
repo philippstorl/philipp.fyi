@@ -32,7 +32,7 @@ for (const { reportedPath, gotoPath } of pages) {
 }
 
 const endsWithNewTabSuffix = new RegExp(
-    `${NEW_TAB_SUFFIX.trim().replace(/[()]/g, '\\$&')}$`,
+    `${NEW_TAB_SUFFIX.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`,
 )
 
 // Scoped to page landmarks so shadow-piercing CSS skips the dev toolbar's links.
