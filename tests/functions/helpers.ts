@@ -78,7 +78,7 @@ export function stubFetch(options: FetchStubOptions = {}) {
             slack.push({ url, method, body })
             return new Response('ok', { status: options.slackStatus ?? 200 })
         }
-        if (url.startsWith(BLOBS_EDGE_URL)) {
+        if (new URL(url).origin === BLOBS_EDGE_URL) {
             blobs.push({ url, method, body })
             if (method === 'GET') {
                 if (options.blobsListStatus) {
