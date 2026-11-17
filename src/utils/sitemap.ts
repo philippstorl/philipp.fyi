@@ -8,6 +8,12 @@ export function isNoindexHtml(html: string): boolean {
     return NOINDEX_META.test(html)
 }
 
+/** A URL pathname's built HTML file, relative to the output dir: /blog/ -> /blog/index.html;
+ * flat status pages like /404 -> /404.html. Still percent-encoded, like the pathname. */
+export function builtHtmlPath(pathname: string): string {
+    return pathname.endsWith('/') ? `${pathname}index.html` : `${pathname}.html`
+}
+
 /** @astrojs/sitemap, minus every page whose built HTML is noindex (e.g. /privacy/,
  * or /blog/ until a post publishes), so BaseLayout's `robots` prop is the only switch. */
 export function sitemapWithoutNoindexPages(): AstroIntegration[] {
@@ -23,11 +29,7 @@ export function sitemapWithoutNoindexPages(): AstroIntegration[] {
     }
     const filter = (page: string): boolean => {
         if (!outDir) throw new Error('sitemap filter ran before build:done')
-        const { pathname } = new URL(page)
-        // /blog/ -> blog/index.html; flat status pages like /404 -> 404.html.
-        const file = pathname.endsWith('/')
-            ? `.${pathname}index.html`
-            : `.${pathname}.html`
+        const file = `.${builtHtmlPath(new URL(page).pathname)}`
         return !isNoindexHtml(readFileSync(new URL(file, outDir), 'utf8'))
     }
     return [captureOutDir, sitemap({ filter })]

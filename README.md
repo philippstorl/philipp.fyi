@@ -36,34 +36,35 @@ npm run dev:astro  # http://localhost:4321
 
 ## Scripts
 
-| Command                               | What it does                                                               |
-| ------------------------------------- | -------------------------------------------------------------------------- |
-| `npm run dev`                         | Start dev server via Netlify CLI (recommended)                             |
-| `npm run dev:astro`                   | Start Astro dev server directly                                            |
-| `npm run build`                       | Type-check + build to `dist/`                                              |
-| `npm run build:app`                   | Build to `dist/` without the type-check prefix (used by CI)                |
-| `npm run typecheck`                   | Run `astro check` (TypeScript only)                                        |
-| `npm run lint`                        | Run ESLint (TypeScript, Astro, accessibility)                              |
-| `npm run check:trailing-slashes`      | Validate every internal link/route ends in `/`                             |
-| `npm run check:favicons`              | Fail if the favicons changed since `generate:favicons` last ran            |
-| `npm run check:color-copies`          | Check hex copies of `global.css` color tokens still match them             |
-| `npm run check:font-preloads`         | Check every font preload in `dist/` matches a built `@font-face` URL       |
-| `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`               |
-| `npm run check:page-coverage`         | Fail if `contrast-pages.mjs` and `dist/` differ, or a `<p>` nests a block  |
-| `npm run check:csp`                   | Fail if `dist/` has code or an image the meta or `netlify.toml` CSP blocks |
-| `npm run check:learnings`             | Check the SessionStart hook's LEARNINGS.md digest, then `check:hooks`      |
-| `npm run check:hooks`                 | Run the Stop hook's doc-sync nudge in a temp repo and check its output     |
-| `npm run test:hooks`                  | Unit-test the PreToolUse hook that checks PR descriptions                  |
-| `npm run check:audit`                 | Audit production dependencies for high-severity vulnerabilities            |
-| `npm run format`                      | Format all files with Prettier                                             |
-| `npm run format:check`                | Check formatting without writing (used in CI)                              |
-| `npm run preview`                     | Preview the production build locally                                       |
-| `npm test`                            | Run Playwright E2E tests                                                   |
-| `npm run test:ui`                     | Run Playwright tests in interactive UI mode                                |
-| `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)           |
-| `npm run test:functions`              | Run the Netlify Functions unit tests (`tests/functions/`, no browser)      |
-| `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist                   |
-| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`         |
+| Command                               | What it does                                                                                                                       |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                         | Start dev server via Netlify CLI (recommended)                                                                                     |
+| `npm run dev:astro`                   | Start Astro dev server directly                                                                                                    |
+| `npm run build`                       | Type-check + build to `dist/`                                                                                                      |
+| `npm run build:app`                   | Build to `dist/` without the type-check prefix (used by CI)                                                                        |
+| `npm run typecheck`                   | Run `astro check` (TypeScript only)                                                                                                |
+| `npm run lint`                        | Run ESLint (TypeScript, Astro, accessibility)                                                                                      |
+| `npm run check:trailing-slashes`      | Validate every internal link/route ends in `/`                                                                                     |
+| `npm run check:favicons`              | Fail if the favicons changed since `generate:favicons` last ran                                                                    |
+| `npm run check:color-copies`          | Check hex copies of `global.css` color tokens still match them                                                                     |
+| `npm run check:font-preloads`         | Check every font preload in `dist/` matches an upright Latin `@font-face` URL, and every page preloads Geist's                     |
+| `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`                                                                       |
+| `npm run check:page-coverage`         | Fail if `contrast-pages.mjs` and `dist/` differ, a `<p>` nests a block or the sitemap lists a noindex page; then runs `check:dist` |
+| `npm run check:dist`                  | Fail on an em dash in `dist/` copy, a case-study OG card without its cover panel, or a class with no built CSS rule                |
+| `npm run check:csp`                   | Fail if `dist/` has code or an image the meta or `netlify.toml` CSP blocks                                                         |
+| `npm run check:learnings`             | Check the SessionStart hook's LEARNINGS.md digest, then `check:hooks`                                                              |
+| `npm run check:hooks`                 | Run the Stop hook's doc-sync nudge in a temp repo and check its output                                                             |
+| `npm run test:hooks`                  | Unit-test the PreToolUse hook that checks PR descriptions                                                                          |
+| `npm run check:audit`                 | Audit production dependencies for high-severity vulnerabilities                                                                    |
+| `npm run format`                      | Format all files with Prettier                                                                                                     |
+| `npm run format:check`                | Check formatting without writing (used in CI)                                                                                      |
+| `npm run preview`                     | Preview the production build locally                                                                                               |
+| `npm test`                            | Run Playwright E2E tests                                                                                                           |
+| `npm run test:ui`                     | Run Playwright tests in interactive UI mode                                                                                        |
+| `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)                                                                   |
+| `npm run test:functions`              | Run the Netlify Functions unit tests (`tests/functions/`, no browser)                                                              |
+| `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist                                                                           |
+| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`                                                                 |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
@@ -73,17 +74,17 @@ Every pull request, and every push to `main`, runs the workflow in `.github/work
 
 Nine jobs run in parallel, all on Node 26:
 
-| Job                  | What it does                                                                                                                                                                                                                                                                                                                                  |
-| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git, or if any `actions/checkout` step in `ci.yml` lacks `persist-credentials: false`, then runs `npm run check:learnings` (plain Node, no `npm ci`), which also runs `npm run check:hooks`                               |
-| `lint`               | `npm run lint`                                                                                                                                                                                                                                                                                                                                |
-| `format`             | `npm run format:check`                                                                                                                                                                                                                                                                                                                        |
-| `typecheck`          | `npm run typecheck`                                                                                                                                                                                                                                                                                                                           |
-| `audit`              | `npm run check:audit` — production dependencies only, see CLAUDE.md for why                                                                                                                                                                                                                                                                   |
-| `build`              | `npm run check:trailing-slashes`, `npm run check:favicons` and `npm run check:color-copies`, then `npm run build:app`, then `npm run check:font-preloads`, `npm run check:inline-module-scripts`, `npm run check:page-coverage` and `npm run check:csp` (skips the `astro check` prefix — the `typecheck` job already covers that)            |
-| `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail                                                                                                                                                                            |
-| `functions`          | `npm run test:functions`: unit tests for `netlify/functions/` (signature verification, CSP-report and deploy-notification handlers, Slack escaping), plain Node with no browser or dev server                                                                                                                                                 |
-| `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations, or nodes axe could not check, not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md |
+| Job                  | What it does                                                                                                                                                                                                                                                                                                                                                              |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `repository-hygiene` | Fails if generated or sensitive paths (`node_modules`, `dist`, `.astro`, `.env*`, etc.) are accidentally tracked in git, or if any `actions/checkout` step in `ci.yml` lacks `persist-credentials: false`, then runs `npm run check:learnings` (plain Node, no `npm ci`), which also runs `npm run check:hooks`                                                           |
+| `lint`               | `npm run lint`                                                                                                                                                                                                                                                                                                                                                            |
+| `format`             | `npm run format:check`                                                                                                                                                                                                                                                                                                                                                    |
+| `typecheck`          | `npm run typecheck`                                                                                                                                                                                                                                                                                                                                                       |
+| `audit`              | `npm run check:audit` — production dependencies only, see CLAUDE.md for why                                                                                                                                                                                                                                                                                               |
+| `build`              | `npm run check:trailing-slashes`, `npm run check:favicons` and `npm run check:color-copies`, then `npm run build:app`, then `npm run check:font-preloads`, `npm run check:inline-module-scripts`, `npm run check:page-coverage` (which also runs `npm run check:dist`) and `npm run check:csp` (skips the `astro check` prefix — the `typecheck` job already covers that) |
+| `test`               | `npm run check:trailing-slashes`, installs Chromium, then `npm test`; uploads the Playwright report as a build artifact (30-day retention) regardless of pass/fail                                                                                                                                                                                                        |
+| `functions`          | `npm run test:functions`: unit tests for `netlify/functions/` (signature verification, CSP-report and deploy-notification handlers, Slack escaping), plain Node with no browser or dev server                                                                                                                                                                             |
+| `contrast`           | Report-only: runs `npm run test:contrast` + `npm run check:contrast`, then posts (or updates) a single PR comment listing any new color-contrast violations, or nodes axe could not check, not already in `contrast-allowlist.json`. PR-only — doesn't run on push to `main` — and never fails the build over a site violation; see CLAUDE.md                             |
 
 Dependabot (`.github/dependabot.yml`) opens npm dependency and GitHub Actions PRs weekly, capped at 5 open at a time per ecosystem, labeled `dependencies` and titled `chore(deps)`/`chore(deps-dev)`. Every Actions step in `ci.yml` is pinned to a commit SHA with a version comment (see CLAUDE.md) — Dependabot bumps both together.
 
