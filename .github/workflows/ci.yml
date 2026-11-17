@@ -106,13 +106,9 @@ jobs:
                   node-version-file: ".nvmrc"
                   cache: "npm"
             - run: npm ci
-            # --omit=dev: only vulnerabilities in packages actually shipped
-            # in the production build/runtime block CI. netlify-cli bundles
-            # its own dev-only tooling (a local functions bundler, image
-            # proxy) with a handful of high-severity advisories that only
-            # have a fix via a major-version downgrade of netlify-cli
-            # itself — not a reasonable tradeoff for tooling that never
-            # ships. See CLAUDE.md.
+            # Full audit, dev dependencies included (issue #490): a high in
+            # dev tooling blocks CI too. See CLAUDE.md's check:audit bullet
+            # for handling one with no non-breaking fix.
             - run: npm run check:audit
 
     build:

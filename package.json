@@ -26,7 +26,7 @@
         "check:learnings": "node scripts/check-learnings.mjs && node scripts/check-hooks.mjs",
         "check:hooks": "node scripts/check-hooks.mjs",
         "test:hooks": "node --test scripts/check-pr-body.test.mjs",
-        "check:audit": "npm audit --omit=dev --audit-level=high",
+        "check:audit": "npm audit --audit-level=high",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "test": "playwright test",
@@ -85,7 +85,6 @@
         "esbuild": true,
         "netlify-cli": true,
         "fsevents": false,
-        "sharp": false,
         "unix-dgram": false
     }
 }
