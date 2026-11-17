@@ -25,13 +25,11 @@ jobs:
               with:
                   persist-credentials: false
             - run: |
-                  # .npmrc is deliberately not in this list: the repo commits one with
-                  # engine-strict=true (see CLAUDE.md's Node 26 bullet) to enforce the
-                  # `engines` field, rather than leaving it advisory-only, and
-                  # strict-allow-scripts=true to gate install scripts. Everything
-                  # else here stays forbidden as local/generated config that shouldn't
-                  # be tracked.
-                  forbidden=$(git ls-files | grep -E '^(node_modules|\.astro|dist|playwright-report|test-results|contrast-results|\.vscode|\.idea|\.env$|\.env\.|\.yarnrc)' || true)
+                  # Any tracked file that .gitignore ignores fails, so .gitignore is the
+                  # one list of local/generated paths (issue #493). .npmrc stays allowed
+                  # because it isn't in .gitignore: the repo commits it for
+                  # engine-strict and strict-allow-scripts (CLAUDE.md's Node 26 bullet).
+                  forbidden=$(git ls-files --cached --ignored --exclude-standard)
                   if [ -n "$forbidden" ]; then
                     echo "Forbidden tracked files found:"
                     echo "$forbidden"
