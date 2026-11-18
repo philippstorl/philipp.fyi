@@ -48,6 +48,7 @@ const command = JSON.parse(read('.claude/settings.json'))
 const learnings = fs.existsSync(path.join(root, 'LEARNINGS.md'))
     ? read('LEARNINGS.md')
     : null
+const lines = learnings?.split(/\r?\n/) ?? []
 const hasOpenQuestions =
     learnings !== null && /^- /m.test(section(learnings, 'Open questions'))
 
@@ -55,14 +56,26 @@ const hasOpenQuestions =
 // a renamed one.
 const missingHeadings = ['Open questions', 'Log'].filter(
     (heading) =>
-        learnings !== null &&
-        !learnings.split(/\r?\n/).some((line) => isHeading(line, heading)),
+        learnings !== null && !lines.some((line) => isHeading(line, heading)),
 )
 if (missingHeadings.length > 0) {
     problems.push(
         `LEARNINGS.md has no ${missingHeadings.map((heading) => `"## ${heading}"`).join(' or ')} heading, which load-learnings.js reads by exact text`,
     )
 }
+
+// The loader ends `## Log` at the next `## ` and files entries under the last
+// `### ` line, so any other heading below `## Log` drops or misfiles entries.
+const logStart = lines.findIndex((line) => isHeading(line, 'Log'))
+const logLines = logStart === -1 ? [] : lines.slice(logStart + 1)
+logLines.forEach((line, offset) => {
+    if (!/^ {0,3}#/.test(line) || /^### \d{4}-\d{2}-\d{2}\s*$/.test(line))
+        return
+    const date = /\d{4}-\d{2}-\d{2}/.exec(line)?.[0]
+    problems.push(
+        `LEARNINGS.md line ${logStart + offset + 2}: "${line}" below "## Log" should be ${date ? `"### ${date}"` : 'a "### YYYY-MM-DD" day heading'}, the only heading load-learnings.js reads there`,
+    )
+})
 
 if (learnings === null) {
     problems.push('LEARNINGS.md is missing')
@@ -117,8 +130,8 @@ if (learnings === null) {
                 "additionalContext has none of LEARNINGS.md's open questions",
             )
         }
-        // Counts the file's log bullets, not its `### ` lines, so day headings
-        // at a level the loader skips are caught too.
+        // Counts the file's log bullets, not its `### ` lines, so the digest
+        // losing every entry is caught however the loader drops them.
         if (
             /^- /m.test(section(learnings, 'Log')) &&
             !/^### /m.test(section(context, 'Log'))
