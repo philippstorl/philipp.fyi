@@ -23,12 +23,16 @@ Developed and refined across these runs:
 - a full pass on 2026-09-24 (#388-#423)
 - a full pass plus a second-wave review on 2026-09-25 (#470-#551)
 - a re-validation of that backlog on 2026-10-31 (#576-#578)
+- a full pass plus a second wave on 2026-11-17/18 (#655-#676)
 
 Two lessons matter most:
 
-- **Run every chosen category in one parallel wave, not sequential rounds.** Rounds only happened
+- **Run categories in parallel, in batches the usage budget can finish.** Rounds only happened
   the first time because the categories were decided one at a time in conversation; nothing
-  about the categories themselves requires sequencing.
+  about the categories themselves requires sequencing. But launching all 19 at once on
+  2026-11-17 used up a 5-hour usage window twice before any agent finished: each spent its share
+  reading CLAUDE.md and setting up, then all stopped together with nothing written. Batches of
+  four finished about four categories per window. §2's "Usage limits" has the details.
 - **Volume is a cost, not a score.** The 2026-09-25 pass filed about 80 priority-low issues. Five
   weeks later 77 still reproduced and none had been fixed, and the re-validation folded 17 of
   them into three checklists. §5 has the filing rules that came out of it.
@@ -77,10 +81,11 @@ Explicitly out of scope: internationalization/i18n — this site is single-langu
 If new categories prove valuable in a future run, add them to this table (with `Status:
 Validated` once actually run) rather than letting them live only in a conversation transcript.
 
-## 2. Launch every chosen category in parallel
+## 2. Launch the chosen categories in parallel batches
 
-One `Agent` tool call per category, `subagent_type: general-purpose`, all in a single message so
-they run concurrently. Each agent's prompt must include:
+One `Agent` tool call per category, `subagent_type: general-purpose`. Launch the first batch in a
+single message so it runs concurrently, then start the next queued category each time one
+finishes (see "Usage limits" below for the batch size). Each agent's prompt must include:
 
 1. **Read `CLAUDE.md` and `LEARNINGS.md` in full first, from disk.** This repo documents an
    enormous number of already-fixed issues and deliberate, considered decisions across every
@@ -186,6 +191,26 @@ scratchpad subdirectory instead: `mkdir -p <scratchpad>/<category> && git archiv
 and it can't touch the real checkout. The copy has no `.git` and is throwaway, so the
 `git status --porcelain` check means the real checkout, which must still be clean.
 
+### Usage limits
+
+The 2026-11-17/18 run (19 categories, 5 verifiers, a second wave) spanned four 5-hour usage
+windows and ended on the weekly limit. What worked:
+
+- **About four agents at a time.** Each one first reads CLAUDE.md and LEARNINGS.md in full, so a
+  wave of 19 spends most of a window on setup. Keep a queue and start the next category when one
+  finishes.
+- **Resume a stopped agent, don't restart it.** An agent stopped by a limit keeps its transcript:
+  `SendMessage` it after the reset, telling it not to reread CLAUDE.md. Start a fresh agent only
+  for a new scope, or when the old one's context is already near full.
+- **Make "write each finding immediately" explicit.** Several agents wrote nothing before they
+  stopped. Say in every resume message that the output file doesn't exist yet, if it doesn't.
+- **Check for leftover servers after every stop.** An agent stopped mid-run leaves its
+  `astro preview` running: check the audit ports with `lsof` and kill by PID (after confirming the
+  command line points into this session's scratchpad).
+- **The weekly limit can block agents while the main session still works.** Then draft and file
+  the issues in the main session instead of waiting; record each filed number as you go so an
+  interruption can resume.
+
 ## 3. Merge, then verify independently — don't skip straight to filing
 
 1. Once all category agents finish, read every scratchpad output file yourself and merge into
@@ -253,6 +278,18 @@ completed`. Caught by checking its actual scratchpad output and process list, no
   inline code and dropped the attribution footer from issue bodies (not from comments). They
   also can't read rulesets. Scan drafts for these patterns before filing, and read every filed
   issue back and compare it with the draft.
+- **The `check-pr-body.js` hook can block a heredoc that only mentions a PR command.** A shell
+  heredoc whose text contains `gh pr edit` followed later by `-b '...'` is read as a real PR
+  command and blocked (#661). Write drafts with the Write tool and file with `--body-file`.
+- **Dashboard-only settings hide data flows.** The contact-form email notification (#669) exists
+  only in Netlify's hooks, so no repo grep finds it. The legal category should run
+  `netlify api listHooksBySiteId` and record only the recipient's domain, never the address.
+- **Some environments need their own tools.** On 2026-11-18, plain `dig @1.1.1.1` was
+  intercepted (a forged NXDOMAIN for every name), so use DNS-over-HTTPS or `dig +norec` against
+  the authoritative servers. Playwright's bundled browsers never restore from the back/forward
+  cache, so test those journeys in real Google Chrome (`channel: 'chrome'`). Forced colors only
+  showed in screenshots when set at context creation (`forcedColors: 'active'`), not through
+  `page.emulateMedia()`.
 - **`/contact/` has two `form[name="contact"]` elements**: the hidden Netlify detection form comes
   first, so a plain `querySelector` reads the wrong one. Target
   `form[name="contact"]:has(button[type=submit])` or `:not([hidden])`.
@@ -304,8 +341,11 @@ Found via a targeted <category> audit and independently reproduced during a sepa
 verification pass (<date>).
 ```
 
-Use `gh issue create --title "..." --label "type,priority" --body-file <scratchpad file>` (or a
-quoted heredoc), so backticks and `$` in code snippets aren't shell-interpolated.
+Use `gh issue create --title "..." --label "type,priority" --body-file <scratchpad file>`, so
+backticks and `$` in code snippets aren't shell-interpolated. From the scratchpad (outside the
+checkout), `gh` needs `-R <owner>/<repo>`. For cross-links between issues filed in the same batch,
+use placeholders in the drafts and replace them with `gh issue edit --body-file` once the numbers
+exist.
 
 ## 6. Report back
 
@@ -326,8 +366,8 @@ valid, 14 with stale bodies.
    only have been fixed by later commits, including Dependabot bumps (#508 was fixed by its own
    dependency bump).
 2. **Batch by area**, about 13 issues per agent (security/CI/infra, docs and tooling, test gaps,
-   accessibility, UX and content, performance and the rest), all launched in one message. Use
-   §2's template with these changes:
+   accessibility, UX and content, performance and the rest), launched in batches as in §2's
+   "Usage limits". Use §2's template with these changes:
     - The task is to reproduce each listed issue against current `main`, starting with
       `gh issue view <N> --json body,comments` and
       `git log --since=<filed date> -- <cited paths>`.
