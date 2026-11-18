@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test'
+import { test, expect, type Locator } from '@playwright/test'
 
 test.describe('Home page', () => {
     test('has correct title and headline', async ({ page }) => {
@@ -164,29 +164,62 @@ test.describe('Home page', () => {
         }
     })
 
-    test('rounded controls keep their own shape while focused (issue #450)', async ({
+    test('focused controls show the accent ring and keep their own shape (issues #450, #656)', async ({
         page,
     }) => {
-        await page.goto('/')
-        const controls = [
-            page
-                .getByRole('region', { name: 'Introduction' })
-                .locator('a[href*="linkedin.com"]'),
-            page.locator('[data-theme-value="dark"]'),
-            page.locator('#site-footer a[href*="github.com"]'),
-        ]
-        for (const control of controls) {
-            const radius = () =>
-                control.evaluate((el) => getComputedStyle(el).borderRadius)
-            const resting = await radius()
-            expect(parseFloat(resting)).toBeGreaterThan(2)
-            // Keyboard modality, so focus() matches :focus-visible.
-            await page.keyboard.press('Shift')
-            await control.focus()
-            expect(
-                await control.evaluate((el) => el.matches(':focus-visible')),
-            ).toBe(true)
-            expect(await radius()).toBe(resting)
+        for (const colorScheme of ['light', 'dark'] as const) {
+            await page.emulateMedia({ colorScheme })
+            await page.goto('/')
+            const html = page.locator('html')
+            if (colorScheme === 'dark') await expect(html).toHaveClass(/dark/)
+            else await expect(html).not.toHaveClass(/dark/)
+            const accent = await page.evaluate(() => {
+                const probe = document.createElement('span')
+                probe.style.color = 'var(--color-accent)'
+                document.body.append(probe)
+                const color = getComputedStyle(probe).color
+                probe.remove()
+                return color
+            })
+
+            const rounded = [
+                page
+                    .getByRole('region', { name: 'Introduction' })
+                    .locator('a[href*="linkedin.com"]'),
+                page.locator('[data-theme-value="dark"]'),
+                page.locator('#site-footer a[href*="github.com"]'),
+            ]
+            for (const control of rounded) {
+                const radius = () =>
+                    control.evaluate((el) => getComputedStyle(el).borderRadius)
+                const resting = await radius()
+                expect(parseFloat(resting)).toBeGreaterThan(2)
+                await expectFocusRing(control, accent)
+                expect(await radius()).toBe(resting)
+            }
+
+            // Last: opening the mobile nav makes the rest of the page inert.
+            const toggle = page.locator('#nav-toggle')
+            if (await toggle.isVisible()) await toggle.click()
+            const navLink = page
+                .locator('#site-header a[data-nav-link]')
+                .filter({ visible: true })
+                .first()
+            await expectFocusRing(navLink, accent)
         }
     })
 })
+
+async function expectFocusRing(control: Locator, accent: string) {
+    // Keyboard modality, so focus() matches :focus-visible.
+    await control.page().keyboard.press('Shift')
+    await control.focus()
+    expect(await control.evaluate((el) => el.matches(':focus-visible'))).toBe(
+        true,
+    )
+    // Retrying: transition-colors also animates outline-color.
+    await expect(control).toHaveCSS('outline-style', 'solid')
+    await expect(control).toHaveCSS('outline-width', '2px')
+    await expect(control).toHaveCSS('outline-color', accent)
+    await expect(control).toHaveCSS('outline-offset', '3px')
+}

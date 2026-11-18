@@ -1026,7 +1026,22 @@ test.describe('Navigation', () => {
         }) => {
             await page.goto(gotoPath)
             await page.keyboard.press('Tab')
-            await expect(page.getByText('Skip to main content')).toBeFocused()
+            const skip = page.getByText('Skip to main content')
+            await expect(skip).toBeFocused()
+            // Focused but painted under the sticky header would be invisible (issue #656).
+            await expect
+                .poll(() =>
+                    skip.evaluate((el) => {
+                        const b = el.getBoundingClientRect()
+                        return el.contains(
+                            document.elementFromPoint(
+                                b.x + b.width / 2,
+                                b.y + b.height / 2,
+                            ),
+                        )
+                    }),
+                )
+                .toBe(true)
             await page.keyboard.press('Enter')
             await expect(page.locator('#main-content')).toBeFocused()
         })
