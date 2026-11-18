@@ -10,6 +10,11 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ## Log
 
+### 2026-11-18
+
+- **The 2026-11-17/18 project audit filed #655-#676 and ran into usage limits, not finding limits.** Launching all 19 round-1 categories at once, as the skill then said, used up two 5-hour windows with one finding written: every agent spent its budget reading CLAUDE.md and LEARNINGS.md and setting up, then all stopped together. Running four at a time, and resuming stopped agents with `SendMessage` instead of restarting them, finished the round. Verification, the second wave and filing took two more windows, and the weekly limit then blocked agents while the main session still worked, so the last issue bodies were drafted and filed there. The skill's §2 "Usage limits" now has the batching rules.
+- **The contact-form email notification is a real data flow** (#669). Netlify's hooks list shows an `email` hook on `submission_created`, created 2026-08-20, that sends each new submission to the owner's private Google address. The owner confirmed it from the dashboard (Forms > Form submission notifications) after the audit found it. It's set only in the dashboard, so nothing in the repo shows it, and `/privacy/` doesn't name Google yet.
+
 ### 2026-11-08
 
 - **`self-review` now sets `background: false`** (issue #475). Verified before adding it, since Claude Code silently ignores unknown frontmatter keys: the skills reference (code.claude.com/docs/en/skills, frontmatter table and "Run skills in a subagent") documents `background` with default `true`, and the CHANGELOG's 2.1.218 entry reads "Changed skills with `context: fork` to run in the background by default; opt out per skill with `background: false`". The docs page itself doesn't name the version. Not checked in an interactive session: the fix was made by an Agent SDK subagent, where forked skills always wait, so its own inline review result proves nothing.
