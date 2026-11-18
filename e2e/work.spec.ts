@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test'
+import { h1LineCount } from './helpers/h1-line-count'
 
 const caseStudies = [
     {
@@ -38,6 +39,25 @@ for (const { slug, title } of caseStudies) {
         ).toBeVisible()
     })
 }
+
+test('case study h1 fits a long word on one line on small phones', async ({
+    page,
+}) => {
+    // Guards issue #674. Each injected word fits its column (272px/312px) at
+    // 30px with 10px+ to spare for Linux's wider text, but not at 36px.
+    const cases = [
+        { width: 320, word: 'Recommendations' },
+        { width: 360, word: 'Internationalization' },
+    ]
+    for (const { width, word } of cases) {
+        await page.setViewportSize({ width, height: 800 })
+        await page.goto('/work/storyblok-migration/')
+        await page.locator('main h1').evaluate((h1, word) => {
+            h1.textContent = word
+        }, word)
+        expect.soft(await h1LineCount(page), `${width}px`).toBe(1)
+    }
+})
 
 test('case study pages set og:type to article with a published time', async ({
     page,
