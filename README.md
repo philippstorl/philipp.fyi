@@ -187,7 +187,7 @@ Shared test helpers live in `e2e/helpers/` (not matched as specs). Before any wo
 
 ### Netlify Functions unit tests
 
-`astro dev` doesn't serve Netlify Functions, so `tests/functions/` unit-tests them directly: `npm run test:functions` (`playwright.functions.config.ts`, plain Node, no browser, about a second) imports each handler, calls it with a real `Request`, and stubs `fetch` so nothing reaches the network, the real Slack webhooks, or Netlify Blobs. It covers `X-Webhook-Signature` verification (valid, wrong secret, tampered body, missing/stripped/truncated token, wrong `alg`/`iss`), the `deploy-notification` 401/400/204 paths, `csp-report`'s 405/413/400 paths, report normalization, batch cap and non-string-field handling, Slack escaping of attacker-controlled fields in both handlers (and `csp-report`'s collapsing of line breaks and format characters in its summary lines), `csp-report-cleanup`'s retention, pinned schedule and Slack alerts on a failed run, and the `includeSubDomains` HSTS header on both HTTP functions' responses (matched against `netlify.toml`). It runs as the `functions` CI job, not as part of `npm test`.
+`astro dev` doesn't serve Netlify Functions, so `tests/functions/` unit-tests them directly: `npm run test:functions` (`playwright.functions.config.ts`, plain Node, no browser, about a second) imports each handler, calls it with a real `Request`, and stubs `fetch` so nothing reaches the network, the real Slack webhooks, or Netlify Blobs. It covers `X-Webhook-Signature` verification (valid, wrong secret, tampered body, missing/stripped/truncated token, wrong `alg`/`iss`), the `deploy-notification` 401/400/204 paths, `csp-report`'s 405/413/400 paths, report normalization, batch cap and non-string-field handling, Slack escaping of attacker-controlled fields in both handlers (and `csp-report`'s collapsing of line breaks and format characters in its summary lines), `csp-report-cleanup`'s retention, pinned schedule and Slack alerts on a failed run, and the `includeSubDomains` HSTS header on both HTTP functions' responses. `netlify-headers.spec.ts` also resolves `netlify.toml`'s `[[headers]]` rules per path with Netlify's own parser: only the `/*` rule may set the site-wide security headers (HSTS matching the functions' value), every sampled path must get all of them, and each gets at most one `Cache-Control`, matching the expected value for real paths. It runs as the `functions` CI job, not as part of `npm test`.
 
 ### First run
 
@@ -346,7 +346,7 @@ netlify.toml       → Build, Node version, security headers, cache headers, 404
 playwright.config.ts
 playwright.contrast.config.ts  → Report-only contrast scan config (npm run test:contrast)
 playwright.functions.config.ts → Browserless Playwright config for tests/functions/
-scripts/           → Node scripts behind the check:*/generate:* npm scripts and .claude/settings.json's hooks, plus contrast-pages.mjs (the page list shared by the a11y, contrast and meta-description tests)
+scripts/           → Node scripts behind the check:*/generate:* npm scripts and .claude/settings.json's hooks, plus contrast-pages.mjs (the page list shared by the a11y, contrast and meta-description tests) and netlify-headers.mjs (netlify.toml's header rules resolved per path, shared by check:csp and tests/functions/)
 ```
 
 ## Security

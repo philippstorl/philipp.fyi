@@ -2,23 +2,34 @@ import crypto from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { loadHeaderRules, rulesSetting } from './netlify-headers.mjs'
 
 // The meta CSP only exists in built output and netlify.toml's header CSP only
 // in production, so dev-server tests see neither. Runs against dist/.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 
-const toml = await fs.readFile(path.join(root, 'netlify.toml'), 'utf8')
-const headerValues = [
-    ...toml.matchAll(/^\s*Content-Security-Policy\s*=\s*"([^"]+)"/gm),
-].map((match) => match[1])
-if (headerValues.length !== 1) {
+// Exactly one rule may set it, across the whole file, and it has to cover pages.
+const cspRules = rulesSetting(
+    await loadHeaderRules(),
+    'Content-Security-Policy',
+)
+if (cspRules.length !== 1) {
     console.error(
-        `Expected exactly one Content-Security-Policy header in netlify.toml, found ${headerValues.length}.`,
+        `Expected exactly one [[headers]] rule setting Content-Security-Policy in netlify.toml, found ${cspRules.length}.`,
     )
     process.exit(1)
 }
-const headerPolicy = headerValues[0]
+const [cspRule] = cspRules
+if (!cspRule.forRegExp.test('/')) {
+    console.error(
+        `netlify.toml's Content-Security-Policy is set for "${cspRule.for}", which doesn't cover /. Is a [[headers]] line inside the /* block?`,
+    )
+    process.exit(1)
+}
+const headerPolicy = Object.entries(cspRule.values).find(
+    ([name]) => name.toLowerCase() === 'content-security-policy',
+)[1]
 
 const astroConfig = await fs.readFile(
     path.join(root, 'astro.config.mjs'),
