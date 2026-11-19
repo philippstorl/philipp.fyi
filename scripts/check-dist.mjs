@@ -66,11 +66,19 @@ function parse(html) {
     const tags = []
     const texts = []
     // Keeps a <script>'s start tag (its src is checked), drops its body.
-    const markup = html.replace(
+    // One pass on purpose: looping would join a kept start tag to a later
+    // </script>. Not sanitization (input is our own build output).
+    let markup = ''
+    let last = 0
+    for (const match of html.matchAll(
         /<!--[\s\S]*?-->|<(script|style)(?=[\s/>])((?:[^>"']|"[^"]*"|'[^']*')*)>[\s\S]*?<\/\1\s*>/gi,
-        (_, name, attrs) =>
-            name?.toLowerCase() === 'script' ? `<script${attrs}>` : '',
-    )
+    )) {
+        markup += html.slice(last, match.index)
+        if (match[1]?.toLowerCase() === 'script')
+            markup += `<script${match[2]}>`
+        last = match.index + match[0].length
+    }
+    markup += html.slice(last)
     for (const [node, tagName, attrSource] of markup.matchAll(nodePattern)) {
         if (tagName) {
             const attrs = new Map()
