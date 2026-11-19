@@ -158,14 +158,22 @@ test.describe('Navigation', () => {
     test('the late-font re-scroll leaves a visitor who scrolled during the wait where they are (issue #676)', async ({
         page,
     }) => {
+        // Held until Home's own scroll has finished: a face arriving mid-scroll
+        // makes scroll anchoring shift where that scroll ends.
+        let releaseFont!: () => void
+        const fontReleased = new Promise<void>((resolve) => {
+            releaseFont = resolve
+        })
         await page.route('**/geist-latin-wght-italic*.woff2', async (route) => {
-            await new Promise((resolve) => setTimeout(resolve, 1500))
+            await fontReleased
             await route.continue()
         })
         await page.goto('/')
         await page.locator('a[href="/recommendations/#janet-levrel"]').click()
         await expect(page).toHaveURL('/recommendations/#janet-levrel')
         await page.keyboard.press('Home')
+        await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0)
+        releaseFont()
         await page.waitForFunction(() =>
             document.fonts.check('italic 400 1em "Geist Variable"'),
         )
