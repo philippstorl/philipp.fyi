@@ -65,12 +65,17 @@ const htmlByFile = new Map(
 )
 const nestingProblems = []
 for (const file of htmlFiles) {
-    const html = htmlByFile
-        .get(file)
-        .replace(
+    // Repeat until stable, so a removal can't splice a new comment or tag
+    // together (CodeQL js/incomplete-multi-character-sanitization).
+    let html = htmlByFile.get(file)
+    let previous
+    do {
+        previous = html
+        html = html.replace(
             /<!--[\s\S]*?-->|<(script|style|template|textarea|svg)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*(?<!\/)>[\s\S]*?<\/\1\s*>/gi,
             '',
         )
+    } while (html !== previous)
     for (const [, openTag, tag] of html.matchAll(blockInParagraph)) {
         nestingProblems.push(
             `${toRoutePath(file)}: <${tag.toLowerCase()}> inside ${openTag}`,
