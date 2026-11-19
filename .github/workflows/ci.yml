@@ -170,6 +170,14 @@ jobs:
                   cache: "npm"
             - run: npm ci
             - run: npm run test:functions
+            # Deployed functions run on Netlify's nodejs24.x Lambda runtime
+            # (issue #668), so test there too. Steps, not a matrix, keep the
+            # required "Functions" check name; deps stay installed from 26,
+            # since engine-strict fails npm ci on 24.
+            - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+              with:
+                  node-version: 24
+            - run: node --version && npm run test:functions
 
     contrast:
         name: Color Contrast (report only)
