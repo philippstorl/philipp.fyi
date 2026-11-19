@@ -21,6 +21,30 @@ async function clickBackdropBelowMenu(page: Page) {
         .click({ position: { x: 10, y: viewport.height - 10 } })
 }
 
+async function expectFragmentSettledBelowHeader(page: Page, id: string) {
+    await expect(page).toHaveURL(`/recommendations/#${id}`)
+    await page.waitForFunction(() =>
+        document.fonts.check('italic 400 1em "Geist Variable"'),
+    )
+
+    // Wait out the smooth scroll: a mid-scroll read can pass the target.
+    const targetTop = () =>
+        page.locator(`#${id}`).evaluate((el) => el.getBoundingClientRect().top)
+    let settledTop = NaN
+    await expect
+        .poll(async () => {
+            const before = await targetTop()
+            await page.waitForTimeout(300)
+            settledTop = await targetTop()
+            return settledTop === before
+        })
+        .toBe(true)
+    const scrollPadding = await page.evaluate(() =>
+        parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop),
+    )
+    expect(Math.abs(settledTop - scrollPadding)).toBeLessThan(12)
+}
+
 test.describe('Navigation', () => {
     test('header is sticky and shows name mark', async ({ page }) => {
         await page.goto('/')
@@ -115,28 +139,38 @@ test.describe('Navigation', () => {
         )
         await page.goto('/')
         await page.locator('a[href="/recommendations/#janet-levrel"]').click()
-        await expect(page).toHaveURL('/recommendations/#janet-levrel')
+        await expectFragmentSettledBelowHeader(page, 'janet-levrel')
+    })
 
-        // Wait out the smooth scroll: a mid-scroll read can pass the target.
-        const targetTop = () =>
-            page
-                .locator('#janet-levrel')
-                .evaluate((el) => el.getBoundingClientRect().top)
-        let settledTop = NaN
-        await expect
-            .poll(async () => {
-                const before = await targetTop()
-                await page.waitForTimeout(300)
-                settledTop = await targetTop()
-                return settledTop === before
-            })
-            .toBe(true)
-        const scrollPadding = await page.evaluate(() =>
-            parseFloat(
-                getComputedStyle(document.documentElement).scrollPaddingTop,
-            ),
+    test('homepage card link still lands below the header when the italic font outlasts the wait (issue #676)', async ({
+        page,
+    }) => {
+        // Past the 1s cap, but still arriving during the smooth scroll.
+        await page.route('**/geist-latin-wght-italic*.woff2', async (route) => {
+            await new Promise((resolve) => setTimeout(resolve, 1500))
+            await route.continue()
+        })
+        await page.goto('/')
+        await page.locator('a[href="/recommendations/#janet-levrel"]').click()
+        await expectFragmentSettledBelowHeader(page, 'janet-levrel')
+    })
+
+    test('the late-font re-scroll leaves a visitor who scrolled during the wait where they are (issue #676)', async ({
+        page,
+    }) => {
+        await page.route('**/geist-latin-wght-italic*.woff2', async (route) => {
+            await new Promise((resolve) => setTimeout(resolve, 1500))
+            await route.continue()
+        })
+        await page.goto('/')
+        await page.locator('a[href="/recommendations/#janet-levrel"]').click()
+        await expect(page).toHaveURL('/recommendations/#janet-levrel')
+        await page.keyboard.press('Home')
+        await page.waitForFunction(() =>
+            document.fonts.check('italic 400 1em "Geist Variable"'),
         )
-        expect(Math.abs(settledTop - scrollPadding)).toBeLessThan(12)
+        await page.waitForTimeout(1500)
+        expect(await page.evaluate(() => window.scrollY)).toBe(0)
     })
 
     test('Work nav link is aria-current="true" inside the section, "page" on /work/ (issue #341)', async ({

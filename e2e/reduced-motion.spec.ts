@@ -195,5 +195,28 @@ for (const [preference, other] of [
                 .poll(() => scrollBehaviorsFor(page, 'contact-name'))
                 .toEqual([preference.jsScrollBehavior, other.jsScrollBehavior])
         })
+
+        test('late-italic-font fragment re-scroll follows the preference (issue #676)', async ({
+            page,
+        }) => {
+            await recordScrollCalls(page)
+            // Past Header.astro's 1s font wait, so the re-scroll runs.
+            await page.route(
+                '**/geist-latin-wght-italic*.woff2',
+                async (route) => {
+                    await new Promise((resolve) => setTimeout(resolve, 1500))
+                    await route.continue()
+                },
+            )
+            await page.goto('/')
+            await page
+                .locator('a[href="/recommendations/#janet-levrel"]')
+                .click()
+            await expect(page).toHaveURL('/recommendations/#janet-levrel')
+
+            await expect
+                .poll(() => scrollBehaviorsFor(page, 'janet-levrel'))
+                .toEqual([preference.jsScrollBehavior])
+        })
     })
 }
