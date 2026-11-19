@@ -72,6 +72,22 @@ test('case study pages set og:type to article with a published time', async ({
     ).toHaveAttribute('content', '2018')
 })
 
+test('case study JSON-LD is a CreativeWork with an ISO year and absolute URLs', async ({
+    page,
+}) => {
+    await page.goto('/work/brand-evolution/')
+    const jsonLd = page.locator('script[type="application/ld+json"]')
+    await expect(jsonLd).toHaveCount(1)
+    const schema = JSON.parse((await jsonLd.textContent()) ?? '')
+    expect(schema).toMatchObject({
+        '@type': 'CreativeWork',
+        // The front matter year is "2018–2026", which isn't a valid ISO 8601 date.
+        datePublished: '2018',
+        url: 'https://philipp.fyi/work/brand-evolution/',
+        image: 'https://philipp.fyi/og/work/brand-evolution.png',
+    })
+})
+
 test('case study share image alt text is the case study title', async ({
     page,
 }) => {

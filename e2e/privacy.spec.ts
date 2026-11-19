@@ -17,7 +17,7 @@ test.describe('Privacy policy page', () => {
         ).toBeVisible()
     })
 
-    test('matches what the site actually processes (issues #401-#404)', async ({
+    test('matches what the site actually processes (issues #401-#404, #669)', async ({
         page,
     }) => {
         await page.goto('/privacy/')
@@ -52,7 +52,7 @@ test.describe('Privacy policy page', () => {
         // Voluntariness, log retention and Netlify Forms metadata (#404).
         await expect(article).toContainText('Using the form is voluntary')
         await expect(article).toContainText(
-            'unless statutory retention periods require keeping it longer',
+            'unless statutory retention periods require keeping them longer',
         )
         await expect(article).toContainText(
             'Netlify doesn’t publish a fixed period for these logs',
@@ -61,6 +61,24 @@ test.describe('Privacy policy page', () => {
             'your IP address, your browser’s user agent, the page you sent the form from (referrer)',
         )
         await expect(article).toContainText('Akismet')
+
+        // Netlify's Forms notification emails each message to a Google mailbox (#669).
+        await expect(article).toContainText(
+            'to my mailbox, which is hosted by Google',
+        )
+        await expect(article).toContainText('Recipients: Netlify, Inc.')
+        await expect(article).toContainText(
+            'mailbox with Google Ireland Limited',
+        )
+        await expect(article).toContainText(
+            'Google provides the mailbox under its own terms rather than processing the data on my behalf',
+        )
+        await expect(article).toContainText(
+            'the email in my mailbox are each kept only as long as needed',
+        )
+        await expect(article).toContainText(
+            'Google relies on the EU-U.S. Data Privacy Framework',
+        )
     })
 
     test('links to the contact form', async ({ page }) => {
@@ -111,6 +129,7 @@ test.describe('Privacy policy page', () => {
         for (const href of [
             'https://automattic.com/privacy/',
             'https://slack.com/trust/privacy/privacy-policy',
+            'https://policies.google.com/privacy',
             'https://docs.netlify.com/manage/monitoring/real-user-monitoring/',
         ]) {
             const link = page.locator(`article a[href="${href}"]`)

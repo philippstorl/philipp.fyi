@@ -1,4 +1,6 @@
 import { test, expect, type Locator } from '@playwright/test'
+import { SITE_NAME } from '../src/data/site'
+import { GITHUB_URL, LINKEDIN_URL } from '../src/data/social'
 
 test.describe('Home page', () => {
     test('has correct title and headline', async ({ page }) => {
@@ -47,6 +49,21 @@ test.describe('Home page', () => {
         await expect(
             page.locator('meta[name="twitter:image:alt"]'),
         ).toHaveAttribute('content', alt)
+    })
+
+    test('JSON-LD is a Person linking the social profiles', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const jsonLd = page.locator('script[type="application/ld+json"]')
+        await expect(jsonLd).toHaveCount(1)
+        const schema = JSON.parse((await jsonLd.textContent()) ?? '')
+        expect(schema).toMatchObject({
+            '@type': 'Person',
+            name: SITE_NAME,
+            url: 'https://philipp.fyi/',
+        })
+        expect(schema.sameAs).toEqual([LINKEDIN_URL, GITHUB_URL])
     })
 
     test('shows all 4 work cards', async ({ page }) => {
