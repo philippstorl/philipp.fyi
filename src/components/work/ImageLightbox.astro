@@ -60,9 +60,21 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         ></div>
         {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
 
-        <div class="shrink-0 pt-3 text-center" aria-live="polite">
-            <p id="lightbox-caption" class="text-sm text-white/90 italic"></p>
-            <p id="lightbox-counter" class="mt-1 text-xs text-white/50"></p>
+        {/* Screen readers get one composed sentence instead of the visible text,
+            since many captions are just a date (issue #670). */}
+        <div class="shrink-0 pt-3 text-center">
+            <div aria-hidden="true">
+                <p
+                    id="lightbox-caption"
+                    class="text-sm text-white/90 italic"
+                ></p>
+                <p id="lightbox-counter" class="mt-1 text-xs text-white/50"></p>
+            </div>
+            <p
+                id="lightbox-announcement"
+                class="sr-only"
+                aria-live="polite"
+            ></p>
         </div>
     </div>
 </dialog>
@@ -99,6 +111,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
         const track = document.getElementById('lightbox-track')
         const caption = document.getElementById('lightbox-caption')
         const counter = document.getElementById('lightbox-counter')
+        const announcement = document.getElementById('lightbox-announcement')
         const closeBtn = document.getElementById(
             'lightbox-close',
         ) as HTMLButtonElement | null
@@ -115,6 +128,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             !track ||
             !caption ||
             !counter ||
+            !announcement ||
             !closeBtn ||
             !prevBtn ||
             !nextBtn ||
@@ -167,14 +181,39 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             }
         }
 
-        const updateCaption = () => {
+        const multiple = figures.length > 1
+
+        // A full stop between parts, so screen readers pause after each one.
+        const sentence = (text: string) => {
+            const trimmed = text.trim()
+            return !trimmed || /[.!?…]["'”’)\]]*$/.test(trimmed)
+                ? trimmed
+                : `${trimmed}.`
+        }
+
+        const updateCaption = ({ announceAlt = true } = {}) => {
             const slide = slides[currentIndex]
             if (!slide) return
             caption.textContent = slide.caption
-            counter.textContent =
-                figures.length > 1
-                    ? `${currentIndex + 1} / ${figures.length}`
-                    : ''
+            counter.textContent = multiple
+                ? `${currentIndex + 1} / ${figures.length}`
+                : ''
+            // On open the trigger's "Enlarge image: <alt>" name was just heard.
+            // A caption the alt already contains (a bare date) isn't repeated.
+            const alt = announceAlt ? slide.alt : ''
+            const repeatsAlt = alt
+                .toLowerCase()
+                .includes(slide.caption.toLowerCase())
+            announcement.textContent = [
+                alt,
+                repeatsAlt ? '' : slide.caption,
+                multiple
+                    ? `Image ${currentIndex + 1} of ${figures.length}`
+                    : '',
+            ]
+                .map(sentence)
+                .filter(Boolean)
+                .join(' ')
             const focused = document.activeElement
             prevBtn.disabled = currentIndex === 0
             nextBtn.disabled = currentIndex === figures.length - 1
@@ -247,7 +286,7 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
                 left: index * track.clientWidth,
                 behavior: 'instant',
             })
-            updateCaption()
+            updateCaption({ announceAlt: false })
         }
 
         // Built once, up front -- same gallery every time. No src yet:
@@ -267,7 +306,6 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react'
             slideImages.push(img)
         }
 
-        const multiple = figures.length > 1
         prevBtn.style.display = multiple ? '' : 'none'
         nextBtn.style.display = multiple ? '' : 'none'
 
