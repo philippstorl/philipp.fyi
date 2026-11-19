@@ -44,6 +44,32 @@ test.describe('Image lightbox', () => {
         await expect(slides.nth(1)).not.toHaveAttribute('aria-hidden')
     })
 
+    test('a slide change announces the new image, not just its caption (issue #670)', async ({
+        page,
+    }) => {
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+
+        const announcement = page.locator('#lightbox-announcement')
+        await expect(announcement).toHaveAttribute('aria-live', 'polite')
+        // No alt on open: the trigger's name just said it.
+        await expect(announcement).toHaveText(
+            `Before - April 2020, plain HTML, agency-maintained. Image 1 of ${TOTAL_IMAGES}.`,
+        )
+
+        await page.locator('#lightbox-next').click()
+        await expect(announcement).toHaveText(
+            'VOICES website homepage in August 2020: a blue particle-tunnel hero announcing the 1 October event, with a countdown below.' +
+                ' After - August 2020, the first Eleventy build, ahead of the October event.' +
+                ` Image 2 of ${TOTAL_IMAGES}.`,
+        )
+        // The visible caption and counter aren't read a second time.
+        const dialogSnapshot = await page.locator('#lightbox').ariaSnapshot()
+        expect(dialogSnapshot).not.toContain(counterText(2))
+        expect(dialogSnapshot.match(/the first Eleventy build/g)).toHaveLength(
+            1,
+        )
+    })
+
     test('every slide sets scroll-snap-stop: always (issue #505)', async ({
         page,
     }) => {
@@ -441,6 +467,16 @@ test.describe('Image lightbox — brand-evolution', () => {
         await expect(page.locator('#lightbox-caption')).toHaveText('March 2018')
         await expect(page.locator('#lightbox-counter')).toHaveText(
             brandEvolutionCounterText(1),
+        )
+    })
+
+    test('a date caption the alt already contains is announced once (issue #670)', async ({
+        page,
+    }) => {
+        await openLightboxOn(page, page.locator('.prose figure img').first())
+        await page.locator('#lightbox-next').click()
+        await expect(page.locator('#lightbox-announcement')).toHaveText(
+            `staffbase.com homepage in July 2018 with a new people-led hero. Image 2 of ${BRAND_EVOLUTION_TOTAL_IMAGES}.`,
         )
     })
 
