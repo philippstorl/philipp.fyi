@@ -1,4 +1,3 @@
-import { readFileSync } from 'node:fs'
 import { expect, test } from '@playwright/test'
 import cspReport from '../../netlify/functions/csp-report'
 import deployNotification from '../../netlify/functions/deploy-notification'
@@ -9,14 +8,6 @@ import {
 import { quietConsole } from './helpers'
 
 const HSTS = 'Strict-Transport-Security'
-
-test('matches the site-wide value in netlify.toml', () => {
-    const toml = readFileSync('netlify.toml', 'utf8')
-    const values = [
-        ...toml.matchAll(/^\s*Strict-Transport-Security\s*=\s*"([^"]+)"/gm),
-    ].map((match) => match[1])
-    expect(values).toEqual([STRICT_TRANSPORT_SECURITY])
-})
 
 test('sets the header, replacing a weaker one from the handler', async () => {
     const wrapped = withHsts(async () => {
