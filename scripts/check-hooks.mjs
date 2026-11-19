@@ -34,6 +34,7 @@ if (!SUPPRESSION.test(command)) {
 const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'check-hooks-'))
 // Not a git repo: the hook falls back to its own script's repo there.
 const outside = fs.mkdtempSync(path.join(os.tmpdir(), 'check-hooks-cwd-'))
+const worktreeParent = fs.mkdtempSync(path.join(os.tmpdir(), 'check-hooks-wt-'))
 // An inherited GIT_DIR etc. (e.g. inside a git hook) would point git elsewhere.
 const env = Object.fromEntries(
     Object.entries(process.env).filter(([key]) => !key.startsWith('GIT_')),
@@ -116,12 +117,85 @@ try {
     expectSilence('source and docs change', subdir, {
         stop_hook_active: false,
     })
+
+    // Committed changes (issue #662): nudge once per unseen commit range.
+    const gitIn = (cwd, ...args) =>
+        execFileSync(
+            'git',
+            [
+                '-c',
+                'user.name=check-hooks',
+                '-c',
+                'user.email=check-hooks@example.com',
+                '-c',
+                'commit.gpgsign=false',
+                ...args,
+            ],
+            { cwd, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
+        )
+    const commit = (cwd, ...files) => {
+        for (const [file, content] of files) {
+            fs.writeFileSync(path.join(cwd, file), content)
+        }
+        gitIn(cwd, 'add', '-A')
+        gitIn(cwd, 'commit', '-q', '--no-verify', '-m', 'test')
+    }
+    const stop = { stop_hook_active: false }
+    commit(dir)
+    expectSilence('first run after commits (history)', subdir, stop)
+    commit(dir, ['src/b.ts', 'export {}\n'])
+    expectNudge('committed source change', subdir, stop)
+    expectSilence('committed source change, already nudged', subdir, stop)
+    commit(dir, ['src/c.ts', 'export {}\n'], ['README.md', '# c\n'])
+    expectSilence('committed source and docs change', subdir, stop)
+    gitIn(dir, 'switch', '-q', '-c', 'side')
+    commit(dir, ['src/side.ts', 'export {}\n'])
+    gitIn(dir, 'switch', '-q', '-')
+    commit(dir, ['src/d.ts', 'export {}\n'])
+    expectSilence('commit during a continuation', subdir, {
+        stop_hook_active: true,
+    })
+    expectSilence('after a continuation', subdir, stop)
+    gitIn(dir, 'switch', '-q', 'side')
+    expectSilence('switch to a sibling branch', subdir, stop)
+    gitIn(dir, 'switch', '-q', '-')
+    expectSilence('switch back', subdir, stop)
+    fs.writeFileSync(path.join(dir, 'src/d2.ts'), 'export {}\n')
+    gitIn(dir, 'add', '-A')
+    gitIn(dir, 'commit', '-q', '--no-verify', '--amend', '--no-edit')
+    expectNudge('amended commit', subdir, stop)
+    expectSilence('amended commit, already nudged', subdir, stop)
+    gitIn(dir, 'merge', '-q', '--no-ff', '--no-verify', '-m', 'merge', 'side')
+    expectSilence("merge of another branch's source change", subdir, stop)
+
+    // The record is per worktree, so a linked one has its own.
+    const worktree = path.join(worktreeParent, 'wt')
+    gitIn(dir, 'worktree', 'add', '-q', '-b', 'wt', worktree)
+    expectSilence('linked worktree, first run', worktree, stop)
+    commit(worktree, ['src/w.ts', 'export {}\n'])
+    expectNudge('linked worktree, committed source change', worktree, stop)
+    expectSilence('linked worktree, already nudged', worktree, stop)
+    expectSilence('main checkout after a worktree commit', subdir, stop)
+
+    commit(dir, ['src/e.ts', 'export {}\n'])
+    const record = gitIn(
+        dir,
+        'rev-parse',
+        '--git-path',
+        'doc-sync-last-head',
+    ).trim()
+    if (!fs.existsSync(path.resolve(dir, record))) {
+        problems.push(`no HEAD record at ${record}`)
+    }
+    fs.writeFileSync(path.resolve(dir, record), `${'0'.repeat(40)}\n`)
+    expectSilence('unknown recorded HEAD', subdir, stop)
 } finally {
     fs.rmSync(dir, { recursive: true, force: true })
     fs.rmSync(outside, { recursive: true, force: true })
+    fs.rmSync(worktreeParent, { recursive: true, force: true })
 }
 
 if (problems.length > 0) fail(problems)
 console.log(
-    'Stop hook check passed (clean tree, source change from a subdirectory and outside the repo, stop_hook_active, docs updated).',
+    'Stop hook check passed (clean tree, source change from a subdirectory and outside the repo, stop_hook_active, docs updated, committed changes incl. amend, merge and a linked worktree).',
 )
