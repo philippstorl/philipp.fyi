@@ -80,6 +80,12 @@
     "overrides": {
         "eslint-plugin-jsx-a11y": {
             "eslint": "$eslint"
+        },
+        "satori": {
+            "fflate": "0.7.5"
+        },
+        "@tailwindcss/typography": {
+            "postcss-selector-parser": "^6.1.5"
         }
     },
     "allowScripts": {
