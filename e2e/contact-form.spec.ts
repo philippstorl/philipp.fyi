@@ -216,6 +216,12 @@ test.describe('Contact form', () => {
             'Please enter a valid email address.',
         )
 
+        // The JS regex, not type="email", is what rejects a dotless domain.
+        await page.locator('#contact-email').fill('test@example')
+        await expect(page.locator('#contact-email-error')).toHaveText(
+            'Please enter a valid email address.',
+        )
+
         await page.locator('#contact-email').fill('test@example.com')
         await expect(page.locator('#contact-email-error')).toBeHidden()
     })
