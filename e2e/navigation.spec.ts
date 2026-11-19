@@ -366,6 +366,57 @@ test.describe('Navigation', () => {
         await expect.poll(readStyles).toEqual([true, true, true])
     })
 
+    test('the pre-paint theme button flip has no transition, later clicks do (issue #672)', async ({
+        page,
+    }) => {
+        // Chromium never fades the flip either way, so this checks the
+        // condition Firefox fades on: a transition already set at flip time.
+        await page.addInitScript(() => {
+            const w = window as Window & { __flipDurations?: string[] }
+            w.__flipDurations = []
+            new MutationObserver((records) => {
+                for (const { target } of records) {
+                    if (
+                        target instanceof Element &&
+                        target.getAttribute('aria-pressed') === 'true'
+                    ) {
+                        w.__flipDurations?.push(
+                            getComputedStyle(target).transitionDuration,
+                        )
+                    }
+                }
+            }).observe(document, {
+                subtree: true,
+                attributeFilter: ['aria-pressed'],
+            })
+        })
+        await page.goto('/')
+
+        const group = page.getByRole('group', { name: 'Color theme' })
+        await expect(group).toHaveAttribute('data-theme-ready', '')
+        expect(
+            await page.evaluate(
+                () =>
+                    (window as Window & { __flipDurations?: string[] })
+                        .__flipDurations,
+            ),
+        ).toEqual(['0s'])
+        // getAnimations() restyles first, so this sees the fade the click starts.
+        const clickTransitions = await page.evaluate(() => {
+            const btn = document.querySelector<HTMLElement>(
+                '[data-theme-value="dark"]',
+            )
+            btn?.click()
+            return (
+                btn
+                    ?.getAnimations()
+                    .filter((a) => a instanceof CSSTransition)
+                    .map((a) => (a as CSSTransition).transitionProperty) ?? []
+            )
+        })
+        expect(clickTransitions).toContain('background-color')
+    })
+
     test('pressed theme button has an accent border, not just a hue change (issue #495)', async ({
         page,
     }) => {

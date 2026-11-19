@@ -15,7 +15,8 @@ const options: ThemeOption[] = [
 <div
     role="group"
     aria-label="Color theme"
-    class="flex items-center gap-1 rounded-lg border border-border bg-card p-[3px] noscript:invisible noscript:max-md:hidden print:hidden"
+    data-theme-toggle
+    class="group/theme-toggle flex items-center gap-1 rounded-lg border border-border bg-card p-[3px] noscript:invisible noscript:max-md:hidden print:hidden"
 >
     {/* `title` alone is the name on purpose: adding a matching aria-label makes browsers expose `title` as a duplicate description (#336). */}
     {options.map(({ value, label }) => <button
@@ -23,7 +24,7 @@ const options: ThemeOption[] = [
         data-theme-value={value}
         aria-pressed="false"
         title={label}
-        class="flex size-11 items-center justify-center rounded-md transition-colors duration-150 not-aria-pressed:text-muted not-aria-pressed:hover:bg-foreground/5 not-aria-pressed:hover:text-foreground aria-pressed:border aria-pressed:border-accent aria-pressed:bg-accent/10 aria-pressed:text-accent forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText]"
+        class="flex size-11 items-center justify-center rounded-md group-data-[theme-ready]/theme-toggle:transition-colors group-data-[theme-ready]/theme-toggle:duration-150 not-aria-pressed:text-muted not-aria-pressed:hover:bg-foreground/5 not-aria-pressed:hover:text-foreground aria-pressed:border aria-pressed:border-accent aria-pressed:bg-accent/10 aria-pressed:text-accent forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText]"
     >
         {value === 'light' && <svg
             width="16"
@@ -152,6 +153,16 @@ const options: ThemeOption[] = [
     }
 
     const buttons = document.querySelectorAll('[data-theme-value]')
+
+    // Enables the fade only now, or Firefox fades in the pre-paint flip (#672).
+    // Keep the style read: without it Firefox still fades (CI can't catch it).
+    const toggleGroup = document.querySelector<HTMLElement>(
+        '[data-theme-toggle]',
+    )
+    if (toggleGroup) {
+        buttons.forEach((btn) => getComputedStyle(btn).backgroundColor)
+        toggleGroup.dataset.themeReady = ''
+    }
 
     function setActiveButtons(theme: Theme) {
         buttons.forEach((btn) => {
