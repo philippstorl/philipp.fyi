@@ -7,7 +7,8 @@ import { recommendations } from '../src/data/recommendations.ts'
 
 // Built-output checks that no other gate sees: an em dash in site copy, a
 // case-study OG card that lost its cover panel (the route only warns), and a
-// class with no CSS rule (Tailwind silently drops a mistyped utility).
+// class with no CSS rule (Tailwind silently drops a mistyped utility), and a
+// same-origin URL in markup with no built file behind it.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 
@@ -64,9 +65,11 @@ const attrPattern =
 function parse(html) {
     const tags = []
     const texts = []
+    // Keeps a <script>'s start tag (its src is checked), drops its body.
     const markup = html.replace(
-        /<!--[\s\S]*?-->|<(script|style)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?<\/\1\s*>/gi,
-        '',
+        /<!--[\s\S]*?-->|<(script|style)(?=[\s/>])((?:[^>"']|"[^"]*"|'[^']*')*)>[\s\S]*?<\/\1\s*>/gi,
+        (_, name, attrs) =>
+            name?.toLowerCase() === 'script' ? `<script${attrs}>` : '',
     )
     for (const [node, tagName, attrSource] of markup.matchAll(nodePattern)) {
         if (tagName) {
@@ -97,7 +100,12 @@ const pages = await Promise.all(
     }),
 )
 // A Set, so a dash repeated in a page's meta tags is reported once.
-const problems = { emDash: new Set(), ogCover: [], classes: [] }
+const problems = {
+    emDash: new Set(),
+    ogCover: [],
+    classes: [],
+    urls: new Set(),
+}
 
 // Em dashes (CLAUDE.md bans them in site copy). Checking dist/ skips code
 // comments, which the rule exempts. Allowed: verbatim recommendations.ts
@@ -233,11 +241,109 @@ for (const [token, seen] of unmatched) {
     )
 }
 
+// Same-origin URLs in markup must resolve to a file in dist/, and page routes
+// need their trailing slash. check:trailing-slashes is the faster source check.
+const astroConfig = await fs.readFile(
+    path.join(root, 'astro.config.mjs'),
+    'utf8',
+)
+const siteMatch = astroConfig.match(/^\s*site:\s*['"]([^'"]+)['"]/m)
+if (!siteMatch) {
+    console.error('No site: URL found in astro.config.mjs.')
+    process.exit(1)
+}
+const siteHost = new URL(siteMatch[1]).hostname
+const siteOrigin = new URL(siteMatch[1]).origin
+const distFiles = new Set(
+    files.map((f) => path.relative(dist, f).split(path.sep).join('/')),
+)
+// Astro keeps these two flat whatever trailingSlash says.
+const flatPages = new Set(['/404', '/500'])
+function pageUrlOf(name) {
+    const rel = name.split(path.sep).join('/')
+    if (rel === 'index.html') return '/'
+    if (rel.endsWith('/index.html'))
+        return `/${rel.slice(0, -'index.html'.length)}`
+    return `/${rel.slice(0, -'.html'.length)}`
+}
+let urlCount = 0
+function urlProblem(raw, base) {
+    let url
+    try {
+        url = new URL(raw, base)
+    } catch {
+        return `unparseable URL "${raw}"`
+    }
+    // http:// self-links count too (upgraded, but still this site's files).
+    if (!/^https?:$/.test(url.protocol) || url.hostname !== siteHost)
+        return null
+    urlCount++
+    let pathname
+    try {
+        pathname = decodeURIComponent(url.pathname)
+    } catch {
+        return `${raw}: malformed percent-encoding`
+    }
+    let file
+    if (pathname.endsWith('/')) file = `${pathname.slice(1)}index.html`
+    else if (flatPages.has(pathname)) file = `${pathname.slice(1)}.html`
+    else if (!/\.[^/]+$/.test(pathname))
+        return `${raw}: page route without its trailing slash`
+    else file = pathname.slice(1)
+    return distFiles.has(file) ? null : `${raw}: no dist/${file}`
+}
+// HTML's srcset parsing (as in check-csp.mjs): data: URLs keep their commas.
+function srcsetUrls(srcset) {
+    const urls = []
+    let rest = srcset
+    while (true) {
+        rest = rest.replace(/^[\s,]+/, '')
+        if (!rest) return urls
+        const [token] = rest.match(/^\S+/)
+        rest = rest.slice(token.length)
+        const url = token.replace(/,+$/, '')
+        if (url) urls.push(url)
+        if (url === token) rest = rest.replace(/^[^,]*/, '')
+    }
+}
+const metaUrlKeys = new Set(['og:image', 'og:url', 'twitter:image'])
+for (const page of pages) {
+    const base = new URL(pageUrlOf(page.name), siteOrigin)
+    for (const tag of page.tags) {
+        const raws = []
+        const { name, attrs } = tag
+        if ((name === 'a' || name === 'link') && attrs.has('href'))
+            raws.push(attrs.get('href'))
+        if (['img', 'source', 'script'].includes(name) && attrs.has('src'))
+            raws.push(attrs.get('src'))
+        if (name === 'astro-island') {
+            for (const attr of [
+                'component-url',
+                'renderer-url',
+                'before-hydration-url',
+            ])
+                if (attrs.has(attr)) raws.push(attrs.get(attr))
+        }
+        if ((name === 'img' || name === 'source') && attrs.has('srcset'))
+            raws.push(...srcsetUrls(attrs.get('srcset')))
+        const key = attrs.get('property') ?? attrs.get('name')
+        if (name === 'meta' && metaUrlKeys.has(key) && attrs.has('content'))
+            raws.push(attrs.get('content'))
+        for (const raw of raws) {
+            const value = raw.trim()
+            if (!value || value.startsWith('#')) continue
+            const problem = urlProblem(value, base)
+            if (problem) problems.urls.add(`${page.name}: ${problem}`)
+        }
+    }
+}
+
 const headings = {
     emDash: 'Em dashes in site copy (reword, or see the exceptions in CLAUDE.md):',
     ogCover: 'Case-study OG cards without their cover panel:',
     classes:
         'Classes with no rule in the CSS their page loads (typo, or an unknown Tailwind utility/variant?):',
+    urls: 'Same-origin URLs with no built file behind them (typo, missing trailing slash, or a page/asset that no longer builds?):',
 }
 let failed = false
 for (const [key, list] of Object.entries(problems)) {
@@ -254,5 +360,5 @@ if (failed) {
 }
 
 console.log(
-    `Dist check passed (${pages.length} pages: no em dash outside the allowed quotes, ${cardsWithCover} OG cover panels, all ${classTokens.size} classes have a rule).`,
+    `Dist check passed (${pages.length} pages: no em dash outside the allowed quotes, ${cardsWithCover} OG cover panels, all ${classTokens.size} classes have a rule, all ${urlCount} same-origin URLs resolve).`,
 )

@@ -36,35 +36,35 @@ npm run dev:astro  # http://localhost:4321
 
 ## Scripts
 
-| Command                               | What it does                                                                                                                       |
-| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run dev`                         | Start dev server via Netlify CLI (recommended)                                                                                     |
-| `npm run dev:astro`                   | Start Astro dev server directly                                                                                                    |
-| `npm run build`                       | Type-check + build to `dist/`                                                                                                      |
-| `npm run build:app`                   | Build to `dist/` without the type-check prefix (used by CI)                                                                        |
-| `npm run typecheck`                   | Run `astro check` (TypeScript only)                                                                                                |
-| `npm run lint`                        | Run ESLint (TypeScript, Astro, accessibility)                                                                                      |
-| `npm run check:trailing-slashes`      | Validate every internal link/route ends in `/`                                                                                     |
-| `npm run check:favicons`              | Fail if the favicons changed since `generate:favicons` last ran                                                                    |
-| `npm run check:color-copies`          | Check hex copies of `global.css` color tokens still match them                                                                     |
-| `npm run check:font-preloads`         | Check every font preload in `dist/` matches an upright Latin `@font-face` URL, and every page preloads Geist's                     |
-| `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`                                                                       |
-| `npm run check:page-coverage`         | Fail if `contrast-pages.mjs` and `dist/` differ, a `<p>` nests a block or the sitemap lists a noindex page; then runs `check:dist` |
-| `npm run check:dist`                  | Fail on an em dash in `dist/` copy, a case-study OG card without its cover panel, or a class with no built CSS rule                |
-| `npm run check:csp`                   | Fail if `dist/` has code or an image the meta or `netlify.toml` CSP blocks                                                         |
-| `npm run check:learnings`             | Check the SessionStart hook's LEARNINGS.md digest, then `check:hooks`                                                              |
-| `npm run check:hooks`                 | Run the Stop hook's doc-sync nudge in a temp repo and check its output                                                             |
-| `npm run test:hooks`                  | Unit-test the PreToolUse hook that checks PR descriptions                                                                          |
-| `npm run check:audit`                 | Audit all dependencies (dev included) for high-severity vulnerabilities                                                            |
-| `npm run format`                      | Format all files with Prettier                                                                                                     |
-| `npm run format:check`                | Check formatting without writing (used in CI)                                                                                      |
-| `npm run preview`                     | Preview the production build locally                                                                                               |
-| `npm test`                            | Run Playwright E2E tests                                                                                                           |
-| `npm run test:ui`                     | Run Playwright tests in interactive UI mode                                                                                        |
-| `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)                                                                   |
-| `npm run test:functions`              | Run the Netlify Functions unit tests (`tests/functions/`, no browser)                                                              |
-| `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist                                                                           |
-| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`                                                                 |
+| Command                               | What it does                                                                                                                                                  |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run dev`                         | Start dev server via Netlify CLI (recommended)                                                                                                                |
+| `npm run dev:astro`                   | Start Astro dev server directly                                                                                                                               |
+| `npm run build`                       | Type-check + build to `dist/`                                                                                                                                 |
+| `npm run build:app`                   | Build to `dist/` without the type-check prefix (used by CI)                                                                                                   |
+| `npm run typecheck`                   | Run `astro check` (TypeScript only)                                                                                                                           |
+| `npm run lint`                        | Run ESLint (TypeScript, Astro, accessibility)                                                                                                                 |
+| `npm run check:trailing-slashes`      | Validate every internal link/route ends in `/`                                                                                                                |
+| `npm run check:favicons`              | Fail if the favicons changed since `generate:favicons` last ran                                                                                               |
+| `npm run check:color-copies`          | Check hex copies of `global.css` color tokens still match them                                                                                                |
+| `npm run check:font-preloads`         | Check every font preload in `dist/` matches an upright Latin `@font-face` URL, and every page preloads Geist's                                                |
+| `npm run check:inline-module-scripts` | Fail if any `<script type="module">` in `dist/` has no `src`                                                                                                  |
+| `npm run check:page-coverage`         | Fail if `contrast-pages.mjs` and `dist/` differ, a `<p>` nests a block or the sitemap lists a noindex page or misses an indexable one; then runs `check:dist` |
+| `npm run check:dist`                  | Fail on an em dash in `dist/` copy, a case-study OG card without its cover panel, a class with no built CSS rule, or a same-origin URL with no built file     |
+| `npm run check:csp`                   | Fail if `dist/` has code or a script/stylesheet/font/image/frame/form URL the meta or `netlify.toml` CSP blocks, or `script-src` allows `data:` or a wildcard |
+| `npm run check:learnings`             | Check the SessionStart hook's LEARNINGS.md digest, then `check:hooks`                                                                                         |
+| `npm run check:hooks`                 | Run the Stop hook's doc-sync nudge in a temp repo and check its output                                                                                        |
+| `npm run test:hooks`                  | Unit-test the PreToolUse hook that checks PR descriptions                                                                                                     |
+| `npm run check:audit`                 | Audit all dependencies (dev included) for high-severity vulnerabilities                                                                                       |
+| `npm run format`                      | Format all files with Prettier                                                                                                                                |
+| `npm run format:check`                | Check formatting without writing (used in CI)                                                                                                                 |
+| `npm run preview`                     | Preview the production build locally                                                                                                                          |
+| `npm test`                            | Run Playwright E2E tests                                                                                                                                      |
+| `npm run test:ui`                     | Run Playwright tests in interactive UI mode                                                                                                                   |
+| `npm run test:contrast`               | Run the report-only color-contrast scan (not part of `npm test`)                                                                                              |
+| `npm run test:functions`              | Run the Netlify Functions unit tests (`tests/functions/`, no browser)                                                                                         |
+| `npm run check:contrast`              | Aggregate `test:contrast`'s output against the allowlist                                                                                                      |
+| `npm run generate:favicons`           | Regenerate `favicon.ico`/`apple-touch-icon.png` from `favicon.svg`                                                                                            |
 
 The `build` script runs `astro check` before `astro build` — TypeScript errors will fail the build on Netlify before anything reaches the CDN.
 
