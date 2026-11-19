@@ -157,20 +157,84 @@ const pathname = getNavPathname(Astro.url.pathname, Astro.routePattern)
 
     // The fragment scroll's target is fixed at swap time, so a late italic
     // face (blockquotes) reflowing above it lands the scroll off target.
+    let italicFont: Promise<boolean> | undefined
+    const loadItalicFont = () =>
+        (italicFont ??= document.fonts
+            .load('italic 400 1em "Geist Variable"')
+            .then(
+                () => true,
+                () => false,
+            ))
+
+    // Start the download before the click lands (focus precedes Enter).
+    function loadItalicFontForHashLink(event: Event) {
+        if (event instanceof PointerEvent && event.button !== 0) return
+        const link =
+            event.target instanceof Element &&
+            event.target.closest<HTMLAnchorElement>('a[href]')
+        if (
+            link &&
+            link.hash &&
+            !link.target &&
+            link.origin === location.origin &&
+            link.pathname !== location.pathname
+        ) {
+            loadItalicFont()
+        }
+    }
+    document.addEventListener('pointerdown', loadItalicFontForHashLink, {
+        capture: true,
+        passive: true,
+    })
+    document.addEventListener('focusin', loadItalicFontForHashLink)
+
+    let pendingRescroll: AbortController | undefined
+
+    // If the cap expired first, redo the fragment scroll once the font is in,
+    // unless the visitor has interacted (or navigated) since.
+    function rescrollWhenFontLoads(to: URL, font: Promise<boolean>) {
+        pendingRescroll?.abort()
+        const controller = new AbortController()
+        pendingRescroll = controller
+        for (const type of ['wheel', 'keydown', 'pointerdown']) {
+            window.addEventListener(type, () => controller.abort(), {
+                capture: true,
+                passive: true,
+                signal: controller.signal,
+            })
+        }
+        font.then((loaded) => {
+            if (controller.signal.aborted) return
+            controller.abort()
+            if (!loaded) return
+            const reduceMotion = window.matchMedia(
+                '(prefers-reduced-motion: reduce)',
+            ).matches
+            document.getElementById(to.hash.slice(1))?.scrollIntoView({
+                behavior: reduceMotion ? 'instant' : 'smooth',
+            })
+        })
+    }
+
     document.addEventListener('astro:before-preparation', (event) => {
+        pendingRescroll?.abort()
         if (!event.to.hash) return
-        const load = event.loader
+        const { loader: load, to, signal } = event
+        // Back/Forward restores a saved position instead of the fragment.
+        const rescroll = event.navigationType !== 'traverse'
         event.loader = async () => {
-            await Promise.all([
-                load(),
-                // Capped so a stalled font can't hold the old page on screen.
-                Promise.race([
-                    document.fonts
-                        .load('italic 400 1em "Geist Variable"')
-                        .catch(() => {}),
-                    new Promise((resolve) => setTimeout(resolve, 1000)),
-                ]),
+            const font = loadItalicFont()
+            // Capped so a stalled font can't hold the old page on screen.
+            const fontTimedOut = Promise.race([
+                font.then(() => false),
+                new Promise<boolean>((resolve) =>
+                    setTimeout(resolve, 1000, true),
+                ),
             ])
+            await Promise.all([load(), fontTimedOut])
+            if (rescroll && !signal.aborted && (await fontTimedOut)) {
+                rescrollWhenFontLoads(to, font)
+            }
         }
     })
 
