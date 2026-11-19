@@ -10,6 +10,10 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ## Log
 
+### 2026-11-19
+
+- Issue #662 (current behavior in CLAUDE.md's Learnings section): alternatives rejected for the doc-sync hook's committed-change check. A branch-wide diff against `main` would re-nudge on every stop of a branch that correctly needs no doc edit. A record keyed by the hook input's `session_id` (raised by `self-review`, to stop commits made between sessions landing on the next one) would make each session's first stop record-only, so a one-shot session that commits before its first stop would never be nudged. Filtering a fast-forward pull's incoming commits by remote-tracking refs would also hide the session's own commits once pushed, and pushing before stopping is the normal flow here. A diff of a sibling branch's tip looks like an amend by parents alone; what tells them apart is that an amended commit is no longer on any local branch. A commit made and then rebased before the next stop isn't checked, accepted as rare.
+
 ### 2026-11-18
 
 - **The 2026-11-17/18 project audit filed #655-#676 and ran into usage limits, not finding limits.** Launching all 19 round-1 categories at once, as the skill then said, used up two 5-hour windows with one finding written: every agent spent its budget reading CLAUDE.md and LEARNINGS.md and setting up, then all stopped together. Running four at a time, and resuming stopped agents with `SendMessage` instead of restarting them, finished the round. Verification, the second wave and filing took two more windows, and the weekly limit then blocked agents while the main session still worked, so the last issue bodies were drafted and filed there. The skill's §2 "Usage limits" now has the batching rules.
