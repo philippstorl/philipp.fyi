@@ -6,9 +6,11 @@ on:
         branches: [main]
     workflow_dispatch:
 
+# Only PR runs cancel superseded ones, so every main push gets a complete run
+# and a failure points at the merge that caused it (#666).
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+    cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 # Explicit so least privilege doesn't depend on the repo's default token setting.
 permissions:
