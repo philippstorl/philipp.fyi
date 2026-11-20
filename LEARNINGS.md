@@ -13,6 +13,7 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 ### 2026-11-20
 
 - **Deploying before CI on `main` is an accepted gap, not gated** (issue #666, current state in CLAUDE.md's ruleset bullet). The gate would have stopped Netlify auto-publishing and triggered the production deploy from a final `ci.yml` job that `needs:` every required job, via a Netlify build hook. Declined: it needs the repo's first Actions secret (the hook URL), a dashboard change and ~5-minute slower deploys, to cover only a broken combination of two PRs that each passed CI, which is rare with one author. The cheap half shipped instead: `cancel-in-progress` is now true only for `pull_request` runs, since 61 of 336 `main` push runs had been cancelled by a newer push, losing which merge broke a later red run.
+- **No HSTS preload** (issue #665, owner decision). Two Netlify-answered URLs, the scheduled `csp-report-cleanup` function's platform `403` and `/.netlify/images`, send `max-age=31536000` without `includeSubDomains` (re-checked with `curl -sI` on 2026-11-20), and the repo can't set headers on either. Preloading is the only fix and the domain already passes every other preload requirement, but the owner accepted the residual instead: tiny impact (no cookies, no auth, only `www`), and preload removal takes months to reach browsers. Don't re-raise on a future audit without asking again.
 
 ### 2026-11-19
 
