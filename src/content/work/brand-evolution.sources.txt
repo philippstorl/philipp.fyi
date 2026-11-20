@@ -41,11 +41,14 @@ staffbase-2018-12-en.png
 
 staffbase-2018-12-de.png
   https://web.archive.org/web/20190402184240/https://staffbase.com/de/
-  Same December 2018 relaunch as above, German-language version. This
-  is the earliest available Wayback snapshot, dated April 2, 2019 —
-  about four months after the actual relaunch. Also promoting the
-  VOICES conference of April 4–5, 2019, captured two days before that
-  event.
+  Same December 2018 relaunch as above, German-language version. The
+  image was taken from this April 2, 2019 capture, two days before
+  the VOICES conference of April 4–5, 2019 it promotes. It isn't the
+  earliest snapshot: web/20181220150928 (December 20, 2018) already
+  shows the relaunch hero and the VOICES 2019 early-bird banner
+  ("Jetzt Frühbucherticket sichern!"), which directly supports the
+  caption's December 2018 date. Corrected 2026-11-20 (issue #664);
+  this entry used to call April 2, 2019 the earliest snapshot.
 
 staffbase-2019-04.png
   https://web.archive.org/web/20190418023823/https://staffbase.com/en/
@@ -158,9 +161,12 @@ Sept 2018, raw broken capture
 Gaps / things worth double-checking
 --------------------------------------
 - staffbase-2018-12-en.png and staffbase-2018-12-de.png are dated
-  "December 2018" in the case study, but the underlying Wayback
-  snapshots are from January and April 2019 respectively — the
-  earliest archive coverage available, not the relaunch date itself.
+  "December 2018" in the case study, but the images were taken from
+  Wayback snapshots from January and April 2019 respectively, not
+  from the relaunch date itself. For the English page January 28,
+  2019 is the earliest archive coverage; the German page also has a
+  December 20, 2018 snapshot showing the same design (see its entry
+  above).
   This is a deliberate choice, not an error: the relaunch happened in
   December 2018 per the actual project record, Wayback just didn't
   crawl it until later. Flagging here so the gap is documented rather
