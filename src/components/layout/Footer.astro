@@ -22,10 +22,10 @@ const year = new Date().getFullYear()
             </a>
         </p>
 
-        <ul class="flex items-center gap-2">
+        <ul class="flex items-center gap-2 print:flex-wrap">
             {socialLinks.map((link) => {
                 const isExternal = link.href.startsWith('http')
-                return <li>
+                return <li class:list={[!isExternal && 'print:hidden']}>
                     <a
                         href={link.href}
                         aria-label={
@@ -35,7 +35,7 @@ const year = new Date().getFullYear()
                         }
                         target={isExternal ? '_blank' : undefined}
                         rel={isExternal ? 'noopener noreferrer' : undefined}
-                        class="flex h-11 w-11 items-center justify-center rounded-md text-muted transition-colors duration-150 hover:bg-card hover:text-foreground"
+                        class="flex h-11 w-11 items-center justify-center rounded-md text-muted print:h-auto print:min-h-11 print:w-auto print:gap-1 transition-colors duration-150 hover:bg-card hover:text-foreground"
                     >
                         <SocialIcon icon={link.icon} size={18} />
                     </a>

@@ -177,8 +177,9 @@ html {
     }
 }
 
-/* Keeps headings with what follows, figures whole, and external link targets
-   readable on paper (issue #533). Screen-only header controls use print:hidden. */
+/* Keeps headings with what follows, figures whole, and every external link's
+   target readable on paper (issues #533, #673). Screen-only header controls and
+   the footer's icon-only Mail link use print:hidden. */
 @layer base {
     @media print {
         .prose :is(h2, h3) {
@@ -189,7 +190,7 @@ html {
             break-inside: avoid;
         }
 
-        .prose a[href^="http"]::after {
+        a[href^="http"]::after {
             content: " (" attr(href) ")";
             font-size: 0.875em;
             overflow-wrap: anywhere;
