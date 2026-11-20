@@ -193,8 +193,19 @@ if (cardsWithCover === 0) {
 // Classes without a CSS rule in the stylesheets the page itself loads. Marker
 // classes (group, peer, prose) appear inside :where(...), so they resolve.
 // Only static markup is seen: a class a script adds isn't checked.
+// Highlighter output counts as generated: `language-*` hints anywhere, and
+// every class on or inside <pre>/<code> (Shiki's, Prism's token classes).
 const allowedClass = (token) =>
-    token === 'lucide' || token.startsWith('lucide-')
+    token === 'lucide' ||
+    token.startsWith('lucide-') ||
+    token.startsWith('language-')
+// Comments and <script>/<style> alternate first, so their content is
+// consumed whole and a <pre> inside one can't start a match.
+const withoutCodeElements = (html) =>
+    html.replace(
+        /<!--[\s\S]*?-->|<(script|style)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?<\/\1\s*>|<(pre|code)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*>[\s\S]*?<\/\2\s*>/gi,
+        '',
+    )
 const unescapeCss = (s) =>
     s.replace(/\\([0-9a-fA-F]{1,6})\s?|\\(.)/g, (_, hex, ch) =>
         hex ? String.fromCodePoint(parseInt(hex, 16)) : ch,
@@ -232,7 +243,7 @@ for (const page of pages) {
     )) {
         for (const s of classSelectors(css)) selectors.add(s)
     }
-    for (const tag of page.tags) {
+    for (const tag of parse(withoutCodeElements(page.html)).tags) {
         for (const token of (tag.attrs.get('class') ?? '').split(/\s+/)) {
             if (!token) continue
             classTokens.add(token)
