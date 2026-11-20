@@ -10,6 +10,10 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ## Log
 
+### 2026-11-20
+
+- **Deploying before CI on `main` is an accepted gap, not gated** (issue #666, current state in CLAUDE.md's ruleset bullet). The gate would have stopped Netlify auto-publishing and triggered the production deploy from a final `ci.yml` job that `needs:` every required job, via a Netlify build hook. Declined: it needs the repo's first Actions secret (the hook URL), a dashboard change and ~5-minute slower deploys, to cover only a broken combination of two PRs that each passed CI, which is rare with one author. The cheap half shipped instead: `cancel-in-progress` is now true only for `pull_request` runs, since 61 of 336 `main` push runs had been cancelled by a newer push, losing which merge broke a later red run.
+
 ### 2026-11-19
 
 - Issue #662 (current behavior in CLAUDE.md's Learnings section): alternatives rejected for the doc-sync hook's committed-change check. A branch-wide diff against `main` would re-nudge on every stop of a branch that correctly needs no doc edit. A record keyed by the hook input's `session_id` (raised by `self-review`, to stop commits made between sessions landing on the next one) would make each session's first stop record-only, so a one-shot session that commits before its first stop would never be nudged. Filtering a fast-forward pull's incoming commits by remote-tracking refs would also hide the session's own commits once pushed, and pushing before stopping is the normal flow here. A diff of a sibling branch's tip looks like an amend by parents alone; what tells them apart is that an amended commit is no longer on any local branch. A commit made and then rebased before the next stop isn't checked, accepted as rare.

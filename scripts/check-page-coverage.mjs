@@ -9,7 +9,8 @@ import { pages } from './contrast-pages.mjs'
 // it against the built HTML in dist/ in both directions. Also fails on a
 // block element inside an open <p> (e.g. MDX wrapping a raw <p>'s line-broken
 // text in its own <p>), which the browser splits into stray paragraphs, and on
-// a sitemap that's missing or lists a noindex page (e.g. a bare sitemap()).
+// a sitemap that's missing, lists a noindex page (e.g. a bare sitemap()) or
+// leaves out an indexable one.
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const dist = path.join(root, 'dist')
 
@@ -57,12 +58,24 @@ const blockInParagraph = new RegExp(
     `(<p(?=[\\s/>])${attrsSource}>)(?:(?!</p\\s*>)[\\s\\S])*?<(${pClosers})(?=[\\s/>])`,
     'gi',
 )
+const htmlByFile = new Map(
+    await Promise.all(
+        htmlFiles.map(async (f) => [f, await fs.readFile(f, 'utf8')]),
+    ),
+)
 const nestingProblems = []
 for (const file of htmlFiles) {
-    const html = (await fs.readFile(file, 'utf8')).replace(
-        /<!--[\s\S]*?-->|<(script|style|template|textarea|svg)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*(?<!\/)>[\s\S]*?<\/\1\s*>/gi,
-        '',
-    )
+    // Repeat until stable, so a removal can't splice a new comment or tag
+    // together (CodeQL js/incomplete-multi-character-sanitization).
+    let html = htmlByFile.get(file)
+    let previous
+    do {
+        previous = html
+        html = html.replace(
+            /<!--[\s\S]*?-->|<(script|style|template|textarea|svg)(?=[\s/>])(?:[^>"']|"[^"]*"|'[^']*')*(?<!\/)>[\s\S]*?<\/\1\s*>/gi,
+            '',
+        )
+    } while (html !== previous)
     for (const [, openTag, tag] of html.matchAll(blockInParagraph)) {
         nestingProblems.push(
             `${toRoutePath(file)}: <${tag.toLowerCase()}> inside ${openTag}`,
@@ -74,6 +87,7 @@ const sitemapFiles = files.filter((f) =>
     /^sitemap-\d+\.xml$/.test(path.relative(dist, f)),
 )
 if (sitemapFiles.length === 0) sitemapProblems.push('no dist/sitemap-*.xml')
+const sitemapPaths = new Set()
 for (const file of sitemapFiles) {
     const xml = await fs.readFile(file, 'utf8')
     const locs = [...xml.matchAll(/<loc>([^<]*)<\/loc>/g)]
@@ -82,6 +96,7 @@ for (const file of sitemapFiles) {
     }
     for (const [, loc] of locs) {
         const { pathname } = new URL(loc)
+        sitemapPaths.add(decodeURIComponent(pathname))
         const page = decodeURIComponent(builtHtmlPath(pathname))
         let html
         try {
@@ -93,6 +108,17 @@ for (const file of sitemapFiles) {
         }
         if (isNoindexHtml(html)) {
             sitemapProblems.push(`${pathname}: listed, but the page is noindex`)
+        }
+    }
+}
+// Flat /404 and /500 are status pages, never sitemap entries.
+if (sitemapFiles.length > 0) {
+    for (const file of htmlFiles) {
+        const route = toRoutePath(file)
+        if (route === '/404' || route === '/500' || sitemapPaths.has(route))
+            continue
+        if (!isNoindexHtml(htmlByFile.get(file))) {
+            sitemapProblems.push(`${route}: indexable, but not in the sitemap`)
         }
     }
 }
@@ -170,5 +196,5 @@ if (problemCount > 0) {
 }
 
 console.log(
-    `Page coverage check passed (${listedPaths.size} listed pages match the build, no block elements inside a <p>, no noindex page in the sitemap).`,
+    `Page coverage check passed (${listedPaths.size} listed pages match the build, no block elements inside a <p>, the sitemap lists exactly the indexable pages).`,
 )

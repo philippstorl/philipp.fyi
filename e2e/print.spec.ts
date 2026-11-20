@@ -1,4 +1,4 @@
-import { test, expect, type Page } from '@playwright/test'
+import { test, expect, type Locator, type Page } from '@playwright/test'
 
 // Paper is white and Chrome drops page backgrounds by default, so the dark
 // theme's light text would print near-invisible (issue #528).
@@ -124,17 +124,56 @@ test.describe('Print layout (issue #533)', () => {
         await context.close()
     })
 
-    test('prose external links print their URL, internal ones do not', async ({
+    const afterContent = (link: Locator) =>
+        link.evaluate((el) => getComputedStyle(el, '::after').content)
+    const linkedIn = 'a[href*="linkedin.com/in/philipp-storl"]'
+
+    for (const path of ['/', '/contact/']) {
+        test(`${path}'s LinkedIn button prints its URL (issue #673)`, async ({
+            page,
+        }) => {
+            await page.goto(path)
+            const button = page.locator(`main ${linkedIn}`).first()
+            expect(await afterContent(button)).toBe('none')
+            await page.emulateMedia({ media: 'print' })
+            expect(await afterContent(button)).toContain(
+                'linkedin.com/in/philipp-storl',
+            )
+        })
+    }
+
+    test('footer social links print their URL on one line (issue #673)', async ({
+        page,
+    }) => {
+        await page.setViewportSize({ width: 718, height: 1000 })
+        await page.goto('/work/brand-evolution/')
+        const footer = page.locator('#site-footer')
+        const footerLinkedIn = footer.locator(linkedIn)
+        const footerContact = footer.locator('a[href="/contact/"]')
+
+        expect(await afterContent(footerLinkedIn)).toBe('none')
+        await expect(footerContact).toBeVisible()
+
+        await page.emulateMedia({ media: 'print' })
+        expect(await afterContent(footerLinkedIn)).toContain(
+            'linkedin.com/in/philipp-storl',
+        )
+        // The 44px icon box widens instead of wrapping the URL into a narrow
+        // column, and the icon-only Mail link means nothing on paper.
+        const box = await footerLinkedIn.boundingBox()
+        expect(box?.width).toBeGreaterThan(44)
+        expect(box?.height).toBe(44)
+        await expect(footerContact).toBeHidden()
+    })
+
+    test('external links in article text print their URL, internal ones do not', async ({
         page,
     }) => {
         await page.goto('/privacy/')
-        const afterContent = (selector: string) =>
-            page
-                .locator(selector)
-                .first()
-                .evaluate((link) => getComputedStyle(link, '::after').content)
-        const external = 'article a[href="https://automattic.com/privacy/"]'
-        const internal = 'article a[href="/contact/"]'
+        const external = page
+            .locator('article a[href="https://automattic.com/privacy/"]')
+            .first()
+        const internal = page.locator('article a[href="/contact/"]').first()
 
         expect(await afterContent(external)).toBe('none')
 

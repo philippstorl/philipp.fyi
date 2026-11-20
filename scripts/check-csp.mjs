@@ -249,6 +249,38 @@ const header = {
 const headerUrlDirectives = {
     img: effectiveSources(headerPolicy, 'img-src'),
     media: effectiveSources(headerPolicy, 'media-src'),
+    script: header.script,
+    style: header.style,
+    font: effectiveSources(headerPolicy, 'font-src'),
+    frame: effectiveSources(headerPolicy, 'frame-src', 'child-src'),
+    object: effectiveSources(headerPolicy, 'object-src'),
+    // No default-src fallback: without form-action any target is allowed.
+    form: sourceList(headerPolicy, 'form-action')
+        ? {
+              directive: 'form-action',
+              sources: sourceList(headerPolicy, 'form-action'),
+          }
+        : 'unrestricted',
+}
+// Sources that let an injected <script src="data:..."> (or any host) through
+// hashes, which never cover an element with a src (#335).
+const unsafeScriptSources =
+    /^(?:data:|blob:|filesystem:|https?:|(?:https?:\/\/)?\*(?::\*)?\/?)$/i
+const scriptSourceProblems = (sources, where) =>
+    sources
+        .filter((token) => unsafeScriptSources.test(token))
+        .map(
+            (token) =>
+                `${where} allows ${token}, which lets an injected <script src> run (see CLAUDE.md's script-src bullet, #335)`,
+        )
+const unsafeScriptProblems = new Set()
+for (const directives of [['script-src-elem', 'script-src'], ['script-src']]) {
+    const effective = effectiveSources(headerPolicy, ...directives)
+    for (const problem of scriptSourceProblems(
+        effective?.sources ?? [],
+        `netlify.toml's header ${effective?.directive}`,
+    ))
+        unsafeScriptProblems.add(problem)
 }
 const upgradesInsecure =
     sourceList(headerPolicy, 'upgrade-insecure-requests') !== null
@@ -260,7 +292,50 @@ const urlAttributes = {
     video: { src: 'media', poster: 'img' },
     audio: { src: 'media' },
     image: { href: 'img', 'xlink:href': 'img' },
-    input: { src: 'img' },
+    input: { src: 'img', formaction: 'form' },
+    script: { src: 'script' },
+    iframe: { src: 'frame' },
+    frame: { src: 'frame' },
+    form: { action: 'form' },
+    button: { formaction: 'form' },
+    object: { data: 'object' },
+    embed: { src: 'object' },
+    track: { src: 'media' },
+    // Islands import these at hydration, under script-src.
+    'astro-island': {
+        'component-url': 'script',
+        'renderer-url': 'script',
+        'before-hydration-url': 'script',
+    },
+}
+const directiveNames = {
+    img: 'img-src',
+    media: 'media-src',
+    script: 'script-src',
+    style: 'style-src',
+    font: 'font-src',
+    frame: 'frame-src',
+    object: 'object-src',
+    form: 'form-action',
+}
+// <link> loads by rel (and, for preloads, by as).
+const preloadKinds = {
+    font: 'font',
+    style: 'style',
+    script: 'script',
+    image: 'img',
+    audio: 'media',
+    video: 'media',
+    track: 'media',
+}
+function linkKind(attrs) {
+    const rel = (attrs.get('rel') ?? '').toLowerCase().split(/\s+/)
+    if (rel.includes('stylesheet')) return 'style'
+    if (rel.includes('modulepreload')) return 'script'
+    if (rel.includes('icon') || rel.includes('apple-touch-icon')) return 'img'
+    if (rel.includes('preload'))
+        return preloadKinds[(attrs.get('as') ?? '').toLowerCase()]
+    return undefined
 }
 // Inline elements' verdicts per page are identical, so decide each once.
 const headerVerdicts = new Map()
@@ -300,6 +375,17 @@ for (const file of htmlFiles) {
     }
     for (const [kind, hashes] of Object.entries(allowed)) {
         if (!hashes) problems.push(`${page}: meta CSP has no ${kind}-src`)
+    }
+    for (const directive of ['script-src-elem', 'script-src']) {
+        for (const problem of scriptSourceProblems(
+            sourceList(policy, directive) ?? [],
+            `the meta CSP's ${directive} (security.csp in astro.config.mjs)`,
+        ))
+            unsafeScriptProblems.add(problem)
+    }
+    const metaUrlDirectives = {
+        script: effectiveSources(policy, 'script-src-elem', 'script-src'),
+        style: effectiveSources(policy, 'style-src-elem', 'style-src'),
     }
     pages.push({ page, allowed })
 
@@ -349,18 +435,40 @@ for (const file of htmlFiles) {
     }
 
     const pageUrl = new URL(`/${page.split(path.sep).join('/')}`, siteOrigin)
-    for (const [tag, attrSource] of tags) {
-        const name = tag.match(/^<([a-zA-Z]+)/)?.[1].toLowerCase()
-        const loaders = urlAttributes[name]
-        if (!loaders) continue
+    // As for inline code, the meta CSP only governs what's parsed after it.
+    const markupMetaEnd = [...markup.matchAll(metaPattern)]
+        .filter(
+            ([, attrs]) =>
+                parseAttrs(attrs).get('http-equiv')?.toLowerCase() ===
+                'content-security-policy',
+        )
+        .map((m) => m.index + m[0].length)[0]
+    for (const { 0: tag, 1: attrSource, index } of tags) {
+        const name = tag.match(/^<([a-zA-Z][\w:-]*)/)?.[1].toLowerCase()
         const attrs = parseAttrs(attrSource)
+        const loaders =
+            name === 'link'
+                ? { href: linkKind(attrs) }
+                : { ...urlAttributes[name] }
         if (name === 'input' && attrs.get('type')?.toLowerCase() !== 'image')
-            continue
+            delete loaders.src
         for (const [attr, kindOfUrl] of Object.entries(loaders)) {
-            if (!attrs.has(attr)) continue
+            if (!kindOfUrl || !attrs.has(attr)) continue
             const value = decodeEntities(attrs.get(attr))
             const raws = attr === 'srcset' ? srcsetUrls(value) : [value.trim()]
-            const { directive, sources } = headerUrlDirectives[kindOfUrl] ?? {}
+            const policies = [
+                {
+                    where: "netlify.toml's header",
+                    effective: headerUrlDirectives[kindOfUrl],
+                },
+            ]
+            if (metaUrlDirectives[kindOfUrl] && index >= markupMetaEnd) {
+                policies.push({
+                    where: "the meta CSP's",
+                    suffix: " (astro.config.mjs's security.csp)",
+                    effective: metaUrlDirectives[kindOfUrl],
+                })
+            }
             for (const raw of raws) {
                 let url
                 try {
@@ -370,13 +478,18 @@ for (const file of htmlFiles) {
                 } catch {
                     url = null
                 }
-                if (url && sources && allowsUrl(sources, url)) continue
-                record(
-                    blockedUrls,
-                    `${directive} ${raw}`,
-                    { directive, raw },
-                    page,
-                )
+                for (const { where, suffix = '', effective } of policies) {
+                    if (effective === 'unrestricted') continue
+                    if (url && effective && allowsUrl(effective.sources, url))
+                        continue
+                    const directive = `${where} ${effective?.directive ?? `${directiveNames[kindOfUrl]} (missing, and no default-src)`}${suffix}`
+                    record(
+                        blockedUrls,
+                        `${directive} ${raw}`,
+                        { directive, raw, kind: kindOfUrl },
+                        page,
+                    )
+                }
             }
         }
     }
@@ -413,9 +526,13 @@ for (const { kind, label, foundOn } of headerBlocked.values()) {
     problems.push(`${label} on ${where(foundOn)} is blocked: ${reason}`)
 }
 
-for (const { directive, raw, foundOn } of blockedUrls.values()) {
+for (const { directive, raw, kind, foundOn } of blockedUrls.values()) {
+    const fix =
+        kind === 'form'
+            ? 'post to this site (e.g. Netlify Forms)'
+            : 'self-host the file next to the content that uses it'
     problems.push(
-        `${raw} on ${where(foundOn)} is blocked by netlify.toml's header ${directive ?? 'img-src/default-src (missing)'}: download the file next to the content that uses it, or widen ${directive ?? 'img-src'} in netlify.toml deliberately`,
+        `${raw} on ${where(foundOn)} is blocked by ${directive}: ${fix}, or widen ${directiveNames[kind]} in ${kind === 'script' || kind === 'style' ? "netlify.toml and astro.config.mjs's security.csp" : 'netlify.toml'} deliberately`,
     )
 }
 
@@ -426,14 +543,18 @@ if (inlineElements.size === 0) {
     process.exit(1)
 }
 
+if (unsafeScriptProblems.size > 0) {
+    console.error('Unsafe script-src sources:')
+    for (const problem of unsafeScriptProblems) console.error(`  ${problem}`)
+}
 if (problems.length > 0) {
     console.error(
         "Built HTML the meta CSP (security.csp in astro.config.mjs) or netlify.toml's CSP header will block:",
     )
     for (const problem of problems) console.error(`  ${problem}`)
-    process.exit(1)
 }
+if (problems.length > 0 || unsafeScriptProblems.size > 0) process.exit(1)
 
 console.log(
-    `CSP check passed (${htmlFiles.length} pages, ${inlineElements.size} distinct inline scripts/styles after the meta CSP, all inline code and image/media URLs allowed by netlify.toml's header, no style attributes).`,
+    `CSP check passed (${htmlFiles.length} pages, ${inlineElements.size} distinct inline scripts/styles after the meta CSP, all inline code and script/style/font/image/media/frame/object/form URLs allowed by both policies, no data:, blob: or wildcard script source, no style attributes).`,
 )
