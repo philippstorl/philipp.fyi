@@ -1,14 +1,12 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { listDistFiles } from './dist-files.mjs'
+import { dist, listDistFiles } from './dist-files.mjs'
 
 // An inline <script type="module"> makes ClientRouter inject a
 // <script src="data:..."> barrier on soft navigation, which script-src
 // (no data:) blocks. Runs against dist/.
-const root = path.resolve(import.meta.dirname, '..')
-const dist = path.join(root, 'dist')
 
-const files = await listDistFiles(dist)
+const files = await listDistFiles()
 
 const htmlFiles = files.filter((f) => f.endsWith('.html'))
 if (htmlFiles.length === 0) {

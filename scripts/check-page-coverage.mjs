@@ -1,6 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { listDistFiles } from './dist-files.mjs'
+import { dist, listDistFiles } from './dist-files.mjs'
 import { builtHtmlPath, isNoindexHtml } from '../src/utils/sitemap.ts'
 import { pages } from './contrast-pages.mjs'
 
@@ -11,8 +11,6 @@ import { pages } from './contrast-pages.mjs'
 // text in its own <p>), which the browser splits into stray paragraphs, and on
 // a sitemap that's missing, lists a noindex page (e.g. a bare sitemap()) or
 // leaves out an indexable one.
-const root = path.resolve(import.meta.dirname, '..')
-const dist = path.join(root, 'dist')
 
 // Built pages deliberately left out of contrast-pages.mjs. Empty today:
 // /404, /privacy/ and (while empty) /blog/ are noindex but still scanned.
@@ -27,7 +25,7 @@ function toRoutePath(file) {
     return `/${rel.slice(0, -'.html'.length)}`
 }
 
-const files = await listDistFiles(dist)
+const files = await listDistFiles()
 
 const htmlFiles = files.filter((f) => f.endsWith('.html'))
 const builtPaths = new Set(htmlFiles.map(toRoutePath))

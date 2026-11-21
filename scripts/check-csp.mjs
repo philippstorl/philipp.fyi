@@ -1,13 +1,12 @@
 import crypto from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
-import { listDistFiles } from './dist-files.mjs'
+import { dist, listDistFiles } from './dist-files.mjs'
 import { loadHeaderRules, rulesSetting } from './netlify-headers.mjs'
 
 // The meta CSP only exists in built output and netlify.toml's header CSP only
 // in production, so dev-server tests see neither. Runs against dist/.
 const root = path.resolve(import.meta.dirname, '..')
-const dist = path.join(root, 'dist')
 
 // Exactly one rule may set it, across the whole file, and it has to cover pages.
 const cspRules = rulesSetting(
@@ -42,7 +41,7 @@ if (!siteMatch) {
 }
 const siteOrigin = new URL(siteMatch[1]).origin
 
-const files = await listDistFiles(dist)
+const files = await listDistFiles()
 
 const htmlFiles = files.filter((f) => f.endsWith('.html'))
 if (htmlFiles.length === 0) {

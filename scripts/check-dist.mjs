@@ -1,8 +1,8 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { listDistFiles } from './dist-files.mjs'
 import { load } from 'js-yaml'
 import sharp from 'sharp'
+import { dist, listDistFiles } from './dist-files.mjs'
 import { recommendations } from '../src/data/recommendations.ts'
 
 // Built-output checks that no other gate sees: an em dash in site copy, a
@@ -10,9 +10,8 @@ import { recommendations } from '../src/data/recommendations.ts'
 // class with no CSS rule (Tailwind silently drops a mistyped utility), and a
 // same-origin URL in markup with no built file behind it.
 const root = path.resolve(import.meta.dirname, '..')
-const dist = path.join(root, 'dist')
 
-const files = await listDistFiles(dist)
+const files = await listDistFiles()
 
 const EM_DASH = String.fromCodePoint(0x2014)
 

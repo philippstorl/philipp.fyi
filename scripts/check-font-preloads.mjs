@@ -1,15 +1,13 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { listDistFiles } from './dist-files.mjs'
+import { dist, listDistFiles } from './dist-files.mjs'
 
 // A font preload the CSS can't reuse (href matching no built @font-face src,
 // or no crossorigin) downloads the font twice. One for a face the text doesn't
 // use first (italic, or a subset without basic Latin) wastes the early fetch,
 // and every page must preload the upright Latin Geist. Runs against dist/.
-const root = path.resolve(import.meta.dirname, '..')
-const dist = path.join(root, 'dist')
 
-const files = await listDistFiles(dist)
+const files = await listDistFiles()
 
 // Lightning CSS writes U+0000-00FF as U+??, so expand ? to 0 (low) / F (high).
 function coversCapitalA(unicodeRange) {
