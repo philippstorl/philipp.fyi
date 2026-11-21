@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import fs from 'fs/promises'
 import path from 'path'
+import { listDistFiles } from './dist-files.mjs'
 import { loadHeaderRules, rulesSetting } from './netlify-headers.mjs'
 
 // The meta CSP only exists in built output and netlify.toml's header CSP only
@@ -41,25 +42,7 @@ if (!siteMatch) {
 }
 const siteOrigin = new URL(siteMatch[1]).origin
 
-async function walk(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true })
-    const files = await Promise.all(
-        entries.map((entry) => {
-            const full = path.join(dir, entry.name)
-            return entry.isDirectory() ? walk(full) : [full]
-        }),
-    )
-    return files.flat()
-}
-
-let files
-try {
-    files = await walk(dist)
-} catch (error) {
-    if (error.code !== 'ENOENT') throw error
-    console.error('dist/ not found. Run `npm run build` first.')
-    process.exit(1)
-}
+const files = await listDistFiles(dist)
 
 const htmlFiles = files.filter((f) => f.endsWith('.html'))
 if (htmlFiles.length === 0) {

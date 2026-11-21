@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import { listDistFiles } from './dist-files.mjs'
 import { builtHtmlPath, isNoindexHtml } from '../src/utils/sitemap.ts'
 import { pages } from './contrast-pages.mjs'
 
@@ -17,17 +18,6 @@ const dist = path.join(root, 'dist')
 // /404, /privacy/ and (while empty) /blog/ are noindex but still scanned.
 const excludedPaths = new Set()
 
-async function walk(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true })
-    const files = await Promise.all(
-        entries.map((entry) => {
-            const full = path.join(dir, entry.name)
-            return entry.isDirectory() ? walk(full) : [full]
-        }),
-    )
-    return files.flat()
-}
-
 // dist/work/foo/index.html -> /work/foo/; flat dist/404.html -> /404.
 function toRoutePath(file) {
     const rel = path.relative(dist, file).split(path.sep).join('/')
@@ -37,14 +27,7 @@ function toRoutePath(file) {
     return `/${rel.slice(0, -'.html'.length)}`
 }
 
-let files
-try {
-    files = await walk(dist)
-} catch (error) {
-    if (error.code !== 'ENOENT') throw error
-    console.error('dist/ not found. Run `npm run build` first.')
-    process.exit(1)
-}
+const files = await listDistFiles(dist)
 
 const htmlFiles = files.filter((f) => f.endsWith('.html'))
 const builtPaths = new Set(htmlFiles.map(toRoutePath))

@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import { listDistFiles } from './dist-files.mjs'
 
 // An inline <script type="module"> makes ClientRouter inject a
 // <script src="data:..."> barrier on soft navigation, which script-src
@@ -7,25 +8,7 @@ import path from 'path'
 const root = path.resolve(import.meta.dirname, '..')
 const dist = path.join(root, 'dist')
 
-async function walk(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true })
-    const files = await Promise.all(
-        entries.map((entry) => {
-            const full = path.join(dir, entry.name)
-            return entry.isDirectory() ? walk(full) : [full]
-        }),
-    )
-    return files.flat()
-}
-
-let files
-try {
-    files = await walk(dist)
-} catch (error) {
-    if (error.code !== 'ENOENT') throw error
-    console.error('dist/ not found. Run `npm run build` first.')
-    process.exit(1)
-}
+const files = await listDistFiles(dist)
 
 const htmlFiles = files.filter((f) => f.endsWith('.html'))
 if (htmlFiles.length === 0) {

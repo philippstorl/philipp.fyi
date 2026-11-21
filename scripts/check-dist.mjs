@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import { listDistFiles } from './dist-files.mjs'
 import { load } from 'js-yaml'
 import sharp from 'sharp'
 import { recommendations } from '../src/data/recommendations.ts'
@@ -11,25 +12,7 @@ import { recommendations } from '../src/data/recommendations.ts'
 const root = path.resolve(import.meta.dirname, '..')
 const dist = path.join(root, 'dist')
 
-async function walk(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true })
-    const files = await Promise.all(
-        entries.map((entry) => {
-            const full = path.join(dir, entry.name)
-            return entry.isDirectory() ? walk(full) : [full]
-        }),
-    )
-    return files.flat()
-}
-
-let files
-try {
-    files = await walk(dist)
-} catch (error) {
-    if (error.code !== 'ENOENT') throw error
-    console.error('dist/ not found. Run `npm run build` first.')
-    process.exit(1)
-}
+const files = await listDistFiles(dist)
 
 const EM_DASH = String.fromCodePoint(0x2014)
 
