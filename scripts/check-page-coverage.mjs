@@ -1,6 +1,5 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import { builtHtmlPath, isNoindexHtml } from '../src/utils/sitemap.ts'
 import { pages } from './contrast-pages.mjs'
 
@@ -11,7 +10,7 @@ import { pages } from './contrast-pages.mjs'
 // text in its own <p>), which the browser splits into stray paragraphs, and on
 // a sitemap that's missing, lists a noindex page (e.g. a bare sitemap()) or
 // leaves out an indexable one.
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const root = path.resolve(import.meta.dirname, '..')
 const dist = path.join(root, 'dist')
 
 // Built pages deliberately left out of contrast-pages.mjs. Empty today:

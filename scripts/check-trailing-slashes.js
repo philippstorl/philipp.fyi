@@ -1,10 +1,7 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { fileURLToPath } from 'url'
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const root = path.resolve(__dirname, '..')
+const root = path.resolve(import.meta.dirname, '..')
 const allowedExtensions = new Set(['.astro', '.ts', '.tsx', '.js'])
 // Markdown is only scanned under src/ (site content); repo docs quote bad examples.
 const contentExtensions = new Set(['.md', '.mdx'])

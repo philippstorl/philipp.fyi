@@ -1,6 +1,5 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { fileURLToPath } from 'url'
 import { load } from 'js-yaml'
 import sharp from 'sharp'
 import { recommendations } from '../src/data/recommendations.ts'
@@ -9,7 +8,7 @@ import { recommendations } from '../src/data/recommendations.ts'
 // case-study OG card that lost its cover panel (the route only warns), and a
 // class with no CSS rule (Tailwind silently drops a mistyped utility), and a
 // same-origin URL in markup with no built file behind it.
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const root = path.resolve(import.meta.dirname, '..')
 const dist = path.join(root, 'dist')
 
 async function walk(dir) {

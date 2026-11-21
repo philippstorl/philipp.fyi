@@ -1,8 +1,7 @@
 import { execFileSync } from 'child_process'
 import fs from 'fs'
-import { dirname, resolve } from 'path'
+import { resolve } from 'path'
 import tty from 'tty'
-import { fileURLToPath } from 'url'
 
 // additionalContext on Stop continues the turn; nudge once, not on every continuation.
 // tty.isatty, not process.stdin.isTTY: touching process.stdin makes a pipe non-blocking (EAGAIN).
@@ -33,7 +32,7 @@ const tryGit = (...args) => {
 const toplevel = () => tryGit('rev-parse', '--show-toplevel')?.trim()
 let root = toplevel()
 if (!root) {
-    cwd = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+    cwd = resolve(import.meta.dirname, '..')
     root = toplevel()
 }
 if (!root) process.exit(0)

@@ -1,11 +1,10 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { fileURLToPath } from 'url'
 
 // An inline <script type="module"> makes ClientRouter inject a
 // <script src="data:..."> barrier on soft navigation, which script-src
 // (no data:) blocks. Runs against dist/.
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const root = path.resolve(import.meta.dirname, '..')
 const dist = path.join(root, 'dist')
 
 async function walk(dir) {

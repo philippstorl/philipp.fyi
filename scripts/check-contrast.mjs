@@ -1,14 +1,11 @@
 import fs from 'node:fs'
 import path from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { expectedResultFileNames } from './contrast-pages.mjs'
 
 // Aggregates axe-core contrast results into a report (see CLAUDE.md).
 // Report-only on violations, but exits 1 if the scan itself is incomplete.
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
-const root = path.resolve(__dirname, '..')
+const root = path.resolve(import.meta.dirname, '..')
 
 const resultsDir = path.join(root, 'contrast-results')
 const allowlistPath = path.join(root, 'contrast-allowlist.json')

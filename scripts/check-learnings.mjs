@@ -2,13 +2,12 @@ import { spawnSync } from 'child_process'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { fileURLToPath } from 'url'
 
 // The SessionStart hook runs load-learnings.js with `2>/dev/null || true`, so
 // a crash or a malformed digest silently drops LEARNINGS.md from every
 // session. Runs the hook's own command without that suffix and checks what
 // it would inject.
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const root = path.resolve(import.meta.dirname, '..')
 const read = (file) => fs.readFileSync(path.join(root, file), 'utf8')
 
 // Claude Code only previews an additionalContext over this many characters.
