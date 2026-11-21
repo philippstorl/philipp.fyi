@@ -1,6 +1,6 @@
 ---
 import type { ImageMetadata } from 'astro'
-import { getImage } from 'astro:assets'
+import { getImage, imageConfig } from 'astro:assets'
 import ResponsiveImage, {
     type ResponsiveImageSizing,
 } from './ResponsiveImage.astro'
@@ -41,12 +41,14 @@ if (typeof sizing.sizes !== 'string') {
     )
 }
 
-// The inline image is deliberately downscaled; the lightbox needs a full-
-// resolution source of its own, handed off via `data-lightbox-src`.
+// Full-resolution source for the lightbox, handed off via `data-lightbox-src`.
 const lightboxImage = await getImage({
     src,
     format: 'webp',
     width: Math.min(src.width, LIGHTBOX_MAX_WIDTH),
+    // <Image>'s layout defaults, so a same-size srcset entry and this share one file.
+    fit: imageConfig.objectFit ?? 'cover',
+    position: imageConfig.objectPosition ?? 'center',
 })
 ---
 
