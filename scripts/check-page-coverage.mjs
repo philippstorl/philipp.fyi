@@ -1,5 +1,6 @@
 import fs from 'fs/promises'
 import path from 'path'
+import { dist, listDistFiles } from './dist-files.mjs'
 import { builtHtmlPath, isNoindexHtml } from '../src/utils/sitemap.ts'
 import { pages } from './contrast-pages.mjs'
 
@@ -10,23 +11,10 @@ import { pages } from './contrast-pages.mjs'
 // text in its own <p>), which the browser splits into stray paragraphs, and on
 // a sitemap that's missing, lists a noindex page (e.g. a bare sitemap()) or
 // leaves out an indexable one.
-const root = path.resolve(import.meta.dirname, '..')
-const dist = path.join(root, 'dist')
 
 // Built pages deliberately left out of contrast-pages.mjs. Empty today:
 // /404, /privacy/ and (while empty) /blog/ are noindex but still scanned.
 const excludedPaths = new Set()
-
-async function walk(dir) {
-    const entries = await fs.readdir(dir, { withFileTypes: true })
-    const files = await Promise.all(
-        entries.map((entry) => {
-            const full = path.join(dir, entry.name)
-            return entry.isDirectory() ? walk(full) : [full]
-        }),
-    )
-    return files.flat()
-}
 
 // dist/work/foo/index.html -> /work/foo/; flat dist/404.html -> /404.
 function toRoutePath(file) {
@@ -37,14 +25,7 @@ function toRoutePath(file) {
     return `/${rel.slice(0, -'.html'.length)}`
 }
 
-let files
-try {
-    files = await walk(dist)
-} catch (error) {
-    if (error.code !== 'ENOENT') throw error
-    console.error('dist/ not found. Run `npm run build` first.')
-    process.exit(1)
-}
+const files = await listDistFiles()
 
 const htmlFiles = files.filter((f) => f.endsWith('.html'))
 const builtPaths = new Set(htmlFiles.map(toRoutePath))

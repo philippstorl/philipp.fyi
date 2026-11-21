@@ -348,7 +348,7 @@ netlify.toml       → Build, Node version, security headers, cache headers, 404
 playwright.config.ts
 playwright.contrast.config.ts  → Report-only contrast scan config (npm run test:contrast)
 playwright.functions.config.ts → Browserless Playwright config for tests/functions/
-scripts/           → Node scripts behind the check:*/generate:* npm scripts and .claude/settings.json's hooks, plus contrast-pages.mjs (the page list shared by the a11y, contrast and meta-description tests) and netlify-headers.mjs (netlify.toml's header rules resolved per path, shared by check:csp and tests/functions/)
+scripts/           → Node scripts behind the check:*/generate:* npm scripts and .claude/settings.json's hooks, plus contrast-pages.mjs (the page list shared by the a11y, contrast and meta-description tests), netlify-headers.mjs (netlify.toml's header rules resolved per path, shared by check:csp and tests/functions/) and dist-files.mjs (the dist/ file listing shared by the check scripts that read the build)
 ```
 
 ## Security
