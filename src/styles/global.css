@@ -4,6 +4,12 @@
 /* Provides `prose` classes for rendering MDX content */
 @plugin "@tailwindcss/typography";
 
+/* Words from src/ comments and prose that no markup uses. A real class with one of these names must come off this list. */
+@source not
+    inline(
+        "container filter inline invisible ring shrink static table transition visible"
+    );
+
 @import "@fontsource-variable/geist/index.css";
 @import "@fontsource-variable/geist/wght-italic.css";
 @import "@fontsource/jetbrains-mono/latin-400.css";

@@ -10,6 +10,10 @@ Entries are added by hand or with the `log-learning` skill. A new session only g
 
 ## Log
 
+### 2026-11-21
+
+- **No reverse CSS check against prose words** (issue #703, owner decision). `global.css`'s `@source not inline(...)` drops ten utilities that only English words in `src/` comments and prose generated, about 300 B gzip. A `check-dist.mjs` check failing on any built class no markup or script uses would stop new words creeping back, but was declined: a word that slips back costs a few dozen bytes, the check would fail CI over ordinary words in comments, and it needs an allowlist for classes rendered only in some states (`/blog/`'s `py-8` once a post publishes, `ContactForm.tsx`'s error styles, the lightbox's script-built classes). A periodic efficiency audit (as in #702) catches the creep instead. Don't re-raise on a future audit without asking again.
+
 ### 2026-11-20
 
 - **Deploying before CI on `main` is an accepted gap, not gated** (issue #666, current state in CLAUDE.md's ruleset bullet). The gate would have stopped Netlify auto-publishing and triggered the production deploy from a final `ci.yml` job that `needs:` every required job, via a Netlify build hook. Declined: it needs the repo's first Actions secret (the hook URL), a dashboard change and ~5-minute slower deploys, to cover only a broken combination of two PRs that each passed CI, which is rare with one author. The cheap half shipped instead: `cancel-in-progress` is now true only for `pull_request` runs, since 61 of 336 `main` push runs had been cancelled by a newer push, losing which merge broke a later red run.
