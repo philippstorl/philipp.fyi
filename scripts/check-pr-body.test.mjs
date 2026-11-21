@@ -4,10 +4,9 @@ import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
 import { test } from 'node:test'
-import { fileURLToPath } from 'node:url'
 import { findBodyProblems } from './check-pr-body.js'
 
-const script = fileURLToPath(new URL('./check-pr-body.js', import.meta.url))
+const script = path.join(import.meta.dirname, 'check-pr-body.js')
 const good =
     'Resolves #12\n\n- #12\n\n## Summary\n\n- x\n\n## Test plan\n\n- [x] y\n'
 const missingBullet = good.replace('- #12\n\n', '')
