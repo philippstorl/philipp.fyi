@@ -1,15 +1,12 @@
 import fs from 'fs'
-import { dirname, resolve } from 'path'
-import { fileURLToPath } from 'url'
+import { resolve } from 'path'
 
 // Claude Code saves an additionalContext over 10,000 chars (JS string length) to a
 // file and injects only a ~2 KB preview, so stay well under it.
 const MAX_CHARS = 9000
 
 // Not cwd-relative: hooks run in Claude's current directory, which follows its `cd`.
-const path =
-    process.argv[2] ??
-    resolve(dirname(fileURLToPath(import.meta.url)), '../LEARNINGS.md')
+const path = process.argv[2] ?? resolve(import.meta.dirname, '../LEARNINGS.md')
 const HEADER =
     'From LEARNINGS.md (bounded digest, newest days first, each in file order):'
 const POINTER = 'Older entries: read LEARNINGS.md'

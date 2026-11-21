@@ -1,10 +1,9 @@
 import fs from 'fs/promises'
 import path from 'path'
-import { fileURLToPath } from 'url'
 
 // Satori, the standalone favicon and theme-color meta tags can't read CSS
 // variables, so they hold hex copies of global.css's OKLCH tokens (#350).
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const root = path.resolve(import.meta.dirname, '..')
 const read = (file) => fs.readFile(path.join(root, file), 'utf8')
 
 const HEX = '#[0-9A-Fa-f]{6}'

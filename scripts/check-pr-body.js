@@ -2,7 +2,6 @@ import fs from 'fs'
 import { homedir } from 'os'
 import { resolve } from 'path'
 import tty from 'tty'
-import { fileURLToPath } from 'url'
 
 // PreToolUse hook: blocks `gh pr create`/`gh pr edit` when the body breaks the
 // conventional-commits skill's "PR description" structure. Exit 2 blocks the call
@@ -327,4 +326,4 @@ function main() {
     process.exit(2)
 }
 
-if (process.argv[1] === fileURLToPath(import.meta.url)) main()
+if (process.argv[1] === import.meta.filename) main()

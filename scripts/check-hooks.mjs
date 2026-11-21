@@ -2,12 +2,11 @@ import { execFileSync, spawnSync } from 'child_process'
 import fs from 'fs'
 import os from 'os'
 import path from 'path'
-import { fileURLToPath } from 'url'
 
 // The Stop hook runs check-doc-sync.js with `2>/dev/null || true`, so a crash
 // silently turns the doc-sync nudge off. Runs the hook's own command without
 // that suffix in a throwaway repo, so the developer's own changes don't matter.
-const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+const root = path.resolve(import.meta.dirname, '..')
 const SUPPRESSION = /\s*2>\/dev\/null\s*\|\|\s*true\s*$/
 
 const command = JSON.parse(

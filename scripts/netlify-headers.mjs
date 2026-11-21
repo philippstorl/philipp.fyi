@@ -1,9 +1,8 @@
 import path from 'path'
-import { fileURLToPath } from 'url'
 import { parseAllHeaders } from '@netlify/headers-parser'
 
 const netlifyConfigPath = path.resolve(
-    path.dirname(fileURLToPath(import.meta.url)),
+    import.meta.dirname,
     '..',
     'netlify.toml',
 )
