@@ -5,7 +5,7 @@ test.describe('Recommendations page', () => {
     test('shows all recommendations', async ({ page }) => {
         await page.goto('/recommendations/')
         const items = page.locator('ol[role="list"] > li')
-        await expect(items).toHaveCount(14)
+        await expect(items).toHaveCount(15)
     })
 
     test('intro paragraph has correct spacing around the LinkedIn link', async ({
