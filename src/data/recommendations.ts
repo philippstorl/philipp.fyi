@@ -10,6 +10,20 @@ export interface Recommendation {
 
 export const recommendations: Recommendation[] = [
     {
+        slug: 'dan-drury',
+        name: 'Dan Drury',
+        title: 'Growth Marketing & CRO | Experimentation Programme Builder | Conversion Copy | Focused on What Actually Improves Results',
+        date: 'November 5, 2026',
+        relationship: 'Dan worked with Philipp on the same team',
+        featured: false,
+        quote: [
+            'I worked closely with Philipp for four years at Staffbase, and it was a genuine pleasure. As Principal Web Developer, he was the person who made ambitious ideas work properly on staffbase.com - even under intense time pressure.',
+            'Philipp’s technical skill really showed in our experimentation work. He built test variants with the real production components rather than relying on a visual editor, so what we tested matched what visitors would actually experience. He also cared about the integrity of the website and was quick to flag risks before they became problems, which raised the quality of how we worked as a team. The same applied to HubSpot landing pages, where his CSS and template work made event and campaign pages look and feel like their own brand.',
+            'Beyond the skills, he was a reliable, thoughtful counterpart. When something broke on a live page, he got to the cause quickly and explained clearly what happened and how it was fixed. I could count on him to engage with the problem rather than deflect it.',
+            'Working alongside him made my own work better, and I’d jump at the chance to work with him again.',
+        ],
+    },
+    {
         slug: 'pooja-bhapkar',
         name: 'Pooja Bhapkar',
         title: 'Senior Graphic Designer at Staffbase',
