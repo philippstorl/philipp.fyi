@@ -1,6 +1,7 @@
 ---
 import SocialIcon from '@/components/ui/SocialIcon.astro'
 import NewTabIndicator from '@/components/ui/NewTabIndicator.astro'
+import { CURRENT_EMPLOYER } from '@/data/employer'
 import { hero } from '@/data/hero'
 ---
 
@@ -29,7 +30,14 @@ import { hero } from '@/data/hero'
         <p class="text-lg leading-relaxed text-muted">
             {hero.subheading}
             <br />
-            {hero.description}
+            {hero.employerLead}{' '}<a
+                href={CURRENT_EMPLOYER.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-accent underline underline-offset-2 hover:no-underline"
+                >{CURRENT_EMPLOYER.name}<NewTabIndicator
+            /></a
+            >{`, ${hero.description}`}
             <br />
             {hero.experienceTagline}
         </p>
