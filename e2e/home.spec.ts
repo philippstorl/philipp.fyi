@@ -1,13 +1,13 @@
 import { test, expect, type Locator } from '@playwright/test'
+import { CURRENT_EMPLOYER } from '../src/data/employer'
+import { hero } from '../src/data/hero'
 import { SITE_NAME } from '../src/data/site'
 import { GITHUB_URL, LINKEDIN_URL } from '../src/data/social'
 
 test.describe('Home page', () => {
     test('has correct title and headline', async ({ page }) => {
         await page.goto('/')
-        await expect(page).toHaveTitle(
-            'Philipp Storl | Principal Web Developer',
-        )
+        await expect(page).toHaveTitle('Philipp Storl | Principal Web Engineer')
         await expect(page.getByRole('heading', { level: 1 })).toContainText(
             'I build things that last.',
         )
@@ -15,7 +15,7 @@ test.describe('Home page', () => {
 
     test('share title names the role, not just the name', async ({ page }) => {
         await page.goto('/')
-        const title = 'Philipp Storl | Principal Web Developer'
+        const title = 'Philipp Storl | Principal Web Engineer'
         await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
             'content',
             title,
@@ -25,9 +25,14 @@ test.describe('Home page', () => {
         ).toHaveAttribute('content', title)
     })
 
-    test('shows availability badge', async ({ page }) => {
+    test('availability badge follows hero.available', async ({ page }) => {
         await page.goto('/')
-        await expect(page.getByText('Open to new opportunities')).toBeVisible()
+        const badge = page.getByText(hero.availabilityText)
+        if (hero.available) {
+            await expect(badge).toBeVisible()
+        } else {
+            await expect(badge).toHaveCount(0)
+        }
     })
 
     test('og:type is website, not article', async ({ page }) => {
@@ -61,6 +66,12 @@ test.describe('Home page', () => {
         expect(schema).toMatchObject({
             '@type': 'Person',
             name: SITE_NAME,
+            jobTitle: 'Principal Web Engineer',
+            worksFor: {
+                '@type': 'Organization',
+                name: CURRENT_EMPLOYER.name,
+                url: CURRENT_EMPLOYER.url,
+            },
             url: 'https://philipp.fyi/',
         })
         expect(schema.sameAs).toEqual([LINKEDIN_URL, GITHUB_URL])

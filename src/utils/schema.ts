@@ -1,3 +1,4 @@
+import { CURRENT_EMPLOYER } from '@/data/employer'
 import { JOB_TITLE, hero } from '@/data/hero'
 import { SITE_NAME } from '@/data/site'
 
@@ -6,17 +7,23 @@ export interface PersonSchema {
     '@type': 'Person'
     name: string
     jobTitle: string
+    worksFor: { '@type': 'Organization'; name: string; url: string }
     url: string
     sameAs: string[]
 }
 
-/** Person schema for the homepage — name, jobTitle, and sameAs (social profile URLs). */
+/** Person schema for the homepage — name, jobTitle, worksFor, and sameAs (social profile URLs). */
 export function buildPersonSchema(url: string): PersonSchema {
     return {
         '@context': 'https://schema.org',
         '@type': 'Person',
         name: SITE_NAME,
         jobTitle: JOB_TITLE,
+        worksFor: {
+            '@type': 'Organization',
+            name: CURRENT_EMPLOYER.name,
+            url: CURRENT_EMPLOYER.url,
+        },
         url,
         sameAs: hero.links.map((link) => link.href),
     }

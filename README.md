@@ -255,7 +255,7 @@ Every static page, case study, and published blog post gets its own `/og/<slug>.
 
 ## Structured data (JSON-LD)
 
-The homepage renders a `Person` schema (name, job title, and `sameAs` links to LinkedIn/GitHub), each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), and each published blog post renders a `BlogPosting` schema (headline, description, publish date, author, URL, and OG image), all as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
+The homepage renders a `Person` schema (name, job title, current employer as `worksFor`, and `sameAs` links to LinkedIn/GitHub), each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), and each published blog post renders a `BlogPosting` schema (headline, description, publish date, author, URL, and OG image), all as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
 
 ## Analytics
 
@@ -278,6 +278,7 @@ src/
   content.config.ts → Collection schemas for work, principles and blog
   data/
     about.ts            → About page/section copy and facts
+    employer.ts         → Current employer (name, URL), shared by hero/about copy and the Person JSON-LD
     hero.ts             → Hero section copy
     navigation.ts       → Nav items
     social.ts           → Footer LinkedIn/GitHub/Contact links, plus LINKEDIN_URL/GITHUB_URL (the only copy of the profile URLs)

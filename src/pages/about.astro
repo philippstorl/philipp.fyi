@@ -6,6 +6,8 @@ import Footer from '@/components/layout/Footer.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { about } from '@/data/about'
+import { CURRENT_EMPLOYER } from '@/data/employer'
+import { JOB_TITLE } from '@/data/hero'
 import { stack } from '@/data/stack'
 import { getDefaultDescription } from '@/data/site'
 import { staticPageMeta } from '@/data/static-pages'
@@ -15,8 +17,8 @@ import { staticPageMeta } from '@/data/static-pages'
     <Header />
     <Main>
         <PageHeader eyebrow="Who I am" title="About">
-            Philipp Storl, Principal Web Developer based in the Chemnitz /
-            Leipzig area, Germany.
+            Philipp Storl, {JOB_TITLE} at {CURRENT_EMPLOYER.name}, based in the
+            Chemnitz / Leipzig area, Germany.
         </PageHeader>
 
         <div class="mx-auto max-w-3xl px-6 pb-24">
