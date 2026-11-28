@@ -257,7 +257,7 @@ Every static page, case study, and published blog post gets its own `/og/<slug>.
 
 ## Structured data (JSON-LD)
 
-The homepage renders a `Person` schema (name, job title, current employer as `worksFor`, and `sameAs` links to LinkedIn/GitHub), each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), and each published blog post renders a `BlogPosting` schema (headline, description, publish date, author, URL, and OG image), all as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
+The homepage renders a `Person` schema (name, job title, current employer as `worksFor`, portrait `image`, and `sameAs` links to LinkedIn/GitHub), each case study renders a `CreativeWork` schema (title, description, publish year, author, URL, and image), and each published blog post renders a `BlogPosting` schema (headline, description, publish date, author, URL, and OG image), all as `<script type="application/ld+json">` tags — see `src/utils/schema.ts` for the data and `src/components/seo/JsonLd.astro` for the shared rendering. This needs no CSP changes: `type="application/ld+json"` scripts aren't subject to the `script-src` directive at all (see CLAUDE.md's CSP section for how this was verified against a real build).
 
 ## Analytics
 
@@ -267,6 +267,8 @@ Site analytics come from **Netlify Analytics** (Netlify dashboard → Logs & met
 
 ```text
 src/
+  assets/
+    philipp-storl.jpg → Portrait on /about/ and in the Person JSON-LD (pre-cropped, no EXIF)
   components/
     about/         → CareerTimeline, CareerDates (the /about/ Experience section)
     home/          → Hero, WorkSection, AboutSection, PrinciplesSection, PrincipleCard, RecommendationsSection, RecommendationCard, ContactSection, SectionHeader

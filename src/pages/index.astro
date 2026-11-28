@@ -1,4 +1,5 @@
 ---
+import { getImage } from 'astro:assets'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
@@ -13,9 +14,17 @@ import JsonLd from '@/components/seo/JsonLd.astro'
 import { getDefaultDescription } from '@/data/site'
 import { buildPersonSchema } from '@/utils/schema'
 import { toAbsoluteUrl } from '@/utils/url'
+import portrait from '@/assets/philipp-storl.jpg'
 
+const portraitImage = await getImage({
+    src: portrait,
+    width: 600,
+    height: 600,
+    format: 'jpeg',
+})
 const personSchema = buildPersonSchema(
     toAbsoluteUrl(Astro.url.pathname, Astro.site),
+    toAbsoluteUrl(portraitImage.src, Astro.site),
 )
 ---
 
