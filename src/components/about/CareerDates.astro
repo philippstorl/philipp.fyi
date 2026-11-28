@@ -1,0 +1,17 @@
+---
+import { formatDuration, formatYearMonth } from '@/utils/career'
+
+interface Props {
+    start: string
+    end: string | undefined
+    class?: string
+}
+
+const { start, end, class: className } = Astro.props
+---
+
+<p class:list={['text-sm text-muted', className]}>
+    <time datetime={start}>{formatYearMonth(start)}</time> –
+    {end ? <time datetime={end}>{formatYearMonth(end)}</time> : 'Present'}
+    <span aria-hidden="true">·</span> {formatDuration(start, end)}
+</p>
