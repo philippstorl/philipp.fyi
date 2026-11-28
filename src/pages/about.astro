@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets'
 import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
@@ -6,6 +7,7 @@ import Footer from '@/components/layout/Footer.astro'
 import CareerTimeline from '@/components/about/CareerTimeline.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
+import portrait from '@/assets/philipp-storl.jpg'
 import { about } from '@/data/about'
 import { CURRENT_EMPLOYER } from '@/data/employer'
 import { JOB_TITLE } from '@/data/hero'
@@ -23,12 +25,23 @@ import { staticPageMeta } from '@/data/static-pages'
         </PageHeader>
 
         <div class="mx-auto max-w-3xl px-6 pb-32">
-            <div class="space-y-5">
-                {about.paragraphs.map((para) => <p
-                    class="text-base leading-relaxed text-muted md:text-lg"
-                >
-                    {para}
-                </p>)}
+            <div class="flex flex-col gap-8 md:flex-row md:items-start">
+                <Image
+                    src={portrait}
+                    alt="Philipp Storl holding his Berlin Half Marathon 2026 medal in front of the Brandenburg Gate"
+                    width={144}
+                    height={144}
+                    densities={[1, 2, 3]}
+                    loading="eager"
+                    class="size-36 shrink-0 rounded-full object-cover"
+                />
+                <div class="space-y-5">
+                    {about.paragraphs.map((para) => <p
+                        class="text-base leading-relaxed text-muted md:text-lg"
+                    >
+                        {para}
+                    </p>)}
+                </div>
             </div>
 
             <dl class="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">

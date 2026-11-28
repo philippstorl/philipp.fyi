@@ -6,6 +6,9 @@ test.describe('About page', () => {
         await expect(
             page.getByRole('heading', { level: 1, name: 'About' }),
         ).toBeVisible()
+        await expect(
+            page.getByRole('img', { name: /^Philipp Storl holding/ }),
+        ).toBeVisible()
         await expect(page.getByText('Based').first()).toBeVisible()
         await expect(
             page.getByText('Chemnitz / Leipzig area, Germany', {

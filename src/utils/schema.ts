@@ -9,11 +9,12 @@ export interface PersonSchema {
     jobTitle: string
     worksFor: { '@type': 'Organization'; name: string; url: string }
     url: string
+    image: string
     sameAs: string[]
 }
 
 /** Person schema for the homepage — name, jobTitle, worksFor, and sameAs (social profile URLs). */
-export function buildPersonSchema(url: string): PersonSchema {
+export function buildPersonSchema(url: string, image: string): PersonSchema {
     return {
         '@context': 'https://schema.org',
         '@type': 'Person',
@@ -25,6 +26,7 @@ export function buildPersonSchema(url: string): PersonSchema {
             url: CURRENT_EMPLOYER.url,
         },
         url,
+        image,
         sameAs: hero.links.map((link) => link.href),
     }
 }

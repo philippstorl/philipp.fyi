@@ -95,6 +95,7 @@ test.describe('Home page', () => {
             url: 'https://philipp.fyi/',
         })
         expect(schema.sameAs).toEqual([LINKEDIN_URL, GITHUB_URL])
+        expect(schema.image).toMatch(/^https:\/\/philipp\.fyi\//)
     })
 
     test('shows all 4 work cards', async ({ page }) => {
