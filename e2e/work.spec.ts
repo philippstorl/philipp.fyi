@@ -5,27 +5,38 @@ const caseStudies = [
     {
         slug: 'storyblok-migration',
         title: 'Migrating staffbase.com to Storyblok & Symfony',
+        year: '2024–2025',
+        role: 'Principal Web Developer',
     },
     {
         slug: 'brand-evolution',
         title: '8 years of brand evolution on staffbase.com',
+        year: '2018–2026',
+        role: 'Senior Web Developer to Principal Web Developer',
     },
     {
         slug: 'leadership-operating-model',
         title: 'Building a team, a career track, and an operating model',
+        year: '2022–2024',
+        role: 'Team Lead Web Development',
     },
     {
         slug: 'voices-conference-website',
         title: 'Six years evolving the VOICES conference website',
+        year: '2020–2026',
+        role: 'Senior Web Developer to Principal Web Developer',
     },
 ]
 
-for (const { slug, title } of caseStudies) {
+for (const { slug, title, year, role } of caseStudies) {
     test(`case study: ${slug} renders correctly`, async ({ page }) => {
         await page.goto(`/work/${slug}/`)
         await expect(page.getByRole('heading', { level: 1 })).toContainText(
             title,
         )
+        const header = page.locator('#main-content header')
+        await expect(header).toContainText(`Staffbase · ${year}`)
+        await expect(header).toContainText(`Role: ${role}`)
         // Exact names keep the decorative "←" out of them; NVDA reads it as
         // "left arrow" (issue #500).
         const main = page.locator('#main-content')
@@ -83,6 +94,7 @@ test('case study JSON-LD is a CreativeWork with an ISO year and absolute URLs', 
         '@type': 'CreativeWork',
         // The front matter year is "2018–2026", which isn't a valid ISO 8601 date.
         datePublished: '2018',
+        sourceOrganization: { '@type': 'Organization', name: 'Staffbase' },
         url: 'https://philipp.fyi/work/brand-evolution/',
         image: 'https://philipp.fyi/og/work/brand-evolution.png',
     })

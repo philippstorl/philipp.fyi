@@ -37,6 +37,7 @@ export interface CreativeWorkSchema {
     description: string
     datePublished: string
     author: { '@type': 'Person'; name: string }
+    sourceOrganization: { '@type': 'Organization'; name: string }
     url: string
     image?: string
 }
@@ -46,6 +47,7 @@ export interface CreativeWorkSchemaParams {
     description: string
     /** A 4-digit year or an en-dash year range, as validated by content.config.ts's work schema. */
     year: string
+    company: string
     url: string
     image?: string
 }
@@ -68,6 +70,7 @@ export function buildCreativeWorkSchema(
         description: params.description,
         datePublished: extractSchemaYear(params.year),
         author: { '@type': 'Person', name: SITE_NAME },
+        sourceOrganization: { '@type': 'Organization', name: params.company },
         url: params.url,
         ...(params.image ? { image: params.image } : {}),
     }

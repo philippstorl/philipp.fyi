@@ -101,6 +101,9 @@ test.describe('Home page', () => {
         await page.goto('/')
         const cards = page.locator('#work article')
         await expect(cards).toHaveCount(4)
+        for (const card of await cards.all()) {
+            await expect(card).toContainText(/Staffbase · \d{4}/)
+        }
     })
 
     test('"See all work" CTA on home links to /work/', async ({ page }) => {
