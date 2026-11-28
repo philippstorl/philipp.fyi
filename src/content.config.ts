@@ -9,9 +9,7 @@ const work = defineCollection({
             title: z.string(),
             description: z.string(),
             category: z.enum(['Engineering', 'Leadership', 'Design']),
-            /** Where the work happened; shown next to the year on the card and case-study header. */
             company: z.string().min(1),
-            /** Philipp's role(s) during the work, shown under the case-study description. */
             role: z.string().min(1),
             tags: z.array(z.string()).min(1),
             /** A 4-digit year or an en-dash range (e.g. "2022–2024") for

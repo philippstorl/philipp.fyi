@@ -47,7 +47,6 @@ export interface CreativeWorkSchemaParams {
     description: string
     /** A 4-digit year or an en-dash year range, as validated by content.config.ts's work schema. */
     year: string
-    /** The organization the work was done for, from the work schema's `company`. */
     company: string
     url: string
     image?: string

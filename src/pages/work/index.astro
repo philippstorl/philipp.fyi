@@ -16,7 +16,6 @@ import {
 const entries = await getPublishedEntries('work')
 const caseStudyCount = entries.length
 const companies = [...new Set(entries.map((entry) => entry.data.company))]
-// Names the company only while every case study comes from the same one.
 const origin = companies.length === 1 ? ` from my time at ${companies[0]}` : ''
 ---
 

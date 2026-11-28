@@ -13,7 +13,6 @@ export interface HeroData {
     availabilityText: string
     headline: string
     subheading: string
-    /** Rendered as "<employerLead> <CURRENT_EMPLOYER link>, <description>" by Hero.astro. */
     employerLead: string
     description: string
     experienceTagline: string
