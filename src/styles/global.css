@@ -196,6 +196,10 @@ html {
             break-inside: avoid;
         }
 
+        details::details-content {
+            content-visibility: visible;
+        }
+
         a[href^="http"]::after {
             content: " (" attr(href) ")";
             font-size: 0.875em;

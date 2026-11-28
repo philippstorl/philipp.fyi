@@ -14,6 +14,60 @@ test.describe('About page', () => {
         ).toBeVisible()
     })
 
+    test('shows the career timeline with dates and case-study links', async ({
+        page,
+    }) => {
+        await page.goto('/about/')
+        const timeline = page.getByRole('region', { name: 'Experience' })
+        await expect(timeline.getByRole('heading', { level: 3 })).toHaveText([
+            'octonomy',
+            'Staffbase',
+        ])
+        await expect(timeline.getByRole('heading', { level: 4 })).toHaveText([
+            'Principal Web Engineer',
+            'Principal Web Developer',
+            'Team Lead Web Development',
+            'Lead Web Developer',
+            'Senior Web Developer',
+        ])
+        await expect(timeline).toContainText(
+            'Mar 2018 – Sep 2026 · 8 years 7 months',
+        )
+        await expect(timeline.locator('time').first()).toHaveAttribute(
+            'datetime',
+            '2026-10',
+        )
+        await expect(timeline).toContainText('Oct 2026 – Present')
+        const caseStudyLinks = timeline.locator('a[href^="/work/"]')
+        await expect(caseStudyLinks).toHaveCount(4)
+        for (const link of await caseStudyLinks.all()) {
+            await expect(link).toHaveAttribute('href', /^\/work\/[a-z-]+\/$/)
+        }
+    })
+
+    test('role highlights are collapsed until opened, and print expanded', async ({
+        page,
+    }) => {
+        await page.goto('/about/')
+        const role = page
+            .getByRole('region', { name: 'Experience' })
+            .locator('details')
+            .filter({ hasText: 'Owned the web tool stack' })
+        const highlight = role.getByText(
+            'Owned the web tool stack, vendor contracts, and billing.',
+        )
+        await expect(highlight).toBeHidden()
+
+        await role.getByText('Show 9 highlights').click()
+        await expect(highlight).toBeVisible()
+        await expect(role.getByText('Hide highlights')).toBeVisible()
+
+        await page.reload()
+        await page.emulateMedia({ media: 'print' })
+        await expect(highlight).toBeVisible()
+        await expect(role.locator('summary')).toBeHidden()
+    })
+
     test('shows the tech stack section', async ({ page }) => {
         await page.goto('/about/')
         await expect(

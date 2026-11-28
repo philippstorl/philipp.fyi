@@ -3,6 +3,7 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 import Header from '@/components/layout/Header.astro'
 import Main from '@/components/layout/Main.astro'
 import Footer from '@/components/layout/Footer.astro'
+import CareerTimeline from '@/components/about/CareerTimeline.astro'
 import InterlinkRow from '@/components/ui/InterlinkRow.astro'
 import PageHeader from '@/components/ui/PageHeader.astro'
 import { about } from '@/data/about'
@@ -21,7 +22,7 @@ import { staticPageMeta } from '@/data/static-pages'
             Chemnitz / Leipzig area, Germany.
         </PageHeader>
 
-        <div class="mx-auto max-w-3xl px-6 pb-24">
+        <div class="mx-auto max-w-3xl px-6 pb-32">
             <div class="space-y-5">
                 {about.paragraphs.map((para) => <p
                     class="text-base leading-relaxed text-muted md:text-lg"
@@ -43,8 +44,23 @@ import { staticPageMeta } from '@/data/static-pages'
                 </div>)}
             </dl>
 
+            <h2
+                class="mt-16 mb-4 font-display text-2xl leading-snug font-bold tracking-tight text-foreground md:text-3xl"
+            >
+                How this site is built
+            </h2>
+            <ul class="flex flex-wrap gap-2">
+                {stack.map((name) => <li
+                    class="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted"
+                >
+                    {name}
+                </li>)}
+            </ul>
+
+            <CareerTimeline />
+
             <InterlinkRow
-                class="mt-10"
+                class="mt-16"
                 items={[
                     {
                         href: '/work/',
@@ -63,21 +79,6 @@ import { staticPageMeta } from '@/data/static-pages'
                     },
                 ]}
             />
-        </div>
-
-        <div class="mx-auto max-w-3xl px-6 pb-32">
-            <h2
-                class="mb-4 font-display text-2xl leading-snug font-bold tracking-tight text-foreground md:text-3xl"
-            >
-                How this site is built
-            </h2>
-            <ul class="flex flex-wrap gap-2">
-                {stack.map((name) => <li
-                    class="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted"
-                >
-                    {name}
-                </li>)}
-            </ul>
         </div>
     </Main>
     <Footer />

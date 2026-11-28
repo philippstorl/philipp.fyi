@@ -1,8 +1,7 @@
-const CAREER_START_DATE = new Date('2010-02-01')
+import { career } from '@/data/career'
+import { getEntrySpan, monthEndDate, monthStartDate } from '@/utils/career'
 
-// Tenure has concluded -- fixed dates, not `now`, so it can't keep growing.
-const STAFFBASE_START_DATE = new Date('2018-03-01')
-const STAFFBASE_END_DATE = new Date('2026-06-30')
+const CAREER_START_DATE = new Date('2010-02-01')
 
 // UTC getters -- local-time would shift the date in negative-UTC-offset zones.
 function yearsBetween(start: Date, end: Date): number {
@@ -19,6 +18,11 @@ export function getYearsOfExperience(now: Date = new Date()): number {
     return yearsBetween(CAREER_START_DATE, now)
 }
 
+// Tenure has concluded: fixed dates from career.ts, not `now`, so it can't keep growing.
 export function getStaffbaseTenureYears(): number {
-    return yearsBetween(STAFFBASE_START_DATE, STAFFBASE_END_DATE)
+    const entry = career.find((e) => e.company === 'Staffbase')
+    if (!entry) throw new Error('career.ts has no Staffbase entry')
+    const { start, end } = getEntrySpan(entry)
+    if (!end) throw new Error('Staffbase tenure needs an end date')
+    return yearsBetween(monthStartDate(start), monthEndDate(end))
 }
