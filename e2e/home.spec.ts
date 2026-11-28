@@ -1,5 +1,6 @@
 import { test, expect, type Locator } from '@playwright/test'
 import { CURRENT_EMPLOYER } from '../src/data/employer'
+import { NEW_TAB_SUFFIX } from '../src/utils/a11y'
 import { hero } from '../src/data/hero'
 import { SITE_NAME } from '../src/data/site'
 import { GITHUB_URL, LINKEDIN_URL } from '../src/data/social'
@@ -33,6 +34,25 @@ test.describe('Home page', () => {
         } else {
             await expect(badge).toHaveCount(0)
         }
+    })
+
+    test('hero links to the current employer in a new tab', async ({
+        page,
+    }) => {
+        await page.goto('/')
+        const link = page
+            .getByRole('region', { name: 'Introduction' })
+            .getByRole('link', { name: CURRENT_EMPLOYER.name, exact: false })
+        await expect(link).toHaveAttribute('href', CURRENT_EMPLOYER.url)
+        await expect(link).toHaveAttribute('target', '_blank')
+        await expect(
+            page
+                .getByRole('region', { name: 'Introduction' })
+                .locator('p')
+                .first(),
+        ).toContainText(
+            `Now at ${CURRENT_EMPLOYER.name}${NEW_TAB_SUFFIX}, after years`,
+        )
     })
 
     test('og:type is website, not article', async ({ page }) => {

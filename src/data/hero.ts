@@ -1,5 +1,4 @@
 import { GITHUB_URL, LINKEDIN_URL, type SocialIcon } from '@/data/social'
-import { CURRENT_EMPLOYER } from '@/data/employer'
 import { getYearsOfExperience } from '@/utils/experience'
 
 export interface HeroLink {
@@ -14,6 +13,8 @@ export interface HeroData {
     availabilityText: string
     headline: string
     subheading: string
+    /** Rendered as "<employerLead> <CURRENT_EMPLOYER link>, <description>" by Hero.astro. */
+    employerLead: string
     description: string
     experienceTagline: string
     location: string
@@ -25,7 +26,9 @@ export const hero: HeroData = {
     availabilityText: 'Open to new opportunities',
     headline: 'I build things that last.',
     subheading: 'Principal Web Engineer, full-stack, with a designer’s eye.',
-    description: `Now at ${CURRENT_EMPLOYER.name}, after years of turning one-person web setups into platforms and teams that scale.`,
+    employerLead: 'Now at',
+    description:
+        'after years of turning one-person web setups into platforms and teams that scale.',
     experienceTagline: `${getYearsOfExperience()} years building for the web.`,
     location: 'Chemnitz / Leipzig area, Germany · Remote-first.',
     links: [
