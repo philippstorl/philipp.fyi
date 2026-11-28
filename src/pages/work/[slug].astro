@@ -19,7 +19,7 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props
 const { Content } = await render(entry)
-const { title, description, category, tags, year } = entry.data
+const { title, description, category, company, role, tags, year } = entry.data
 const slug = stripContentExtension(entry.id)
 const ogImage = `/og/work/${slug}.png`
 ---
@@ -38,6 +38,8 @@ const ogImage = `/og/work/${slug}.png`
             title={title}
             description={description}
             category={category}
+            company={company}
+            role={role}
             year={year}
             tags={tags}
             ogImage={ogImage}

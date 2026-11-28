@@ -11,13 +11,16 @@ interface Props {
     title: string
     description: string
     category: WorkCategory
+    company: string
+    role: string
     year: string
     tags: string[]
     /** Per-slug OG image path (e.g. "/og/work/foo.png"), reused as the schema's image */
     ogImage?: string
 }
 
-const { title, description, category, year, tags, ogImage } = Astro.props
+const { title, description, category, company, role, year, tags, ogImage } =
+    Astro.props
 
 const pageUrl = toAbsoluteUrl(Astro.url.pathname, Astro.site)
 const imageUrl = ogImage ? toAbsoluteUrl(ogImage, Astro.site) : undefined
@@ -25,6 +28,7 @@ const creativeWorkSchema = buildCreativeWorkSchema({
     title,
     description,
     year,
+    company,
     url: pageUrl,
     image: imageUrl,
 })
@@ -43,14 +47,19 @@ const creativeWorkSchema = buildCreativeWorkSchema({
     <header class="mt-10 mb-12">
         <div class="mb-5 flex items-center gap-3">
             <CategoryBadge category={category} />
-            <span class="text-sm text-muted">{year}</span>
+            <span class="text-sm text-muted"
+                >{company} <span aria-hidden="true">·</span> {year}</span
+            >
         </div>
         <h1
             class="mb-6 font-display text-3xl leading-tight font-bold tracking-tight break-words text-foreground min-[23.4375rem]:text-4xl md:text-5xl"
         >
             {title}
         </h1>
-        <p class="mb-8 text-lg leading-relaxed text-muted">{description}</p>
+        <p class="mb-4 text-lg leading-relaxed text-muted">{description}</p>
+        <p class="mb-8 text-sm text-muted">
+            Role: <span class="text-foreground">{role}</span>
+        </p>
 
         <ul class="flex flex-wrap gap-2" aria-label="Technologies and topics">
             {tags.map((tag) => <li

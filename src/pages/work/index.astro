@@ -13,7 +13,11 @@ import {
     getYearsOfExperience,
 } from '@/utils/experience'
 
-const caseStudyCount = (await getPublishedEntries('work')).length
+const entries = await getPublishedEntries('work')
+const caseStudyCount = entries.length
+const companies = [...new Set(entries.map((entry) => entry.data.company))]
+// Names the company only while every case study comes from the same one.
+const origin = companies.length === 1 ? ` from my time at ${companies[0]}` : ''
 ---
 
 <BaseLayout
@@ -24,8 +28,7 @@ const caseStudyCount = (await getPublishedEntries('work')).length
     <Header />
     <Main>
         <PageHeader eyebrow="Selected work" title="Work">
-            {caseStudyCount} projects across engineering, design, and
-            leadership, each with the decisions and trade-offs behind it.
+            {`${caseStudyCount} projects${origin}, across engineering, design, and leadership, each with the decisions and trade-offs behind it.`}
         </PageHeader>
 
         <div class="mx-auto max-w-6xl px-6 pb-24">
